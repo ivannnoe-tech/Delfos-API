@@ -23,6 +23,10 @@ export class AppConfigService {
     return this.configService.get('DELFOS_ADMIN_KEY', { infer: true });
   }
 
+  get encryptionKeyBase64(): string {
+    return this.configService.get('ENCRYPTION_KEY_BASE64', { infer: true });
+  }
+
   get corsOrigin(): string[] {
     return this.configService.get('CORS_ORIGIN', { infer: true });
   }

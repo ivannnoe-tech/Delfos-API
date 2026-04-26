@@ -412,7 +412,124 @@ Principais erros esperados:
 - `404 Not Found` quando o mapping nao existir para o `tenantId` informado.
 - `500 Internal Server Error` para falha inesperada de persistencia, incluindo duplicidade de `tenantId + datasetKey + targetField` enquanto nao houver erro de dominio especifico.
 
-## 8. Seguranca dos exemplos
+## 8. Credentials / secrets
+
+Objetivo: registrar referencias seguras de credenciais para conexoes sem expor segredo real em respostas, listagens, logs ou auditoria.
+
+Rotas:
+
+- `POST /api/v1/credentials`
+- `GET /api/v1/credentials?tenantId=...&page=1&pageSize=25`
+- `GET /api/v1/credentials/:id?tenantId=...`
+- `PATCH /api/v1/credentials/:id/rotate?tenantId=...`
+- `PATCH /api/v1/credentials/:id/revoke?tenantId=...`
+
+Request seguro:
+
+```http
+POST /api/v1/credentials
+Content-Type: application/json
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-id: dev-actor-001
+x-delfos-actor-role: operator
+```
+
+```json
+{
+  "tenantId": "662d4f6e7a1c2b00124f0001",
+  "connectionId": "662d4f6e7a1c2b00124f0201",
+  "type": "api_key",
+  "provider": "customer-api",
+  "name": "Primary customer API credential",
+  "secretValue": "not-a-real-secret-value"
+}
+```
+
+Response `201`:
+
+```json
+{
+  "id": "662d4f6e7a1c2b00124f0401",
+  "credentialRef": "cred_662d4f6e7a1c2b00124f0401",
+  "tenantId": "662d4f6e7a1c2b00124f0001",
+  "connectionId": "662d4f6e7a1c2b00124f0201",
+  "type": "api_key",
+  "provider": "customer-api",
+  "name": "Primary customer API credential",
+  "status": "active",
+  "maskedPreview": "********alue",
+  "createdAt": "2026-04-26T12:00:00.000Z",
+  "updatedAt": "2026-04-26T12:00:00.000Z",
+  "createdBy": "dev-actor-001",
+  "updatedBy": "dev-actor-001"
+}
+```
+
+Tipos iniciais:
+
+- `api_key`
+- `bearer_token`
+- `basic_auth`
+- `oauth_client`
+- `database_connection_string`
+- `custom`
+
+Status:
+
+- `active`
+- `inactive`
+- `revoked`
+
+Exemplo de listagem:
+
+```http
+GET /api/v1/credentials?tenantId=662d4f6e7a1c2b00124f0001
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+```
+
+Exemplo de rotacao:
+
+```http
+PATCH /api/v1/credentials/662d4f6e7a1c2b00124f0401/rotate?tenantId=662d4f6e7a1c2b00124f0001
+Content-Type: application/json
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-role: operator
+```
+
+```json
+{
+  "secretValue": "not-a-real-rotated-secret-value"
+}
+```
+
+Exemplo de revogacao:
+
+```http
+PATCH /api/v1/credentials/662d4f6e7a1c2b00124f0401/revoke?tenantId=662d4f6e7a1c2b00124f0001
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-role: operator
+```
+
+Regras de seguranca:
+
+- `secretValue` existe apenas em `POST` e `rotate`.
+- Respostas nunca retornam `secretValue`, valor protegido, token, senha, connection string real ou headers sensiveis.
+- `credentialRef` segue `cred_<ObjectId>` e pode ser usado em `connections.credentialRef`.
+- `maskedPreview` so mostra sufixo quando o valor tem tamanho suficiente; caso contrario retorna `null`.
+- A foundation temporaria protege o valor com AES-256-GCM local usando `ENCRYPTION_KEY_BASE64`.
+- A implementacao fica isolada em service proprio para troca futura por Vault/KMS/Secrets Manager sem alterar o contrato publico.
+- Eventos internos de audit: `credential.created`, `credential.rotated`, `credential.revoked`.
+- Auditoria registra apenas `tenantId`, `entityId`, `type`, `status`, `provider` e `connectionId`; nunca registra segredo real.
+
+Principais erros esperados:
+
+- `401 Unauthorized` para admin key ausente ou invalida.
+- `403 Forbidden` para role temporaria sem permissao em escrita.
+- `400 Bad Request` para `tenantId`, `connectionId`, `id`, `type`, `provider`, `name`, `secretValue`, `page` ou `pageSize` invalidos.
+- `404 Not Found` quando a credencial nao existir para o `tenantId` informado.
+- `500 Internal Server Error` para falha inesperada de persistencia ou protecao local.
+
+## 9. Seguranca dos exemplos
 
 - Nao usar dados reais de cliente, usuario, tenant, API externa ou ambiente interno.
 - Nao incluir token, senha, secret, privateKey, API key, admin key real, credential real ou `.env`.

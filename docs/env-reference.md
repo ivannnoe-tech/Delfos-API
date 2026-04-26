@@ -35,7 +35,7 @@ Na Fase 1, MongoDB armazena configuração e metadados do Delfos, não payload o
 |---|---:|---|---|
 | `JWT_SECRET` | Sim | `change-me` | Secret forte para tokens. |
 | `JWT_EXPIRES_IN` | Sim | `1h` | Expiração do access token. |
-| `ENCRYPTION_KEY` | Sim | `base64-or-hex-key` | Chave para criptografar secrets. |
+| `ENCRYPTION_KEY_BASE64` | Sim | `MDEy...YmY=` | Chave base64 que deve decodificar para 32 bytes e criptografar secrets locais da foundation. |
 | `RATE_LIMIT_WINDOW_MS` | Não | `60000` | Janela de rate limit. |
 | `RATE_LIMIT_MAX` | Não | `100` | Limite por janela. |
 

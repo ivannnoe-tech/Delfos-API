@@ -76,11 +76,31 @@ Configuração de API externa.
 - `name`
 - `baseUrl`
 - `authType`
-- `encryptedCredentials`
+- `credentialRef`
 - `allowedHeaders`
 - `timeoutMs`
 - `rateLimit`
 - `status`
+
+### credentials
+
+Referencia protegida de credenciais usadas por conexoes.
+
+- `tenantId`
+- `connectionId`
+- `type`
+- `provider`
+- `name`
+- `status`
+- `maskedPreview`
+- `protectedSecretValue`
+- `protectionProvider`
+- `rotatedAt`
+- `revokedAt`
+- `createdBy`
+- `updatedBy`
+- `createdAt`
+- `updatedAt`
 
 ### datasets
 
@@ -178,6 +198,9 @@ Auditoria de ações sensíveis.
 - `users.email` único
 - `tenant_users.tenantId + userId` único
 - `connections.tenantId + name`
+- `credentials.tenantId + connectionId`
+- `credentials.tenantId + status`
+- `credentials.tenantId + type`
 - `datasets.tenantId + connectionId + key` único
 - `field_mappings.tenantId + datasetId + targetField`
 - `dashboards.tenantId + name`

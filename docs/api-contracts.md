@@ -124,6 +124,19 @@ X-Tenant-Id: <tenant_id>
 - `PATCH /api/v1/connections/:id`
 - `POST /api/v1/connections/:id/test`
 
+### Credentials / secrets
+
+- `GET /api/v1/credentials`
+- `POST /api/v1/credentials`
+- `GET /api/v1/credentials/:id`
+- `PATCH /api/v1/credentials/:id/rotate`
+- `PATCH /api/v1/credentials/:id/revoke`
+
+As respostas de credentials retornam apenas `credentialRef` e metadados seguros. Campos como
+`secretValue`, tokens, senhas, connection strings reais, headers sensiveis e representacao
+protegida interna nunca fazem parte do contrato publico. `credentialRef` segue o formato
+`cred_<ObjectId>` e e compativel com `connections.credentialRef`.
+
 ### Datasets
 
 - `GET /api/v1/datasets`

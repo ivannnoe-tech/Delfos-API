@@ -5,6 +5,7 @@ export interface EnvironmentVariables {
   PORT: number;
   DELFOS_DATABASE_URL: string;
   DELFOS_ADMIN_KEY: string;
+  ENCRYPTION_KEY_BASE64: string;
   CORS_ORIGIN: string[];
   LOG_LEVEL: 'debug' | 'info' | 'warn' | 'error';
 }
@@ -22,6 +23,7 @@ export function validateEnvironment(config: Record<string, unknown>): Environmen
   const port = readPort(config);
   const databaseUrl = readRequiredString(config, 'DELFOS_DATABASE_URL');
   const adminKey = readRequiredString(config, 'DELFOS_ADMIN_KEY');
+  const encryptionKeyBase64 = readEncryptionKey(config);
   const corsOrigin = readCsv(config, 'CORS_ORIGIN');
   const logLevel = readEnum(config, 'LOG_LEVEL', allowedLogLevels, 'info');
 
@@ -30,6 +32,7 @@ export function validateEnvironment(config: Record<string, unknown>): Environmen
     PORT: port,
     DELFOS_DATABASE_URL: databaseUrl,
     DELFOS_ADMIN_KEY: adminKey,
+    ENCRYPTION_KEY_BASE64: encryptionKeyBase64,
     CORS_ORIGIN: corsOrigin,
     LOG_LEVEL: logLevel,
   };
@@ -54,6 +57,17 @@ function readRequiredString(config: Record<string, unknown>, key: string): strin
   }
 
   return value.trim();
+}
+
+function readEncryptionKey(config: Record<string, unknown>): string {
+  const value = readRequiredString(config, 'ENCRYPTION_KEY_BASE64');
+  const key = Buffer.from(value, 'base64');
+
+  if (key.length !== 32) {
+    throw new Error('ENCRYPTION_KEY_BASE64 must decode to 32 bytes.');
+  }
+
+  return value;
 }
 
 function readCsv(config: Record<string, unknown>, key: string): string[] {
