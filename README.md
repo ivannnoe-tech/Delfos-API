@@ -10,6 +10,8 @@ Backend do **Delfos Analytics** — API NestJS que serve o frontend (`delfos-web
 
 ---
 
+Contratos HTTP atuais da foundation MongoDB/configuracao: [`docs/api-foundation-contracts.md`](./docs/api-foundation-contracts.md).
+
 ## Stack
 
 - **Node.js** 24 LTS
