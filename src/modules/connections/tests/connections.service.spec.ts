@@ -1,0 +1,57 @@
+import { Types } from 'mongoose';
+
+import { ConnectionsRepository } from '../repositories/connections.repository';
+import {
+  ConnectionAuthType,
+  ConnectionDocument,
+  ConnectionStatus,
+  ConnectionType,
+} from '../schemas/connection.schema';
+import { ConnectionsService } from '../services/connections.service';
+
+describe('ConnectionsService', () => {
+  it('stores sanitized metadata and does not expose credential references', async () => {
+    const connectionId = new Types.ObjectId();
+    const tenantId = new Types.ObjectId();
+    const createdAt = new Date('2026-04-26T12:00:00.000Z');
+    const repository: Pick<ConnectionsRepository, 'create'> = {
+      create: jest.fn(
+        async (record) =>
+          ({
+            _id: connectionId,
+            tenantId: record.tenantId,
+            name: record.name,
+            type: record.type ?? ConnectionType.CustomerApi,
+            baseUrl: record.baseUrl,
+            authType: record.authType ?? ConnectionAuthType.None,
+            credentialRef: record.credentialRef,
+            allowedHeaders: record.allowedHeaders,
+            metadata: record.metadata,
+            status: record.status ?? ConnectionStatus.Draft,
+            createdAt,
+            updatedAt: createdAt,
+          }) as unknown as ConnectionDocument,
+      ),
+    };
+    const service = new ConnectionsService(repository as ConnectionsRepository);
+
+    const result = await service.create({
+      tenantId: tenantId.toString(),
+      name: 'Primary customer API',
+      baseUrl: 'https://api.customer.example',
+      authType: ConnectionAuthType.BearerToken,
+      credentialRef: 'vault-reference',
+      metadata: { environment: 'sandbox', accessToken: 'must-not-leak' },
+    });
+
+    expect(repository.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        credentialRef: 'vault-reference',
+        metadata: { environment: 'sandbox' },
+      }),
+    );
+    expect(result.hasCredentialReference).toBe(true);
+    expect(result).not.toHaveProperty('credentialRef');
+    expect(result.metadata).toEqual({ environment: 'sandbox' });
+  });
+});
