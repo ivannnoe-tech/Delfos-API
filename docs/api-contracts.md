@@ -150,6 +150,29 @@ ingestao, cache, scheduler ou chamada externa. `DELETE` e soft delete: o recurso
 `status: "archived"`. `metadata` e `settings` sao sanitizados e nao podem conter secrets,
 tokens, senhas, connection strings reais ou headers sensiveis.
 
+### Query definitions / semantic layer
+
+- `GET /api/v1/query-definitions`
+- `POST /api/v1/query-definitions`
+- `GET /api/v1/query-definitions/:id`
+- `PATCH /api/v1/query-definitions/:id`
+- `DELETE /api/v1/query-definitions/:id`
+
+Na foundation atual, query definitions sao apenas configuracao declarativa da camada
+semantica. Elas descrevem `metrics`, `dimensions`, `filters`, `sorts`, `defaultLimit`,
+`timeField` e granularidades futuras para dashboards e relatorios, mas nao executam query,
+SQL, aggregation, cache, worker, scheduler, conector ou chamada externa.
+
+`tenantId`, `datasetId`, `queryKey` e `name` sao obrigatorios. `datasetId` e obrigatorio
+para manter rastreabilidade com o dataset declarativo. `queryKey` e unico por tenant e
+deve ser estavel para integracoes.
+
+`DELETE` e soft delete: o recurso passa para `status: "archived"`. `metadata`,
+`settings`, `filters.defaultValue` e `filters.allowedValues` sao sanitizados e nao podem
+conter secrets, tokens, senhas, connection strings reais, authorization headers ou valores
+de alta entropia. Eventos internos de audit registram apenas `queryKey`, `status`, `type`
+e `datasetId`.
+
 ### Field mappings
 
 - `GET /api/v1/field-mappings?tenantId=...&datasetKey=...`

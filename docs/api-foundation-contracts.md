@@ -485,7 +485,165 @@ Principais erros esperados:
 - `409 Conflict` quando `datasetKey` ja existir para o tenant.
 - `500 Internal Server Error` para falha inesperada de persistencia.
 
-## 8. Field mappings
+## 8. Query definitions / semantic layer
+
+Objetivo: cadastrar definicoes logicas de consulta, metricas, dimensoes, filtros e
+ordenacoes por tenant/dataset. Nesta etapa o recurso e apenas declarativo: nenhuma rota
+executa query, SQL, aggregation, cache, worker, scheduler, conector ou chamada externa.
+
+Rotas:
+
+- `POST /api/v1/query-definitions`
+- `GET /api/v1/query-definitions?tenantId=...&page=1&pageSize=25`
+- `GET /api/v1/query-definitions/:id?tenantId=...`
+- `PATCH /api/v1/query-definitions/:id?tenantId=...`
+- `DELETE /api/v1/query-definitions/:id?tenantId=...`
+
+Request seguro:
+
+```http
+POST /api/v1/query-definitions
+Content-Type: application/json
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-role: operator
+```
+
+```json
+{
+  "tenantId": "662d4f6e7a1c2b00124f0001",
+  "datasetId": "662d4f6e7a1c2b00124f0501",
+  "queryKey": "sales_overview",
+  "name": "Visao geral de vendas",
+  "description": "Definicao logica para indicadores principais de vendas",
+  "type": "metric",
+  "status": "draft",
+  "metrics": [
+    {
+      "key": "total_sales",
+      "label": "Vendas totais",
+      "field": "total_amount",
+      "aggregation": "sum",
+      "format": "currency",
+      "description": "Soma do valor total de vendas"
+    }
+  ],
+  "dimensions": [
+    {
+      "key": "seller",
+      "label": "Vendedor",
+      "field": "seller_name",
+      "type": "string"
+    }
+  ],
+  "filters": [
+    {
+      "key": "period",
+      "label": "Periodo",
+      "field": "created_at",
+      "operator": "date_range",
+      "required": true,
+      "allowedValues": ["last_7_days", "last_30_days"]
+    }
+  ],
+  "sorts": [
+    {
+      "field": "total_amount",
+      "direction": "desc"
+    }
+  ],
+  "defaultLimit": 100,
+  "timeField": "created_at",
+  "allowedGranularities": ["day", "week", "month"],
+  "tags": ["sales", "overview"],
+  "metadata": {
+    "domain": "sales"
+  },
+  "settings": {
+    "visibleInBuilder": true
+  }
+}
+```
+
+Response `201`:
+
+```json
+{
+  "id": "662d4f6e7a1c2b00124f0601",
+  "tenantId": "662d4f6e7a1c2b00124f0001",
+  "datasetId": "662d4f6e7a1c2b00124f0501",
+  "queryKey": "sales_overview",
+  "name": "Visao geral de vendas",
+  "description": "Definicao logica para indicadores principais de vendas",
+  "status": "draft",
+  "type": "metric",
+  "metrics": [],
+  "dimensions": [],
+  "filters": [],
+  "sorts": [],
+  "defaultLimit": 100,
+  "timeField": "created_at",
+  "allowedGranularities": ["day", "week", "month"],
+  "tags": ["sales", "overview"],
+  "metadata": {
+    "domain": "sales"
+  },
+  "settings": {
+    "visibleInBuilder": true
+  },
+  "createdAt": "2026-04-26T12:00:00.000Z",
+  "updatedAt": "2026-04-26T12:00:00.000Z",
+  "createdBy": "dev-actor-001",
+  "updatedBy": "dev-actor-001"
+}
+```
+
+Enums iniciais:
+
+- `type`: `table`, `metric`, `timeseries`, `comparison`, `custom`
+- `status`: `active`, `inactive`, `draft`, `archived`
+- `metrics.aggregation`: `count`, `count_distinct`, `sum`, `avg`, `min`, `max`, `none`
+- `dimensions.type`: `string`, `number`, `boolean`, `date`, `datetime`, `currency`, `percentage`, `object`, `array`, `unknown`
+- `filters.operator`: `eq`, `neq`, `gt`, `gte`, `lt`, `lte`, `in`, `not_in`, `contains`, `between`, `date_range`
+- `sorts.direction`: `asc`, `desc`
+- `allowedGranularities`: `hour`, `day`, `week`, `month`, `quarter`, `year`
+
+Exemplo de listagem:
+
+```http
+GET /api/v1/query-definitions?tenantId=662d4f6e7a1c2b00124f0001&datasetId=662d4f6e7a1c2b00124f0501
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+```
+
+Exemplo de arquivamento logico:
+
+```http
+DELETE /api/v1/query-definitions/662d4f6e7a1c2b00124f0601?tenantId=662d4f6e7a1c2b00124f0001
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-role: operator
+```
+
+O `DELETE` atual nao remove fisicamente o documento. Ele aplica `status: "archived"` e retorna a query definition atualizada.
+
+Regras de seguranca:
+
+- `queryKey` e unico por tenant e deve ser estavel para integracoes futuras.
+- `datasetId` e obrigatorio para manter rastreabilidade ate o dataset declarativo de origem.
+- `metrics`, `dimensions`, `filters` e `sorts` descrevem consultas futuras; nao carregam resultado real de cliente.
+- `metadata`, `settings`, `filters.defaultValue` e `filters.allowedValues` sao sanitizados. Valores com aparencia de segredo, token, senha, connection string real, authorization header ou alta entropia sao descartados.
+- Respostas retornam apenas configuracao segura e nunca campos sensiveis.
+- Eventos internos de audit: `query_definition.created`, `query_definition.updated`, `query_definition.archived`.
+- Auditoria registra apenas `queryKey`, `status`, `type` e `datasetId`; nunca registra metadata/settings, filtros livres ou payload sensivel.
+
+Principais erros esperados:
+
+- `401 Unauthorized` para admin key ausente ou invalida.
+- `403 Forbidden` para role temporaria sem permissao em escrita.
+- `400 Bad Request` para `tenantId`, `datasetId`, `queryKey`, enums, arrays, `defaultLimit`, tags, `page` ou `pageSize` invalidos.
+- `404 Not Found` quando a query definition nao existir para o `tenantId` informado.
+- `409 Conflict` quando `queryKey` ja existir para o tenant.
+- `500 Internal Server Error` para falha inesperada de persistencia.
+
+## 9. Field mappings
 
 Objetivo: cadastrar De/Para de campos por tenant/dataset sem processar dados operacionais do cliente.
 
@@ -566,7 +724,7 @@ Principais erros esperados:
 - `404 Not Found` quando o mapping nao existir para o `tenantId` informado.
 - `500 Internal Server Error` para falha inesperada de persistencia, incluindo duplicidade de `tenantId + datasetKey + targetField` enquanto nao houver erro de dominio especifico.
 
-## 9. Credentials / secrets
+## 10. Credentials / secrets
 
 Objetivo: registrar referencias seguras de credenciais para conexoes sem expor segredo real em respostas, listagens, logs ou auditoria.
 
@@ -684,7 +842,7 @@ Principais erros esperados:
 - `404 Not Found` quando a credencial nao existir para o `tenantId` informado.
 - `500 Internal Server Error` para falha inesperada de persistencia ou protecao local.
 
-## 10. Seguranca dos exemplos
+## 11. Seguranca dos exemplos
 
 - Nao usar dados reais de cliente, usuario, tenant, API externa ou ambiente interno.
 - Nao incluir token, senha, secret, privateKey, API key, admin key real, credential real ou `.env`.
@@ -692,20 +850,23 @@ Principais erros esperados:
 - Em `connections`, usar sempre `credentialRef` ficticio; nunca segredo bruto.
 - Em `settings` e `metadata`, usar apenas metadados nao sensiveis. Chaves como `token`, `secret`, `password`, `credential`, `authorization`, `apiKey` e `privateKey` nao devem aparecer.
 - Estes endpoints manipulam configuracao do Delfos. Eles nao devem receber payload operacional bruto de APIs de clientes.
+- Em `query-definitions`, exemplos devem usar apenas chaves logicas e valores ficticios seguros para filtros.
 
-## 11. Checkpoint tecnico da foundation
+## 12. Checkpoint tecnico da foundation
 
 Estado revisado neste checkpoint:
 
 - `GET /health` permanece publico e fora de `/api/v1`.
-- Endpoints administrativos de `tenants`, `users`, `connections`, `credentials`, `datasets` e `field-mappings` exigem `x-delfos-admin-key`.
+- Endpoints administrativos de `tenants`, `users`, `connections`, `credentials`, `datasets`, `query-definitions` e `field-mappings` exigem `x-delfos-admin-key`.
 - Leitura/listagem usa o padrao temporario atual: admin key obrigatoria, sem role obrigatoria.
 - Mutacoes gerais usam `owner`, `admin` ou `operator`, exceto operacoes sensiveis de credenciais.
 - Operacoes sensiveis de credenciais (`POST`, `rotate`, `revoke`) usam apenas `owner` ou `admin`.
 - Recursos tenant-scoped exigem `tenantId` explicito em body ou query enquanto nao existir contexto autenticado final.
 - Buscas/updates/deletes por id em `users`, `connections`, `credentials`, `datasets` e `field-mappings` sao tenant-scoped.
+- Buscas/updates/deletes por id em `query-definitions` tambem sao tenant-scoped.
 - `createdBy` e `updatedBy` usam `x-delfos-actor-id` nos recursos que possuem esses campos (`credentials` e `datasets`).
-- `metadata`/`settings` sao sanitizados em `tenants`, `connections` e `datasets`; secrets, tokens, credenciais, connection strings e valores nao escalares sao descartados.
+- `metadata`/`settings` sao sanitizados em `tenants`, `connections`, `datasets` e `query-definitions`; secrets, tokens, credenciais, connection strings e valores nao escalares sao descartados.
+- `query-definitions` tambem sanitiza `filters.defaultValue` e `filters.allowedValues`, mantendo apenas escalares seguros.
 - Auditoria interna nao possui rota publica e nao grava segredo real, `secretValue`, `protectedSecretValue`, `credentialRef`, `baseUrl`, `sourcePath`, `metadata` livre, `settings` ou payload operacional.
 - Swagger documenta os headers temporarios via `ApiFoundationAuthHeaders` nos controllers protegidos.
 - O contrato de erro global padronizado vale para validacao, auth, forbidden, not found e erros inesperados.

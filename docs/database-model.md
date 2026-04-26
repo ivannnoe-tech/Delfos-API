@@ -128,6 +128,40 @@ Na foundation atual, nao armazena payload operacional nem executa consulta.
 - `createdAt`
 - `updatedAt`
 
+### query_definitions
+
+Definicao logica da camada semantica usada futuramente por dashboards e relatorios.
+Na foundation atual, armazena apenas configuracao declarativa e nao executa consulta.
+
+- `tenantId`
+- `datasetId`
+- `queryKey`
+- `name`
+- `description`
+- `status`
+- `type`
+- `metrics`
+- `dimensions`
+- `filters`
+- `sorts`
+- `defaultLimit`
+- `timeField`
+- `allowedGranularities`
+- `tags`
+- `metadata`
+- `settings`
+- `createdBy`
+- `updatedBy`
+- `createdAt`
+- `updatedAt`
+
+Regras:
+
+- `datasetId` e obrigatorio para rastreabilidade com o dataset declarativo.
+- `queryKey` e unico por tenant e deve ser estavel para integracoes.
+- `filters.defaultValue`, `filters.allowedValues`, `metadata` e `settings` guardam apenas valores sanitizados.
+- `DELETE` logico usa `status: archived`.
+
 ### field_mappings
 
 De/Para de campos.
@@ -216,6 +250,10 @@ Auditoria de ações sensíveis.
 - `datasets.tenantId + connectionId`
 - `datasets.tenantId + status`
 - `datasets.tenantId + sourceType`
+- `query_definitions.tenantId + queryKey` unico
+- `query_definitions.tenantId + datasetId`
+- `query_definitions.tenantId + status`
+- `query_definitions.tenantId + type`
 - `field_mappings.tenantId + datasetKey + targetField`
 - `field_mappings.tenantId + connectionId`
 - `dashboards.tenantId + name`

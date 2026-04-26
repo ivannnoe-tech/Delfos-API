@@ -11,6 +11,7 @@ import { CredentialsModule } from './modules/credentials/credentials.module';
 import { DatasetsModule } from './modules/datasets/datasets.module';
 import { FieldMappingsModule } from './modules/field-mappings/field-mappings.module';
 import { HealthModule } from './modules/health/health.module';
+import { QueryDefinitionsModule } from './modules/query-definitions/query-definitions.module';
 import { TenantsModule } from './modules/tenants/tenants.module';
 import { UsersModule } from './modules/users/users.module';
 
@@ -29,6 +30,7 @@ import { UsersModule } from './modules/users/users.module';
     ConnectionsModule,
     CredentialsModule,
     DatasetsModule,
+    QueryDefinitionsModule,
     FieldMappingsModule,
     AuditModule,
   ],

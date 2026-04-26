@@ -36,6 +36,14 @@ Orienta diagnóstico e resposta a incidentes comuns.
 
 Na Fase 1, dados operacionais vêm de APIs expostas pelos clientes. Registre status code, endpoint lógico e `requestId`, sem logar payload sensível.
 
+## Erro em query definitions
+
+Query definitions sao configuracao declarativa. Se houver erro em `/api/v1/query-definitions`,
+verifique `tenantId`, `datasetId`, `queryKey`, status, type e `requestId`. Nao deve haver
+tentativa de execucao de query, conexao externa, cache, worker, scheduler ou fila nesse fluxo.
+Para incidentes de vazamento, conferir auditoria e confirmar que apenas `queryKey`, `status`,
+`type` e `datasetId` foram registrados.
+
 ## Incidente de segurança
 
 1. Isolar impacto.
