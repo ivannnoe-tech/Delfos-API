@@ -11,11 +11,7 @@ import {
   MaxLength,
 } from 'class-validator';
 
-import {
-  ConnectionAuthType,
-  ConnectionStatus,
-  ConnectionType,
-} from '../schemas/connection.schema';
+import { ConnectionAuthType, ConnectionStatus, ConnectionType } from '../schemas/connection.schema';
 
 export class CreateConnectionDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })

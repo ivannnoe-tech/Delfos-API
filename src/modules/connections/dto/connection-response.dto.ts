@@ -2,11 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { ListMetaDto } from '../../../core/dto/list-meta.dto';
 import { SanitizedMetadata } from '../../../core/utils/sanitize-metadata';
-import {
-  ConnectionAuthType,
-  ConnectionStatus,
-  ConnectionType,
-} from '../schemas/connection.schema';
+import { ConnectionAuthType, ConnectionStatus, ConnectionType } from '../schemas/connection.schema';
 
 export class ConnectionResponseDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0201' })

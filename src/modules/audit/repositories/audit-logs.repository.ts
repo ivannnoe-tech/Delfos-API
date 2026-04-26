@@ -15,7 +15,9 @@ export interface CreateAuditLogRecord {
 
 @Injectable()
 export class AuditLogsRepository {
-  constructor(@InjectModel(AuditLog.name) private readonly auditLogModel: Model<AuditLogDocument>) {}
+  constructor(
+    @InjectModel(AuditLog.name) private readonly auditLogModel: Model<AuditLogDocument>,
+  ) {}
 
   create(record: CreateAuditLogRecord): Promise<AuditLogDocument> {
     return this.auditLogModel.create(record);

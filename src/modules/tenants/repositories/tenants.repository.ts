@@ -39,6 +39,8 @@ export class TenantsRepository {
   }
 
   updateById(id: string, record: UpdateTenantRecord): Promise<TenantDocument | null> {
-    return this.tenantModel.findByIdAndUpdate(id, record, { new: true, runValidators: true }).exec();
+    return this.tenantModel
+      .findByIdAndUpdate(id, record, { new: true, runValidators: true })
+      .exec();
   }
 }

@@ -1,11 +1,14 @@
 import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { IsMongoId } from 'class-validator';
 
-import {
-  ConnectionListResponseDto,
-  ConnectionResponseDto,
-} from '../dto/connection-response.dto';
+import { ConnectionListResponseDto, ConnectionResponseDto } from '../dto/connection-response.dto';
 import { ConnectionTenantQueryDto, ListConnectionsQueryDto } from '../dto/connection-query.dto';
 import { CreateConnectionDto } from '../dto/create-connection.dto';
 import { UpdateConnectionDto } from '../dto/update-connection.dto';
@@ -35,8 +38,7 @@ export class ConnectionsController {
   @Get()
   @ApiOperation({
     summary: 'List connection configurations by tenant.',
-    description:
-      'Temporary administrative foundation endpoint. No external API call is performed.',
+    description: 'Temporary administrative foundation endpoint. No external API call is performed.',
   })
   @ApiOkResponse({ type: ConnectionListResponseDto })
   findByTenant(@Query() query: ListConnectionsQueryDto): Promise<ConnectionListResponseDto> {
@@ -46,8 +48,7 @@ export class ConnectionsController {
   @Get(':id')
   @ApiOperation({
     summary: 'Get one connection configuration.',
-    description:
-      'Temporary administrative foundation endpoint. No external API call is performed.',
+    description: 'Temporary administrative foundation endpoint. No external API call is performed.',
   })
   @ApiParam({ name: 'id' })
   @ApiOkResponse({ type: ConnectionResponseDto })
