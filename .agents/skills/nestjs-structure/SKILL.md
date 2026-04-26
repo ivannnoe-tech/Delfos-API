@@ -1,11 +1,15 @@
 ---
 name: delfos-api-nestjs-structure
-description: Use ao criar ou reorganizar a estrutura NestJS do delfos-api, incluindo módulos, controllers, services, DTOs, repositories, schemas, config, healthcheck, Swagger/OpenAPI e testes base.
+description: Crie ou reorganize estrutura NestJS do delfos-api: módulos, controllers, services, DTOs, config, healthcheck, Swagger e testes base.
 ---
 
 # Skill — Estrutura NestJS do delfos-api
 
 Use esta skill quando a tarefa envolver criação, reorganização ou revisão da base técnica do `delfos-api`.
+
+## Quando não usar
+
+Não use para regra de negócio específica, layout do frontend, ajustes de texto ou modelagem MongoDB isolada. Para planejar refatoração grande, use também `delfos-api-execution-plan`.
 
 ## Leitura obrigatória antes de agir
 
@@ -64,20 +68,27 @@ src/
 └── docs/
 ```
 
+## Fluxo obrigatório
+
+1. Verificar se a estrutura proposta já existe ou tem padrão equivalente.
+2. Definir módulos pequenos com responsabilidade clara.
+3. Criar contratos, DTOs, pipes, filtros e interceptors reutilizáveis em `common/` quando aplicável.
+4. Configurar `.env` validado por schema antes de depender de variáveis.
+5. Criar healthcheck mínimo sem expor dados sensíveis.
+6. Garantir Swagger/OpenAPI alinhado ao contrato real.
+7. Prever testes desde o início.
+
 ## Regras de implementação
 
-- Criar módulos pequenos, com responsabilidade clara.
 - Não misturar controller, service, repository, schema e DTO no mesmo arquivo.
 - Não criar arquivos acima de 500 linhas.
 - Não adicionar biblioteca fora da política sem revisão.
-- Configuração deve vir de `.env` validado por schema.
 - Nunca hardcodar secrets, URLs sensíveis ou credenciais.
 - Todo endpoint deve ter DTOs explícitos.
-- Todo módulo novo deve prever testes.
-- Swagger/OpenAPI deve refletir o contrato real, não um rascunho genérico.
-- Healthcheck deve validar pelo menos processo e conectividade essencial.
+- Todo módulo novo deve prever testes proporcionais.
+- Logs não podem expor tokens, payloads sensíveis ou stack trace para usuário.
 
-## Fase 1: limites obrigatórios
+## Limites da Fase 1
 
 - Não implementar ingestão própria de dados operacionais do cliente.
 - Não acessar banco de dados do cliente diretamente.
@@ -85,13 +96,22 @@ src/
 - MongoDB guarda configuração/metadados do Delfos, não dado operacional bruto do cliente.
 - Integrações com clientes devem seguir `docs/api-connectors.md`.
 
+## Saída esperada
+
+Ao finalizar, informar:
+
+- módulos/arquivos criados ou alterados;
+- decisões técnicas tomadas;
+- comandos executados ou pendentes;
+- riscos conhecidos;
+- documentação atualizada.
+
 ## Checklist de saída
 
-- `npm run lint` planejado/configurado.
-- `npm run test` planejado/configurado.
-- `npm run build` planejado/configurado.
-- estrutura separa módulos e responsabilidades.
-- contratos HTTP documentados.
-- configuração validada.
-- nenhum secret ou dado real em código/log.
-- documentação atualizada quando a estrutura mudar.
+- `npm run lint` planejado/executado quando existir.
+- `npm run test` planejado/executado quando existir.
+- `npm run build` planejado/executado quando existir.
+- Estrutura separa módulos e responsabilidades.
+- Contratos HTTP documentados.
+- Configuração validada.
+- Nenhum secret ou dado real em código/log.

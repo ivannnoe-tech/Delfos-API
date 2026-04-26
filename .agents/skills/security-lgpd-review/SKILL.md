@@ -1,11 +1,15 @@
 ---
 name: delfos-api-security-lgpd-review
-description: Use para revisar autenticação, autorização, multi-tenant, LGPD, logs, secrets, permissões, tratamento de dados pessoais e segurança de endpoints no delfos-api.
+description: Revise segurança, LGPD, autenticação, autorização, tenantId, permissões, logs, secrets e dados pessoais no delfos-api.
 ---
 
 # Skill — Revisão de Segurança e LGPD
 
 Use esta skill sempre que a tarefa envolver autenticação, autorização, tenants, usuários, permissões, logs, credenciais, payloads externos, dados pessoais ou integrações sensíveis.
+
+## Quando não usar
+
+Não use para mudanças visuais puras ou documentação sem impacto em segurança/dados. Em dúvida, use esta skill.
 
 ## Leitura obrigatória antes de agir
 
@@ -19,6 +23,15 @@ Use esta skill sempre que a tarefa envolver autenticação, autorização, tenan
 ## Objetivo
 
 Garantir menor privilégio, isolamento por empresa, proteção de secrets e tratamento adequado de dados pessoais.
+
+## Fluxo obrigatório
+
+1. Identificar dados pessoais, sensíveis, credenciais e dados operacionais envolvidos.
+2. Confirmar isolamento multi-tenant em leitura, escrita, listagem e auditoria.
+3. Verificar autenticação e autorização por ação.
+4. Revisar logs, erros e exemplos para impedir vazamento.
+5. Confirmar minimização de dados e finalidade.
+6. Registrar riscos residuais e necessidade de revisão humana quando aplicável.
 
 ## Regras obrigatórias
 
@@ -53,3 +66,10 @@ Garantir menor privilégio, isolamento por empresa, proteção de secrets e trat
 - Os dados coletados são necessários para a finalidade?
 - Existe trilha de auditoria para ações sensíveis?
 - A alteração respeita LGPD e minimização de dados?
+
+## Saída esperada
+
+- riscos encontrados;
+- correções aplicadas ou recomendadas;
+- evidências de validação;
+- pendências para revisão humana, quando houver.

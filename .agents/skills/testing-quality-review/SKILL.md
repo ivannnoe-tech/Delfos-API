@@ -1,11 +1,15 @@
 ---
 name: delfos-api-testing-quality-review
-description: Use para revisar testes, qualidade, Definition of Done, lint, build, cobertura mínima, casos de erro, contratos e critérios de aceite no delfos-api.
+description: Revise qualidade final do delfos-api: testes, lint, build, CI, Definition of Done, contratos, segurança e critérios de aceite.
 ---
 
 # Skill — Testes e Qualidade do delfos-api
 
 Use esta skill quando a tarefa envolver testes, revisão final, lint, build, CI, qualidade, DoD ou validação antes de commit/PR.
+
+## Quando não usar
+
+Não use como substituta de uma skill específica. Para contrato, segurança ou MongoDB, use também a skill especializada correspondente.
 
 ## Leitura obrigatória antes de agir
 
@@ -18,6 +22,15 @@ Use esta skill quando a tarefa envolver testes, revisão final, lint, build, CI,
 ## Objetivo
 
 Garantir que a entrega seja pequena, testável, segura, legível e alinhada à fase atual.
+
+## Fluxo obrigatório
+
+1. Identificar o tipo de mudança e o risco.
+2. Conferir se há testes proporcionais ao risco.
+3. Rodar ou indicar os comandos de validação existentes.
+4. Conferir documentação/contratos quando aplicável.
+5. Revisar tamanho de arquivos, duplicação, tipagem e tratamento de erros.
+6. Validar se o DoD do `AGENTS.md` foi cumprido.
 
 ## Tipos de teste esperados
 
@@ -61,3 +74,14 @@ Se algum comando ainda não existir, apontar claramente e propor a criação sem
 - A segurança foi revisada?
 - A LGPD foi considerada?
 - O DoD do `AGENTS.md` foi cumprido?
+
+## Saída esperada
+
+```text
+Validação final
+- Comandos executados:
+- Resultado:
+- Testes adicionados/ausentes:
+- Riscos restantes:
+- Pendências antes de commit/PR:
+```

@@ -1,11 +1,15 @@
 ---
 name: delfos-api-mongo-modeling-review
-description: Use para criar ou revisar schemas Mongoose, índices, modelos de configuração, multi-tenancy, De/Para, dashboards, widgets, auditoria e metadados no MongoDB.
+description: Revise schemas Mongoose, collections MongoDB, índices, tenantId, metadados, De/Para, auditoria, dashboards e widgets.
 ---
 
 # Skill — Modelagem MongoDB do Delfos
 
 Use esta skill quando a tarefa envolver MongoDB, Mongoose, schemas, índices, collections, modelos de configuração, De/Para, auditoria, dashboards, widgets, relatórios ou white label.
+
+## Quando não usar
+
+Não use para payload bruto de API do cliente, cache analítico persistente ou ingestão operacional fora da Fase 1. Esses temas devem ser recusados ou remetidos à Fase 2.
 
 ## Leitura obrigatória antes de agir
 
@@ -19,6 +23,15 @@ Use esta skill quando a tarefa envolver MongoDB, Mongoose, schemas, índices, co
 ## Objetivo
 
 Modelar apenas dados próprios do Delfos, mantendo isolamento por empresa e evitando armazenar dado operacional bruto de clientes na Fase 1.
+
+## Fluxo obrigatório
+
+1. Classificar o dado: configuração do Delfos, metadado, auditoria, credencial, dado pessoal ou dado operacional do cliente.
+2. Confirmar se o dado pode existir na Fase 1.
+3. Definir schema, índices, lifecycle, auditoria e soft delete quando aplicável.
+4. Confirmar isolamento por `tenantId`.
+5. Definir como dados sensíveis serão protegidos.
+6. Evitar documento com crescimento ilimitado.
 
 ## O MongoDB pode armazenar na Fase 1
 
@@ -66,3 +79,11 @@ Modelar apenas dados próprios do Delfos, mantendo isolamento por empresa e evit
 - Há timestamps?
 - Há auditoria para mudança crítica?
 - O modelo respeita `docs/database-model.md`?
+
+## Saída esperada
+
+- collections alteradas/criadas;
+- índices previstos;
+- riscos de crescimento;
+- campos sensíveis e estratégia de proteção;
+- impacto em contratos ou frontend, se houver.

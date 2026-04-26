@@ -1,11 +1,15 @@
 ---
 name: delfos-api-contract-review
-description: Use para criar ou revisar endpoints, DTOs, OpenAPI/Swagger, versionamento, contratos entre delfos-api e delfos-web, e integrações consumidas pelo frontend.
+description: Revise endpoints, DTOs, OpenAPI/Swagger, paginação, filtros, erros HTTP e contratos entre delfos-api e delfos-web.
 ---
 
 # Skill — Revisão de contratos da API
 
 Use esta skill quando a tarefa envolver endpoints, DTOs, payloads, OpenAPI/Swagger, erros HTTP, paginação, filtros ou contratos entre `delfos-api` e `delfos-web`.
+
+## Quando não usar
+
+Não use para UI isolada, alteração visual, modelagem de banco sem endpoint ou texto documental sem contrato público.
 
 ## Leitura obrigatória antes de agir
 
@@ -21,21 +25,27 @@ Use esta skill quando a tarefa envolver endpoints, DTOs, payloads, OpenAPI/Swagg
 
 Garantir que contratos sejam explícitos, versionáveis, seguros, testáveis e compatíveis com o frontend Flutter Web.
 
+## Fluxo obrigatório
+
+1. Identificar consumidor do contrato: frontend, integração interna ou cliente externo.
+2. Definir request, response, paginação, filtros, ordenação e erros.
+3. Validar se há De/Para quando o contrato tocar campos do cliente.
+4. Garantir DTOs separados de input/output.
+5. Atualizar OpenAPI/Swagger junto com o código.
+6. Avaliar impacto no `delfos-web` antes de alterar contrato existente.
+7. Prever testes de sucesso, validação, permissão e erro externo.
+
 ## Regras obrigatórias
 
 - Todo endpoint deve ter DTO de request e response.
 - Todo DTO deve ser validado.
 - Erros devem ser padronizados.
-- Paginação, ordenação e filtros devem ser explícitos.
 - Campos opcionais devem ter semântica clara.
 - IDs internos não devem expor detalhes sensíveis.
 - Contratos não podem depender de nomes de campos específicos do cliente sem passar por De/Para.
 - Não quebrar contrato público sem registrar impacto e migração.
-- OpenAPI deve ser atualizado junto com o código.
 
 ## Modelo de erro esperado
-
-Garantir resposta de erro consistente, com pelo menos:
 
 ```json
 {
@@ -59,12 +69,10 @@ Não retornar stack trace, token, payload sensível ou erro cru da API do client
 - O frontend consegue consumir sem conhecer regra interna?
 - O contrato não força acesso direto ao banco do cliente?
 
-## Checklist para integrações com APIs de clientes
+## Saída esperada
 
-- Base URL e credenciais vêm de configuração segura.
-- Headers e parâmetros são validados.
-- Timeout e retry foram considerados.
-- Rate limit foi considerado.
-- Payload do cliente é normalizado antes de chegar no frontend.
-- De/Para está explícito.
-- Logs não expõem payload sensível.
+- resumo do contrato criado/alterado;
+- impactos no frontend;
+- erros padronizados definidos;
+- testes necessários/executados;
+- documentação atualizada.

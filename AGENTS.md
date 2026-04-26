@@ -108,20 +108,24 @@ Use a skill mais específica quando a tarefa se encaixar em um destes fluxos:
 
 | Skill | Quando usar |
 |---|---|
+| `delfos-api-execution-plan` | planejar tarefa estrutural, refatoração ou mudança com vários arquivos antes de editar |
 | `delfos-api-nestjs-structure` | criar/reorganizar estrutura NestJS, módulos, config, healthcheck, Swagger e testes base |
 | `delfos-api-contract-review` | criar/revisar endpoints, DTOs, OpenAPI, paginação, filtros e erros |
 | `delfos-api-security-lgpd-review` | revisar autenticação, autorização, multi-tenant, LGPD, secrets e logs |
 | `delfos-api-mongo-modeling-review` | criar/revisar schemas MongoDB, índices, De/Para, auditoria e metadados |
 | `delfos-api-testing-quality-review` | revisar testes, lint, build, DoD e qualidade final |
+| `delfos-api-ci-fix-review` | corrigir falhas de CI, build, lint e testes com causa raiz |
 
 Regras:
 
 - skills complementam este `AGENTS.md`; não substituem `docs/`.
+- se a tarefa for grande, estrutural ou tocar vários arquivos, comece com `delfos-api-execution-plan`.
 - se a tarefa for de estrutura NestJS, use `delfos-api-nestjs-structure`.
 - se a tarefa alterar contrato público, use `delfos-api-contract-review`.
 - se a tarefa tocar auth, tenant, permissão, secrets, logs ou dados pessoais, use `delfos-api-security-lgpd-review`.
 - se a tarefa criar ou alterar schema MongoDB, use `delfos-api-mongo-modeling-review`.
 - antes de finalizar PR/commit relevante, use `delfos-api-testing-quality-review`.
+- se houver erro de lint/test/build/CI, use `delfos-api-ci-fix-review`.
 
 ---
 
