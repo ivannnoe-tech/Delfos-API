@@ -1,4 +1,3 @@
-import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import 'reflect-metadata';
@@ -7,6 +6,7 @@ import { AppModule } from './app.module';
 import { AppConfigService } from './config/app-config.service';
 import { HttpExceptionFilter } from './core/filters/http-exception.filter';
 import { RequestContextInterceptor } from './core/interceptors/request-context.interceptor';
+import { createApiValidationPipe } from './core/pipes/api-validation.pipe';
 import { DELFOS_ADMIN_KEY_HEADER } from './modules/auth/constants/auth-headers';
 
 async function bootstrap(): Promise<void> {
@@ -18,13 +18,7 @@ async function bootstrap(): Promise<void> {
   app.enableCors({
     origin: config.corsOrigin.length > 0 ? config.corsOrigin : false,
   });
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
-  );
+  app.useGlobalPipes(createApiValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new RequestContextInterceptor());
 

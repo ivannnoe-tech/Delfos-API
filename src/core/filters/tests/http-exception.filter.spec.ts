@@ -11,6 +11,7 @@ interface RequestWithIds extends Request {
 interface ResponseMock {
   status: jest.MockedFunction<(statusCode: number) => ResponseMock>;
   json: jest.MockedFunction<(body: unknown) => void>;
+  setHeader: jest.MockedFunction<(name: string, value: string) => void>;
 }
 
 describe('HttpExceptionFilter', () => {
@@ -19,6 +20,7 @@ describe('HttpExceptionFilter', () => {
     const host = createHost(
       {
         originalUrl: '/health',
+        method: 'GET',
         requestId: 'request-123',
         correlationId: 'correlation-123',
       } as RequestWithIds,
@@ -32,17 +34,19 @@ describe('HttpExceptionFilter', () => {
       expect.objectContaining({
         statusCode: HttpStatus.BAD_REQUEST,
         error: 'Bad Request',
-        message: ['invalid field'],
+        message: 'Validation failed',
+        details: [{ message: 'invalid field' }],
         requestId: 'request-123',
         correlationId: 'correlation-123',
         path: '/health',
+        method: 'GET',
       }),
     );
   });
 
   it('sanitizes unexpected exceptions', () => {
     const response = createResponse();
-    const host = createHost({ originalUrl: '/health' } as RequestWithIds, response);
+    const host = createHost({ originalUrl: '/health', method: 'GET' } as RequestWithIds, response);
 
     new HttpExceptionFilter().catch(new Error('database secret leaked'), host);
 
@@ -52,8 +56,16 @@ describe('HttpExceptionFilter', () => {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
         error: 'Internal Server Error',
         message: 'Unexpected error.',
-        requestId: null,
-        correlationId: null,
+        path: '/health',
+        method: 'GET',
+      }),
+    );
+    const body = readJsonBody(response);
+    expect(typeof body.requestId).toBe('string');
+    expect(typeof body.correlationId).toBe('string');
+    expect(response.json).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'database secret leaked',
       }),
     );
   });
@@ -66,6 +78,7 @@ function createResponse(): ResponseMock {
     return response as ResponseMock;
   });
   response.json = jest.fn();
+  response.setHeader = jest.fn();
   return response as ResponseMock;
 }
 
@@ -77,4 +90,14 @@ function createHost(request: RequestWithIds, response: ResponseMock): ArgumentsH
       getNext: () => undefined,
     }),
   } as ArgumentsHost;
+}
+
+function readJsonBody(response: ResponseMock): Record<string, unknown> {
+  const body = response.json.mock.calls[0]?.[0];
+
+  if (typeof body !== 'object' || body === null) {
+    throw new Error('Expected JSON response body.');
+  }
+
+  return body as Record<string, unknown>;
 }

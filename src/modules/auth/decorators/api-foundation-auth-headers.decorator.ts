@@ -1,6 +1,14 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiHeader, ApiSecurity } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiForbiddenResponse,
+  ApiHeader,
+  ApiInternalServerErrorResponse,
+  ApiSecurity,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
+import { ApiErrorResponseDto } from '../../../core/dto/api-error-response.dto';
 import {
   DELFOS_ACTOR_ID_HEADER,
   DELFOS_ACTOR_ROLE_HEADER,
@@ -32,4 +40,8 @@ export const ApiFoundationAuthHeaders = (): MethodDecorator & ClassDecorator =>
       description:
         'Temporary foundation actor role. Required only for role-restricted admin operations.',
     }),
+    ApiBadRequestResponse({ type: ApiErrorResponseDto }),
+    ApiUnauthorizedResponse({ type: ApiErrorResponseDto }),
+    ApiForbiddenResponse({ type: ApiErrorResponseDto }),
+    ApiInternalServerErrorResponse({ type: ApiErrorResponseDto }),
   );

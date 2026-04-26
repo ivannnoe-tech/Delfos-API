@@ -73,19 +73,36 @@ Envelope de lista:
 }
 ```
 
-Modelo de erro HTTP atual:
+Contrato vigente de erro:
 
 ```json
 {
   "statusCode": 400,
   "error": "Bad Request",
-  "message": ["tenantId must be a mongodb id"],
+  "message": "Validation failed",
+  "details": [
+    {
+      "field": "tenantId",
+      "message": "tenantId must be a mongodb id"
+    }
+  ],
   "requestId": "dev-req-001",
   "correlationId": "dev-corr-001",
   "timestamp": "2026-04-26T12:00:00.000Z",
-  "path": "/api/v1/users?tenantId=invalid"
+  "path": "/api/v1/users?tenantId=invalid",
+  "method": "GET"
 }
 ```
+
+Regras do contrato de erro:
+
+- `statusCode`, `error`, `message`, `requestId`, `correlationId`, `timestamp`, `path` e `method` aparecem em todos os erros.
+- `details` aparece somente quando houver informacao segura e acionavel, especialmente em erros de validacao.
+- Erros `400` de DTO/ValidationPipe usam `message: "Validation failed"` e `details` com `field` e `message`.
+- Erros `401` e `403` da auth foundation seguem o mesmo envelope.
+- Erros `404` de rota inexistente seguem o mesmo envelope.
+- Erros internos `500` usam `message: "Unexpected error."` e nao retornam stack trace, env, secrets, headers sensiveis ou payload interno.
+- Quando `x-request-id` ou `x-correlation-id` forem omitidos ou invalidos, a API gera valores seguros e os devolve tambem nos headers da resposta.
 
 ## 3. Health
 

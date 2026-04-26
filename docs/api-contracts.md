@@ -37,20 +37,30 @@ Este documento define padrões. Endpoints finais devem ser detalhados conforme i
 
 ## 3. Envelope de erro
 
+Contrato vigente para todos os endpoints:
+
 ```json
 {
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Dados inválidos.",
-    "details": [],
-    "requestId": "req_123"
-  }
+  "statusCode": 400,
+  "error": "Bad Request",
+  "message": "Validation failed",
+  "details": [
+    {
+      "field": "tenantId",
+      "message": "tenantId must be a mongodb id"
+    }
+  ],
+  "requestId": "req_123",
+  "correlationId": "req_123",
+  "timestamp": "2026-04-26T00:00:00.000Z",
+  "path": "/api/v1/users",
+  "method": "POST"
 }
 ```
 
-Mensagens para usuário final devem estar em PT-BR. Detalhes técnicos sensíveis não devem ser enviados.
-
----
+`details` aparece quando houver informacao segura e acionavel, especialmente em validacoes.
+Erros inesperados `500` usam mensagem generica e nunca retornam stack trace, secrets, env,
+payload sensivel ou detalhes internos.
 
 ## 4. Códigos de erro comuns
 
