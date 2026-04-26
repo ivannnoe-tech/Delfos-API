@@ -3,6 +3,7 @@ import { Types } from 'mongoose';
 
 import { buildListMeta, ListResponse } from '../../../core/dto/list-meta.dto';
 import { sanitizeMetadata } from '../../../core/utils/sanitize-metadata';
+import { AuditService } from '../../audit/services/audit.service';
 import { ConnectionResponseDto } from '../dto/connection-response.dto';
 import { CreateConnectionDto } from '../dto/create-connection.dto';
 import { UpdateConnectionDto } from '../dto/update-connection.dto';
@@ -11,9 +12,15 @@ import { ConnectionDocument } from '../schemas/connection.schema';
 
 @Injectable()
 export class ConnectionsService {
-  constructor(private readonly connectionsRepository: ConnectionsRepository) {}
+  constructor(
+    private readonly connectionsRepository: ConnectionsRepository,
+    private readonly auditService: AuditService,
+  ) {}
 
-  async create(dto: CreateConnectionDto): Promise<ConnectionResponseDto> {
+  async create(
+    dto: CreateConnectionDto,
+    actor: { actorId?: string } = {},
+  ): Promise<ConnectionResponseDto> {
     const connection = await this.connectionsRepository.create({
       tenantId: new Types.ObjectId(dto.tenantId),
       name: dto.name,
@@ -25,6 +32,8 @@ export class ConnectionsService {
       metadata: sanitizeMetadata(dto.metadata),
       status: dto.status,
     });
+
+    await this.recordAudit('connection.created', connection, actor);
 
     return this.toResponse(connection);
   }
@@ -63,6 +72,7 @@ export class ConnectionsService {
     tenantId: string,
     id: string,
     dto: UpdateConnectionDto,
+    actor: { actorId?: string } = {},
   ): Promise<ConnectionResponseDto> {
     const connection = await this.connectionsRepository.updateByTenantAndId(
       new Types.ObjectId(tenantId),
@@ -77,7 +87,37 @@ export class ConnectionsService {
       throw new NotFoundException('Connection not found.');
     }
 
+    await this.recordAudit('connection.updated', connection, actor);
+
     return this.toResponse(connection);
+  }
+
+  private async recordAudit(
+    action: string,
+    connection: ConnectionDocument,
+    actor: { actorId?: string },
+  ): Promise<void> {
+    await this.auditService.record({
+      tenantId: connection.tenantId.toString(),
+      actorUserId: this.toAuditActorUserId(actor.actorId),
+      action,
+      entity: 'connection',
+      entityId: connection._id.toString(),
+      metadata: {
+        type: connection.type,
+        authType: connection.authType,
+        status: connection.status,
+        hasCredentialReference: Boolean(connection.credentialRef),
+      },
+    });
+  }
+
+  private toAuditActorUserId(actorId: string | undefined): string | undefined {
+    if (!actorId || !/^[0-9a-f]{24}$/i.test(actorId)) {
+      return undefined;
+    }
+
+    return actorId;
   }
 
   private toResponse(connection: ConnectionDocument): ConnectionResponseDto {

@@ -38,7 +38,7 @@ export class CredentialsController {
     description:
       'Protected by temporary foundation admin-key auth. secretValue is protected locally and never returned.',
   })
-  @AdminRoles(AdminRole.Owner, AdminRole.Admin, AdminRole.Operator)
+  @AdminRoles(AdminRole.Owner, AdminRole.Admin)
   @ApiCreatedResponse({ type: CredentialResponseDto })
   create(
     @Body() dto: CreateCredentialDto,
@@ -79,7 +79,7 @@ export class CredentialsController {
     description:
       'Protected by temporary foundation admin-key auth. The new secretValue is protected and never returned.',
   })
-  @AdminRoles(AdminRole.Owner, AdminRole.Admin, AdminRole.Operator)
+  @AdminRoles(AdminRole.Owner, AdminRole.Admin)
   @ApiParam({ name: 'id' })
   @ApiOkResponse({ type: CredentialResponseDto })
   rotate(
@@ -102,7 +102,7 @@ export class CredentialsController {
     description:
       'Protected by temporary foundation admin-key auth. This marks the credential as revoked without exposing secret values.',
   })
-  @AdminRoles(AdminRole.Owner, AdminRole.Admin, AdminRole.Operator)
+  @AdminRoles(AdminRole.Owner, AdminRole.Admin)
   @ApiParam({ name: 'id' })
   @ApiOkResponse({ type: CredentialResponseDto })
   revoke(

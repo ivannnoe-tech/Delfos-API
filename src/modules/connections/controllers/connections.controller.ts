@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -13,6 +13,7 @@ import { ApiFoundationAuthHeaders } from '../../auth/decorators/api-foundation-a
 import { AdminKeyGuard } from '../../auth/guards/admin-key.guard';
 import { AdminRolesGuard } from '../../auth/guards/admin-roles.guard';
 import { AdminRole } from '../../auth/types/admin-role';
+import { AuthenticatedRequest } from '../../auth/types/authenticated-request';
 import { ConnectionListResponseDto, ConnectionResponseDto } from '../dto/connection-response.dto';
 import { ConnectionTenantQueryDto, ListConnectionsQueryDto } from '../dto/connection-query.dto';
 import { CreateConnectionDto } from '../dto/create-connection.dto';
@@ -39,8 +40,11 @@ export class ConnectionsController {
   })
   @AdminRoles(AdminRole.Owner, AdminRole.Admin, AdminRole.Operator)
   @ApiCreatedResponse({ type: ConnectionResponseDto })
-  create(@Body() dto: CreateConnectionDto): Promise<ConnectionResponseDto> {
-    return this.connectionsService.create(dto);
+  create(
+    @Body() dto: CreateConnectionDto,
+    @Req() request: AuthenticatedRequest,
+  ): Promise<ConnectionResponseDto> {
+    return this.connectionsService.create(dto, this.toActorContext(request));
   }
 
   @Get()
@@ -82,7 +86,19 @@ export class ConnectionsController {
     @Param() params: ConnectionIdParamDto,
     @Query() query: ConnectionTenantQueryDto,
     @Body() dto: UpdateConnectionDto,
+    @Req() request: AuthenticatedRequest,
   ): Promise<ConnectionResponseDto> {
-    return this.connectionsService.update(query.tenantId, params.id, dto);
+    return this.connectionsService.update(
+      query.tenantId,
+      params.id,
+      dto,
+      this.toActorContext(request),
+    );
+  }
+
+  private toActorContext(request: AuthenticatedRequest): { actorId?: string } {
+    return {
+      actorId: request.delfosAuthContext?.actorId,
+    };
   }
 }

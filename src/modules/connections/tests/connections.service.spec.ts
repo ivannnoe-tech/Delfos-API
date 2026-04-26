@@ -1,5 +1,6 @@
 import { Types } from 'mongoose';
 
+import { AuditService } from '../../audit/services/audit.service';
 import { ConnectionsRepository } from '../repositories/connections.repository';
 import {
   ConnectionAuthType,
@@ -9,8 +10,12 @@ import {
 } from '../schemas/connection.schema';
 import { ConnectionsService } from '../services/connections.service';
 
+type AuditServiceMock = {
+  record: jest.Mock;
+};
+
 describe('ConnectionsService', () => {
-  it('stores sanitized metadata and does not expose credential references', async () => {
+  it('stores sanitized metadata, hides credential references, and audits safe context', async () => {
     const connectionId = new Types.ObjectId();
     const tenantId = new Types.ObjectId();
     const createdAt = new Date('2026-04-26T12:00:00.000Z');
@@ -33,16 +38,23 @@ describe('ConnectionsService', () => {
           }) as unknown as ConnectionDocument,
       ),
     };
-    const service = new ConnectionsService(repository as ConnectionsRepository);
+    const auditService = createAuditService();
+    const service = new ConnectionsService(
+      repository as ConnectionsRepository,
+      auditService as unknown as AuditService,
+    );
 
-    const result = await service.create({
-      tenantId: tenantId.toString(),
-      name: 'Primary customer API',
-      baseUrl: 'https://api.customer.example',
-      authType: ConnectionAuthType.BearerToken,
-      credentialRef: 'vault-reference',
-      metadata: { environment: 'sandbox', accessToken: 'must-not-leak' },
-    });
+    const result = await service.create(
+      {
+        tenantId: tenantId.toString(),
+        name: 'Primary customer API',
+        baseUrl: 'https://api.customer.example',
+        authType: ConnectionAuthType.BearerToken,
+        credentialRef: 'vault-reference',
+        metadata: { environment: 'sandbox', accessToken: 'must-not-leak' },
+      },
+      { actorId: 'dev-actor-001' },
+    );
 
     expect(repository.create).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -53,5 +65,33 @@ describe('ConnectionsService', () => {
     expect(result.hasCredentialReference).toBe(true);
     expect(result).not.toHaveProperty('credentialRef');
     expect(result.metadata).toEqual({ environment: 'sandbox' });
+    expect(auditService.record).toHaveBeenCalledWith({
+      tenantId: tenantId.toString(),
+      actorUserId: undefined,
+      action: 'connection.created',
+      entity: 'connection',
+      entityId: connectionId.toString(),
+      metadata: {
+        type: ConnectionType.CustomerApi,
+        authType: ConnectionAuthType.BearerToken,
+        status: ConnectionStatus.Draft,
+        hasCredentialReference: true,
+      },
+    });
+    expect(JSON.stringify(auditService.record.mock.calls)).not.toContain('vault-reference');
+    expect(JSON.stringify(auditService.record.mock.calls)).not.toContain('must-not-leak');
   });
 });
+
+function createAuditService(): AuditServiceMock {
+  return {
+    record: jest.fn(async () => ({
+      id: new Types.ObjectId().toString(),
+      tenantId: new Types.ObjectId().toString(),
+      action: 'connection.created',
+      entity: 'connection',
+      metadata: {},
+      timestamp: new Date().toISOString(),
+    })),
+  };
+}

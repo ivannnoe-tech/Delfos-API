@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -23,6 +24,7 @@ import { ApiFoundationAuthHeaders } from '../../auth/decorators/api-foundation-a
 import { AdminKeyGuard } from '../../auth/guards/admin-key.guard';
 import { AdminRolesGuard } from '../../auth/guards/admin-roles.guard';
 import { AdminRole } from '../../auth/types/admin-role';
+import { AuthenticatedRequest } from '../../auth/types/authenticated-request';
 import { CreateFieldMappingDto } from '../dto/create-field-mapping.dto';
 import {
   FieldMappingTenantQueryDto,
@@ -55,8 +57,11 @@ export class FieldMappingsController {
   })
   @AdminRoles(AdminRole.Owner, AdminRole.Admin, AdminRole.Operator)
   @ApiCreatedResponse({ type: FieldMappingResponseDto })
-  create(@Body() dto: CreateFieldMappingDto): Promise<FieldMappingResponseDto> {
-    return this.fieldMappingsService.create(dto);
+  create(
+    @Body() dto: CreateFieldMappingDto,
+    @Req() request: AuthenticatedRequest,
+  ): Promise<FieldMappingResponseDto> {
+    return this.fieldMappingsService.create(dto, this.toActorContext(request));
   }
 
   @Get()
@@ -83,8 +88,14 @@ export class FieldMappingsController {
     @Param() params: FieldMappingIdParamDto,
     @Query() query: FieldMappingTenantQueryDto,
     @Body() dto: UpdateFieldMappingDto,
+    @Req() request: AuthenticatedRequest,
   ): Promise<FieldMappingResponseDto> {
-    return this.fieldMappingsService.update(query.tenantId, params.id, dto);
+    return this.fieldMappingsService.update(
+      query.tenantId,
+      params.id,
+      dto,
+      this.toActorContext(request),
+    );
   }
 
   @Delete(':id')
@@ -99,7 +110,18 @@ export class FieldMappingsController {
   deactivate(
     @Param() params: FieldMappingIdParamDto,
     @Query() query: FieldMappingTenantQueryDto,
+    @Req() request: AuthenticatedRequest,
   ): Promise<FieldMappingResponseDto> {
-    return this.fieldMappingsService.deactivate(query.tenantId, params.id);
+    return this.fieldMappingsService.deactivate(
+      query.tenantId,
+      params.id,
+      this.toActorContext(request),
+    );
+  }
+
+  private toActorContext(request: AuthenticatedRequest): { actorId?: string } {
+    return {
+      actorId: request.delfosAuthContext?.actorId,
+    };
   }
 }

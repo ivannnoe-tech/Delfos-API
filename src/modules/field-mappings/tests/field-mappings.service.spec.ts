@@ -1,5 +1,6 @@
 import { Types } from 'mongoose';
 
+import { AuditService } from '../../audit/services/audit.service';
 import { FieldMappingsRepository } from '../repositories/field-mappings.repository';
 import {
   FieldMappingDocument,
@@ -8,10 +9,15 @@ import {
 } from '../schemas/field-mapping.schema';
 import { FieldMappingsService } from '../services/field-mappings.service';
 
+type AuditServiceMock = {
+  record: jest.Mock;
+};
+
 describe('FieldMappingsService', () => {
-  it('deactivates mappings using tenant scoped lookup', async () => {
+  it('deactivates mappings using tenant scoped lookup and safe audit metadata', async () => {
     const tenantId = new Types.ObjectId();
     const mappingId = new Types.ObjectId();
+    const connectionId = new Types.ObjectId();
     const createdAt = new Date('2026-04-26T12:00:00.000Z');
     const repository: Pick<FieldMappingsRepository, 'deactivateByTenantAndId'> = {
       deactivateByTenantAndId: jest.fn(
@@ -19,6 +25,7 @@ describe('FieldMappingsService', () => {
           ({
             _id: mappingId,
             tenantId,
+            connectionId,
             datasetKey: 'sales',
             sourcePath: 'order.total',
             targetField: 'totalAmount',
@@ -30,11 +37,45 @@ describe('FieldMappingsService', () => {
           }) as unknown as FieldMappingDocument,
       ),
     };
-    const service = new FieldMappingsService(repository as FieldMappingsRepository);
+    const auditService = createAuditService();
+    const service = new FieldMappingsService(
+      repository as FieldMappingsRepository,
+      auditService as unknown as AuditService,
+    );
 
-    const result = await service.deactivate(tenantId.toString(), mappingId.toString());
+    const result = await service.deactivate(tenantId.toString(), mappingId.toString(), {
+      actorId: 'dev-actor-001',
+    });
 
     expect(repository.deactivateByTenantAndId).toHaveBeenCalledWith(tenantId, mappingId.toString());
     expect(result.status).toBe(FieldMappingStatus.Inactive);
+    expect(auditService.record).toHaveBeenCalledWith({
+      tenantId: tenantId.toString(),
+      actorUserId: undefined,
+      action: 'field_mapping.deactivated',
+      entity: 'field_mapping',
+      entityId: mappingId.toString(),
+      metadata: {
+        datasetKey: 'sales',
+        targetField: 'totalAmount',
+        targetType: FieldMappingTargetType.Money,
+        status: FieldMappingStatus.Inactive,
+        connectionId: connectionId.toString(),
+      },
+    });
+    expect(JSON.stringify(auditService.record.mock.calls)).not.toContain('order.total');
   });
 });
+
+function createAuditService(): AuditServiceMock {
+  return {
+    record: jest.fn(async () => ({
+      id: new Types.ObjectId().toString(),
+      tenantId: new Types.ObjectId().toString(),
+      action: 'field_mapping.deactivated',
+      entity: 'field_mapping',
+      metadata: {},
+      timestamp: new Date().toISOString(),
+    })),
+  };
+}

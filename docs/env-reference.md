@@ -1,54 +1,68 @@
-# Referência de Variáveis de Ambiente — delfos-api
+# Referencia de Variaveis de Ambiente - delfos-api
 
-Este documento descreve variáveis esperadas para local, homologação e produção.
+Este documento descreve variaveis esperadas para local, homologacao e producao.
 
-> Nunca versionar `.env` real. Use `.env.example` como referência segura.
+> Nunca versionar `.env` real. Use `.env.example` como referencia segura.
 
-## Princípios
+## Principios
 
-- Toda variável obrigatória deve ser validada no bootstrap.
+- Toda variavel obrigatoria deve ser validada no bootstrap.
 - Secrets devem vir de ambiente, secret manager ou pipeline seguro.
-- Valores sensíveis nunca devem aparecer em log, print, fixture ou documentação pública.
+- Valores sensiveis nunca devem aparecer em log, print, fixture ou documentacao publica.
 
-## Variáveis gerais
+## Variaveis gerais
 
-| Variável | Obrigatória | Exemplo | Descrição |
+| Variavel | Obrigatoria | Exemplo | Descricao |
 |---|---:|---|---|
-| `NODE_ENV` | Sim | `development` | Ambiente de execução. |
-| `PORT` | Sim | `3000` | Porta HTTP da API. |
-| `APP_BASE_URL` | Não | `http://localhost:3000` | URL base da API. |
-| `CORS_ORIGINS` | Sim | `http://localhost:8080` | Origens permitidas separadas por vírgula. |
-| `LOG_LEVEL` | Sim | `info` | Nível de log. |
+| `NODE_ENV` | Sim | `development` | Ambiente de execucao. |
+| `PORT` | Sim | `3001` | Porta HTTP da API. |
+| `CORS_ORIGIN` | Nao | `http://localhost:8080` | Origens permitidas separadas por virgula. Quando omitida, CORS fica desabilitado. |
+| `LOG_LEVEL` | Sim | `info` | Nivel de log. |
 
 ## MongoDB
 
-| Variável | Obrigatória | Exemplo | Descrição |
+| Variavel | Obrigatoria | Exemplo | Descricao |
 |---|---:|---|---|
-| `MONGODB_URI` | Sim | `mongodb://localhost:27017` | Conexão MongoDB. |
-| `MONGODB_DB_NAME` | Sim | `delfos` | Banco de configuração/metadados. |
+| `DELFOS_DATABASE_URL` | Sim | `mongodb://localhost:27017/delfos` | URL completa do MongoDB de configuracao/metadados. |
 
-Na Fase 1, MongoDB armazena configuração e metadados do Delfos, não payload operacional bruto de cliente.
+Na Fase 1, MongoDB armazena configuracao e metadados do Delfos, nao payload operacional bruto de cliente.
 
-## Segurança
+## Seguranca
 
-| Variável | Obrigatória | Exemplo | Descrição |
+| Variavel | Obrigatoria | Exemplo | Descricao |
 |---|---:|---|---|
-| `JWT_SECRET` | Sim | `change-me` | Secret forte para tokens. |
-| `JWT_EXPIRES_IN` | Sim | `1h` | Expiração do access token. |
+| `DELFOS_ADMIN_KEY` | Sim | `change-me-local-admin-key-at-least-32-chars` | Chave temporaria da foundation para endpoints administrativos. Nao substitui autenticacao final. |
 | `ENCRYPTION_KEY_BASE64` | Sim | `MDEy...YmY=` | Chave base64 que deve decodificar para 32 bytes e criptografar secrets locais da foundation. |
-| `RATE_LIMIT_WINDOW_MS` | Não | `60000` | Janela de rate limit. |
-| `RATE_LIMIT_MAX` | Não | `100` | Limite por janela. |
+| `JWT_ACCESS_SECRET` | Futuro | `change-me-access-secret` | Secret forte para access tokens quando o auth final for implementado. |
+| `JWT_REFRESH_SECRET` | Futuro | `change-me-refresh-secret` | Secret forte para refresh tokens quando o auth final for implementado. |
+| `JWT_ACCESS_TTL` | Futuro | `15m` | TTL planejado do access token. |
+| `JWT_REFRESH_TTL` | Futuro | `7d` | TTL planejado do refresh token. |
+
+## APIs externas e cache planejado
+
+As variaveis abaixo ja aparecem em `.env.example` como referencia de Fase 1, mas nem todas sao consumidas pelo bootstrap atual.
+
+| Variavel | Obrigatoria | Exemplo | Descricao |
+|---|---:|---|---|
+| `CACHE_DRIVER` | Nao | `memory` | Driver planejado de cache transitorio. Redis continua fora da Fase 1. |
+| `CACHE_DEFAULT_TTL_S` | Nao | `300` | TTL padrao planejado para cache em memoria. |
+| `CACHE_MAX_ITEMS` | Nao | `1000` | Limite planejado de itens em cache local. |
+| `HTTP_TIMEOUT_MS` | Nao | `30000` | Timeout padrao planejado para APIs de clientes. |
+| `HTTP_MAX_RETRIES` | Nao | `2` | Retentativas planejadas para chamadas externas seguras. |
+| `HTTP_RATE_LIMIT_PER_MINUTE` | Nao | `120` | Rate limit planejado por conexao/API de cliente. |
 
 ## Swagger/OpenAPI
 
-| Variável | Obrigatória | Exemplo | Descrição |
+| Variavel | Obrigatoria | Exemplo | Descricao |
 |---|---:|---|---|
-| `SWAGGER_ENABLED` | Não | `true` | Habilita Swagger em ambientes permitidos. |
-| `SWAGGER_PATH` | Não | `/docs` | Caminho da documentação. |
+| `SWAGGER_ENABLED` | Futuro | `true` | Feature flag planejada para habilitar Swagger em ambientes permitidos. |
+| `SWAGGER_PATH` | Futuro | `/docs` | Caminho planejado da documentacao. |
+
+No checkpoint atual, Swagger fica exposto em `/docs` sem feature flag.
 
 ## Checklist
 
 - [ ] `.env.example` atualizado.
 - [ ] Nenhum `.env` real versionado.
-- [ ] Variáveis obrigatórias validadas.
-- [ ] Logs não expõem valores sensíveis.
+- [ ] Variaveis obrigatorias validadas.
+- [ ] Logs nao expoem valores sensiveis.

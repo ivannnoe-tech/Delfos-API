@@ -152,7 +152,7 @@ tokens, senhas, connection strings reais ou headers sensiveis.
 
 ### Field mappings
 
-- `GET /api/v1/field-mappings?datasetId=...`
+- `GET /api/v1/field-mappings?tenantId=...&datasetKey=...`
 - `POST /api/v1/field-mappings`
 - `PATCH /api/v1/field-mappings/:id`
 - `DELETE /api/v1/field-mappings/:id`

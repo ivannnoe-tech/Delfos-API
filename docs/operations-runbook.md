@@ -22,7 +22,7 @@ Orienta diagnóstico e resposta a incidentes comuns.
 
 1. Verificar rede e credenciais.
 2. Conferir disponibilidade do servidor/cluster.
-3. Validar `MONGODB_URI` e `MONGODB_DB_NAME`.
+3. Validar `DELFOS_DATABASE_URL`.
 4. Avaliar disco/volume quando aplicável.
 
 ## Erros 401/403 em massa

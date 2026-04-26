@@ -44,12 +44,14 @@ x-delfos-actor-role: admin
 
 Regras:
 
-- `x-delfos-admin-key` e obrigatorio para `tenants`, `users`, `connections` e `field-mappings`.
+- `x-delfos-admin-key` e obrigatorio para `tenants`, `users`, `connections`, `credentials`, `datasets` e `field-mappings`.
 - `GET /health` continua publico e nao exige headers de auth.
 - `x-delfos-tenant-id` e opcional nesta foundation, mas quando enviado deve ser um ObjectId MongoDB valido.
 - `x-delfos-actor-id` e opcional e aceita apenas identificadores tecnicos simples.
 - `x-delfos-actor-role` aceita apenas `owner`, `admin`, `operator` ou `viewer`.
-- Operacoes mutaveis podem exigir role temporaria por header; listagens atuais exigem apenas a admin key.
+- Leitura/listagem exige apenas a admin key no checkpoint atual.
+- Mutacoes administrativas gerais exigem `owner`, `admin` ou `operator`, quando aplicavel.
+- Operacoes sensiveis de credenciais exigem `owner` ou `admin`.
 - A role enviada por header e temporaria/foundation. Nao usar como autorizacao final de producao.
 - A API nao deve logar `x-delfos-admin-key` nem revelar se a chave existe, tamanho esperado ou valor esperado.
 
@@ -249,10 +251,12 @@ x-delfos-actor-role: admin
 
 ```json
 {
-  "role": "editor",
+  "role": "operator",
   "status": "active"
 }
 ```
+
+Roles de usuario aceitas na foundation atual: `owner`, `admin`, `operator` e `viewer`.
 
 Principais erros esperados:
 
@@ -325,6 +329,8 @@ Observacoes de seguranca:
 - Nunca enviar token, senha, secret, privateKey, API key real ou credential real.
 - `metadata` e sanitizado; chaves sensiveis e valores nao escalares sao descartados.
 - A resposta nao retorna `credentialRef`, apenas `hasCredentialReference`.
+- Eventos internos de audit: `connection.created`, `connection.updated`.
+- Auditoria registra apenas `type`, `authType`, `status` e `hasCredentialReference`; nunca registra `baseUrl`, `credentialRef`, metadata livre ou segredo real.
 
 Principais erros esperados:
 
@@ -549,6 +555,9 @@ x-delfos-actor-role: operator
 
 O `DELETE` atual desativa o mapping com `status: "inactive"` e retorna o recurso atualizado.
 
+Eventos internos de audit: `field_mapping.created`, `field_mapping.updated`, `field_mapping.deactivated`.
+Auditoria registra apenas `datasetKey`, `targetField`, `targetType`, `status` e `connectionId`; nunca registra `sourcePath` ou payload operacional.
+
 Principais erros esperados:
 
 - `401 Unauthorized` para admin key ausente ou invalida.
@@ -576,7 +585,7 @@ POST /api/v1/credentials
 Content-Type: application/json
 x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
 x-delfos-actor-id: dev-actor-001
-x-delfos-actor-role: operator
+x-delfos-actor-role: admin
 ```
 
 ```json
@@ -638,7 +647,7 @@ Exemplo de rotacao:
 PATCH /api/v1/credentials/662d4f6e7a1c2b00124f0401/rotate?tenantId=662d4f6e7a1c2b00124f0001
 Content-Type: application/json
 x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
-x-delfos-actor-role: operator
+x-delfos-actor-role: admin
 ```
 
 ```json
@@ -652,12 +661,13 @@ Exemplo de revogacao:
 ```http
 PATCH /api/v1/credentials/662d4f6e7a1c2b00124f0401/revoke?tenantId=662d4f6e7a1c2b00124f0001
 x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
-x-delfos-actor-role: operator
+x-delfos-actor-role: admin
 ```
 
 Regras de seguranca:
 
 - `secretValue` existe apenas em `POST` e `rotate`.
+- `POST`, `rotate` e `revoke` sao operacoes sensiveis e exigem role temporaria `owner` ou `admin`.
 - Respostas nunca retornam `secretValue`, valor protegido, token, senha, connection string real ou headers sensiveis.
 - `credentialRef` segue `cred_<ObjectId>` e pode ser usado em `connections.credentialRef`.
 - `maskedPreview` so mostra sufixo quando o valor tem tamanho suficiente; caso contrario retorna `null`.
@@ -682,3 +692,21 @@ Principais erros esperados:
 - Em `connections`, usar sempre `credentialRef` ficticio; nunca segredo bruto.
 - Em `settings` e `metadata`, usar apenas metadados nao sensiveis. Chaves como `token`, `secret`, `password`, `credential`, `authorization`, `apiKey` e `privateKey` nao devem aparecer.
 - Estes endpoints manipulam configuracao do Delfos. Eles nao devem receber payload operacional bruto de APIs de clientes.
+
+## 11. Checkpoint tecnico da foundation
+
+Estado revisado neste checkpoint:
+
+- `GET /health` permanece publico e fora de `/api/v1`.
+- Endpoints administrativos de `tenants`, `users`, `connections`, `credentials`, `datasets` e `field-mappings` exigem `x-delfos-admin-key`.
+- Leitura/listagem usa o padrao temporario atual: admin key obrigatoria, sem role obrigatoria.
+- Mutacoes gerais usam `owner`, `admin` ou `operator`, exceto operacoes sensiveis de credenciais.
+- Operacoes sensiveis de credenciais (`POST`, `rotate`, `revoke`) usam apenas `owner` ou `admin`.
+- Recursos tenant-scoped exigem `tenantId` explicito em body ou query enquanto nao existir contexto autenticado final.
+- Buscas/updates/deletes por id em `users`, `connections`, `credentials`, `datasets` e `field-mappings` sao tenant-scoped.
+- `createdBy` e `updatedBy` usam `x-delfos-actor-id` nos recursos que possuem esses campos (`credentials` e `datasets`).
+- `metadata`/`settings` sao sanitizados em `tenants`, `connections` e `datasets`; secrets, tokens, credenciais, connection strings e valores nao escalares sao descartados.
+- Auditoria interna nao possui rota publica e nao grava segredo real, `secretValue`, `protectedSecretValue`, `credentialRef`, `baseUrl`, `sourcePath`, `metadata` livre, `settings` ou payload operacional.
+- Swagger documenta os headers temporarios via `ApiFoundationAuthHeaders` nos controllers protegidos.
+- O contrato de erro global padronizado vale para validacao, auth, forbidden, not found e erros inesperados.
+- `.env.example` e `docs/env-reference.md` usam `DELFOS_DATABASE_URL`, `DELFOS_ADMIN_KEY`, `ENCRYPTION_KEY_BASE64`, `CORS_ORIGIN` e `LOG_LEVEL` como base implementada atual.

@@ -87,13 +87,13 @@ describe('CredentialsController', () => {
     });
   });
 
-  it('rejects insufficient role on create endpoint', async () => {
+  it('rejects operator role on sensitive create endpoint', async () => {
     const response = await fetch(`${baseUrl}/api/v1/credentials`, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
         [DELFOS_ADMIN_KEY_HEADER]: adminKey,
-        [DELFOS_ACTOR_ROLE_HEADER]: AdminRole.Viewer,
+        [DELFOS_ACTOR_ROLE_HEADER]: AdminRole.Operator,
       },
       body: JSON.stringify({
         tenantId: '662d4f6e7a1c2b00124f0001',
@@ -133,7 +133,7 @@ describe('CredentialsController', () => {
       headers: {
         'content-type': 'application/json',
         [DELFOS_ADMIN_KEY_HEADER]: adminKey,
-        [DELFOS_ACTOR_ROLE_HEADER]: AdminRole.Operator,
+        [DELFOS_ACTOR_ROLE_HEADER]: AdminRole.Admin,
       },
       body: JSON.stringify({
         tenantId: '662d4f6e7a1c2b00124f0001',

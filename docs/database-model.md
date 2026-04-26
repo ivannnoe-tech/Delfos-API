@@ -42,9 +42,10 @@ Representa usuário do Delfos.
 Campos principais:
 
 - `_id`
+- `tenantId`
 - `name`
 - `email`
-- `passwordHash`
+- `role` (`owner`, `admin`, `operator`, `viewer` na foundation atual)
 - `status`
 - `lastLoginAt`
 - `createdAt`
@@ -132,7 +133,8 @@ Na foundation atual, nao armazena payload operacional nem executa consulta.
 De/Para de campos.
 
 - `tenantId`
-- `datasetId`
+- `connectionId`
+- `datasetKey`
 - `sourcePath`
 - `targetField`
 - `targetType`
@@ -214,7 +216,8 @@ Auditoria de ações sensíveis.
 - `datasets.tenantId + connectionId`
 - `datasets.tenantId + status`
 - `datasets.tenantId + sourceType`
-- `field_mappings.tenantId + datasetId + targetField`
+- `field_mappings.tenantId + datasetKey + targetField`
+- `field_mappings.tenantId + connectionId`
 - `dashboards.tenantId + name`
 - `audit_logs.tenantId + createdAt`
 
