@@ -1,0 +1,7 @@
+# Default owner for all files.
+* @ivannoe-debug
+
+# Governance, docs and agent instructions.
+*.md @ivannoe-debug
+.github/ @ivannoe-debug
+.agents/ @ivannoe-debug

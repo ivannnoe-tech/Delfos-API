@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Segurança
+    url: https://github.com/ivannoe-debug
+    about: Para vulnerabilidades, siga SECURITY.md e use canal privado.

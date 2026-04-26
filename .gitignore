@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+.yarn/
+
+# Build and coverage
+dist/
+build/
+coverage/
+.nyc_output/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs and temp
+logs/
+*.log
+.cache/
+.tmp/
+tmp/
+.temp/
+
+# Local databases / volumes
+.mongo-data/
+.mongodb/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Local artifacts
+*.local
+*.bak
+*.zip

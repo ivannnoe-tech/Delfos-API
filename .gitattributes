@@ -1,4 +1,4 @@
-# Normalize all text files to LF in the repository.
+# Normalize text files to LF in the repository.
 * text=auto eol=lf
 
 # Windows command scripts should use CRLF.
@@ -8,25 +8,20 @@
 # Shell scripts should always use LF.
 *.sh text eol=lf
 
-# Source code and config files.
+# Source and config files.
 *.ts text eol=lf
 *.tsx text eol=lf
 *.js text eol=lf
 *.jsx text eol=lf
+*.dart text eol=lf
 *.json text eol=lf
 *.md text eol=lf
 *.yml text eol=lf
 *.yaml text eol=lf
 *.env.example text eol=lf
-*.dockerignore text eol=lf
 Dockerfile text eol=lf
 
-# Flutter / Dart files.
-*.dart text eol=lf
-*.arb text eol=lf
-*.lock text eol=lf
-
-# Styles and web assets.
+# Web assets.
 *.css text eol=lf
 *.scss text eol=lf
 *.html text eol=lf
@@ -44,8 +39,6 @@ Dockerfile text eol=lf
 *.gz binary
 *.7z binary
 *.rar binary
-
-# Font files are binary.
 *.ttf binary
 *.otf binary
 *.woff binary

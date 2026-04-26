@@ -1,0 +1,52 @@
+---
+name: Bug report
+description: Reportar falha em comportamento existente
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: "Não inclua secrets, dados reais de cliente ou prints com informação sensível."
+  - type: textarea
+    id: summary
+    attributes:
+      label: Resumo
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Passos para reproduzir
+      placeholder: "1. ...
+2. ...
+3. ..."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportamento esperado
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Comportamento atual
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Ambiente
+      placeholder: "local, homologação, produção, navegador, SO, versão"
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidências sanitizadas
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: Revisei se não há dados sensíveis nas evidências.
+          required: true

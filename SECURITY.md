@@ -1,80 +1,44 @@
-# Security Policy — Delfos Analytics
+# Security Policy — delfos-api
 
-Levamos segurança a sério. Este documento descreve como reportar vulnerabilidades e quais são as regras de divulgação responsável.
+Segurança é parte da arquitetura do Delfos Analytics. Vulnerabilidades devem ser tratadas em canal privado, nunca em issue pública.
 
----
+## Como reportar
 
-## 1. Reportar uma vulnerabilidade
-
-**Não** abra issue pública para reportar vulnerabilidades. **Não** comente em PR. **Não** divulgue em redes sociais antes da correção.
-
-Envie um e-mail para: **security@<dominio-da-empresa>**
+Use GitHub Security Advisory, canal interno da equipe ou contato direto com o mantenedor do repositório.
 
 Inclua, se possível:
 
-- descrição da vulnerabilidade
-- componente afetado (módulo, endpoint, repositório)
-- passos para reproduzir
-- impacto estimado
-- versão/commit afetado
-- evidência (logs, screenshots, payload)
+- descrição objetiva;
+- componente afetado;
+- passos para reproduzir;
+- impacto estimado;
+- commit, branch ou versão afetada;
+- evidências sanitizadas, sem dados reais de cliente.
 
-PGP key disponível em `https://<site-da-empresa>/security.asc` (opcional).
+## Regras obrigatórias
 
----
+- Nunca versionar `.env` real, tokens, senhas, chaves privadas ou credenciais.
+- Nunca usar payload real de cliente em fixture, print, prompt ou documentação pública.
+- Nunca logar secrets ou dados pessoais desnecessários.
+- Nunca criar bypass de autenticação ou permissão para facilitar teste.
+- Toda mudança sensível deve considerar LGPD, tenant, menor privilégio e auditoria.
+- Comandos destrutivos exigem autorização explícita.
 
-## 2. O que esperar
+## Fora de escopo
 
-| Etapa | Prazo |
-|---|---|
-| Confirmação de recebimento | até 2 dias úteis |
-| Avaliação inicial | até 5 dias úteis |
-| Plano de correção | até 10 dias úteis |
-| Correção aplicada | depende da severidade |
+- engenharia social;
+- DoS/DDoS;
+- vulnerabilidade de dependência sem impacto demonstrado;
+- testes em dados reais de cliente sem autorização.
 
-Severidade segue a escala CVSS v3.1.
+## Documentos relacionados
 
----
-
-## 3. Escopo
-
-Coberto por esta política:
-
-- Repositórios `delfos-api` e `delfos-web`
-- APIs em `*.delfos.<dominio>` (produção e homologação)
-- Painel administrativo do Delfos
-
-Fora de escopo:
-
-- Engenharia social contra colaboradores
-- Ataques de DoS/DDoS
-- Vulnerabilidades em bibliotecas de terceiros já reportadas publicamente
-- Issues sem prova de impacto real
-
----
-
-## 4. Divulgação responsável
-
-- Não acessar, modificar ou exfiltrar dados de outros usuários
-- Não interromper serviços
-- Não tentar engenharia social
-- Aguardar nossa autorização antes de divulgar publicamente
-
-Pesquisadores que seguirem essa política não serão objeto de ação legal por nossa parte, e poderão ser reconhecidos publicamente (a critério do reportante) após a correção.
-
----
-
-## 5. Não fazemos bug bounty no momento
-
-Mas reconhecemos publicamente quem ajudar (com permissão) na seção `Hall of Fame` (a ser publicada).
-
----
-
-## 6. Boas práticas de segurança internas
-
-Para colaboradores e agentes de IA, ver:
-
-- `docs/security-checklist.md`
 - `docs/security-lgpd.md`
+- `docs/security-checklist.md`
 - `docs/data-access-policy.md`
 - `docs/destructive-commands-policy.md`
+- `.agents/skills/security-lgpd-review/SKILL.md`
+
+## Divulgação responsável
+
+Aguarde correção e autorização antes de divulgar publicamente. A equipe poderá reconhecer a contribuição após a correção, se a pessoa reportante desejar.
