@@ -37,7 +37,7 @@ export class UsersController {
     description:
       'Protected by temporary foundation admin-key auth. This endpoint still does not create login credentials.',
   })
-  @AdminRoles(AdminRole.Owner, AdminRole.Admin)
+  @AdminRoles(AdminRole.Owner, AdminRole.Admin, AdminRole.Operator)
   @ApiCreatedResponse({ type: UserResponseDto })
   create(@Body() dto: CreateUserDto): Promise<UserResponseDto> {
     return this.usersService.create(dto);
@@ -60,7 +60,7 @@ export class UsersController {
     description:
       'Protected by temporary foundation admin-key auth. tenantId remains explicit until final authorization exists.',
   })
-  @AdminRoles(AdminRole.Owner, AdminRole.Admin)
+  @AdminRoles(AdminRole.Owner, AdminRole.Admin, AdminRole.Operator)
   @ApiParam({ name: 'id' })
   @ApiOkResponse({ type: UserResponseDto })
   update(

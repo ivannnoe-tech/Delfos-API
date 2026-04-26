@@ -248,7 +248,7 @@ Auditoria de ações sensíveis.
 ## 3. Índices mínimos
 
 - `tenants.slug` único
-- `users.email` único
+- `users.tenantId + email` único
 - `tenant_users.tenantId + userId` único
 - `connections.tenantId + name`
 - `credentials.tenantId + connectionId`

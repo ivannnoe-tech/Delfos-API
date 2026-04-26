@@ -37,7 +37,7 @@ export class TenantsController {
     description:
       'Protected by temporary foundation admin-key auth. This is not the final production authentication strategy.',
   })
-  @AdminRoles(AdminRole.Owner, AdminRole.Admin)
+  @AdminRoles(AdminRole.Owner, AdminRole.Admin, AdminRole.Operator)
   @ApiCreatedResponse({ type: TenantResponseDto })
   create(@Body() dto: CreateTenantDto): Promise<TenantResponseDto> {
     return this.tenantsService.create(dto);
@@ -72,7 +72,7 @@ export class TenantsController {
     description:
       'Protected by temporary foundation admin-key auth. This is not the final production authentication strategy.',
   })
-  @AdminRoles(AdminRole.Owner, AdminRole.Admin)
+  @AdminRoles(AdminRole.Owner, AdminRole.Admin, AdminRole.Operator)
   @ApiParam({ name: 'id' })
   @ApiOkResponse({ type: TenantResponseDto })
   update(
