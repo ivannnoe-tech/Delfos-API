@@ -18,6 +18,7 @@ Antes de qualquer implementação, ler:
 - `docs/libraries-policy.md`
 - `docs/development-guide.md`
 - `docs/security-checklist.md`
+- `.agents/skills/` quando a tarefa tiver skill específica
 
 ---
 
@@ -99,7 +100,32 @@ Use os prompts em `prompts/` para guiar o trabalho:
 
 ---
 
-## 5. Onde achar cada coisa
+## 5. Repo skills para Codex
+
+Além dos prompts em `prompts/`, este repositório possui skills versionadas em `.agents/skills/`.
+
+Use a skill mais específica quando a tarefa se encaixar em um destes fluxos:
+
+| Skill | Quando usar |
+|---|---|
+| `delfos-api-nestjs-structure` | criar/reorganizar estrutura NestJS, módulos, config, healthcheck, Swagger e testes base |
+| `delfos-api-contract-review` | criar/revisar endpoints, DTOs, OpenAPI, paginação, filtros e erros |
+| `delfos-api-security-lgpd-review` | revisar autenticação, autorização, multi-tenant, LGPD, secrets e logs |
+| `delfos-api-mongo-modeling-review` | criar/revisar schemas MongoDB, índices, De/Para, auditoria e metadados |
+| `delfos-api-testing-quality-review` | revisar testes, lint, build, DoD e qualidade final |
+
+Regras:
+
+- skills complementam este `AGENTS.md`; não substituem `docs/`.
+- se a tarefa for de estrutura NestJS, use `delfos-api-nestjs-structure`.
+- se a tarefa alterar contrato público, use `delfos-api-contract-review`.
+- se a tarefa tocar auth, tenant, permissão, secrets, logs ou dados pessoais, use `delfos-api-security-lgpd-review`.
+- se a tarefa criar ou alterar schema MongoDB, use `delfos-api-mongo-modeling-review`.
+- antes de finalizar PR/commit relevante, use `delfos-api-testing-quality-review`.
+
+---
+
+## 6. Onde achar cada coisa
 
 | Tema | Documento |
 |---|---|
@@ -128,7 +154,7 @@ Use os prompts em `prompts/` para guiar o trabalho:
 
 ---
 
-## 6. Definition of Done
+## 7. Definition of Done
 
 Uma entrega só é considerada pronta quando:
 
@@ -150,7 +176,7 @@ Checklist completo em `docs/quality-checklist.md`.
 
 ---
 
-## 7. Regra final
+## 8. Regra final
 
 Sempre que houver dúvida, escolher na seguinte ordem:
 
