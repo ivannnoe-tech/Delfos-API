@@ -173,6 +173,30 @@ conter secrets, tokens, senhas, connection strings reais, authorization headers 
 de alta entropia. Eventos internos de audit registram apenas `queryKey`, `status`, `type`
 e `datasetId`.
 
+### Dashboard definitions
+
+- `GET /api/v1/dashboard-definitions`
+- `POST /api/v1/dashboard-definitions`
+- `GET /api/v1/dashboard-definitions/:id`
+- `PATCH /api/v1/dashboard-definitions/:id`
+- `DELETE /api/v1/dashboard-definitions/:id`
+
+Na foundation atual, dashboard definitions sao apenas configuracao declarativa para o
+futuro `delfos-web`. Elas descrevem `layout`, `sections`, `widgets`, `filters`, tags e
+metadados seguros, mas nao renderizam dashboard, nao executam query, nao buscam dados reais,
+nao consomem API externa, nao criam cache, worker, scheduler ou fila.
+
+`tenantId`, `dashboardKey` e `name` sao obrigatorios. `dashboardKey` e unico por tenant e
+deve ser estavel para integracoes. `queryDefinitionId` em widgets e somente uma referencia
+declarativa nesta etapa; a existencia real da query definition nao e validada para permitir
+montagem incremental dos cadastros.
+
+`DELETE` e soft delete: o recurso passa para `status: "archived"`. `metadata`, `settings`,
+`widgets.options`, `filters.defaultValue` e `filters.allowedValues` sao sanitizados e nao
+podem conter secrets, tokens, senhas, connection strings reais, authorization headers ou
+valores de alta entropia. Eventos internos de audit registram apenas `dashboardKey`,
+`status`, `visibility`, quantidade de secoes e quantidade de widgets.
+
 ### Field mappings
 
 - `GET /api/v1/field-mappings?tenantId=...&datasetKey=...`

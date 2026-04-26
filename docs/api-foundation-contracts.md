@@ -44,7 +44,7 @@ x-delfos-actor-role: admin
 
 Regras:
 
-- `x-delfos-admin-key` e obrigatorio para `tenants`, `users`, `connections`, `credentials`, `datasets` e `field-mappings`.
+- `x-delfos-admin-key` e obrigatorio para `tenants`, `users`, `connections`, `credentials`, `datasets`, `query-definitions`, `dashboard-definitions` e `field-mappings`.
 - `GET /health` continua publico e nao exige headers de auth.
 - `x-delfos-tenant-id` e opcional nesta foundation, mas quando enviado deve ser um ObjectId MongoDB valido.
 - `x-delfos-actor-id` e opcional e aceita apenas identificadores tecnicos simples.
@@ -643,7 +643,187 @@ Principais erros esperados:
 - `409 Conflict` quando `queryKey` ja existir para o tenant.
 - `500 Internal Server Error` para falha inesperada de persistencia.
 
-## 9. Field mappings
+## 9. Dashboard definitions
+
+Objetivo: cadastrar definicoes logicas de dashboards, layouts, secoes, widgets e filtros
+globais por tenant. Nesta etapa o recurso e apenas declarativo: nenhuma rota renderiza
+dashboard, executa query, busca dados reais, consome API externa, cria cache, worker,
+scheduler ou fila.
+
+Rotas:
+
+- `POST /api/v1/dashboard-definitions`
+- `GET /api/v1/dashboard-definitions?tenantId=...&page=1&pageSize=25`
+- `GET /api/v1/dashboard-definitions/:id?tenantId=...`
+- `PATCH /api/v1/dashboard-definitions/:id?tenantId=...`
+- `DELETE /api/v1/dashboard-definitions/:id?tenantId=...`
+
+Request seguro:
+
+```http
+POST /api/v1/dashboard-definitions
+Content-Type: application/json
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-role: operator
+```
+
+```json
+{
+  "tenantId": "662d4f6e7a1c2b00124f0001",
+  "dashboardKey": "sales_dashboard",
+  "name": "Dashboard de vendas",
+  "description": "Painel logico para acompanhamento comercial",
+  "status": "draft",
+  "visibility": "tenant",
+  "layout": {
+    "type": "grid",
+    "columns": 12,
+    "gap": "md",
+    "density": "comfortable"
+  },
+  "sections": [
+    {
+      "key": "overview",
+      "title": "Visao geral",
+      "description": "Indicadores principais",
+      "order": 1,
+      "layout": {
+        "type": "grid",
+        "columns": 12
+      }
+    }
+  ],
+  "widgets": [
+    {
+      "key": "total_sales",
+      "title": "Vendas totais",
+      "description": "Soma das vendas do periodo",
+      "type": "metric_card",
+      "queryDefinitionId": "662d4f6e7a1c2b00124f0601",
+      "sectionKey": "overview",
+      "order": 1,
+      "size": {
+        "cols": 3,
+        "rows": 1
+      },
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "visualization": {
+        "chartType": "number",
+        "format": "currency"
+      },
+      "options": {
+        "showTrend": true
+      }
+    }
+  ],
+  "filters": [
+    {
+      "key": "period",
+      "label": "Periodo",
+      "field": "created_at",
+      "operator": "date_range",
+      "required": true,
+      "defaultValue": "last_30_days",
+      "allowedValues": ["last_7_days", "last_30_days"]
+    }
+  ],
+  "tags": ["sales", "overview"],
+  "metadata": {
+    "domain": "sales"
+  },
+  "settings": {
+    "visibleInBuilder": true
+  }
+}
+```
+
+Response `201`:
+
+```json
+{
+  "id": "662d4f6e7a1c2b00124f0701",
+  "tenantId": "662d4f6e7a1c2b00124f0001",
+  "dashboardKey": "sales_dashboard",
+  "name": "Dashboard de vendas",
+  "description": "Painel logico para acompanhamento comercial",
+  "status": "draft",
+  "visibility": "tenant",
+  "layout": {
+    "type": "grid",
+    "columns": 12,
+    "gap": "md",
+    "density": "comfortable"
+  },
+  "sections": [],
+  "widgets": [],
+  "filters": [],
+  "tags": ["sales", "overview"],
+  "metadata": {
+    "domain": "sales"
+  },
+  "settings": {
+    "visibleInBuilder": true
+  },
+  "createdAt": "2026-04-26T12:00:00.000Z",
+  "updatedAt": "2026-04-26T12:00:00.000Z",
+  "createdBy": "dev-actor-001",
+  "updatedBy": "dev-actor-001"
+}
+```
+
+Enums iniciais:
+
+- `status`: `active`, `inactive`, `draft`, `archived`
+- `visibility`: `private`, `tenant`, `public`
+- `layout.type`: `grid`, `tabs`, `list`, `custom`
+- `layout.gap`: `none`, `sm`, `md`, `lg`
+- `layout.density`: `compact`, `comfortable`, `spacious`
+- `widgets.type`: `metric_card`, `chart`, `table`, `text`, `filter`, `custom`
+- `widgets.visualization.chartType`: `line`, `bar`, `area`, `pie`, `donut`, `scatter`, `stacked_bar`, `table`, `number`, `custom`
+- `filters.operator`: `eq`, `neq`, `gt`, `gte`, `lt`, `lte`, `in`, `not_in`, `contains`, `between`, `date_range`
+
+Exemplo de listagem:
+
+```http
+GET /api/v1/dashboard-definitions?tenantId=662d4f6e7a1c2b00124f0001&status=active
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+```
+
+Exemplo de arquivamento logico:
+
+```http
+DELETE /api/v1/dashboard-definitions/662d4f6e7a1c2b00124f0701?tenantId=662d4f6e7a1c2b00124f0001
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-role: operator
+```
+
+O `DELETE` atual nao remove fisicamente o documento. Ele aplica `status: "archived"`
+e retorna a dashboard definition atualizada.
+
+Regras de seguranca:
+
+- `dashboardKey` e unico por tenant e deve ser estavel para integracoes futuras.
+- `tenantId` e obrigatorio em criacao, listagem e buscas tenant-scoped.
+- `queryDefinitionId` em widgets e apenas referencia declarativa nesta foundation; a existencia real da query definition nao e validada nesta etapa para evitar acoplamento entre cadastros e permitir montagem incremental do dashboard builder.
+- `sections`, `widgets` e `filters` descrevem configuracao futura; nao carregam resultado real de cliente.
+- `metadata`, `settings`, `widgets.options`, `filters.defaultValue` e `filters.allowedValues` sao sanitizados. Valores com aparencia de segredo, token, senha, connection string real, authorization header ou alta entropia sao descartados.
+- Respostas retornam apenas configuracao segura e nunca campos sensiveis.
+- Eventos internos de audit: `dashboard_definition.created`, `dashboard_definition.updated`, `dashboard_definition.archived`.
+- Auditoria registra apenas `dashboardKey`, `status`, `visibility`, quantidade de `sections` e quantidade de `widgets`; nunca registra metadata/settings/options/filtros livres ou payload sensivel.
+
+Principais erros esperados:
+
+- `401 Unauthorized` para admin key ausente ou invalida.
+- `403 Forbidden` para role temporaria sem permissao em escrita.
+- `400 Bad Request` para `tenantId`, `dashboardKey`, enums, arrays, tags, `page` ou `pageSize` invalidos.
+- `404 Not Found` quando a dashboard definition nao existir para o `tenantId` informado.
+- `409 Conflict` quando `dashboardKey` ja existir para o tenant.
+- `500 Internal Server Error` para falha inesperada de persistencia.
+
+## 10. Field mappings
 
 Objetivo: cadastrar De/Para de campos por tenant/dataset sem processar dados operacionais do cliente.
 
@@ -724,7 +904,7 @@ Principais erros esperados:
 - `404 Not Found` quando o mapping nao existir para o `tenantId` informado.
 - `500 Internal Server Error` para falha inesperada de persistencia, incluindo duplicidade de `tenantId + datasetKey + targetField` enquanto nao houver erro de dominio especifico.
 
-## 10. Credentials / secrets
+## 11. Credentials / secrets
 
 Objetivo: registrar referencias seguras de credenciais para conexoes sem expor segredo real em respostas, listagens, logs ou auditoria.
 
@@ -842,7 +1022,7 @@ Principais erros esperados:
 - `404 Not Found` quando a credencial nao existir para o `tenantId` informado.
 - `500 Internal Server Error` para falha inesperada de persistencia ou protecao local.
 
-## 11. Seguranca dos exemplos
+## 12. Seguranca dos exemplos
 
 - Nao usar dados reais de cliente, usuario, tenant, API externa ou ambiente interno.
 - Nao incluir token, senha, secret, privateKey, API key, admin key real, credential real ou `.env`.
@@ -850,23 +1030,25 @@ Principais erros esperados:
 - Em `connections`, usar sempre `credentialRef` ficticio; nunca segredo bruto.
 - Em `settings` e `metadata`, usar apenas metadados nao sensiveis. Chaves como `token`, `secret`, `password`, `credential`, `authorization`, `apiKey` e `privateKey` nao devem aparecer.
 - Estes endpoints manipulam configuracao do Delfos. Eles nao devem receber payload operacional bruto de APIs de clientes.
-- Em `query-definitions`, exemplos devem usar apenas chaves logicas e valores ficticios seguros para filtros.
+- Em `query-definitions` e `dashboard-definitions`, exemplos devem usar apenas chaves logicas e valores ficticios seguros para filtros/opcoes.
 
-## 12. Checkpoint tecnico da foundation
+## 13. Checkpoint tecnico da foundation
 
 Estado revisado neste checkpoint:
 
 - `GET /health` permanece publico e fora de `/api/v1`.
-- Endpoints administrativos de `tenants`, `users`, `connections`, `credentials`, `datasets`, `query-definitions` e `field-mappings` exigem `x-delfos-admin-key`.
+- Endpoints administrativos de `tenants`, `users`, `connections`, `credentials`, `datasets`, `query-definitions`, `dashboard-definitions` e `field-mappings` exigem `x-delfos-admin-key`.
 - Leitura/listagem usa o padrao temporario atual: admin key obrigatoria, sem role obrigatoria.
 - Mutacoes gerais usam `owner`, `admin` ou `operator`, exceto operacoes sensiveis de credenciais.
 - Operacoes sensiveis de credenciais (`POST`, `rotate`, `revoke`) usam apenas `owner` ou `admin`.
 - Recursos tenant-scoped exigem `tenantId` explicito em body ou query enquanto nao existir contexto autenticado final.
 - Buscas/updates/deletes por id em `users`, `connections`, `credentials`, `datasets` e `field-mappings` sao tenant-scoped.
 - Buscas/updates/deletes por id em `query-definitions` tambem sao tenant-scoped.
-- `createdBy` e `updatedBy` usam `x-delfos-actor-id` nos recursos que possuem esses campos (`credentials` e `datasets`).
-- `metadata`/`settings` sao sanitizados em `tenants`, `connections`, `datasets` e `query-definitions`; secrets, tokens, credenciais, connection strings e valores nao escalares sao descartados.
+- Buscas/updates/deletes por id em `dashboard-definitions` tambem sao tenant-scoped.
+- `createdBy` e `updatedBy` usam `x-delfos-actor-id` nos recursos que possuem esses campos (`credentials`, `datasets`, `query-definitions` e `dashboard-definitions`).
+- `metadata`/`settings` sao sanitizados em `tenants`, `connections`, `datasets`, `query-definitions` e `dashboard-definitions`; secrets, tokens, credenciais, connection strings e valores nao escalares sao descartados.
 - `query-definitions` tambem sanitiza `filters.defaultValue` e `filters.allowedValues`, mantendo apenas escalares seguros.
+- `dashboard-definitions` tambem sanitiza `widgets.options`, `filters.defaultValue` e `filters.allowedValues`, mantendo apenas escalares seguros.
 - Auditoria interna nao possui rota publica e nao grava segredo real, `secretValue`, `protectedSecretValue`, `credentialRef`, `baseUrl`, `sourcePath`, `metadata` livre, `settings` ou payload operacional.
 - Swagger documenta os headers temporarios via `ApiFoundationAuthHeaders` nos controllers protegidos.
 - O contrato de erro global padronizado vale para validacao, auth, forbidden, not found e erros inesperados.

@@ -175,28 +175,36 @@ De/Para de campos.
 - `required`
 - `transform`
 
-### dashboards
+### dashboard_definitions
 
-Dashboards configurados.
+Definicoes logicas de dashboards, layouts, secoes, widgets e filtros globais.
+Na foundation atual, armazena apenas configuracao declarativa para o futuro `delfos-web`;
+nao renderiza dashboard, nao executa query, nao busca dados reais e nao consome API externa.
 
 - `tenantId`
+- `dashboardKey`
 - `name`
 - `description`
-- `layout`
-- `filters`
 - `status`
+- `visibility`
+- `layout`
+- `sections`
+- `widgets`
+- `filters`
+- `tags`
+- `metadata`
+- `settings`
+- `createdBy`
+- `updatedBy`
+- `createdAt`
+- `updatedAt`
 
-### widgets
+Regras:
 
-Widgets de dashboard.
-
-- `tenantId`
-- `dashboardId`
-- `type`
-- `title`
-- `datasetId`
-- `config`
-- `position`
+- `dashboardKey` e unico por tenant e deve ser estavel para integracoes.
+- `queryDefinitionId` em `widgets` e referencia declarativa sem validacao cruzada nesta etapa.
+- `metadata`, `settings`, `widgets.options`, `filters.defaultValue` e `filters.allowedValues` guardam apenas valores sanitizados.
+- `DELETE` logico usa `status: archived`.
 
 ### reports
 
@@ -256,7 +264,9 @@ Auditoria de ações sensíveis.
 - `query_definitions.tenantId + type`
 - `field_mappings.tenantId + datasetKey + targetField`
 - `field_mappings.tenantId + connectionId`
-- `dashboards.tenantId + name`
+- `dashboard_definitions.tenantId + dashboardKey` unico
+- `dashboard_definitions.tenantId + status`
+- `dashboard_definitions.tenantId + visibility`
 - `audit_logs.tenantId + createdAt`
 
 ---
