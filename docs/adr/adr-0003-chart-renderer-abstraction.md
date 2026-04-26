@@ -92,6 +92,6 @@ Adapters são detalhe interno e podem ser substituídos sem alterar `features/`.
 
 ## Referências
 
-- `delfos-web/delfos-web/docs/chart-renderer.md`
+- `delfos-web/docs/chart-renderer.md`
 - ADR-0002 (sem componentes pagos)
 - `delfos-web/lib/shared/charts/`
