@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -9,6 +9,11 @@ import {
 import { IsMongoId } from 'class-validator';
 
 import { PaginationQueryDto } from '../../../core/dto/pagination-query.dto';
+import { AdminRoles } from '../../auth/decorators/admin-roles.decorator';
+import { ApiFoundationAuthHeaders } from '../../auth/decorators/api-foundation-auth-headers.decorator';
+import { AdminKeyGuard } from '../../auth/guards/admin-key.guard';
+import { AdminRolesGuard } from '../../auth/guards/admin-roles.guard';
+import { AdminRole } from '../../auth/types/admin-role';
 import { CreateTenantDto } from '../dto/create-tenant.dto';
 import { TenantListResponseDto, TenantResponseDto } from '../dto/tenant-response.dto';
 import { UpdateTenantDto } from '../dto/update-tenant.dto';
@@ -20,6 +25,8 @@ class TenantIdParamDto {
 }
 
 @ApiTags('tenants')
+@ApiFoundationAuthHeaders()
+@UseGuards(AdminKeyGuard, AdminRolesGuard)
 @Controller('api/v1/tenants')
 export class TenantsController {
   constructor(private readonly tenantsService: TenantsService) {}
@@ -28,8 +35,9 @@ export class TenantsController {
   @ApiOperation({
     summary: 'Create a tenant foundation record.',
     description:
-      'Temporary administrative foundation endpoint. Real authentication and authorization must be added before production.',
+      'Protected by temporary foundation admin-key auth. This is not the final production authentication strategy.',
   })
+  @AdminRoles(AdminRole.Owner, AdminRole.Admin)
   @ApiCreatedResponse({ type: TenantResponseDto })
   create(@Body() dto: CreateTenantDto): Promise<TenantResponseDto> {
     return this.tenantsService.create(dto);
@@ -39,7 +47,7 @@ export class TenantsController {
   @ApiOperation({
     summary: 'List tenants.',
     description:
-      'Temporary administrative foundation endpoint. Real authentication and authorization must be added before production.',
+      'Protected by temporary foundation admin-key auth. This is not the final production authentication strategy.',
   })
   @ApiOkResponse({ type: TenantListResponseDto })
   findAll(@Query() query: PaginationQueryDto): Promise<TenantListResponseDto> {
@@ -50,7 +58,7 @@ export class TenantsController {
   @ApiOperation({
     summary: 'Get one tenant.',
     description:
-      'Temporary administrative foundation endpoint. Real authentication and authorization must be added before production.',
+      'Protected by temporary foundation admin-key auth. This is not the final production authentication strategy.',
   })
   @ApiParam({ name: 'id' })
   @ApiOkResponse({ type: TenantResponseDto })
@@ -62,8 +70,9 @@ export class TenantsController {
   @ApiOperation({
     summary: 'Update a tenant foundation record.',
     description:
-      'Temporary administrative foundation endpoint. Real authentication and authorization must be added before production.',
+      'Protected by temporary foundation admin-key auth. This is not the final production authentication strategy.',
   })
+  @AdminRoles(AdminRole.Owner, AdminRole.Admin)
   @ApiParam({ name: 'id' })
   @ApiOkResponse({ type: TenantResponseDto })
   update(

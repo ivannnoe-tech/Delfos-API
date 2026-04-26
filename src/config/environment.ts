@@ -4,6 +4,7 @@ export interface EnvironmentVariables {
   NODE_ENV: NodeEnvironment;
   PORT: number;
   DELFOS_DATABASE_URL: string;
+  DELFOS_ADMIN_KEY: string;
   CORS_ORIGIN: string[];
   LOG_LEVEL: 'debug' | 'info' | 'warn' | 'error';
 }
@@ -20,6 +21,7 @@ export function validateEnvironment(config: Record<string, unknown>): Environmen
   const nodeEnv = readEnum(config, 'NODE_ENV', allowedNodeEnvironments, 'development');
   const port = readPort(config);
   const databaseUrl = readRequiredString(config, 'DELFOS_DATABASE_URL');
+  const adminKey = readRequiredString(config, 'DELFOS_ADMIN_KEY');
   const corsOrigin = readCsv(config, 'CORS_ORIGIN');
   const logLevel = readEnum(config, 'LOG_LEVEL', allowedLogLevels, 'info');
 
@@ -27,6 +29,7 @@ export function validateEnvironment(config: Record<string, unknown>): Environmen
     NODE_ENV: nodeEnv,
     PORT: port,
     DELFOS_DATABASE_URL: databaseUrl,
+    DELFOS_ADMIN_KEY: adminKey,
     CORS_ORIGIN: corsOrigin,
     LOG_LEVEL: logLevel,
   };

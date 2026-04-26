@@ -8,9 +8,12 @@ Este documento registra os contratos atuais para desenvolvimento e testes manuai
 ## 1. Aviso de escopo
 
 - Estes endpoints sao administrativos e temporarios da foundation.
-- Ainda nao ha autenticacao, autorizacao ou contexto real de usuario/tenant.
-- `tenantId` aparece explicitamente em algumas requests ate existir contexto autenticado.
-- Nao considerar estes endpoints prontos para producao sem auth, autorizacao, RBAC, auditoria completa e revisao de seguranca.
+- Agora ha autenticacao temporaria por `x-delfos-admin-key` para reduzir o estado inseguro da foundation.
+- Esta autenticacao e uma base explicita de desenvolvimento/foundation, nao a estrategia final de producao.
+- Ainda nao ha login real, senha, JWT, refresh token, MFA, OAuth ou provedor externo neste contrato.
+- `tenantId` ainda aparece explicitamente em algumas requests ate existir contexto autenticado real.
+- Headers temporarios de tenant, actor e role existem apenas para contexto de desenvolvimento e nao devem ser tratados como autoridade final.
+- Nao considerar estes endpoints prontos para producao sem auth final, autorizacao completa, isolamento multi-tenant real, auditoria completa e revisao de seguranca.
 - O service de audit existe nesta etapa como service interno. Nao ha rota publica de audit.
 
 ## 2. Convencoes
@@ -29,6 +32,32 @@ Headers opcionais para rastreio:
 x-request-id: dev-req-001
 x-correlation-id: dev-corr-001
 ```
+
+Headers temporarios de auth/contexto para endpoints administrativos:
+
+```http
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-tenant-id: 662d4f6e7a1c2b00124f0001
+x-delfos-actor-id: dev-actor-001
+x-delfos-actor-role: admin
+```
+
+Regras:
+
+- `x-delfos-admin-key` e obrigatorio para `tenants`, `users`, `connections` e `field-mappings`.
+- `GET /health` continua publico e nao exige headers de auth.
+- `x-delfos-tenant-id` e opcional nesta foundation, mas quando enviado deve ser um ObjectId MongoDB valido.
+- `x-delfos-actor-id` e opcional e aceita apenas identificadores tecnicos simples.
+- `x-delfos-actor-role` aceita apenas `owner`, `admin`, `operator` ou `viewer`.
+- Operacoes mutaveis podem exigir role temporaria por header; listagens atuais exigem apenas a admin key.
+- A role enviada por header e temporaria/foundation. Nao usar como autorizacao final de producao.
+- A API nao deve logar `x-delfos-admin-key` nem revelar se a chave existe, tamanho esperado ou valor esperado.
+
+Erros comuns de auth:
+
+- `401 Unauthorized` quando `x-delfos-admin-key` estiver ausente ou invalida.
+- `403 Forbidden` quando a admin key for valida, mas a role temporaria nao permitir a acao.
+- `400 Bad Request` quando headers temporarios de contexto tiverem formato invalido.
 
 Envelope de lista:
 
@@ -102,6 +131,8 @@ Request seguro:
 ```http
 POST /api/v1/tenants
 Content-Type: application/json
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-role: admin
 ```
 
 ```json
@@ -135,10 +166,13 @@ Exemplo de listagem:
 
 ```http
 GET /api/v1/tenants?page=1&pageSize=25
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
 ```
 
 Principais erros esperados:
 
+- `401 Unauthorized` para admin key ausente ou invalida.
+- `403 Forbidden` para role temporaria sem permissao em escrita.
 - `400 Bad Request` para `slug`, `status`, `page`, `pageSize` ou MongoDB id invalidos.
 - `404 Not Found` quando `:id` nao existir.
 - `500 Internal Server Error` para falha inesperada de persistencia, incluindo duplicidade de `slug` enquanto nao houver erro de dominio especifico.
@@ -158,6 +192,8 @@ Request seguro:
 ```http
 POST /api/v1/users
 Content-Type: application/json
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-role: admin
 ```
 
 ```json
@@ -190,6 +226,8 @@ Exemplo de update:
 ```http
 PATCH /api/v1/users/662d4f6e7a1c2b00124f0101?tenantId=662d4f6e7a1c2b00124f0001
 Content-Type: application/json
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-role: admin
 ```
 
 ```json
@@ -201,6 +239,8 @@ Content-Type: application/json
 
 Principais erros esperados:
 
+- `401 Unauthorized` para admin key ausente ou invalida.
+- `403 Forbidden` para role temporaria sem permissao em escrita.
 - `400 Bad Request` para `tenantId`, e-mail, `role`, `status`, `page` ou `pageSize` invalidos.
 - `404 Not Found` quando o usuario nao existir para o `tenantId` informado.
 - `500 Internal Server Error` para falha inesperada de persistencia, incluindo duplicidade de `tenantId + email` enquanto nao houver erro de dominio especifico.
@@ -221,6 +261,8 @@ Request seguro:
 ```http
 POST /api/v1/connections
 Content-Type: application/json
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-role: operator
 ```
 
 ```json
@@ -269,6 +311,8 @@ Observacoes de seguranca:
 
 Principais erros esperados:
 
+- `401 Unauthorized` para admin key ausente ou invalida.
+- `403 Forbidden` para role temporaria sem permissao em escrita.
 - `400 Bad Request` para URL sem protocolo, protocolo invalido, `tenantId`, `authType`, headers ou `status` invalidos.
 - `404 Not Found` quando a conexao nao existir para o `tenantId` informado.
 - `500 Internal Server Error` para falha inesperada de persistencia, incluindo duplicidade de `tenantId + name` enquanto nao houver erro de dominio especifico.
@@ -289,6 +333,8 @@ Request seguro:
 ```http
 POST /api/v1/field-mappings
 Content-Type: application/json
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-role: operator
 ```
 
 ```json
@@ -328,18 +374,23 @@ Exemplo de listagem por dataset:
 
 ```http
 GET /api/v1/field-mappings?tenantId=662d4f6e7a1c2b00124f0001&datasetKey=sales
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
 ```
 
 Exemplo de delete logico:
 
 ```http
 DELETE /api/v1/field-mappings/662d4f6e7a1c2b00124f0301?tenantId=662d4f6e7a1c2b00124f0001
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-role: operator
 ```
 
 O `DELETE` atual desativa o mapping com `status: "inactive"` e retorna o recurso atualizado.
 
 Principais erros esperados:
 
+- `401 Unauthorized` para admin key ausente ou invalida.
+- `403 Forbidden` para role temporaria sem permissao em escrita.
 - `400 Bad Request` para `tenantId`, `connectionId`, `datasetKey`, `targetType`, `transform`, `status`, `page` ou `pageSize` invalidos.
 - `404 Not Found` quando o mapping nao existir para o `tenantId` informado.
 - `500 Internal Server Error` para falha inesperada de persistencia, incluindo duplicidade de `tenantId + datasetKey + targetField` enquanto nao houver erro de dominio especifico.
@@ -347,7 +398,7 @@ Principais erros esperados:
 ## 8. Seguranca dos exemplos
 
 - Nao usar dados reais de cliente, usuario, tenant, API externa ou ambiente interno.
-- Nao incluir token, senha, secret, privateKey, API key, credential real ou `.env`.
+- Nao incluir token, senha, secret, privateKey, API key, admin key real, credential real ou `.env`.
 - Usar e-mails `example.com`, hosts `*.example` e IDs MongoDB ficticios.
 - Em `connections`, usar sempre `credentialRef` ficticio; nunca segredo bruto.
 - Em `settings` e `metadata`, usar apenas metadados nao sensiveis. Chaves como `token`, `secret`, `password`, `credential`, `authorization`, `apiKey` e `privateKey` nao devem aparecer.

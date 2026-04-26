@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -8,6 +8,11 @@ import {
 } from '@nestjs/swagger';
 import { IsMongoId } from 'class-validator';
 
+import { AdminRoles } from '../../auth/decorators/admin-roles.decorator';
+import { ApiFoundationAuthHeaders } from '../../auth/decorators/api-foundation-auth-headers.decorator';
+import { AdminKeyGuard } from '../../auth/guards/admin-key.guard';
+import { AdminRolesGuard } from '../../auth/guards/admin-roles.guard';
+import { AdminRole } from '../../auth/types/admin-role';
 import { ConnectionListResponseDto, ConnectionResponseDto } from '../dto/connection-response.dto';
 import { ConnectionTenantQueryDto, ListConnectionsQueryDto } from '../dto/connection-query.dto';
 import { CreateConnectionDto } from '../dto/create-connection.dto';
@@ -20,6 +25,8 @@ class ConnectionIdParamDto {
 }
 
 @ApiTags('connections')
+@ApiFoundationAuthHeaders()
+@UseGuards(AdminKeyGuard, AdminRolesGuard)
 @Controller('api/v1/connections')
 export class ConnectionsController {
   constructor(private readonly connectionsService: ConnectionsService) {}
@@ -28,8 +35,9 @@ export class ConnectionsController {
   @ApiOperation({
     summary: 'Create a customer API connection configuration.',
     description:
-      'Temporary administrative foundation endpoint. It stores metadata and credential references only; real encryption/authz must be added before production.',
+      'Protected by temporary foundation admin-key auth. It stores metadata and credential references only.',
   })
+  @AdminRoles(AdminRole.Owner, AdminRole.Admin, AdminRole.Operator)
   @ApiCreatedResponse({ type: ConnectionResponseDto })
   create(@Body() dto: CreateConnectionDto): Promise<ConnectionResponseDto> {
     return this.connectionsService.create(dto);
@@ -38,7 +46,8 @@ export class ConnectionsController {
   @Get()
   @ApiOperation({
     summary: 'List connection configurations by tenant.',
-    description: 'Temporary administrative foundation endpoint. No external API call is performed.',
+    description:
+      'Protected by temporary foundation admin-key auth. No external API call is performed.',
   })
   @ApiOkResponse({ type: ConnectionListResponseDto })
   findByTenant(@Query() query: ListConnectionsQueryDto): Promise<ConnectionListResponseDto> {
@@ -48,7 +57,8 @@ export class ConnectionsController {
   @Get(':id')
   @ApiOperation({
     summary: 'Get one connection configuration.',
-    description: 'Temporary administrative foundation endpoint. No external API call is performed.',
+    description:
+      'Protected by temporary foundation admin-key auth. No external API call is performed.',
   })
   @ApiParam({ name: 'id' })
   @ApiOkResponse({ type: ConnectionResponseDto })
@@ -63,8 +73,9 @@ export class ConnectionsController {
   @ApiOperation({
     summary: 'Update a connection configuration.',
     description:
-      'Temporary administrative foundation endpoint. Raw secrets must not be sent or stored here.',
+      'Protected by temporary foundation admin-key auth. Raw secrets must not be sent or stored here.',
   })
+  @AdminRoles(AdminRole.Owner, AdminRole.Admin, AdminRole.Operator)
   @ApiParam({ name: 'id' })
   @ApiOkResponse({ type: ConnectionResponseDto })
   update(

@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -8,6 +18,11 @@ import {
 } from '@nestjs/swagger';
 import { IsMongoId } from 'class-validator';
 
+import { AdminRoles } from '../../auth/decorators/admin-roles.decorator';
+import { ApiFoundationAuthHeaders } from '../../auth/decorators/api-foundation-auth-headers.decorator';
+import { AdminKeyGuard } from '../../auth/guards/admin-key.guard';
+import { AdminRolesGuard } from '../../auth/guards/admin-roles.guard';
+import { AdminRole } from '../../auth/types/admin-role';
 import { CreateFieldMappingDto } from '../dto/create-field-mapping.dto';
 import {
   FieldMappingTenantQueryDto,
@@ -26,6 +41,8 @@ class FieldMappingIdParamDto {
 }
 
 @ApiTags('field-mappings')
+@ApiFoundationAuthHeaders()
+@UseGuards(AdminKeyGuard, AdminRolesGuard)
 @Controller('api/v1/field-mappings')
 export class FieldMappingsController {
   constructor(private readonly fieldMappingsService: FieldMappingsService) {}
@@ -34,8 +51,9 @@ export class FieldMappingsController {
   @ApiOperation({
     summary: 'Create a field mapping.',
     description:
-      'Temporary administrative foundation endpoint. It stores only De/Para configuration and never processes customer data.',
+      'Protected by temporary foundation admin-key auth. It stores only De/Para configuration and never processes customer data.',
   })
+  @AdminRoles(AdminRole.Owner, AdminRole.Admin, AdminRole.Operator)
   @ApiCreatedResponse({ type: FieldMappingResponseDto })
   create(@Body() dto: CreateFieldMappingDto): Promise<FieldMappingResponseDto> {
     return this.fieldMappingsService.create(dto);
@@ -45,7 +63,7 @@ export class FieldMappingsController {
   @ApiOperation({
     summary: 'List field mappings.',
     description:
-      'Temporary administrative foundation endpoint. tenantId is explicit until real authorization exists.',
+      'Protected by temporary foundation admin-key auth. tenantId remains explicit until final authorization exists.',
   })
   @ApiOkResponse({ type: FieldMappingListResponseDto })
   findByFilters(@Query() query: ListFieldMappingsQueryDto): Promise<FieldMappingListResponseDto> {
@@ -56,8 +74,9 @@ export class FieldMappingsController {
   @ApiOperation({
     summary: 'Update a field mapping.',
     description:
-      'Temporary administrative foundation endpoint. It does not execute analytical transformations.',
+      'Protected by temporary foundation admin-key auth. It does not execute analytical transformations.',
   })
+  @AdminRoles(AdminRole.Owner, AdminRole.Admin, AdminRole.Operator)
   @ApiParam({ name: 'id' })
   @ApiOkResponse({ type: FieldMappingResponseDto })
   update(
@@ -72,8 +91,9 @@ export class FieldMappingsController {
   @ApiOperation({
     summary: 'Deactivate a field mapping.',
     description:
-      'Temporary administrative foundation endpoint. This is a soft delete via inactive status.',
+      'Protected by temporary foundation admin-key auth. This is a soft delete via inactive status.',
   })
+  @AdminRoles(AdminRole.Owner, AdminRole.Admin, AdminRole.Operator)
   @ApiParam({ name: 'id' })
   @ApiOkResponse({ type: FieldMappingResponseDto })
   deactivate(

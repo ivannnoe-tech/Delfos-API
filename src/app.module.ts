@@ -5,6 +5,7 @@ import { AppConfigModule } from './config/app-config.module';
 import { AppConfigService } from './config/app-config.service';
 import { createMongooseOptions } from './config/mongoose.config';
 import { AuditModule } from './modules/audit/audit.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { ConnectionsModule } from './modules/connections/connections.module';
 import { FieldMappingsModule } from './modules/field-mappings/field-mappings.module';
 import { HealthModule } from './modules/health/health.module';
@@ -19,6 +20,7 @@ import { UsersModule } from './modules/users/users.module';
       inject: [AppConfigService],
       useFactory: createMongooseOptions,
     }),
+    AuthModule,
     HealthModule,
     TenantsModule,
     UsersModule,

@@ -19,6 +19,10 @@ export class AppConfigService {
     return this.configService.get('DELFOS_DATABASE_URL', { infer: true });
   }
 
+  get adminKey(): string {
+    return this.configService.get('DELFOS_ADMIN_KEY', { infer: true });
+  }
+
   get corsOrigin(): string[] {
     return this.configService.get('CORS_ORIGIN', { infer: true });
   }

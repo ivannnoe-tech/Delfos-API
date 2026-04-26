@@ -12,6 +12,10 @@ Backend do **Delfos Analytics** — API NestJS que serve o frontend (`delfos-web
 
 Contratos HTTP atuais da foundation MongoDB/configuracao: [`docs/api-foundation-contracts.md`](./docs/api-foundation-contracts.md).
 
+Os endpoints administrativos da foundation exigem temporariamente `x-delfos-admin-key`
+configurado por `DELFOS_ADMIN_KEY`. Esse mecanismo existe apenas para desenvolvimento da
+foundation e nao substitui a autenticacao final de producao.
+
 ## Stack
 
 - **Node.js** 24 LTS

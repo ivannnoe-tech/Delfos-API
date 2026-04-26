@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -8,6 +8,11 @@ import {
 } from '@nestjs/swagger';
 import { IsMongoId } from 'class-validator';
 
+import { AdminRoles } from '../../auth/decorators/admin-roles.decorator';
+import { ApiFoundationAuthHeaders } from '../../auth/decorators/api-foundation-auth-headers.decorator';
+import { AdminKeyGuard } from '../../auth/guards/admin-key.guard';
+import { AdminRolesGuard } from '../../auth/guards/admin-roles.guard';
+import { AdminRole } from '../../auth/types/admin-role';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { ListUsersQueryDto, TenantScopedQueryDto } from '../dto/user-query.dto';
 import { UserListResponseDto, UserResponseDto } from '../dto/user-response.dto';
@@ -20,6 +25,8 @@ class UserIdParamDto {
 }
 
 @ApiTags('users')
+@ApiFoundationAuthHeaders()
+@UseGuards(AdminKeyGuard, AdminRolesGuard)
 @Controller('api/v1/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -28,8 +35,9 @@ export class UsersController {
   @ApiOperation({
     summary: 'Create a foundation user record.',
     description:
-      'Temporary administrative foundation endpoint without login, password or real auth. Authentication and authorization must be added before production.',
+      'Protected by temporary foundation admin-key auth. This endpoint still does not create login credentials.',
   })
+  @AdminRoles(AdminRole.Owner, AdminRole.Admin)
   @ApiCreatedResponse({ type: UserResponseDto })
   create(@Body() dto: CreateUserDto): Promise<UserResponseDto> {
     return this.usersService.create(dto);
@@ -39,7 +47,7 @@ export class UsersController {
   @ApiOperation({
     summary: 'List users by tenant.',
     description:
-      'Temporary administrative foundation endpoint. tenantId is explicit until real authenticated tenant context exists.',
+      'Protected by temporary foundation admin-key auth. tenantId remains explicit until final authenticated tenant context exists.',
   })
   @ApiOkResponse({ type: UserListResponseDto })
   findByTenant(@Query() query: ListUsersQueryDto): Promise<UserListResponseDto> {
@@ -50,8 +58,9 @@ export class UsersController {
   @ApiOperation({
     summary: 'Update a foundation user record.',
     description:
-      'Temporary administrative foundation endpoint. tenantId is explicit until real authorization exists.',
+      'Protected by temporary foundation admin-key auth. tenantId remains explicit until final authorization exists.',
   })
+  @AdminRoles(AdminRole.Owner, AdminRole.Admin)
   @ApiParam({ name: 'id' })
   @ApiOkResponse({ type: UserResponseDto })
   update(

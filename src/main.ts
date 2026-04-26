@@ -7,6 +7,7 @@ import { AppModule } from './app.module';
 import { AppConfigService } from './config/app-config.service';
 import { HttpExceptionFilter } from './core/filters/http-exception.filter';
 import { RequestContextInterceptor } from './core/interceptors/request-context.interceptor';
+import { DELFOS_ADMIN_KEY_HEADER } from './modules/auth/constants/auth-headers';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule, {
@@ -31,6 +32,15 @@ async function bootstrap(): Promise<void> {
     .setTitle('Delfos Analytics API')
     .setDescription('HTTP contracts for Delfos Analytics.')
     .setVersion('0.1.0')
+    .addApiKey(
+      {
+        type: 'apiKey',
+        name: DELFOS_ADMIN_KEY_HEADER,
+        in: 'header',
+        description: 'Temporary foundation admin key for protected administrative endpoints.',
+      },
+      'delfos-admin-key',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, openApiConfig);
   SwaggerModule.setup('docs', app, document);
