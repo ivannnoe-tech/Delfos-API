@@ -35,6 +35,8 @@ npm run start:dev
 
 A API sobe em `http://localhost:3001`. Swagger em `http://localhost:3001/docs`.
 
+Para o fluxo local validado no Windows com MongoDB local, veja [`docs/local-development.md`](./docs/local-development.md).
+
 ---
 
 ## Scripts
