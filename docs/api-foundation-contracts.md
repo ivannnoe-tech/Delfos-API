@@ -334,7 +334,152 @@ Principais erros esperados:
 - `404 Not Found` quando a conexao nao existir para o `tenantId` informado.
 - `500 Internal Server Error` para falha inesperada de persistencia, incluindo duplicidade de `tenantId + name` enquanto nao houver erro de dominio especifico.
 
-## 7. Field mappings
+## 7. Datasets
+
+Objetivo: cadastrar datasets logicos e declarativos por tenant, com estrutura futura de campos, sem buscar dados reais e sem executar integracao externa.
+
+Rotas:
+
+- `POST /api/v1/datasets`
+- `GET /api/v1/datasets?tenantId=...&page=1&pageSize=25`
+- `GET /api/v1/datasets/:id?tenantId=...`
+- `PATCH /api/v1/datasets/:id?tenantId=...`
+- `DELETE /api/v1/datasets/:id?tenantId=...`
+
+Request seguro:
+
+```http
+POST /api/v1/datasets
+Content-Type: application/json
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-role: operator
+```
+
+```json
+{
+  "tenantId": "662d4f6e7a1c2b00124f0001",
+  "connectionId": "662d4f6e7a1c2b00124f0201",
+  "datasetKey": "sales_orders",
+  "name": "Pedidos de venda",
+  "description": "Dataset logico para pedidos de venda",
+  "sourceType": "api",
+  "refreshMode": "manual",
+  "schemaMode": "declared",
+  "fields": [
+    {
+      "key": "order_id",
+      "label": "Codigo do pedido",
+      "type": "string",
+      "required": true,
+      "description": "Identificador do pedido",
+      "semanticRole": "identifier"
+    },
+    {
+      "key": "total_amount",
+      "label": "Valor total",
+      "type": "currency",
+      "required": false,
+      "semanticRole": "metric"
+    }
+  ],
+  "primaryKeyFields": ["order_id"],
+  "timeField": "created_at",
+  "tags": ["sales", "orders"],
+  "metadata": {
+    "domain": "sales"
+  },
+  "settings": {
+    "defaultPageSize": 50
+  }
+}
+```
+
+Response `201`:
+
+```json
+{
+  "id": "662d4f6e7a1c2b00124f0501",
+  "tenantId": "662d4f6e7a1c2b00124f0001",
+  "connectionId": "662d4f6e7a1c2b00124f0201",
+  "datasetKey": "sales_orders",
+  "name": "Pedidos de venda",
+  "description": "Dataset logico para pedidos de venda",
+  "sourceType": "api",
+  "status": "draft",
+  "refreshMode": "manual",
+  "schemaMode": "declared",
+  "fields": [
+    {
+      "key": "order_id",
+      "label": "Codigo do pedido",
+      "type": "string",
+      "required": true,
+      "description": "Identificador do pedido",
+      "semanticRole": "identifier"
+    }
+  ],
+  "primaryKeyFields": ["order_id"],
+  "timeField": "created_at",
+  "tags": ["sales", "orders"],
+  "metadata": {
+    "domain": "sales"
+  },
+  "settings": {
+    "defaultPageSize": 50
+  },
+  "createdAt": "2026-04-26T12:00:00.000Z",
+  "updatedAt": "2026-04-26T12:00:00.000Z",
+  "createdBy": "dev-actor-001",
+  "updatedBy": "dev-actor-001"
+}
+```
+
+Enums iniciais:
+
+- `sourceType`: `api`, `database`, `file`, `manual`, `computed`, `custom`
+- `status`: `active`, `inactive`, `draft`, `archived`
+- `refreshMode`: `manual`, `scheduled`, `realtime`, `none`
+- `schemaMode`: `declared`, `inferred`, `dynamic`
+- `field.type`: `string`, `number`, `boolean`, `date`, `datetime`, `currency`, `percentage`, `object`, `array`, `unknown`
+- `field.semanticRole`: `dimension`, `metric`, `identifier`, `timestamp`, `attribute`
+
+Exemplo de listagem:
+
+```http
+GET /api/v1/datasets?tenantId=662d4f6e7a1c2b00124f0001&status=active
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+```
+
+Exemplo de arquivamento logico:
+
+```http
+DELETE /api/v1/datasets/662d4f6e7a1c2b00124f0501?tenantId=662d4f6e7a1c2b00124f0001
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-role: operator
+```
+
+O `DELETE` atual nao remove fisicamente o documento. Ele aplica `status: "archived"` e retorna o dataset atualizado.
+
+Regras de seguranca:
+
+- `datasetKey` e unico por tenant e deve ser estavel para integracoes futuras.
+- `connectionId` e opcional.
+- `fields` descreve estrutura futura, nunca linhas ou payload real de cliente.
+- `metadata` e `settings` sao sanitizados; chaves e valores com aparencia de segredo sao descartados.
+- Nenhuma rota executa query, preview, cache, scheduler, ingestao, conector ou chamada externa.
+- Eventos internos de audit: `dataset.created`, `dataset.updated`, `dataset.archived`.
+- Auditoria registra apenas `datasetKey`, `status`, `sourceType` e `connectionId`; nunca registra metadata/settings ou payload sensivel.
+
+Principais erros esperados:
+
+- `401 Unauthorized` para admin key ausente ou invalida.
+- `403 Forbidden` para role temporaria sem permissao em escrita.
+- `400 Bad Request` para `tenantId`, `connectionId`, `datasetKey`, enums, fields, tags, `page` ou `pageSize` invalidos.
+- `404 Not Found` quando o dataset nao existir para o `tenantId` informado.
+- `409 Conflict` quando `datasetKey` ja existir para o tenant.
+- `500 Internal Server Error` para falha inesperada de persistencia.
+
+## 8. Field mappings
 
 Objetivo: cadastrar De/Para de campos por tenant/dataset sem processar dados operacionais do cliente.
 
@@ -412,7 +557,7 @@ Principais erros esperados:
 - `404 Not Found` quando o mapping nao existir para o `tenantId` informado.
 - `500 Internal Server Error` para falha inesperada de persistencia, incluindo duplicidade de `tenantId + datasetKey + targetField` enquanto nao houver erro de dominio especifico.
 
-## 8. Credentials / secrets
+## 9. Credentials / secrets
 
 Objetivo: registrar referencias seguras de credenciais para conexoes sem expor segredo real em respostas, listagens, logs ou auditoria.
 
@@ -529,7 +674,7 @@ Principais erros esperados:
 - `404 Not Found` quando a credencial nao existir para o `tenantId` informado.
 - `500 Internal Server Error` para falha inesperada de persistencia ou protecao local.
 
-## 9. Seguranca dos exemplos
+## 10. Seguranca dos exemplos
 
 - Nao usar dados reais de cliente, usuario, tenant, API externa ou ambiente interno.
 - Nao incluir token, senha, secret, privateKey, API key, admin key real, credential real ou `.env`.

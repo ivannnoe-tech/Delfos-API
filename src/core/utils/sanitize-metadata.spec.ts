@@ -9,6 +9,9 @@ describe('sanitizeMetadata', () => {
       note: null,
       token: 'must-not-leak',
       password: 'must-not-leak',
+      supportUrl: 'https://user:pass@customer.example',
+      authHeader: 'Bearer abcdef123456',
+      generatedKey: 'Abcdef1234567890Abcdef1234567890Abcdef12',
       nested: { unsafe: true },
     });
 

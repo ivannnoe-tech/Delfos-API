@@ -104,19 +104,28 @@ Referencia protegida de credenciais usadas por conexoes.
 
 ### datasets
 
-Endpoint configurado dentro de uma conexão.
+Dataset logico declarativo usado futuramente por dashboards, relatorios, De/Para e conectores.
+Na foundation atual, nao armazena payload operacional nem executa consulta.
 
 - `tenantId`
 - `connectionId`
+- `datasetKey`
 - `name`
-- `key`
-- `method`
-- `path`
-- `queryParamsSchema`
-- `pagination`
-- `responsePath`
-- `cacheTtlSeconds`
+- `description`
+- `sourceType`
 - `status`
+- `refreshMode`
+- `schemaMode`
+- `fields`
+- `primaryKeyFields`
+- `timeField`
+- `tags`
+- `metadata`
+- `settings`
+- `createdBy`
+- `updatedBy`
+- `createdAt`
+- `updatedAt`
 
 ### field_mappings
 
@@ -201,7 +210,10 @@ Auditoria de ações sensíveis.
 - `credentials.tenantId + connectionId`
 - `credentials.tenantId + status`
 - `credentials.tenantId + type`
-- `datasets.tenantId + connectionId + key` único
+- `datasets.tenantId + datasetKey` único
+- `datasets.tenantId + connectionId`
+- `datasets.tenantId + status`
+- `datasets.tenantId + sourceType`
 - `field_mappings.tenantId + datasetId + targetField`
 - `dashboards.tenantId + name`
 - `audit_logs.tenantId + createdAt`

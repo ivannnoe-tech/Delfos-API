@@ -143,8 +143,12 @@ protegida interna nunca fazem parte do contrato publico. `credentialRef` segue o
 - `POST /api/v1/datasets`
 - `GET /api/v1/datasets/:id`
 - `PATCH /api/v1/datasets/:id`
-- `POST /api/v1/datasets/:id/preview`
-- `POST /api/v1/datasets/:id/query`
+- `DELETE /api/v1/datasets/:id`
+
+Na foundation atual, datasets sao apenas configuracao declarativa. Nao ha preview, query,
+ingestao, cache, scheduler ou chamada externa. `DELETE` e soft delete: o recurso passa para
+`status: "archived"`. `metadata` e `settings` sao sanitizados e nao podem conter secrets,
+tokens, senhas, connection strings reais ou headers sensiveis.
 
 ### Field mappings
 

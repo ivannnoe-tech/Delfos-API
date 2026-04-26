@@ -8,6 +8,7 @@ import { AuditModule } from './modules/audit/audit.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConnectionsModule } from './modules/connections/connections.module';
 import { CredentialsModule } from './modules/credentials/credentials.module';
+import { DatasetsModule } from './modules/datasets/datasets.module';
 import { FieldMappingsModule } from './modules/field-mappings/field-mappings.module';
 import { HealthModule } from './modules/health/health.module';
 import { TenantsModule } from './modules/tenants/tenants.module';
@@ -27,6 +28,7 @@ import { UsersModule } from './modules/users/users.module';
     UsersModule,
     ConnectionsModule,
     CredentialsModule,
+    DatasetsModule,
     FieldMappingsModule,
     AuditModule,
   ],
