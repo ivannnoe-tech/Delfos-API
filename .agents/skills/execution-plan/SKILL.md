@@ -1,6 +1,6 @@
 ---
 name: delfos-api-execution-plan
-description: Planeje tarefas do delfos-api antes de editar código: escopo, arquivos afetados, riscos, validações, documentação e passos pequenos.
+description: "Planeje tarefas do delfos-api antes de editar código: escopo, arquivos afetados, riscos, validações, documentação e passos pequenos."
 ---
 
 # Skill — Plano de execução do delfos-api

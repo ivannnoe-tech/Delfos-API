@@ -1,6 +1,6 @@
 ---
 name: delfos-api-testing-quality-review
-description: Revise qualidade final do delfos-api: testes, lint, build, CI, Definition of Done, contratos, segurança e critérios de aceite.
+description: "Revise qualidade final do delfos-api: testes, lint, build, CI, Definition of Done, contratos, segurança e critérios de aceite."
 ---
 
 # Skill — Testes e Qualidade do delfos-api

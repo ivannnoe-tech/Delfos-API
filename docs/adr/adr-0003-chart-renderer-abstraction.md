@@ -80,7 +80,7 @@ Adapters são detalhe interno e podem ser substituídos sem alterar `features/`.
 
 - Criar `lib/shared/charts/` com `chart_renderer.dart`, `chart_spec.dart`, `adapters/fl_chart_adapter.dart`, `adapters/graphic_adapter.dart`
 - Implementar specs mínimos da Fase 1: `BarSpec`, `LineSpec`, `AreaSpec`, `PieSpec`, `DonutSpec`, `RankingSpec`, `ComparisonSpec`, `KpiSpec`
-- Documentar contrato em `docs/chart-renderer.md` (no `delfos-web`)
+- Documentar contrato em `delfos-web/docs/chart-renderer.md` (no `delfos-web`)
 - Adicionar lint que bloqueia import direto fora de `adapters/` (ex.: `custom_lint` rule)
 
 ## Impacto futuro / Fase 2
@@ -92,6 +92,6 @@ Adapters são detalhe interno e podem ser substituídos sem alterar `features/`.
 
 ## Referências
 
-- `delfos-web/docs/chart-renderer.md`
+- `delfos-web/delfos-web/docs/chart-renderer.md`
 - ADR-0002 (sem componentes pagos)
 - `delfos-web/lib/shared/charts/`

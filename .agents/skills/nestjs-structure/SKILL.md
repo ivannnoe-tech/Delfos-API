@@ -1,6 +1,6 @@
 ---
 name: delfos-api-nestjs-structure
-description: Crie ou reorganize estrutura NestJS do delfos-api: módulos, controllers, services, DTOs, config, healthcheck, Swagger e testes base.
+description: "Crie ou reorganize estrutura NestJS do delfos-api: módulos, controllers, services, DTOs, config, healthcheck, Swagger e testes base."
 ---
 
 # Skill — Estrutura NestJS do delfos-api

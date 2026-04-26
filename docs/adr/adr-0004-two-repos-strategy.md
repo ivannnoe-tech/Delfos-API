@@ -67,7 +67,7 @@ A documentação compartilhada (AGENTS, DESIGN, /docs, /prompts, ADRs) vive no `
 ## Impacto na Fase 1
 
 - Criar dois repositórios privados no GitHub: `delfos-api`, `delfos-web`
-- CI configurado independente em cada (`.github/workflows/ci.yml`)
+- CI configurado independente em cada (`.github/workflows/ci.yml` (a ser configurado futuramente))
 - Doc compartilhada (`docs/`, `prompts/`, ADRs) vive **apenas** em `delfos-api`
 - `delfos-web/AGENTS.md` aponta pra `delfos-api/AGENTS.md` como fonte canônica
 - `delfos-web/DESIGN.md` aponta pra `delfos-api/DESIGN.md`
