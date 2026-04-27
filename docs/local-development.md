@@ -36,6 +36,40 @@ npm install
 npm run start:dev
 ```
 
+## Seed local da foundation
+
+Para popular o MongoDB local com configuracoes ficticias da foundation, rode:
+
+```powershell
+$env:DELFOS_ADMIN_KEY="change-me-local-admin-key-at-least-32-chars"
+npm run seed:dev
+```
+
+O seed cria ou atualiza dados demo seguros e idempotentes:
+
+- tenant `Delfos Demo Local` (`slug: delfos-demo-local`);
+- usuario owner `owner.demo@example.local`;
+- connection `Fonte Demo Local` apontando para host reservado `.invalid`;
+- credential com placeholder protegido localmente, sem imprimir o valor;
+- datasets `sales_orders_demo`, `customers_demo` e `payments_demo`;
+- query definitions `sales_overview_demo`, `sales_by_day_demo` e `customers_summary_demo`;
+- dashboard definition `commercial_dashboard_demo`.
+
+O script nao executa query, nao chama API externa, nao conecta em banco de cliente e nao
+armazena payload operacional. A idempotencia usa chaves estaveis como `slug`, e-mail,
+`datasetKey`, `queryKey`, `dashboardKey` e `tenantId + datasetKey + targetField`.
+O script usa models Mongoose diretamente porque os services/repositories atuais nao expõem
+upsert por todas essas chaves estaveis; isso mantem o seed local explicito e evita criar
+contrato publico ou endpoint administrativo para desenvolvimento.
+
+Ao final, o terminal imprime o `tenantId`, o `actorId` sugerido e um comando para rodar o
+`delfos-web` com `--dart-define`. O comando referencia `$env:DELFOS_ADMIN_KEY` em vez de
+imprimir a chave administrativa:
+
+```powershell
+flutter run -d edge --web-port=5173 --dart-define=API_URL=http://localhost:3000 --dart-define=DELFOS_ADMIN_KEY=$env:DELFOS_ADMIN_KEY --dart-define=DELFOS_TENANT_ID=<tenantId retornado> --dart-define=DELFOS_ACTOR_ID=<actorId retornado> --dart-define=DELFOS_ACTOR_ROLE=owner
+```
+
 ## Validação
 
 Verifique se o MongoDB está acessível:

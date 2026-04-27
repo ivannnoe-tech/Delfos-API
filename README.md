@@ -52,6 +52,7 @@ Para o fluxo local validado no Windows com MongoDB local, veja [`docs/local-deve
 | `npm run start:dev` | desenvolvimento com watch |
 | `npm run build` | build de produção |
 | `npm run start:prod` | executa o build |
+| `npm run seed:dev` | popula MongoDB local com dados fictícios da foundation |
 | `npm run lint` | ESLint |
 | `npm run format` | Prettier write |
 | `npm run format:check` | Prettier check (CI usa esse) |

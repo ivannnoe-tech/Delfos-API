@@ -54,6 +54,19 @@ cache, worker, scheduler ou fila nesse fluxo. Para incidentes de vazamento, conf
 auditoria e confirmar que apenas `dashboardKey`, `status`, `visibility`, quantidade de
 secoes e quantidade de widgets foram registrados.
 
+## Erro no seed local de desenvolvimento
+
+O comando `npm run seed:dev` e exclusivo para ambiente local. Se falhar, verifique:
+
+1. MongoDB local acessivel em `DELFOS_DATABASE_URL`.
+2. Variaveis obrigatorias do `.env`, principalmente `ENCRYPTION_KEY_BASE64`.
+3. Ausencia de dados reais no banco local usado para validacao.
+4. Mensagem de erro do terminal sem expor secrets.
+
+O seed deve apenas criar ou atualizar configuracoes ficticias da foundation. Ele nao deve
+executar query, chamar API externa, conectar em banco de cliente, criar cache, worker,
+scheduler ou fila.
+
 ## Incidente de seguranca
 
 1. Isolar impacto.

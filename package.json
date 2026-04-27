@@ -12,9 +12,10 @@
     "start": "node dist/main.js",
     "start:dev": "nest start --watch",
     "build": "nest build",
-    "lint": "eslint \"src/**/*.ts\"",
-    "format": "prettier --write \"src/**/*.ts\" \"*.json\" \"*.js\" \"*.mjs\"",
-    "format:check": "prettier --check \"src/**/*.ts\" \"*.json\" \"*.js\" \"*.mjs\"",
+    "lint": "eslint \"src/**/*.ts\" \"scripts/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\" \"scripts/**/*.ts\" \"*.json\" \"*.js\" \"*.mjs\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"scripts/**/*.ts\" \"*.json\" \"*.js\" \"*.mjs\"",
+    "seed:dev": "ts-node -r tsconfig-paths/register scripts/seed-dev.ts",
     "test": "jest",
     "test:watch": "jest --watch"
   },
