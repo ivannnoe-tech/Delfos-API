@@ -92,6 +92,11 @@ O comando `npm run seed:dev` e exclusivo para ambiente local. Se falhar, verifiq
 3. Ausencia de dados reais no banco local usado para validacao.
 4. Mensagem de erro do terminal sem expor secrets.
 
+O output esperado deve listar IDs, chaves logicas e nomes de datasets, query definitions
+e dashboard definitions, alem de comandos PowerShell de preview. Esses comandos devem
+referenciar `$env:DELFOS_ADMIN_KEY` literalmente e nunca imprimir o valor da chave ou
+`secretValue`.
+
 O seed deve apenas criar ou atualizar configuracoes ficticias da foundation. Ele nao deve
 executar query, chamar API externa, conectar em banco de cliente, criar cache, worker,
 scheduler ou fila.

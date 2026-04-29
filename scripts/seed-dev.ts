@@ -49,6 +49,10 @@ import {
   buildDatasetInputs,
   buildDelfosWebCommand,
   buildFieldMappingInputs,
+  buildListDashboardDefinitionsCommand,
+  buildListQueryDefinitionsCommand,
+  buildPreviewDashboardDefinitionCommand,
+  buildPreviewQueryDefinitionCommand,
   buildQueryFilter,
   buildQueryInputs,
   buildQuerySorts,
@@ -69,15 +73,29 @@ interface SeedModels {
   dashboardDefinitions: Model<DashboardDefinitionDocument>;
 }
 
+interface SeedCatalogItem {
+  id: string;
+  key: string;
+  name: string;
+}
+
+interface SeedPreviewCommands {
+  listQueryDefinitions: string;
+  previewQueryDefinition: string;
+  listDashboardDefinitions: string;
+  previewDashboardDefinition: string;
+}
+
 interface SeedResult {
   tenantId: string;
   actorId: string;
   connectionId: string;
   credentialRef: string;
-  datasetKeys: string[];
-  queryKeys: string[];
-  dashboardKeys: string[];
+  datasets: SeedCatalogItem[];
+  queryDefinitions: SeedCatalogItem[];
+  dashboardDefinitions: SeedCatalogItem[];
   webCommand: string;
+  previewCommands: SeedPreviewCommands;
 }
 
 async function run(): Promise<void> {
@@ -122,15 +140,42 @@ export async function seedDevFoundation(app: INestApplicationContext): Promise<S
     queries,
   );
 
+  const tenantId = tenant._id.toString();
+  const actorId = user._id.toString();
+  const queryItems = queries.map((query) => toCatalogItem(query._id, query.queryKey, query.name));
+  const dashboardItems = dashboards.map((dashboard) =>
+    toCatalogItem(dashboard._id, dashboard.dashboardKey, dashboard.name),
+  );
+  const previewQuery = requireCatalogItem(queryItems, 'sales_overview_demo');
+  const previewDashboard = requireCatalogItem(dashboardItems, 'commercial_dashboard_demo');
+
   return {
-    tenantId: tenant._id.toString(),
-    actorId: user._id.toString(),
+    tenantId,
+    actorId,
     connectionId: connectionWithCredential._id.toString(),
     credentialRef,
-    datasetKeys: datasets.map((dataset) => dataset.datasetKey),
-    queryKeys: queries.map((query) => query.queryKey),
-    dashboardKeys: dashboards.map((dashboard) => dashboard.dashboardKey),
-    webCommand: buildDelfosWebCommand(tenant._id.toString(), user._id.toString()),
+    datasets: datasets.map((dataset) =>
+      toCatalogItem(dataset._id, dataset.datasetKey, dataset.name),
+    ),
+    queryDefinitions: queryItems,
+    dashboardDefinitions: dashboardItems,
+    webCommand: buildDelfosWebCommand(tenantId, actorId),
+    previewCommands: {
+      listQueryDefinitions: buildListQueryDefinitionsCommand(tenantId, actorId),
+      previewQueryDefinition: buildPreviewQueryDefinitionCommand({
+        tenantId,
+        actorId,
+        queryDefinitionId: previewQuery.id,
+        dashboardDefinitionId: previewDashboard.id,
+      }),
+      listDashboardDefinitions: buildListDashboardDefinitionsCommand(tenantId, actorId),
+      previewDashboardDefinition: buildPreviewDashboardDefinitionCommand({
+        tenantId,
+        actorId,
+        queryDefinitionId: previewQuery.id,
+        dashboardDefinitionId: previewDashboard.id,
+      }),
+    },
   };
 }
 
@@ -425,18 +470,56 @@ function toCredentialRef(id: Types.ObjectId): string {
   return `cred_${id.toString()}`;
 }
 
+function toCatalogItem(id: Types.ObjectId, key: string, name: string): SeedCatalogItem {
+  return { id: id.toString(), key, name };
+}
+
+function requireCatalogItem(items: SeedCatalogItem[], key: string): SeedCatalogItem {
+  const item = items.find((current) => current.key === key);
+
+  if (!item) {
+    throw new Error(`Catalog item ${key} is required for preview command seed output.`);
+  }
+
+  return item;
+}
+
 function printSeedResult(result: SeedResult): void {
   console.log('Seed local concluido.');
   console.log(`tenantId criado/usado: ${result.tenantId}`);
   console.log(`actorId sugerido: ${result.actorId}`);
   console.log(`connectionId criado/usado: ${result.connectionId}`);
   console.log(`credentialRef criado/usado: ${result.credentialRef}`);
-  console.log(`datasets: ${result.datasetKeys.join(', ')}`);
-  console.log(`queryDefinitions: ${result.queryKeys.join(', ')}`);
-  console.log(`dashboardDefinitions: ${result.dashboardKeys.join(', ')}`);
+  console.log('');
+  printCatalog('Datasets:', result.datasets);
+  console.log('');
+  printCatalog('Query definitions:', result.queryDefinitions);
+  console.log('');
+  printCatalog('Dashboard definitions:', result.dashboardDefinitions);
   console.log('');
   console.log('Comando sugerido no delfos-web (PowerShell):');
   console.log(result.webCommand);
+  console.log('');
+  console.log('Comandos de teste de preview:');
+  console.log('1. Listar query-definitions:');
+  console.log(result.previewCommands.listQueryDefinitions);
+  console.log('');
+  console.log('2. Preview query-definition:');
+  console.log(result.previewCommands.previewQueryDefinition);
+  console.log('');
+  console.log('3. Listar dashboard-definitions:');
+  console.log(result.previewCommands.listDashboardDefinitions);
+  console.log('');
+  console.log('4. Preview dashboard-definition:');
+  console.log(result.previewCommands.previewDashboardDefinition);
+}
+
+function printCatalog(title: string, items: SeedCatalogItem[]): void {
+  console.log(title);
+
+  for (const item of items) {
+    console.log(`- ${item.key} | ${item.id} | ${item.name}`);
+  }
 }
 
 if (require.main === module) {

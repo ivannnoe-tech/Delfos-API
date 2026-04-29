@@ -62,15 +62,25 @@ O script usa models Mongoose diretamente porque os services/repositories atuais 
 upsert por todas essas chaves estaveis; isso mantem o seed local explicito e evita criar
 contrato publico ou endpoint administrativo para desenvolvimento.
 
-Ao final, o terminal imprime o `tenantId`, o `actorId` sugerido e um comando para rodar o
-`delfos-web` com `--dart-define`. O comando referencia `$env:DELFOS_ADMIN_KEY` em vez de
-imprimir a chave administrativa:
+Ao final, o terminal imprime o `tenantId`, o `actorId` sugerido, o `connectionId`, o
+`credentialRef` e os IDs reais dos datasets, query definitions e dashboard definitions
+criados ou reutilizados. Esses IDs facilitam testes manuais dos previews sem criar
+endpoints auxiliares.
+
+O seed tambem imprime um comando para rodar o `delfos-web` com `--dart-define`. O comando
+referencia `$env:DELFOS_ADMIN_KEY` em vez de imprimir a chave administrativa:
 
 ```powershell
 flutter run -d edge --web-port=5173 --dart-define=API_URL=http://localhost:3000 --dart-define=DELFOS_ADMIN_KEY=$env:DELFOS_ADMIN_KEY --dart-define=DELFOS_TENANT_ID=<tenantId retornado> --dart-define=DELFOS_ACTOR_ID=<actorId retornado> --dart-define=DELFOS_ACTOR_ROLE=owner
 ```
 
 ## Validação
+
+O output tambem inclui comandos PowerShell prontos para listar `query-definitions`,
+executar preview demo de uma query definition, listar `dashboard-definitions` e executar
+preview demo de um dashboard definition. Esses comandos usam o `tenantId`, o `actorId` e
+os IDs retornados pelo proprio seed, mantendo `$env:DELFOS_ADMIN_KEY` literal e sem
+imprimir valor de secret.
 
 Verifique se o MongoDB está acessível:
 

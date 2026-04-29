@@ -5,6 +5,10 @@ import {
   buildDatasetInputs,
   buildDelfosWebCommand,
   buildFieldMappingInputs,
+  buildListDashboardDefinitionsCommand,
+  buildListQueryDefinitionsCommand,
+  buildPreviewDashboardDefinitionCommand,
+  buildPreviewQueryDefinitionCommand,
   buildQueryInputs,
   buildSeedIdentityKeys,
   demoSeedKeys,
@@ -74,5 +78,45 @@ describe('seed-dev data', () => {
     expect(command).toContain('--dart-define=DELFOS_ACTOR_ID=662d4f6e7a1c2b00124f0101');
     expect(command).toContain('--dart-define=DELFOS_ADMIN_KEY=$env:DELFOS_ADMIN_KEY');
     expect(command).not.toContain('change-me-local-admin-key');
+  });
+
+  it('prints preview test commands without expanding the admin key value', () => {
+    const tenantId = '662d4f6e7a1c2b00124f0001';
+    const actorId = '662d4f6e7a1c2b00124f0101';
+    const queryDefinitionId = '662d4f6e7a1c2b00124f0201';
+    const dashboardDefinitionId = '662d4f6e7a1c2b00124f0301';
+    const commands = [
+      buildListQueryDefinitionsCommand(tenantId, actorId),
+      buildPreviewQueryDefinitionCommand({
+        tenantId,
+        actorId,
+        queryDefinitionId,
+        dashboardDefinitionId,
+      }),
+      buildListDashboardDefinitionsCommand(tenantId, actorId),
+      buildPreviewDashboardDefinitionCommand({
+        tenantId,
+        actorId,
+        queryDefinitionId,
+        dashboardDefinitionId,
+      }),
+    ];
+    const output = commands.join('\n');
+
+    expect(output).toContain('$env:DELFOS_ADMIN_KEY');
+    expect(output).toContain(`"x-delfos-tenant-id" = "${tenantId}"`);
+    expect(output).toContain(`"x-delfos-actor-id" = "${actorId}"`);
+    expect(output).toContain(`/api/v1/query-definitions?tenantId=${tenantId}`);
+    expect(output).toContain(
+      `/api/v1/query-definitions/${queryDefinitionId}/preview?tenantId=${tenantId}`,
+    );
+    expect(output).toContain(`/api/v1/dashboard-definitions?tenantId=${tenantId}`);
+    expect(output).toContain(
+      `/api/v1/dashboard-definitions/${dashboardDefinitionId}/preview?tenantId=${tenantId}`,
+    );
+    expect(output).toContain('-Body \'{"rowLimit":5}\'');
+    expect(output).toContain('-Body \'{"rowLimitPerWidget":5}\'');
+    expect(output).not.toContain('change-me-local-admin-key');
+    expect(output).not.toContain('not-a-real-secret-value');
   });
 });
