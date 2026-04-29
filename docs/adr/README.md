@@ -47,3 +47,4 @@ Mudanças de bug fix, refatoração local ou estilização **não** viram ADR.
 | [0005](./adr-0005-mongodb-as-config-store.md) | MongoDB as Delfos configuration store | Accepted |
 | [0006](./adr-0006-jwt-self-managed-auth.md) | Self-managed JWT auth (no Auth0/Clerk) | Accepted |
 | [0007](./adr-0007-no-cache-redis-phase-1.md) | No Redis cache in Phase 1 | Accepted |
+| [0008](./adr-0008-connectors-and-integration-execution.md) | delfos-connectors and integration execution | Accepted |
