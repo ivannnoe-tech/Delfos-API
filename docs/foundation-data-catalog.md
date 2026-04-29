@@ -568,3 +568,202 @@ Principais erros esperados:
 - `400 Bad Request` para `tenantId`, `connectionId`, `datasetKey`, `targetType`, `transform`, `status`, `page` ou `pageSize` invalidos.
 - `404 Not Found` quando o mapping nao existir para o `tenantId` informado.
 - `500 Internal Server Error` para falha inesperada de persistencia, incluindo duplicidade de `tenantId + datasetKey + targetField` enquanto nao houver erro de dominio especifico.
+
+## 5. Preview/demo execution
+
+Objetivo: permitir que `delfos-web` renderize previews de query definitions e dashboard
+definitions com dados demonstrativos seguros, sem executar consultas reais e sem acessar dados de
+cliente.
+
+Rotas:
+
+- `POST /api/v1/query-definitions/:id/preview?tenantId=...`
+- `POST /api/v1/dashboard-definitions/:id/preview?tenantId=...`
+
+Esses endpoints seguem as regras transversais de
+[`foundation-auth-and-errors.md`](./foundation-auth-and-errors.md):
+
+- `x-delfos-admin-key` e obrigatorio.
+- `tenantId` e obrigatorio na query string e deve ser ObjectId valido.
+- A busca por `:id` e sempre tenant-scoped.
+- Nao ha role temporaria obrigatoria para preview; a decisao segue o padrao atual de
+  leitura/listagem da foundation, em que a admin key e suficiente.
+- Se `x-delfos-actor-role` for enviado, ele precisa ser uma role valida da foundation.
+
+### 5.1 Query preview
+
+Request:
+
+```http
+POST /api/v1/query-definitions/662d4f6e7a1c2b00124f0601/preview?tenantId=662d4f6e7a1c2b00124f0001
+Content-Type: application/json
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+```
+
+Body opcional:
+
+```json
+{
+  "rowLimit": 6
+}
+```
+
+Response `200`:
+
+```json
+{
+  "mode": "demo",
+  "queryDefinitionId": "662d4f6e7a1c2b00124f0601",
+  "queryKey": "sales_overview_demo",
+  "generatedAt": "2026-04-26T12:00:00.000Z",
+  "columns": [
+    { "key": "period", "label": "Periodo", "type": "string" },
+    { "key": "total_sales", "label": "Vendas totais", "type": "currency" }
+  ],
+  "rows": [{ "period": "Jan demo", "total_sales": 125000 }],
+  "meta": {
+    "rowCount": 1,
+    "isPreview": true,
+    "source": "demo-generator"
+  }
+}
+```
+
+Regras:
+
+- Carrega a query definition por `id + tenantId`.
+- Usa `metrics`, `dimensions`, `filters` declarativos, `type`, `timeField` e `defaultLimit`
+  apenas para gerar formato e volume pequeno de linhas ficticias.
+- `filters.defaultValue`, `filters.allowedValues`, `metadata` e `settings` nao sao usados para
+  gerar nem expor dados.
+- Os valores gerados usam nomes demonstrativos, como `Jan demo`, `Cliente Demo A` e
+  `Vendedor Demo A`.
+- O retorno sempre indica `mode: "demo"` e `meta.isPreview: true`.
+- Nao executa SQL, Mongo aggregation, query builder real, API externa, conector, cache, fila,
+  scheduler ou worker.
+- Nao persiste resultados e nao cria `query_result_snapshots`.
+
+Evento interno de audit:
+
+- `execution_preview.query.generated`
+
+Auditoria registra somente:
+
+- `tenantId`
+- `queryDefinitionId`
+- `queryKey`
+- `mode`
+
+Auditoria nunca registra `rows`, `columns`, metadata/settings, filtros livres, valores gerados,
+default values ou allowed values.
+
+### 5.2 Dashboard preview
+
+Request:
+
+```http
+POST /api/v1/dashboard-definitions/662d4f6e7a1c2b00124f0701/preview?tenantId=662d4f6e7a1c2b00124f0001
+Content-Type: application/json
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+```
+
+Body opcional:
+
+```json
+{
+  "rowLimitPerWidget": 6
+}
+```
+
+Response `200`:
+
+```json
+{
+  "mode": "demo",
+  "dashboardDefinitionId": "662d4f6e7a1c2b00124f0701",
+  "dashboardKey": "commercial_dashboard_demo",
+  "generatedAt": "2026-04-26T12:00:00.000Z",
+  "widgets": [
+    {
+      "widgetKey": "total_sales",
+      "title": "Vendas totais",
+      "type": "metric_card",
+      "queryDefinitionId": "662d4f6e7a1c2b00124f0601",
+      "status": "ready",
+      "visualization": {
+        "chartType": "number",
+        "yFields": ["total_sales"],
+        "format": "currency"
+      },
+      "data": {
+        "columns": [
+          { "key": "period", "label": "Periodo", "type": "string" },
+          { "key": "total_sales", "label": "Vendas totais", "type": "currency" }
+        ],
+        "rows": [{ "period": "Jan demo", "total_sales": 125000 }]
+      }
+    }
+  ],
+  "meta": {
+    "isPreview": true,
+    "source": "demo-generator",
+    "widgetsCount": 1,
+    "readyWidgetsCount": 1
+  }
+}
+```
+
+Widgets sem query definition relacionada nao quebram o preview inteiro. Eles retornam
+`status: "degraded"` e `reason` seguro:
+
+- `missing_query_definition` quando `queryDefinitionId` nao foi configurado.
+- `query_definition_not_found` quando a referencia nao existe para o mesmo `tenantId`.
+
+Exemplo degradado:
+
+```json
+{
+  "widgetKey": "total_sales",
+  "title": "Vendas totais",
+  "type": "metric_card",
+  "status": "degraded",
+  "reason": "missing_query_definition",
+  "visualization": { "yFields": [] },
+  "data": { "columns": [], "rows": [] }
+}
+```
+
+Regras:
+
+- Carrega a dashboard definition por `id + tenantId`.
+- Carrega query definitions relacionadas por `queryDefinitionId + tenantId`.
+- Usa `widget.visualization` e a query definition relacionada para montar colunas e linhas demo.
+- `metadata`, `settings`, `widgets.options`, `filters.defaultValue` e `filters.allowedValues`
+  nao sao usados para gerar nem expor dados.
+- O retorno sempre indica `mode: "demo"` e `meta.isPreview: true`.
+- Nao renderiza dashboard real, nao executa query real, nao chama API externa, nao cria cache,
+  fila, scheduler, worker, staging ou snapshot.
+
+Evento interno de audit:
+
+- `execution_preview.dashboard.generated`
+
+Auditoria registra somente:
+
+- `tenantId`
+- `dashboardDefinitionId`
+- `dashboardKey`
+- `mode`
+- `widgetsCount`
+- `readyWidgetsCount`
+
+Auditoria nunca registra `rows`, `columns`, metadata/settings/options, filtros livres, valores
+gerados, default values ou allowed values.
+
+Principais erros esperados:
+
+- `401 Unauthorized` para admin key ausente ou invalida.
+- `400 Bad Request` para `tenantId`, `id`, `rowLimit` ou `rowLimitPerWidget` invalidos.
+- `404 Not Found` quando a query/dashboard definition raiz nao existir para o `tenantId`
+  informado.
+- `500 Internal Server Error` para falha inesperada de persistencia ou auditoria.

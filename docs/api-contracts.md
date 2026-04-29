@@ -157,11 +157,13 @@ tokens, senhas, connection strings reais ou headers sensiveis.
 - `GET /api/v1/query-definitions/:id`
 - `PATCH /api/v1/query-definitions/:id`
 - `DELETE /api/v1/query-definitions/:id`
+- `POST /api/v1/query-definitions/:id/preview`
 
 Na foundation atual, query definitions sao apenas configuracao declarativa da camada
 semantica. Elas descrevem `metrics`, `dimensions`, `filters`, `sorts`, `defaultLimit`,
-`timeField` e granularidades futuras para dashboards e relatorios, mas nao executam query,
-SQL, aggregation, cache, worker, scheduler, conector ou chamada externa.
+`timeField` e granularidades futuras para dashboards e relatorios. O endpoint de preview
+gera apenas dados demonstrativos em memoria com `mode: "demo"`; nenhum endpoint executa query
+real, SQL, aggregation, cache, worker, scheduler, conector ou chamada externa.
 
 `tenantId`, `datasetId`, `queryKey` e `name` sao obrigatorios. `datasetId` e obrigatorio
 para manter rastreabilidade com o dataset declarativo. `queryKey` e unico por tenant e
@@ -173,6 +175,55 @@ conter secrets, tokens, senhas, connection strings reais, authorization headers 
 de alta entropia. Eventos internos de audit registram apenas `queryKey`, `status`, `type`
 e `datasetId`.
 
+Preview demo:
+
+```http
+POST /api/v1/query-definitions/662d4f6e7a1c2b00124f0601/preview?tenantId=662d4f6e7a1c2b00124f0001
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+Content-Type: application/json
+```
+
+Body opcional:
+
+```json
+{
+  "rowLimit": 6
+}
+```
+
+Response `200`:
+
+```json
+{
+  "mode": "demo",
+  "queryDefinitionId": "662d4f6e7a1c2b00124f0601",
+  "queryKey": "sales_overview_demo",
+  "generatedAt": "2026-04-26T12:00:00.000Z",
+  "columns": [
+    { "key": "period", "label": "Periodo", "type": "string" },
+    { "key": "total_sales", "label": "Vendas totais", "type": "currency" }
+  ],
+  "rows": [{ "period": "Jan demo", "total_sales": 125000 }],
+  "meta": {
+    "rowCount": 1,
+    "isPreview": true,
+    "source": "demo-generator"
+  }
+}
+```
+
+Regras do preview de query:
+
+- Exige `x-delfos-admin-key` e `tenantId` na query string.
+- A busca por `:id` e tenant-scoped.
+- Nao exige role temporaria, seguindo o padrao atual de leitura/listagem da foundation.
+- Usa apenas `metrics`, `dimensions`, `filters` declarativos, `type` e `timeField` para gerar
+  dados ficticios.
+- Nao usa nem expoe `metadata`, `settings`, `filters.defaultValue` ou
+  `filters.allowedValues`.
+- Nao persiste resultado e nao cria snapshot/cache.
+- Evento interno de audit: `execution_preview.query.generated`.
+
 ### Dashboard definitions
 
 - `GET /api/v1/dashboard-definitions`
@@ -180,11 +231,13 @@ e `datasetId`.
 - `GET /api/v1/dashboard-definitions/:id`
 - `PATCH /api/v1/dashboard-definitions/:id`
 - `DELETE /api/v1/dashboard-definitions/:id`
+- `POST /api/v1/dashboard-definitions/:id/preview`
 
 Na foundation atual, dashboard definitions sao apenas configuracao declarativa para o
 futuro `delfos-web`. Elas descrevem `layout`, `sections`, `widgets`, `filters`, tags e
-metadados seguros, mas nao renderizam dashboard, nao executam query, nao buscam dados reais,
-nao consomem API externa, nao criam cache, worker, scheduler ou fila.
+metadados seguros. O endpoint de preview gera apenas dados demonstrativos em memoria com
+`mode: "demo"`; ele nao renderiza dashboard real, nao executa query real, nao busca dados
+reais, nao consome API externa, nao cria cache, worker, scheduler ou fila.
 
 `tenantId`, `dashboardKey` e `name` sao obrigatorios. `dashboardKey` e unico por tenant e
 deve ser estavel para integracoes. `queryDefinitionId` em widgets e somente uma referencia
@@ -196,6 +249,86 @@ montagem incremental dos cadastros.
 podem conter secrets, tokens, senhas, connection strings reais, authorization headers ou
 valores de alta entropia. Eventos internos de audit registram apenas `dashboardKey`,
 `status`, `visibility`, quantidade de secoes e quantidade de widgets.
+
+Preview demo:
+
+```http
+POST /api/v1/dashboard-definitions/662d4f6e7a1c2b00124f0701/preview?tenantId=662d4f6e7a1c2b00124f0001
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+Content-Type: application/json
+```
+
+Body opcional:
+
+```json
+{
+  "rowLimitPerWidget": 6
+}
+```
+
+Response `200`:
+
+```json
+{
+  "mode": "demo",
+  "dashboardDefinitionId": "662d4f6e7a1c2b00124f0701",
+  "dashboardKey": "commercial_dashboard_demo",
+  "generatedAt": "2026-04-26T12:00:00.000Z",
+  "widgets": [
+    {
+      "widgetKey": "total_sales",
+      "title": "Vendas totais",
+      "type": "metric_card",
+      "queryDefinitionId": "662d4f6e7a1c2b00124f0601",
+      "status": "ready",
+      "visualization": {
+        "chartType": "number",
+        "yFields": ["total_sales"],
+        "format": "currency"
+      },
+      "data": {
+        "columns": [
+          { "key": "period", "label": "Periodo", "type": "string" },
+          { "key": "total_sales", "label": "Vendas totais", "type": "currency" }
+        ],
+        "rows": [{ "period": "Jan demo", "total_sales": 125000 }]
+      }
+    }
+  ],
+  "meta": {
+    "isPreview": true,
+    "source": "demo-generator",
+    "widgetsCount": 1,
+    "readyWidgetsCount": 1
+  }
+}
+```
+
+Quando um widget nao tiver `queryDefinitionId` ou a query definition referenciada nao existir
+no mesmo `tenantId`, a resposta inteira continua `200` e apenas o widget fica degradado:
+
+```json
+{
+  "widgetKey": "missing_query",
+  "title": "Widget demo incompleto",
+  "type": "metric_card",
+  "status": "degraded",
+  "reason": "missing_query_definition",
+  "visualization": { "yFields": [] },
+  "data": { "columns": [], "rows": [] }
+}
+```
+
+Regras do preview de dashboard:
+
+- Exige `x-delfos-admin-key` e `tenantId` na query string.
+- A busca do dashboard por `:id` e tenant-scoped.
+- Query definitions relacionadas tambem sao carregadas por `id + tenantId`.
+- Nao exige role temporaria, seguindo o padrao atual de leitura/listagem da foundation.
+- Nao usa nem expoe `metadata`, `settings`, `widgets.options`, `filters.defaultValue` ou
+  `filters.allowedValues`.
+- Nao persiste resultado e nao cria snapshot/cache.
+- Evento interno de audit: `execution_preview.dashboard.generated`.
 
 ### Field mappings
 

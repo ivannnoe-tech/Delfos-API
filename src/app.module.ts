@@ -10,6 +10,7 @@ import { ConnectionsModule } from './modules/connections/connections.module';
 import { CredentialsModule } from './modules/credentials/credentials.module';
 import { DashboardDefinitionsModule } from './modules/dashboard-definitions/dashboard-definitions.module';
 import { DatasetsModule } from './modules/datasets/datasets.module';
+import { ExecutionPreviewModule } from './modules/execution-preview/execution-preview.module';
 import { FieldMappingsModule } from './modules/field-mappings/field-mappings.module';
 import { HealthModule } from './modules/health/health.module';
 import { QueryDefinitionsModule } from './modules/query-definitions/query-definitions.module';
@@ -32,6 +33,7 @@ import { UsersModule } from './modules/users/users.module';
     CredentialsModule,
     DashboardDefinitionsModule,
     DatasetsModule,
+    ExecutionPreviewModule,
     QueryDefinitionsModule,
     FieldMappingsModule,
     AuditModule,

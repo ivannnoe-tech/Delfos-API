@@ -179,7 +179,8 @@ De/Para de campos.
 
 Definicoes logicas de dashboards, layouts, secoes, widgets e filtros globais.
 Na foundation atual, armazena apenas configuracao declarativa para o futuro `delfos-web`;
-nao renderiza dashboard, nao executa query, nao busca dados reais e nao consome API externa.
+o preview demo gera dados ficticios em memoria e nao renderiza dashboard real, nao executa
+query real, nao busca dados reais e nao consome API externa.
 
 - `tenantId`
 - `dashboardKey`
@@ -205,6 +206,19 @@ Regras:
 - `queryDefinitionId` em `widgets` e referencia declarativa sem validacao cruzada nesta etapa.
 - `metadata`, `settings`, `widgets.options`, `filters.defaultValue` e `filters.allowedValues` guardam apenas valores sanitizados.
 - `DELETE` logico usa `status: archived`.
+
+### execution_preview
+
+Nao ha collection persistida para preview/demo execution nesta fase.
+
+Os endpoints `POST /api/v1/query-definitions/:id/preview` e
+`POST /api/v1/dashboard-definitions/:id/preview` carregam configuracoes tenant-scoped ja
+persistidas em `query_definitions` e `dashboard_definitions`, geram dados ficticios em memoria e
+retornam `mode: "demo"`.
+
+Nao persistem resultado, nao criam cache, nao criam snapshots, nao criam `query_result_snapshots`
+e nao armazenam dado operacional de cliente. Apenas eventos seguros de audit podem ser gravados
+em `audit_logs`.
 
 ### reports
 

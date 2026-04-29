@@ -70,6 +70,7 @@ Detalhes completos de headers, erros, envelope de lista e healthcheck ficam em
 | Query definitions | `POST /api/v1/query-definitions`, `GET /api/v1/query-definitions`, `GET /api/v1/query-definitions/:id`, `PATCH /api/v1/query-definitions/:id`, `DELETE /api/v1/query-definitions/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#2-query-definitions--semantic-layer) |
 | Dashboard definitions | `POST /api/v1/dashboard-definitions`, `GET /api/v1/dashboard-definitions`, `GET /api/v1/dashboard-definitions/:id`, `PATCH /api/v1/dashboard-definitions/:id`, `DELETE /api/v1/dashboard-definitions/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#3-dashboard-definitions) |
 | Field mappings | `POST /api/v1/field-mappings`, `GET /api/v1/field-mappings`, `PATCH /api/v1/field-mappings/:id`, `DELETE /api/v1/field-mappings/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#4-field-mappings) |
+| Execution preview | `POST /api/v1/query-definitions/:id/preview`, `POST /api/v1/dashboard-definitions/:id/preview` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#5-previewdemo-execution) |
 | Credentials | `POST /api/v1/credentials`, `GET /api/v1/credentials`, `GET /api/v1/credentials/:id`, `PATCH /api/v1/credentials/:id/rotate`, `PATCH /api/v1/credentials/:id/revoke` | [`foundation-credentials-and-security.md`](./foundation-credentials-and-security.md#1-credentials--secrets) |
 
 ## 5. Regras transversais

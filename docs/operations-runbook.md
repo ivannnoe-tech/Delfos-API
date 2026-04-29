@@ -54,6 +54,35 @@ cache, worker, scheduler ou fila nesse fluxo. Para incidentes de vazamento, conf
 auditoria e confirmar que apenas `dashboardKey`, `status`, `visibility`, quantidade de
 secoes e quantidade de widgets foram registrados.
 
+## Erro em preview/demo execution
+
+Os endpoints de preview demo sao:
+
+- `POST /api/v1/query-definitions/:id/preview?tenantId=...`
+- `POST /api/v1/dashboard-definitions/:id/preview?tenantId=...`
+
+Se houver erro, verifique:
+
+1. `x-delfos-admin-key` presente e valido.
+2. `tenantId` informado e valido.
+3. Recurso raiz existente para o mesmo `tenantId`.
+4. `queryDefinitionId` de widgets, quando houver.
+5. `requestId` e `correlationId` no envelope de erro.
+
+Esse fluxo deve gerar apenas dados ficticios em memoria com `mode: "demo"`. Nao deve haver
+chamada externa, SQL, Mongo aggregation analitico, conector, cache, fila, scheduler, worker,
+staging ou snapshot persistido.
+
+Para incidentes de vazamento, conferir que:
+
+- respostas nao incluem metadata/settings/options nem filtros livres usados como segredo;
+- auditoria de `execution_preview.query.generated` contem apenas `tenantId`,
+  `queryDefinitionId`, `queryKey` e `mode`;
+- auditoria de `execution_preview.dashboard.generated` contem apenas `tenantId`,
+  `dashboardDefinitionId`, `dashboardKey`, `mode`, `widgetsCount` e `readyWidgetsCount`;
+- auditoria nunca contem `rows`, valores gerados, payload operacional, default values ou
+  allowed values.
+
 ## Erro no seed local de desenvolvimento
 
 O comando `npm run seed:dev` e exclusivo para ambiente local. Se falhar, verifique:
