@@ -49,3 +49,4 @@ Mudanças de bug fix, refatoração local ou estilização **não** viram ADR.
 | [0007](./adr-0007-no-cache-redis-phase-1.md) | No Redis cache in Phase 1 | Accepted |
 | [0008](./adr-0008-connectors-and-integration-execution.md) | delfos-connectors and integration execution | Accepted |
 | [0009](./adr-0009-deployment-isolation-and-tenant-model.md) | Deployment isolation and tenant model | Accepted |
+| [0010](./adr-0010-analytics-storage-and-retention.md) | Analytics storage and retention | Accepted |
