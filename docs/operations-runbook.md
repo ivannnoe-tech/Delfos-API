@@ -1,6 +1,6 @@
 # Runbook Operacional - delfos-api
 
-Orienta diagnostico e resposta a incidentes comuns.
+Orienta diagnostico e resposta a incidentes comuns da foundation administrativa/declarativa.
 
 ## Principios
 
@@ -8,51 +8,109 @@ Orienta diagnostico e resposta a incidentes comuns.
 - Registrar causa raiz, impacto e correcao.
 - Nao executar comandos destrutivos sem autorizacao explicita.
 - Nao compartilhar dados reais de cliente sem necessidade e autorizacao.
+- Nao tratar procedimentos futuros como operacionais no estado atual.
+
+## Estado operacional atual
+
+O estado atual cobre:
+
+- `GET /health`;
+- MongoDB usado como store de configuracao/metadados;
+- auth temporaria por `x-delfos-admin-key`;
+- headers temporarios de tenant, actor e role;
+- seed/dev local com dados ficticios;
+- catalogos foundation declarativos;
+- `execution-preview` demo em memoria;
+- Swagger em `/docs` conforme `SWAGGER_ENABLED`.
+
+Nao existe procedimento operacional atual para JWT/login, conectores reais, teste real de API de
+cliente, cache, fila, scheduler, dashboard runtime ou query builder.
 
 ## API indisponivel
 
 1. Verificar processo/container.
-2. Conferir logs por `requestId`.
-3. Validar variaveis obrigatorias.
+2. Conferir logs por `requestId` ou `correlationId`.
+3. Validar variaveis obrigatorias: `DELFOS_DATABASE_URL`, `DELFOS_ADMIN_KEY` e
+   `ENCRYPTION_KEY_BASE64`.
 4. Testar conexao com MongoDB.
-5. Conferir ultimo deploy.
-6. Fazer rollback se o problema comecou apos deploy.
+5. Conferir ultimo deploy ou ultima alteracao local.
+6. Fazer rollback apenas com autorizacao quando o problema tiver comecado apos deploy.
+
+## Healthcheck
+
+1. Chamar `GET /health`.
+2. Confirmar status HTTP `200`.
+3. Confirmar envelope esperado do healthcheck.
+4. Se falhar, verificar processo, porta `PORT` e conectividade com MongoDB.
 
 ## MongoDB indisponivel
 
 1. Verificar rede e credenciais.
-2. Conferir disponibilidade do servidor/cluster.
+2. Conferir disponibilidade do servidor/container.
 3. Validar `DELFOS_DATABASE_URL`.
 4. Avaliar disco/volume quando aplicavel.
+5. Confirmar que o banco usado para desenvolvimento local nao contem dado real de cliente.
 
-## Erros 401/403 em massa
+## Swagger
 
-- Verificar alteracao de JWT secret.
-- Conferir validacao de permissao.
-- Validar fluxo de login em ambiente controlado.
-- Reverter se houver impacto generalizado.
+Swagger UI fica em `/docs` quando `SWAGGER_ENABLED=true`.
 
-## Falha em API de cliente
+Se Swagger nao abrir:
 
-Na Fase 1, dados operacionais vem de APIs expostas pelos clientes. Registre status code,
-endpoint logico e `requestId`, sem logar payload sensivel.
+1. Confirmar `SWAGGER_ENABLED`.
+2. Confirmar `NODE_ENV`; o default e habilitado em desenvolvimento/teste e desabilitado em
+   producao.
+3. Confirmar que a API esta respondendo em `http://localhost:3000`.
+
+Nao colocar valores reais de secrets em exemplos do Swagger ou documentos.
+
+## Erros 401/403 atuais
+
+No estado atual, endpoints administrativos protegidos usam `x-delfos-admin-key` e roles
+temporarias.
+
+Verificar:
+
+1. Header `x-delfos-admin-key` presente.
+2. Valor igual ao `DELFOS_ADMIN_KEY` do ambiente, sem imprimir a chave em logs.
+3. Headers temporarios de actor/role quando a rota exigir mutacao.
+4. Role permitida para a operacao (`owner`, `admin`, `operator` ou `viewer` conforme contrato).
+5. `tenantId` informado quando o recurso for tenant-scoped.
+
+JWT, login, refresh token e OAuth sao futuros e nao fazem parte do procedimento atual.
+
+## Erro em catalogos foundation
+
+Aplica-se a `tenants`, `users`, `connections`, `credentials`, `datasets`, `field-mappings`,
+`query-definitions` e `dashboard-definitions`.
+
+Verificar:
+
+1. `x-delfos-admin-key`.
+2. `tenantId` quando exigido.
+3. Payload conforme DTO/documentacao.
+4. Metadata/settings sem secrets, tokens, connection strings reais ou payload sensivel.
+5. `requestId` e `correlationId` no envelope de erro.
+
+Esses fluxos sao declarativos. Nao deve haver chamada externa, query real, cache, worker,
+scheduler, fila, staging ou snapshot.
 
 ## Erro em query definitions
 
 Query definitions sao configuracao declarativa. Se houver erro em `/api/v1/query-definitions`,
-verifique `tenantId`, `datasetId`, `queryKey`, status, type e `requestId`. Nao deve haver
-tentativa de execucao de query, conexao externa, cache, worker, scheduler ou fila nesse fluxo.
-Para incidentes de vazamento, conferir auditoria e confirmar que apenas `queryKey`, `status`,
-`type` e `datasetId` foram registrados.
+verifique `tenantId`, `datasetId`, `queryKey`, status, type e `requestId`.
+
+Nao deve haver tentativa de execucao de query, conexao externa, cache, worker, scheduler ou fila
+nesse fluxo.
 
 ## Erro em dashboard definitions
 
 Dashboard definitions sao configuracao declarativa. Se houver erro em
 `/api/v1/dashboard-definitions`, verifique `tenantId`, `dashboardKey`, status, visibility e
-`requestId`. Nao deve haver tentativa de renderizacao, execucao de query, conexao externa,
-cache, worker, scheduler ou fila nesse fluxo. Para incidentes de vazamento, conferir
-auditoria e confirmar que apenas `dashboardKey`, `status`, `visibility`, quantidade de
-secoes e quantidade de widgets foram registrados.
+`requestId`.
+
+Nao deve haver tentativa de renderizacao final, execucao de query, conexao externa, cache, worker,
+scheduler ou fila nesse fluxo.
 
 ## Erro em preview/demo execution
 
@@ -92,57 +150,65 @@ O comando `npm run seed:dev` e exclusivo para ambiente local. Se falhar, verifiq
 3. Ausencia de dados reais no banco local usado para validacao.
 4. Mensagem de erro do terminal sem expor secrets.
 
-O output esperado deve listar IDs, chaves logicas e nomes de datasets, query definitions
-e dashboard definitions, alem de comandos PowerShell de preview. Esses comandos devem
-referenciar `$env:DELFOS_ADMIN_KEY` literalmente e nunca imprimir o valor da chave ou
-`secretValue`.
+O output esperado deve listar IDs, chaves logicas e nomes de datasets, query definitions e
+dashboard definitions, alem de comandos PowerShell de preview. Esses comandos devem referenciar
+`$env:DELFOS_ADMIN_KEY` literalmente e nunca imprimir o valor da chave ou `secretValue`.
 
-O seed deve apenas criar ou atualizar configuracoes ficticias da foundation. Ele nao deve
-executar query, chamar API externa, conectar em banco de cliente, criar cache, worker,
-scheduler ou fila.
+O seed deve apenas criar ou atualizar configuracoes ficticias da foundation. Ele nao deve executar
+query, chamar API externa, conectar em banco de cliente, criar cache, worker, scheduler ou fila.
 
 ## Rotacao de DELFOS_ADMIN_KEY
 
 A `DELFOS_ADMIN_KEY` e uma autenticacao temporaria da foundation. Deve ser rotacionada
 proativamente e imediatamente apos suspeita de comprometimento.
 
-**Procedimento:**
+Procedimento:
 
 1. Gerar novo valor com comprimento minimo de 32 caracteres e alta entropia.
-   Exemplo local (nao usar em producao): `openssl rand -hex 32`
-2. Atualizar a variavel no ambiente de destino (secret manager, pipeline, env seguro).
+   Exemplo local, nao usar em producao: `openssl rand -hex 32`.
+2. Atualizar a variavel no ambiente de destino.
 3. Reiniciar a aplicacao para carregar o novo valor.
 4. Verificar que endpoints protegidos por `x-delfos-admin-key` respondem com a nova chave.
-5. Invalidar o valor antigo no ambiente (remover do secret manager ou sobrescrever).
+5. Invalidar o valor antigo no ambiente.
 6. Registrar o incidente de rotacao com data, motivo e responsavel.
 
 Nunca registrar o valor real da chave em log, auditoria, documento ou PR.
-A chave antiga nao deve continuar ativa apos confirmacao da nova.
 
 ## Rotacao de ENCRYPTION_KEY_BASE64
 
-A `ENCRYPTION_KEY_BASE64` protege `secretValue` das credenciais armazenadas.
-A rotacao exige re-criptografia de todos os segredos ativos — nao e uma troca simples de variavel.
+A `ENCRYPTION_KEY_BASE64` protege `secretValue` das credenciais armazenadas. A rotacao exige
+re-criptografia de todos os segredos ativos; nao e uma troca simples de variavel.
 
-**Procedimento:**
+Procedimento:
 
-1. Gerar nova chave de 32 bytes em base64.
-   Exemplo local: `openssl rand -base64 32`
-2. Criar rotina de migracao que:
-   a. Descriptografe cada credencial com a chave atual.
-   b. Re-criptografe com a nova chave.
-   c. Salve o novo `protectedSecretValue`.
-   Essa rotina deve ser executada em ambiente seguro, sem expor `secretValue` em log.
-3. Somente apos migracao bem-sucedida, atualizar `ENCRYPTION_KEY_BASE64` no ambiente.
+1. Gerar nova chave de 32 bytes em base64. Exemplo local: `openssl rand -base64 32`.
+2. Criar rotina de migracao em ambiente seguro que descriptografe com a chave atual,
+   re-criptografe com a nova chave e salve o novo `protectedSecretValue`.
+3. Somente apos migracao bem-sucedida, atualizar `ENCRYPTION_KEY_BASE64`.
 4. Reiniciar a aplicacao e validar que credenciais existentes ainda funcionam.
 5. Registrar o incidente com data, motivo e responsavel.
 
-Nao substituir a variavel sem a migracao — todas as credenciais existentes ficarao ilegíveis.
+Nao substituir a variavel sem a migracao; todas as credenciais existentes ficarao ilegíveis.
+
+## Procedimentos futuros/deferidos
+
+Os itens abaixo nao sao operacionais no estado atual:
+
+- JWT/login/refresh/OAuth;
+- teste real de connection;
+- falha em API de cliente;
+- conectores reais ou `data-connectors`;
+- `delfos-connectors` e local agent;
+- cache, fila, worker, scheduler, staging ou snapshot;
+- dashboard runtime final e query builder.
+
+Quando essas capacidades forem aprovadas e implementadas, este runbook deve ganhar secoes
+operacionais especificas antes de uso em ambiente real.
 
 ## Incidente de seguranca
 
 1. Isolar impacto.
 2. Preservar evidencias.
-3. Revogar secrets/tokens suspeitos (ver rotacao acima).
+3. Revogar secrets/tokens suspeitos quando aplicavel.
 4. Verificar logs e auditoria.
 5. Registrar plano de correcao.

@@ -79,12 +79,15 @@ payload sensivel ou detalhes internos.
 | `FORBIDDEN` | sem permissão |
 | `NOT_FOUND` | recurso inexistente ou inacessível |
 | `TENANT_REQUIRED` | tenant não informado/selecionado |
-| `EXTERNAL_API_UNAVAILABLE` | API do cliente indisponível |
-| `EXTERNAL_API_TIMEOUT` | timeout externo |
-| `EXTERNAL_API_AUTH_FAILED` | credencial externa inválida |
-| `DATASET_SCHEMA_INVALID` | resposta não bate com dataset/mapping |
+| `EXTERNAL_API_UNAVAILABLE` | Planejado/futuro para conectores reais; nao usado pela foundation atual |
+| `EXTERNAL_API_TIMEOUT` | Planejado/futuro para conectores reais; nao usado pela foundation atual |
+| `EXTERNAL_API_AUTH_FAILED` | Planejado/futuro para conectores reais; nao usado pela foundation atual |
+| `DATASET_SCHEMA_INVALID` | Planejado/futuro para resposta real de dataset/mapping; nao usado pela foundation atual |
 | `CONFIGURATION_INCOMPLETE` | conexão/dataset/mapping incompleto |
 | `INTERNAL_ERROR` | erro inesperado |
+
+Erros externos permanecem documentados para compatibilidade conceitual futura. No estado atual,
+nao ha chamada externa, conector real, API de cliente, cache, fila, scheduler ou execucao real.
 
 ---
 

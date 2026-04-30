@@ -1,140 +1,206 @@
-# PRD — Delfos Analytics
+# PRD - Delfos Analytics
 
-> Status: versão inicial  
+> Status: versao inicial realinhada  
 > Produto: Delfos Analytics  
-> Fase: 1
+> Estado atual: foundation administrativa/declarativa
 
 ---
 
 ## 1. Problema
 
-Empresas precisam acompanhar indicadores, vendas, operação, financeiro e relatórios, mas cada cliente possui sistemas e APIs diferentes. Soluções fixas exigem customizações repetidas e difíceis de manter.
+Empresas precisam acompanhar indicadores, vendas, operacao, financeiro e relatorios, mas cada
+cliente possui sistemas, fontes e contratos diferentes. Solucoes fixas exigem customizacoes
+repetidas e dificeis de manter.
 
-O Delfos resolve isso com uma plataforma analítica configurável, capaz de consumir APIs custom dos clientes e montar dashboards/relatórios sem reescrever o produto para cada caso.
+O Delfos busca resolver isso com uma plataforma analitica configuravel, preparada para evoluir
+para integracoes reais e dashboards customizaveis sem reescrever o produto para cada caso.
+
+No estado atual, essa visao ainda nao executa dados reais de clientes. A entrega atual e a
+foundation declarativa que permite governar catalogos, contratos e preview demo.
 
 ---
 
 ## 2. Objetivo
 
-Permitir que clientes e parceiros tenham uma experiência de BI simples, customizável e white label, com baixo custo inicial e arquitetura preparada para evolução.
+Permitir que clientes e parceiros tenham uma experiencia de BI simples, customizavel e white
+label, com baixo custo inicial e arquitetura preparada para evolucao.
+
+Objetivo da etapa atual:
+
+- consolidar contratos e governanca;
+- administrar tenants, users, connections declarativas, credentials, datasets e mappings;
+- manter query-definitions e dashboard-definitions declarativas;
+- oferecer preview demo seguro e explicitamente ficticio;
+- evitar qualquer acesso real a API, banco, arquivo ou sistema de cliente.
 
 ---
 
-## 3. Público-alvo
+## 3. Publico-alvo
 
-- empresas que precisam de painéis administrativos
-- grupos com múltiplas unidades
-- parceiros white label
-- clientes que já possuem APIs próprias
-- equipes que precisam de dashboards e relatórios personalizados
+- empresas que precisam de paineis administrativos;
+- grupos com multiplas unidades;
+- parceiros white label;
+- clientes que possuem fontes proprias e poderao integrar futuramente;
+- equipes que precisam de dashboards e relatorios personalizados em fases futuras.
 
 ---
 
 ## 4. Proposta de valor
 
-- dashboards personalizados
-- relatórios configuráveis
-- consumo de APIs existentes do cliente
-- De/Para flexível
-- white label
-- controle de usuários e permissões
-- sem exigir acesso ao banco do cliente
-- implantação mais segura e menos invasiva
+Valor atual:
+
+- foundation segura e declarativa;
+- catalogos por tenant;
+- referencias seguras de credenciais;
+- De/Para declarativo;
+- contratos REST claros;
+- preview demo sem dado real;
+- base preparada para evolucao.
+
+Valor futuro:
+
+- dashboards personalizados;
+- relatorios configuraveis;
+- integracoes reais via `delfos-connectors` ou local agent;
+- execucao real governada por queryDefinitions e datasets;
+- white label;
+- controle final de usuarios e permissoes;
+- implantacao mais segura e menos invasiva.
 
 ---
 
-## 5. Funcionalidades da Fase 1
+## 5. Funcionalidades atuais
 
-- autenticação
-- gestão de tenants
-- gestão de usuários
-- permissões
-- conexões com APIs
-- datasets
-- De/Para
-- dashboard builder
-- report builder
-- widgets de gráfico/KPI/tabela
-- tema claro/escuro
-- white label básico
-- auditoria
-- exportações iniciais
+- auth temporaria por `x-delfos-admin-key`;
+- gestao administrativa de tenants;
+- gestao administrativa de users, sem login/senha;
+- connections declarativas, sem chamada externa;
+- credentials protegidas e `credentialRef`;
+- datasets declarativos;
+- field-mappings declarativos;
+- query-definitions declarativas;
+- dashboard-definitions declarativas;
+- audit interno;
+- seed/dev com dados ficticios;
+- `execution-preview` demo em memoria.
 
 ---
 
-## 6. Não objetivos da Fase 1
+## 6. Funcionalidades futuras/deferidas
 
-- data warehouse próprio
-- ETL recorrente
-- app mobile nativo
-- IA embarcada
-- acesso direto ao banco do cliente
-- substituir sistema operacional do cliente
-- histórico analítico próprio
+Nao implementadas atualmente:
+
+- login/JWT/OAuth real;
+- conexoes reais com APIs, bancos, arquivos ou sistemas de clientes;
+- conectores reais ou `data-connectors`;
+- `delfos-connectors`;
+- local agent;
+- teste real de conexao;
+- sync/ingestao;
+- cache, fila, worker, scheduler, staging ou snapshots;
+- dashboard builder;
+- dashboard runtime final;
+- query builder;
+- report builder;
+- widgets com dados reais;
+- exportacoes finais;
+- white label completo.
+
+Essas capacidades dependem de tarefa explicita, ADR quando necessario e alinhamento com ADR-0008
+a ADR-0012.
 
 ---
 
-## 7. Métricas de sucesso
+## 7. Nao objetivos da etapa atual
 
-- tempo para configurar primeiro cliente
-- tempo de carregamento de dashboards
-- quantidade de widgets configurados sem código
-- taxa de erros em conectores
-- quantidade de relatórios exportados
-- satisfação visual/usabilidade
-- número de customizações evitadas por De/Para
+- acessar dado operacional real de cliente;
+- consumir API custom de cliente;
+- acessar banco de cliente diretamente;
+- armazenar historico analitico proprio;
+- criar data warehouse proprio;
+- criar ETL recorrente;
+- criar app mobile nativo;
+- embutir IA no produto;
+- substituir sistema operacional do cliente.
 
 ---
 
-## 8. Personas iniciais
+## 8. Metricas de sucesso atuais
 
-### Administrador do cliente
+- clareza dos contratos foundation;
+- ausencia de dados reais em fixtures, docs e preview;
+- seguranca de credentials e `credentialRef`;
+- isolamento por tenant nos recursos tenant-scoped;
+- consistencia entre API e Web;
+- previsibilidade de seed/dev;
+- facilidade para agentes trabalharem sem implementar futuro fora de escopo.
 
-Configura usuários, permissões, dashboards e relatórios.
+Metricas como tempo de carregamento de dashboards reais, taxa de erros em conectores e quantidade
+de relatorios exportados pertencem a fases futuras.
 
-### Gestor operacional
+---
 
-Consulta indicadores e relatórios para tomada de decisão.
-
-### Parceiro white label
-
-Oferece a solução com marca própria para sua carteira.
+## 9. Personas iniciais
 
 ### Administrador Delfos
 
-Gerencia tenants, suporte, configurações e auditoria.
+Gerencia tenants, suporte, configuracoes, catalogos e auditoria.
+
+### Administrador do cliente
+
+Futuramente configurara usuarios, permissoes, dashboards, relatorios e fontes. No estado atual,
+essa experiencia final ainda nao existe.
+
+### Gestor operacional
+
+Futuramente consultara indicadores e relatorios para tomada de decisao.
+
+### Parceiro white label
+
+Futuramente oferecera a solucao com marca propria para sua carteira.
 
 ---
 
-## 9. Requisitos não funcionais
+## 10. Requisitos nao funcionais
 
-- segurança por tenant
-- responsividade web
-- tema claro e escuro
-- componentes reutilizáveis
-- baixo custo de infraestrutura
-- logs seguros
-- LGPD desde o início
-- documentação viva
-- sem bibliotecas pagas na Fase 1
-
----
-
-## 10. Riscos
-
-- APIs de clientes lentas ou instáveis
-- contratos muito diferentes entre clientes
-- excesso de customização sem padrão
-- dashboards complexos demais na primeira versão
-- expectativa de histórico sem ingestão própria
+- seguranca por tenant;
+- responsividade web;
+- tema claro e escuro;
+- componentes reutilizaveis;
+- baixo custo de infraestrutura;
+- logs seguros;
+- LGPD desde o inicio;
+- documentacao viva;
+- sem bibliotecas pagas ou restritivas sem revisao;
+- exemplos sem secrets reais.
 
 ---
 
-## 11. Mitigações
+## 11. Riscos
 
-- motor genérico de conectores
-- De/Para por dataset
-- cache transitório
-- limites claros de escopo
-- componentes padronizados
-- ADRs para decisões relevantes
+Riscos atuais:
+
+- agentes confundirem visao futura com implementacao atual;
+- documentos legados induzirem conectores/cache/JWT fora de escopo;
+- preview demo ser interpretado como dado real;
+- credenciais ou dados reais entrarem em exemplo, log ou fixture.
+
+Riscos futuros:
+
+- APIs de clientes lentas ou instaveis;
+- contratos muito diferentes entre clientes;
+- excesso de customizacao sem padrao;
+- dashboards complexos demais na primeira versao real;
+- expectativa de historico sem ingestao propria aprovada.
+
+---
+
+## 12. Mitigacoes
+
+- `AGENTS.md` e `docs/phase-1-scope.md` como fonte de escopo atual;
+- ADR-0008 a ADR-0012 como decisoes vigentes para integracoes, tenant, storage, dashboards e
+  local agent;
+- documentos conceituais marcados como futuro/deferido;
+- preview demo sempre identificado como demo;
+- `credentialRef` em vez de segredo real;
+- limites claros de escopo antes de qualquer feature futura.

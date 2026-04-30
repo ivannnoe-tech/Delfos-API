@@ -1,177 +1,180 @@
-# Guia de Testes — Delfos Analytics
+# Guia de Testes - Delfos Analytics
 
 > Status: documento normativo  
-> Escopo: testes mínimos para backend e frontend.
+> Escopo: testes minimos atuais e testes futuros planejados para backend e frontend.
 
-Testes existem para proteger contratos, segurança e evolução do produto.
+Testes existem para proteger contratos, seguranca e evolucao do produto.
 
 ---
 
-## 1. Pirâmide de testes
+## 1. Piramide de testes
 
 Priorizar:
 
-1. testes unitários de regra pura
-2. testes de service/use-case
-3. testes de contrato/API
-4. testes de widget/estado visual
-5. testes end-to-end das jornadas críticas
+1. testes unitarios de regra pura;
+2. testes de service/use-case;
+3. testes de contrato/API;
+4. testes de widget/estado visual;
+5. testes end-to-end apenas quando houver estrutura operacional.
 
 ---
 
-## 2. Backend
+## 2. Testes atuais obrigatorios - backend
 
-### Unitários
+O estado atual do `delfos-api` e foundation administrativa/declarativa. A cobertura atual deve
+proteger:
 
-Cobrir:
+- validacao de ambiente;
+- healthcheck;
+- contrato global de erro;
+- request id/correlation id;
+- auth temporaria por `x-delfos-admin-key`;
+- roles administrativas temporarias;
+- tenants;
+- users administrativos sem login/senha;
+- connections declarativas, sem chamada externa;
+- credentials, protecao local, rotacao/revogacao e `credentialRef`;
+- datasets declarativos;
+- field-mappings declarativos;
+- query-definitions declarativas;
+- dashboard-definitions declarativas;
+- `execution-preview` demo em memoria;
+- auditoria interna sem secrets ou payload operacional;
+- sanitizacao de metadata/settings/options/filtros;
+- seed/dev local e dados ficticios.
 
-- services
-- guards
-- validações
-- mapeamentos
-- normalizadores
-- conectores
-- cache service
-
-### Integração
-
-Cobrir:
-
-- auth
-- permissões
-- CRUDs principais
-- execução de dataset
-- erro de API externa
-- isolamento por tenant
-
-### E2E
-
-Cobrir jornadas:
-
-- login
-- criar tenant/usuário
-- configurar conexão
-- testar dataset
-- consultar dashboard/relatório
+Testes de controller/service devem confirmar que nenhum fluxo da foundation executa query real,
+chama API externa, cria cache, worker, scheduler, fila, staging ou snapshot.
 
 ---
 
-## 3. Frontend
+## 3. Testes atuais obrigatorios - frontend
 
-### Unitários
-
-Cobrir:
-
-- formatadores
-- providers
-- controllers
-- mappers
-- regras de filtro
-
-### Widget tests
-
-Toda tela com dados deve testar:
-
-- loading
-- vazio
-- erro
-- sem permissão
-- configuração incompleta
-- sucesso básico
-
-### Integração
+O estado atual do `delfos-web` consome a foundation e preview demo.
 
 Cobrir:
 
-- login
-- navegação principal
-- visualização de dashboard
-- relatório com filtro
+- configuracao via `API_URL`;
+- headers temporarios via `DELFOS_ADMIN_KEY`, `DELFOS_TENANT_ID`, `DELFOS_ACTOR_ID` e
+  `DELFOS_ACTOR_ROLE`;
+- health/status da API;
+- clients, DTOs, mappers e repositories dos catalogos atuais;
+- telas de datasets, query-definitions e dashboard-definitions;
+- loading, vazio, erro, sem permissao e configuracao incompleta;
+- preview demo com sucesso, erro e vazio;
+- formatadores e componentes compartilhados quando houver regra relevante.
 
 ---
 
-## 4. Testes de segurança
+## 4. Testes futuros planejados
 
-Obrigatórios em mudanças sensíveis:
+Os itens abaixo sao planejados/futuros e nao devem ser tratados como operacionais enquanto nao
+existirem implementacao, scripts e escopo aprovado:
 
-- usuário sem permissão não acessa recurso
-- usuário de outro tenant não acessa recurso
-- token inválido é rejeitado
-- input inválido é rejeitado
-- credencial não aparece em resposta
-- logs não contêm secret em cenários testáveis
+- login/JWT/OAuth, refresh token, logout e recuperacao de senha;
+- `data-connectors`, conectores reais e teste real de conexao;
+- cache service, Redis, fila, worker ou scheduler;
+- execucao real de dataset/query;
+- chamada real a API, banco, arquivo ou sistema de cliente;
+- dashboard runtime final;
+- dashboard builder e query builder;
+- reports/exportacoes;
+- E2E completo;
+- testes Flutter em `integration_test/`;
+- CI.
+
+Quando essas capacidades forem aprovadas, atualizar este guia antes de exigir os testes.
 
 ---
 
-## 5. Mocks
+## 5. Testes de seguranca atuais
+
+Obrigatorios em mudancas sensiveis:
+
+- `x-delfos-admin-key` ausente ou invalido e rejeitado;
+- role temporaria insuficiente e rejeitada em mutacoes;
+- tenant obrigatorio validado em recursos tenant-scoped;
+- recurso de outro tenant nao acessivel por ID global;
+- input invalido rejeitado;
+- credencial nao aparece em resposta;
+- metadata/settings/options/filtros nao aceitam secrets;
+- logs e auditoria nao contem secret em cenarios testaveis.
+
+Token JWT invalido, fluxo de login e refresh token sao testes futuros.
+
+---
+
+## 6. Mocks e fixtures
 
 Mocks devem ser claros e pequenos.
 
 Evitar:
 
-- payload gigante sem necessidade
-- mock que não representa contrato real
-- duplicar fixtures em vários testes
+- payload gigante sem necessidade;
+- mock que parece dado real de cliente;
+- duplicar fixtures em varios testes;
+- fixture com token, senha, connection string ou payload sensivel real.
 
-Preferir fixtures compartilhadas por domínio.
-
----
-
-## 6. APIs externas
-
-Testes de conectores devem simular:
-
-- sucesso
-- timeout
-- 401/403
-- 429
-- payload inválido
-- paginação
-- resposta vazia
-
-Não depender de API real em teste automatizado.
+Preferir fixtures compartilhadas por dominio e dados explicitamente ficticios.
 
 ---
 
-## 7. Comandos
+## 7. APIs externas e conectores
+
+Nao ha API externa real, conector real ou teste real de conexao no estado atual.
+
+Testes de conectores, quando a capacidade futura for aprovada, deverao simular sucesso, timeout,
+401/403, 429, payload invalido, paginacao e resposta vazia sem depender de API real.
+
+---
+
+## 8. Comandos atuais
 
 Backend:
 
 ```bash
+npm run format:check
+npm run lint
 npm test
 npm run test:cov
+npm run build
 ```
-
-`test:e2e` é planejado/futuro. Não há script nem estrutura E2E operacional na etapa atual da foundation.
 
 Frontend:
 
 ```bash
+flutter analyze
 flutter test
+flutter build web
 ```
 
-Testes de integração Flutter são planejados/futuros. Não rodar `flutter test integration_test` enquanto o diretório `integration_test/` não existir.
+`test:e2e`, `flutter test integration_test`, CI e outros scripts nao existentes sao
+planejados/futuros. Nao documentar nem exigir script inexistente como operacional.
 
 ---
 
-## 8. Cobertura
+## 9. Cobertura
 
-Cobertura é métrica auxiliar, não garantia de qualidade.
+Cobertura e metrica auxiliar, nao garantia de qualidade.
 
-Prioridade é cobrir:
+Prioridade atual:
 
-- segurança
-- contratos
-- regra de negócio
-- mapeamento de dados
-- estados visuais críticos
+- seguranca da foundation;
+- contratos;
+- erro padronizado;
+- tenant scope;
+- sanitizacao;
+- mapeamento de dados;
+- estados visuais criticos;
+- preview demo seguro.
 
 ---
 
-## 9. Antes do PR
+## 10. Antes do PR
 
-- [ ] Testes novos para comportamento novo
-- [ ] Testes antigos continuam passando
-- [ ] Fixtures atualizadas
-- [ ] Casos de erro cobertos
-- [ ] Contratos atualizados quando necessário
+- [ ] Testes novos para comportamento novo.
+- [ ] Testes antigos continuam passando.
+- [ ] Fixtures atualizadas sem dados reais.
+- [ ] Casos de erro cobertos.
+- [ ] Contratos/documentacao atualizados quando necessario.
+- [ ] Nenhum teste trata capacidade futura como implementada.

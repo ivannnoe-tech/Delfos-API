@@ -1,136 +1,170 @@
-# Roadmap — Delfos Analytics
+# Roadmap - Delfos Analytics
 
-> Status: planejamento inicial. Datas devem ser definidas conforme execução real.
+> Status: planejamento vivo. Datas devem ser definidas conforme execucao real.
+
+Nota de estado atual: a foundation administrativa/declarativa foi realinhada pelas ADR-0008,
+ADR-0009, ADR-0010, ADR-0011 e ADR-0012. Itens antigos de Fase 1 que envolvem JWT/login,
+conectores reais, execucao real, cache, dashboard builder ou report builder sao visao futura ou
+deferida, nao implementacao atual.
 
 ---
 
-## Fase 0 — Fundação documental e governança
+## Estado atual aprovado - foundation administrativa/declarativa
 
-Status: concluída/inicial.
+Implementado atualmente:
+
+- setup NestJS no `delfos-api`;
+- setup Flutter Web no `delfos-web`;
+- MongoDB como store de configuracao/metadados;
+- healthcheck;
+- auth temporaria por `x-delfos-admin-key`;
+- tenants e users administrativos;
+- connections declarativas;
+- credentials protegidas e `credentialRef`;
+- datasets declarativos;
+- field-mappings declarativos;
+- query-definitions declarativas;
+- dashboard-definitions declarativas;
+- audit interno;
+- seed/dev local com dados ficticios;
+- `execution-preview` demo em memoria;
+- catalogos foundation no `delfos-web`.
+
+Nao implementado atualmente:
+
+- JWT/login/OAuth real;
+- conectores reais ou `data-connectors`;
+- `delfos-connectors`;
+- local agent;
+- teste real de conexao;
+- execucao real de dataset/query;
+- cache, fila, worker, scheduler, staging ou snapshot;
+- dashboard builder/runtime final;
+- query builder;
+- report builder/exportacoes finais;
+- CI/commitlint.
+
+---
+
+## Fase 0 - Fundacao documental e governanca
+
+Status: concluida/inicial.
 
 Entregas:
 
-- `AGENTS.md`
-- `DESIGN.md`
-- ADRs iniciais
-- política de bibliotecas
-- política de dados
-- política de conectores
-- prompts internos
-- guias de desenvolvimento
+- `AGENTS.md`;
+- `DESIGN.md`;
+- ADRs iniciais e ADRs 0008-0012;
+- politica de bibliotecas;
+- politica de dados;
+- politica de conectores conceitual/futura;
+- prompts internos;
+- guias de desenvolvimento.
 
 ---
 
-## Fase 1.1 — Estrutura técnica inicial
+## Fase 1 - Foundation administrativa/declarativa
 
-Objetivo: criar base dos dois repositórios sem regra de negócio avançada.
+Objetivo: consolidar contratos, seguranca, catalogos e governanca sem acessar dado real de
+cliente.
 
-Entregas:
+Entregas atuais:
 
-- setup NestJS no `delfos-api`
-- setup Flutter Web no `delfos-web`
-- lint/format/test/build
-- Docker Compose local para MongoDB
-- configuração de ambiente
-- estrutura de pastas
-- CI inicial
-- healthcheck
-
----
-
-## Fase 1.2 — Segurança e contas
-
-Entregas:
-
-- auth JWT
-- refresh token
-- usuários
-- tenants
-- vínculo usuário/tenant
-- RBAC inicial
-- guards
-- auditoria básica
+- contratos foundation;
+- auth temporaria;
+- catalogos declarativos;
+- credentials protegidas;
+- auditoria interna;
+- preview demo;
+- documentacao operacional e de desenvolvimento.
 
 ---
 
-## Fase 1.3 — Conexões e datasets
+## Fase futura - Auth final
 
-Entregas:
+Planejado/futuro, nao implementado atualmente:
 
-- CRUD de conexões
-- credenciais criptografadas
-- teste de conexão
-- CRUD de datasets
-- execução segura de dataset
-- paginação
-- erros padronizados
-- cache transitório
+- auth JWT;
+- refresh token;
+- login/logout;
+- recuperacao de senha;
+- RBAC final;
+- guards finais;
+- auditoria de login.
 
----
-
-## Fase 1.4 — De/Para
-
-Entregas:
-
-- CRUD de field mappings
-- validação de campos
-- transformação simples
-- preview de dados normalizados
-- validação de configuração incompleta
+Esta fase depende de tarefa explicita e deve respeitar ADR-0006 e as decisoes mais recentes de
+escopo.
 
 ---
 
-## Fase 1.5 — Dashboards
+## Fase futura - Integracoes e execucao real
 
-Entregas:
+Planejado/futuro, nao implementado atualmente:
 
-- dashboard builder inicial
-- widgets de KPI
-- widgets de gráfico
-- tabelas simples
-- filtros por período
-- layout configurável
-- ChartRenderer
+- `delfos-connectors`;
+- local agent;
+- teste real de conexao;
+- sync/ingestao;
+- execucao real de dataset/query;
+- conectores reais;
+- rate limit/retry/timeout de integracoes reais;
+- erros externos operacionais.
 
----
-
-## Fase 1.6 — Relatórios e exportações
-
-Entregas:
-
-- report builder
-- filtros
-- colunas configuráveis
-- ordenação
-- exportação CSV/XLSX
-- auditoria de exportação sensível
+Essa fase depende de autorizacao explicita e alinhamento com ADR-0008 e ADR-0012.
 
 ---
 
-## Fase 1.7 — White label e acabamento
+## Fase futura - Storage analitico, cache e jobs
 
-Entregas:
+Planejado/futuro, nao implementado atualmente:
 
-- logo por tenant
-- cor primária por tenant
-- tema claro/escuro refinado
-- domínio/nome exibido
-- polish visual
-- testes de responsividade
+- snapshots;
+- resultados materializados;
+- ingestion batches;
+- sync runs;
+- cache ou staging;
+- Redis quando justificado;
+- filas/workers;
+- scheduler;
+- politica de retencao operacional.
+
+Essa fase depende de ADR-0010 e nova decisao quando houver implementacao.
 
 ---
 
-## Fase 2 — Evolução analítica
+## Fase futura - Dashboards, query builder e relatorios
 
-Possíveis entregas futuras:
+Planejado/futuro, nao implementado atualmente:
 
-- ingestão própria
-- histórico
-- Redis
-- filas/workers
-- alertas
-- snapshots
-- conectores dedicados
-- agendamento de relatórios
+- dashboard builder;
+- dashboard runtime final;
+- widget builder;
+- query builder guiado;
+- report builder;
+- exportacao CSV/XLSX;
+- filtros finais;
+- renderizacao real de widgets com dados reais.
 
-Fase 2 exige novos ADRs antes de execução.
+Essa fase depende de ADR-0011, dos contratos futuros e da existencia de mecanismo aprovado para
+execucao real.
+
+---
+
+## Fase futura - White label e acabamento
+
+Planejado/futuro:
+
+- logo por tenant ou cliente/grupo;
+- cor primaria por tenant ou cliente/grupo;
+- tema claro/escuro refinado;
+- dominio/nome exibido;
+- polish visual;
+- testes de responsividade ampliados.
+
+---
+
+## Observacao sobre fases antigas
+
+Listas antigas que colocavam JWT, execucao de dataset, cache, dashboard builder ou report builder
+dentro da Fase 1 devem ser interpretadas como historicas/deferidas. O estado atual aceito e a
+foundation administrativa/declarativa descrita em `docs/phase-1-scope.md`.
