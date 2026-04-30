@@ -1,8 +1,8 @@
 # delfos-api
 
-Backend do **Delfos Analytics** — API NestJS que serve o frontend (`delfos-web`) e consome as APIs custom dos clientes para alimentar dashboards, gráficos, KPIs e relatórios.
+Backend do **Delfos Analytics** — API NestJS que atualmente fornece a foundation administrativa/declarativa consumida pelo frontend (`delfos-web`).
 
-> **Fase 1**: o Delfos não armazena dados operacionais dos clientes. Todo dado vem em tempo real das APIs que cada cliente expõe. O banco do Delfos guarda apenas configuração.
+> **Estado atual**: o Delfos guarda configuração, catálogos, referências seguras de credenciais e auditoria interna. Não há consumo real de APIs/bancos de clientes, conectores reais, execução real de query, cache, fila ou scheduler.
 
 ---
 
@@ -21,11 +21,10 @@ foundation e nao substitui a autenticacao final de producao.
 - **Node.js** 24 LTS
 - **NestJS** 11
 - **MongoDB** 8.0+ via Mongoose
-- **JWT** próprio (access + refresh)
-- **axios** (`@nestjs/axios`) para consumir APIs dos clientes
-- **pino** com redact LGPD
 - **class-validator** + **class-transformer**
 - **Jest**
+
+Planejado/futuro, mas não implementado no estado atual: JWT/login/OAuth, conectores reais, chamadas externas para clientes, cache/fila/scheduler e serviço `delfos-connectors`.
 
 ---
 
@@ -51,14 +50,15 @@ Para o fluxo local validado no Windows com MongoDB local, veja [`docs/local-deve
 |---|---|
 | `npm run start:dev` | desenvolvimento com watch |
 | `npm run build` | build de produção |
-| `npm run start:prod` | executa o build |
+| `npm start` | executa o build |
 | `npm run seed:dev` | popula MongoDB local com dados fictícios da foundation |
 | `npm run lint` | ESLint |
 | `npm run format` | Prettier write |
-| `npm run format:check` | Prettier check (CI usa esse) |
+| `npm run format:check` | Prettier check |
 | `npm test` | testes unitários |
-| `npm run test:e2e` | testes end-to-end |
 | `npm run test:cov` | cobertura |
+
+Testes end-to-end (`test:e2e`) são planejados/futuros; não há script operacional nesta etapa da foundation.
 
 ---
 
@@ -69,7 +69,7 @@ Para o fluxo local validado no Windows com MongoDB local, veja [`docs/local-deve
 3. [`docs/architecture.md`](./docs/architecture.md)
 4. [`docs/phase-1-scope.md`](./docs/phase-1-scope.md)
 5. [`docs/data-access-policy.md`](./docs/data-access-policy.md)
-6. [`docs/api-connectors.md`](./docs/api-connectors.md)
+6. [`docs/api-connectors.md`](./docs/api-connectors.md) — conceitual/futuro; não autoriza implementação atual
 7. [`docs/security-checklist.md`](./docs/security-checklist.md)
 8. [`docs/libraries-policy.md`](./docs/libraries-policy.md)
 9. [`docs/development-guide.md`](./docs/development-guide.md)
@@ -83,21 +83,17 @@ src/
 ├── config/                  # @nestjs/config + Joi
 ├── core/                    # logger, guards, interceptors, decorators, pipes
 └── modules/
-    ├── auth/                # JWT access + refresh
+    ├── auth/                # admin-key temporário da foundation
     ├── tenants/             # multi-tenant (empresas)
     ├── users/
-    ├── permissions/         # RBAC
     ├── audit/
-    ├── connections/         # config das APIs dos clientes (criptografado)
-    ├── datasets/            # endpoints/recursos por conexão
+    ├── connections/         # configuração declarativa; sem chamada externa
+    ├── credentials/         # credentialRef e proteção local de secrets
+    ├── datasets/            # catálogo lógico declarativo
     ├── field-mappings/      # De/Para
-    ├── data-connectors/     # ⭐ motor de consumo das APIs
-    ├── dashboards/
-    ├── widgets/
-    ├── reports/
-    ├── exports/             # CSV / XLSX / PDF
-    ├── white-label/
-    └── preferences/
+    ├── query-definitions/   # camada semântica declarativa
+    ├── dashboard-definitions/
+    └── execution-preview/   # preview demo em memória
 ```
 
 Detalhes completos em [`docs/project-structure.md`](./docs/project-structure.md).
@@ -114,7 +110,7 @@ Contratos públicos (REST) entre os dois ficam em [`docs/api-contracts.md`](./do
 
 ## Convenções
 
-- **Conventional Commits** — `commitlint` no CI
+- **Conventional Commits** — política atual; `commitlint`/CI estão planejados, ainda não configurados
 - **Idioma**: código em EN, docs em PT-BR
 - **Branches**: `feat/`, `fix/`, `chore/`, `docs/` → `develop` → `main`
 - **PRs**: 1 aprovação humana mínima

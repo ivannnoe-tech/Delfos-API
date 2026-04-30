@@ -5,6 +5,8 @@
 - **Fase impactada**: Fase 1
 
 > Substitui a versão anterior deste ADR, que previa **acesso direto ao banco de dados dos clientes**. A direção mudou após avaliação de risco, escopo e custo de manutenção.
+>
+> Nota de status atual: esta ADR e uma decisao historica/conceitual. ADR-0008 e ADR-0012 deferiram a execucao real de integracoes para componentes futuros, como `delfos-connectors` e local agent. No estado atual nao ha `data-connectors`, conector real, cache, fila, scheduler, teste real de conexao, chamada externa ou execucao real de query. O `delfos-api` implementa apenas foundation administrativa/declarativa e `execution-preview` demo em memoria.
 
 ---
 
@@ -33,9 +35,9 @@ A opção (2) é o ponto-doce desta fase: alinha com o que a maioria dos softwar
 
 ## Decisão
 
-Na Fase 1, o Delfos consumirá **APIs custom expostas pelos próprios clientes**. O Delfos atua como **consumidor genérico**: cada cliente cadastra uma `Connection` (URL base, tipo de auth, credenciais criptografadas) e um conjunto de `Datasets` (endpoints específicos: vendas, produtos, pedidos, etc), com `FieldMappings` (De/Para campo a campo).
+Como direcao conceitual, o Delfos podera consumir **APIs custom expostas pelos próprios clientes** em etapa futura aprovada. O Delfos atuaria como consumidor generico: cada cliente cadastraria uma `Connection` (URL base, tipo de auth, credenciais protegidas) e um conjunto de `Datasets` (endpoints especificos: vendas, produtos, pedidos, etc), com `FieldMappings` (De/Para campo a campo).
 
-O Delfos **não** acessa banco de dados do cliente. **Não** mantém cópia local dos dados operacionais (apenas cache transitório em memória, ver ADR-0007).
+No estado atual, o Delfos **nao** acessa banco de dados do cliente, **nao** consome APIs de cliente, **nao** mantem copia local dos dados operacionais e **nao** possui cache real. Connections, datasets e field-mappings sao declarativos.
 
 ---
 
@@ -63,29 +65,30 @@ O Delfos **não** acessa banco de dados do cliente. **Não** mantém cópia loca
 - Cada cliente precisa expor uma API (e mantê-la). Quem não expõe não usa o Delfos na Fase 1.
 - Schemas variam de cliente para cliente — exige De/Para forte e validação de schema
 - Disponibilidade do dado depende da disponibilidade da API do cliente
-- Latência maior do que banco direto — mitigado por cache em memória
-- Rate limiting da API do cliente é responsabilidade do consumidor — Delfos precisa respeitar
+- Latencia maior do que banco direto — mitigacao futura dependera de ADR especifica para cache/snapshots/staging.
+- Rate limiting da API do cliente sera responsabilidade do executor futuro.
 
 ### Neutras
 
-- O `query-engine` originalmente previsto vira `data-connectors` (motor de HTTP, paginação, normalização e cache)
+- O `query-engine` originalmente previsto foi reavaliado. ADR-0008 define `delfos-connectors` como servico futuro para execucao de integracoes.
 
 ---
 
-## Impacto na Fase 1
+## Impacto na Fase 1 atual
 
-- O módulo `connections` armazena credenciais (criptografadas) e metadados de cada API de cliente
-- O módulo `datasets` cataloga endpoints expostos por cada conexão
-- O módulo `field-mappings` traduz schemas heterogêneos para o modelo conceitual do Delfos
-- O módulo `data-connectors` é o motor: monta requisições, autentica, pagina, normaliza, cacheia, retorna dado pronto pra widgets
-- A política em `docs/data-access-policy.md` deixa de tratar SQL/views/timeout-de-query e passa a tratar HTTP/retry/rate-limit/payload
-- O `.env.example` perde `CUSTOMER_QUERY_*` e ganha `HTTP_*`
+- O modulo `connections` armazena configuracao declarativa e referencia segura de credencial.
+- O modulo `credentials` protege secrets locais e retorna apenas `credentialRef`.
+- O modulo `datasets` cataloga origem logica declarativa.
+- O modulo `field-mappings` guarda De/Para declarativo.
+- Nao existe modulo `data-connectors`.
+- Nao existe execucao HTTP externa, cache, fila, scheduler ou teste real de conexao.
+- `execution-preview` gera somente dados demo em memoria.
 
 ## Impacto futuro / Fase 2
 
-- O motor `data-connectors` continua sendo o ponto único de entrada de dado externo, mesmo quando houver ingestão e armazenamento local
-- Conectores específicos de software de mercado (Bling, Tiny, Omie, etc.) podem ser construídos como **subclasses** ou **plugins** do connector genérico
-- Cache em memória (Fase 1) eventualmente migra para Redis (Fase 2)
+- `delfos-connectors` ou mecanismo equivalente aprovado devera ser o ponto controlado de execucao externa.
+- Conectores especificos de software de mercado (Bling, Tiny, Omie, etc.) podem ser planejados no futuro.
+- Cache, snapshots, staging ou Redis exigem nova decisao antes de implementacao.
 
 ---
 
@@ -96,4 +99,6 @@ O Delfos **não** acessa banco de dados do cliente. **Não** mantém cópia loca
 - `docs/data-access-policy.md`
 - `docs/api-connectors.md`
 - `docs/de-para.md`
-- ADR-0007 (cache em memória)
+- ADR-0007 (cache/Redis fora do escopo atual)
+- ADR-0008
+- ADR-0012

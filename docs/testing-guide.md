@@ -139,16 +139,18 @@ Backend:
 
 ```bash
 npm test
-npm run test:e2e
 npm run test:cov
 ```
+
+`test:e2e` é planejado/futuro. Não há script nem estrutura E2E operacional na etapa atual da foundation.
 
 Frontend:
 
 ```bash
 flutter test
-flutter test integration_test
 ```
+
+Testes de integração Flutter são planejados/futuros. Não rodar `flutter test integration_test` enquanto o diretório `integration_test/` não existir.
 
 ---
 

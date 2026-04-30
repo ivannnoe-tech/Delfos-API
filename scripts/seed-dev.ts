@@ -174,11 +174,7 @@ function getSeedModels(app: INestApplicationContext): SeedModels {
   };
 }
 
-function toCatalogItem(
-  id: { toString(): string },
-  key: string,
-  name: string,
-): SeedCatalogItem {
+function toCatalogItem(id: { toString(): string }, key: string, name: string): SeedCatalogItem {
   return { id: id.toString(), key, name };
 }
 

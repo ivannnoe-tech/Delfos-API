@@ -1,11 +1,17 @@
 # Contratos de API — Delfos Analytics
 
-> Status: contrato inicial da Fase 1  
+> Status: contrato geral da foundation em andamento
 > Escopo: formato e diretrizes dos endpoints REST do `delfos-api` consumidos pelo `delfos-web`.
 
 Este documento define padrões gerais. Para os contratos detalhados dos endpoints da foundation já implementados, ver **`docs/api-foundation-contracts.md`**.
 
-Este documento define padrões. Endpoints finais devem ser detalhados conforme implementação.
+Estado atual implementado:
+
+- Autenticação temporária por `x-delfos-admin-key`.
+- Recursos tenant-scoped recebem `tenantId` explícito enquanto não há auth final.
+- Bearer JWT, login e `/auth/*` são planejados/futuros, não implementados.
+- `execution-preview` está implementado somente como demo em memória com `mode: "demo"`.
+- Não há conector real, execução real de query, cache, fila, scheduler ou chamada externa para cliente.
 
 ---
 
@@ -13,7 +19,7 @@ Este documento define padrões. Endpoints finais devem ser detalhados conforme i
 
 - Base path: `/api/v1`
 - JSON como formato padrão
-- Autenticação via Bearer JWT
+- Autenticação atual via `x-delfos-admin-key`
 - Datas em ISO 8601
 - Valores monetários como número decimal e moeda separada quando necessário
 - Erros padronizados
@@ -69,7 +75,7 @@ payload sensivel ou detalhes internos.
 | Código | Uso |
 |---|---|
 | `VALIDATION_ERROR` | entrada inválida |
-| `UNAUTHENTICATED` | token ausente/inválido |
+| `UNAUTHENTICATED` | credencial temporária ausente/inválida |
 | `FORBIDDEN` | sem permissão |
 | `NOT_FOUND` | recurso inexistente ou inacessível |
 | `TENANT_REQUIRED` | tenant não informado/selecionado |
@@ -84,25 +90,26 @@ payload sensivel ou detalhes internos.
 
 ## 5. Headers
 
-Requisições autenticadas:
+Requisições administrativas atuais:
 
 ```http
-Authorization: Bearer <access_token>
-X-Tenant-Id: <tenant_id>
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
 ```
 
-`X-Tenant-Id` é obrigatório quando o usuário possui mais de um tenant ou quando o recurso é tenant-scoped.
+Recursos tenant-scoped recebem `tenantId` na query string ou no body, conforme o endpoint. Headers Bearer/JWT e `X-Tenant-Id` pertencem ao auth final planejado e não estão implementados.
 
 ---
 
 ## 6. Endpoints iniciais
 
-### Auth
+### Auth planejado/futuro
 
 - `POST /api/v1/auth/login`
 - `POST /api/v1/auth/refresh`
 - `POST /api/v1/auth/logout`
 - `GET /api/v1/auth/me`
+
+Esses endpoints ainda não existem no estado atual. A foundation usa apenas `x-delfos-admin-key`.
 
 ### Tenants
 
@@ -116,7 +123,7 @@ X-Tenant-Id: <tenant_id>
 - `GET /api/v1/users`
 - `POST /api/v1/users`
 - `PATCH /api/v1/users/:id`
-- `POST /api/v1/users/:id/invite`
+- `POST /api/v1/users/:id/invite` — planejado/futuro, não implementado
 
 ### Connections
 
@@ -124,7 +131,7 @@ X-Tenant-Id: <tenant_id>
 - `POST /api/v1/connections`
 - `GET /api/v1/connections/:id`
 - `PATCH /api/v1/connections/:id`
-- `POST /api/v1/connections/:id/test`
+- `POST /api/v1/connections/:id/test` — planejado/futuro, não implementado
 
 ### Credentials / secrets
 
@@ -339,7 +346,7 @@ Regras do preview de dashboard:
 - `PATCH /api/v1/field-mappings/:id`
 - `DELETE /api/v1/field-mappings/:id`
 
-### Dashboards e widgets
+### Dashboards e widgets planejados/futuros
 
 - `GET /api/v1/dashboards`
 - `POST /api/v1/dashboards`
@@ -350,7 +357,7 @@ Regras do preview de dashboard:
 - `DELETE /api/v1/widgets/:id`
 - `POST /api/v1/widgets/:id/data`
 
-### Reports
+### Reports planejados/futuros
 
 - `GET /api/v1/reports`
 - `POST /api/v1/reports`
@@ -361,7 +368,9 @@ Regras do preview de dashboard:
 
 ---
 
-## 7. Resposta de dataset query
+## 7. Resposta de dataset query planejada/futura
+
+Não implementado no estado atual. Query real dependerá de decisão futura envolvendo `delfos-connectors`, armazenamento analítico/cache/snapshots ou mecanismo equivalente aprovado.
 
 ```json
 {

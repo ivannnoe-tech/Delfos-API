@@ -96,11 +96,7 @@ function readCsv(config: Record<string, unknown>, key: string): string[] {
     .filter((item) => item.length > 0);
 }
 
-function readBoolean(
-  config: Record<string, unknown>,
-  key: string,
-  defaultValue: boolean,
-): boolean {
+function readBoolean(config: Record<string, unknown>, key: string, defaultValue: boolean): boolean {
   const value = config[key];
 
   if (value === undefined || value === null || value === '') {

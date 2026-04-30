@@ -1,7 +1,7 @@
 # Estrutura do Projeto — Delfos Analytics
 
-> Status: documento normativo  
-> Escopo: organização inicial dos repositórios.
+> Status: documento normativo
+> Escopo: organização atual dos repositórios.
 
 ---
 
@@ -18,6 +18,8 @@ Ver ADR-0004.
 
 ## 2. Estrutura do delfos-api
 
+Esta estrutura reflete o estado atual implementado. Pastas futuras como `data-connectors`, `dashboards`, `widgets`, `reports`, `exports`, `white-label`, `preferences`, `core/cache` e `permissions` nao devem ser criadas sem escopo aprovado.
+
 ```text
 delfos-api/
 ├── src/
@@ -25,36 +27,28 @@ delfos-api/
 │   ├── app.module.ts
 │   ├── config/
 │   ├── core/
-│   │   ├── auth/
-│   │   ├── cache/
-│   │   ├── decorators/
 │   │   ├── errors/
 │   │   ├── filters/
-│   │   ├── guards/
 │   │   ├── interceptors/
-│   │   ├── logger/
 │   │   ├── pipes/
+│   │   ├── dto/
 │   │   └── utils/
 │   └── modules/
+│       ├── health/
 │       ├── auth/
+│       ├── audit/
 │       ├── tenants/
 │       ├── users/
-│       ├── permissions/
-│       ├── audit/
 │       ├── connections/
+│       ├── credentials/
 │       ├── datasets/
 │       ├── field-mappings/
-│       ├── data-connectors/
-│       ├── dashboards/
-│       ├── widgets/
-│       ├── reports/
-│       ├── exports/
-│       ├── white-label/
-│       └── preferences/
-├── test/
+│       ├── query-definitions/
+│       ├── dashboard-definitions/
+│       └── execution-preview/
+├── scripts/
 ├── docs/
 ├── prompts/
-├── .github/workflows/
 └── docker-compose.yml
 ```
 
@@ -75,6 +69,8 @@ modules/<module>/
 ```
 
 Criar apenas pastas necessárias. Não criar estrutura vazia sem uso.
+
+Nao criar módulos de conector real, cache, fila, scheduler, login/JWT real ou dashboard runtime final apenas porque aparecem em documentos de visão futura.
 
 ---
 

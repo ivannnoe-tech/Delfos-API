@@ -4,11 +4,13 @@
 - **Data**: 2026-04-25
 - **Fase impactada**: Fase 1
 
+> Nota de status atual: decisão histórica/parcialmente deferida. Cache em memória, `core/cache/` e `CacheService` não estão implementados atualmente. Redis, cache real, fila e scheduler continuam fora do escopo atual. O módulo `execution-preview` gera demo em memória e não usa cache real.
+
 ---
 
 ## Contexto
 
-A Fase 1 consome APIs custom de cada cliente (ADR-0001). APIs externas têm latência variável e quase sempre rate limit, então cache reduz latência percebida e protege a API do cliente de excesso de chamadas.
+Esta ADR foi escrita quando a Fase 1 considerava consumo direto de APIs custom de cada cliente. As ADRs 0008 e 0012 deferiram essa execução para componentes futuros, como `delfos-connectors` e eventual agente local. No estado atual não há conector real, chamada externa, cache, fila, scheduler ou execução real.
 
 A solução de cache mais comum em ambientes Node é Redis (cache, rate limit, fila), mas Redis significa:
 
@@ -24,14 +26,9 @@ A Fase 1 ainda está em validação comercial. Não há base de usuários para j
 
 ## Decisão
 
-A Fase 1 **não** usa Redis. Cache fica **em memória** dentro do processo Node, com TTL configurável e tamanho máximo:
+A decisão vigente para o estado atual é: a Fase 1 **não** usa Redis, cache real, fila ou scheduler.
 
-- Implementação via `cache-manager` (driver `memory`) ou estrutura LRU própria simples
-- Configuração: `CACHE_DRIVER=memory`, `CACHE_DEFAULT_TTL_S`, `CACHE_MAX_ITEMS` (ver `.env.example`)
-- Uso primário: cache das respostas das APIs dos clientes em `data-connectors`, com chave por `(tenantId, datasetId, queryHash)`
-- Suporte a **ETag** quando a API do cliente expõe — economia adicional sem ocupar memória
-- Rate limit do `delfos-api` (lado consumidor das APIs dos clientes) implementado **em memória** com janela deslizante por `connectionId`
-- Throttling do `delfos-api` (proteção do próprio backend contra abuso de cliente final) via `@nestjs/throttler` em memória
+Itens como cache em memória, rate limit de conectores, ETag e throttle dedicado só devem voltar como desenho futuro quando conectores reais forem aprovados. Não há implementação atual desses componentes.
 
 ---
 
@@ -61,26 +58,26 @@ A Fase 1 **não** usa Redis. Cache fica **em memória** dentro do processo Node,
 
 ### Neutras
 
-- A interface do cache no código é **agnóstica de driver** — quando virar Redis, troca-se o driver e pronto. O contrato em `core/cache/` não muda
+- Se cache for reintroduzido no futuro, a interface deverá ser definida em nova decisão ou atualização explícita desta ADR.
 
 ---
 
-## Impacto na Fase 1
+## Impacto na Fase 1 atual
 
-- `core/cache/` provê interface única (`CacheService.get`, `set`, `del`, `wrap`) com driver `memory`
-- `data-connectors/services/response-cache.service.ts` usa `CacheService` com TTL por dataset
-- `@nestjs/throttler` com storage in-memory para proteger o `delfos-api` de abuso
-- Headers HTTP `ETag` e `If-None-Match` propagados quando a API do cliente os expõe
+- Não criar Redis.
+- Não criar cache em memória real.
+- Não criar fila, worker ou scheduler.
+- Não criar `core/cache/`, `CacheService` ou módulo equivalente sem nova autorização.
+- `execution-preview` permanece demo em memória, sem cache e sem persistência analítica.
 
 ## Impacto futuro / Fase 2
 
-- Quando a dor aparecer (múltiplas instâncias, exportações pesadas, alertas, ingestão), criamos um novo ADR de promoção e introduzimos **Redis + BullMQ**
-- A migração é local: trocar o driver do `CacheService` e migrar throttler para Redis. Sem refactor de feature
+- Quando a dor aparecer (múltiplas instâncias, exportações pesadas, alertas, ingestão), criar novo ADR de promoção antes de introduzir Redis, BullMQ, cache, fila, scheduler ou worker.
 
 ---
 
 ## Referências
 
-- `.env.example` (`CACHE_*`, `THROTTLE_*`, `HTTP_RATE_LIMIT_*`)
-- `docs/api-connectors.md`
-- ADR-0001 (consumo via APIs)
+- `docs/api-connectors.md` (conceitual/futuro)
+- ADR-0008
+- ADR-0012

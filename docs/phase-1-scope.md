@@ -1,206 +1,175 @@
-# Escopo da Fase 1 — Delfos Analytics
+# Escopo da Fase 1 - Delfos Analytics
 
-> Status: documento normativo  
-> Objetivo: delimitar o que será construído agora e o que fica fora da primeira entrega.
+> Status: documento normativo.
+> Objetivo: delimitar o estado atual da foundation e o que fica planejado para etapas futuras.
 
-A Fase 1 valida o produto como plataforma analítica configurável consumindo **APIs custom expostas pelos clientes**. O foco é entregar valor com baixo custo operacional, segurança e arquitetura evolutiva.
+A etapa atual da Fase 1 valida a foundation administrativa/declarativa do Delfos Analytics. O foco agora e consolidar contratos, seguranca, catalogos, governanca e preview demo, sem execucao real e sem conexao com banco/API de cliente.
+
+O consumo real de APIs custom, conectores, cache, fila, scheduler, dashboard runtime, query builder e execucao real permanecem visao futura e dependem de autorizacao explicita, ADR quando necessario e alinhamento com ADR-0008 e ADR-0012.
 
 ---
 
-## Estado atual da implementação (Fase 1 em andamento)
-
-> Esta seção reflete o que está **implementado** versus o que ainda está **planejado** dentro da Fase 1.  
-> O escopo das seções seguintes descreve a visão completa da Fase 1, não o estado atual.
+## Estado atual implementado
 
 **Implementado (foundation):**
 
-| Módulo | Status |
+| Modulo | Status |
 |---|---|
 | health | Implementado |
-| auth (admin-key temporário) | Implementado — JWT real planejado, não iniciado |
+| auth (admin-key temporario) | Implementado - sem JWT real |
 | audit | Implementado |
 | tenants | Implementado |
 | users | Implementado |
-| connections | Implementado — declarativo, sem chamada externa |
-| credentials | Implementado — criptografia local, credentialRef |
-| datasets | Implementado — declarativo |
-| field-mappings | Implementado — declarativo |
-| query-definitions | Implementado — declarativo |
-| dashboard-definitions | Implementado — declarativo |
-| execution-preview | Implementado — demo em memória, sem execução real |
+| connections | Implementado - declarativo, sem chamada externa |
+| credentials | Implementado - protecao local, `credentialRef` |
+| datasets | Implementado - declarativo |
+| field-mappings | Implementado - declarativo |
+| query-definitions | Implementado - declarativo |
+| dashboard-definitions | Implementado - declarativo |
+| execution-preview | Implementado - demo em memoria, sem execucao real |
+| seed/dev local | Implementado - dados ficticios |
 
-**Planejado (não iniciado):**
+**Nao implementado e nao autorizado sem decisao explicita:**
 
-- JWT auth real (login, refresh, bcrypt, strategies)
-- Motor de consumo de APIs de clientes (`data-connectors`)
-- Teste de conexão real
-- Execução real de query
-- Dashboard builder e widgets de runtime
-- Relatórios e exportações
-- White-label e preferências
-
-**Não implementar sem autorização explícita e ADR quando necessário.**
-
----
-
-## 1. Objetivo da Fase 1
-
-Entregar uma plataforma web capaz de:
-
-- autenticar usuários
-- separar empresas/tenants
-- configurar conexões com APIs de clientes
-- mapear campos por De/Para
-- montar dashboards personalizados
-- montar relatórios personalizados
-- renderizar gráficos e KPIs
-- exportar dados quando permitido
-- aplicar white label básico
-- auditar ações sensíveis
+- JWT auth real, login, refresh, bcrypt, OAuth ou MFA.
+- Conectores reais.
+- `delfos-connectors` ou local agent.
+- Teste real de conexao.
+- Cache real, fila, worker ou scheduler.
+- Execucao real de query.
+- Conexao com banco, API, arquivo ou sistema de cliente.
+- Dashboard runtime final, widget builder final ou query builder guiado.
+- Relatorios, exportacoes, white-label e preferencias finais.
 
 ---
 
-## 2. Premissa principal
+## 1. Objetivo atual da Fase 1
 
-O Delfos **não armazena dados operacionais dos clientes** na Fase 1.
+Entregar uma foundation capaz de:
 
-Dados como vendas, produtos, pedidos, clientes finais, estoque, financeiro ou transações vêm das APIs dos próprios clientes no momento da consulta, com cache transitório em memória quando permitido.
-
----
-
-## 3. Incluído na Fase 1
-
-### 3.1 Autenticação e usuários
-
-- Login com e-mail/senha
-- JWT access + refresh
-- refresh token rotacionável
-- logout
-- recuperação de senha, se priorizada no roadmap
-- cadastro e gestão de usuários
-- vínculo usuário ↔ tenant
-
-### 3.2 Tenants e permissões
-
-- cadastro de empresas
-- isolamento por tenant
-- RBAC básico
-- perfis de acesso
-- permissões por módulo/ação
-- auditoria de ações sensíveis
-
-### 3.3 Conexões com APIs dos clientes
-
-- cadastro de URL base
-- tipo de autenticação
-- headers permitidos
-- credenciais criptografadas
-- teste de conexão
-- timeout configurável
-- rate limit por conexão
-- status da conexão
-
-### 3.4 Datasets
-
-- cadastro de endpoints por conexão
-- método HTTP permitido
-- parâmetros permitidos
-- paginação
-- resposta esperada
-- validação de schema mínimo
-- ativação/inativação
-
-### 3.5 De/Para
-
-- mapeamento de campos da API do cliente para campos canônicos do Delfos
-- transformação simples de tipos
-- nomes amigáveis para exibição
-- definição de campos obrigatórios
-- suporte a nested path quando necessário
-
-### 3.6 Dashboards
-
-- criação de dashboards
-- organização por widgets
-- filtros por período e campos mapeados
-- KPIs
-- gráficos básicos
-- tabelas analíticas
-- layout configurável
-
-### 3.7 Relatórios
-
-- criação de relatórios configuráveis
-- seleção de dataset
-- colunas visíveis
-- filtros
-- ordenação
-- agrupamento simples
-- exportação CSV/XLSX quando aplicável
-
-### 3.8 Design System
-
-- layout base
-- sidebar
-- topbar
-- cards
-- botões
-- inputs
-- tabelas
-- modais
-- estados visuais
-- tema claro/escuro
-- tokens para white label
+- expor contratos administrativos protegidos por `x-delfos-admin-key`;
+- separar recursos por tenant;
+- cadastrar tenants, usuarios administrativos, connections declarativas e credentials protegidas;
+- cadastrar datasets, field-mappings, query-definitions e dashboard-definitions declarativos;
+- gerar `execution-preview` demo em memoria, sempre ficticio;
+- popular ambiente local com seed/dev ficticio;
+- auditar mutacoes sensiveis sem gravar payloads ou secrets.
 
 ---
 
-## 4. Fora da Fase 1
+## 2. Premissa principal atual
+
+O Delfos nao armazena dados operacionais reais dos clientes na etapa atual.
+
+Tambem nao busca dados reais em APIs, bancos, arquivos ou sistemas de clientes. Dados como vendas, produtos, pedidos, clientes finais, estoque, financeiro ou transacoes so podem aparecer como fixtures/demo explicitamente ficticias.
+
+---
+
+## 3. Incluido no estado atual
+
+### 3.1 Autenticacao temporaria e usuarios administrativos
+
+- Auth temporaria por `x-delfos-admin-key`.
+- Headers temporarios de contexto (`tenantId`, `actorId`, `actorRole`) conforme contratos foundation.
+- Cadastro e gestao de usuarios administrativos.
+- Vinculo usuario/tenant.
+- Sem login, senha, JWT, refresh token, OAuth ou MFA.
+
+### 3.2 Tenants e roles administrativas
+
+- Cadastro de tenants.
+- Isolamento por tenant em recursos tenant-scoped.
+- Roles administrativas temporarias: `owner`, `admin`, `operator`, `viewer`.
+- Auditoria de acoes sensiveis.
+
+### 3.3 Connections e credentials declarativas
+
+- Cadastro declarativo de connection.
+- Tipo de autenticacao planejado/declarativo.
+- `credentialRef`.
+- Credentials protegidas localmente.
+- Status da connection.
+- Sem teste real de conexao.
+- Sem chamada externa.
+
+### 3.4 Catalogos declarativos
+
+- Datasets logicos.
+- Field mappings.
+- Query definitions ligadas a dataset.
+- Dashboard definitions ligadas a queryDefinition por widget.
+- Metadata/settings sanitizados.
+- Soft delete/arquivamento quando aplicavel.
+
+### 3.5 Preview demo
+
+- Preview demo de query definition.
+- Preview demo de dashboard definition.
+- Respostas com `mode: "demo"`.
+- Sem execucao real de query.
+- Sem persistencia de resultado analitico.
+- Sem cache, fila, worker, scheduler ou conector.
+
+### 3.6 Design System
+
+Aplicavel principalmente ao `delfos-web`. Componentes e tokens atuais devem ser usados sem redesign nao solicitado.
+
+---
+
+## 4. Fora do escopo atual
 
 Fora do escopo imediato:
 
-- ETL próprio
-- ingestão recorrente de dados operacionais
-- data warehouse próprio
-- histórico analítico persistente
-- filas complexas
-- Redis obrigatório
-- motor de alertas
-- IA generativa embarcada no produto
-- criação automática de APIs para clientes
-- acesso direto ao banco de dados do cliente
-- app mobile nativo
-- marketplace de conectores
+- ETL proprio.
+- Ingestao recorrente de dados operacionais.
+- Data warehouse proprio.
+- Historico analitico persistente.
+- Cache real ou Redis.
+- Filas, workers ou scheduler.
+- Motor de alertas.
+- IA generativa embarcada no produto.
+- Criacao automatica de APIs para clientes.
+- Acesso direto ao banco de dados do cliente.
+- Consumo direto de API, banco, arquivo ou sistema de cliente.
+- Conector real.
+- `delfos-connectors`.
+- Local agent.
+- Login/JWT/OAuth real.
+- Dashboard runtime final.
+- App mobile nativo.
+- Marketplace de conectores.
 
 Detalhes em `docs/out-of-scope.md`.
 
 ---
 
-## 5. Critério de sucesso
+## 5. Criterio de sucesso da etapa atual
 
-A Fase 1 é considerada bem-sucedida quando:
+Esta etapa da Fase 1 e considerada bem-sucedida quando:
 
-- um tenant consegue configurar uma API própria
-- datasets podem ser cadastrados e testados
-- campos podem ser mapeados por De/Para
-- dashboards carregam dados reais da API do cliente
-- relatórios podem ser gerados e exportados
-- permissões impedem acesso indevido
-- tema claro e escuro estão funcionais
-- a experiência visual segue `DESIGN.md`
-- a arquitetura permanece pronta para evoluir para Fase 2
+- tenants, usuarios administrativos, connections e credentials podem ser cadastrados com seguranca;
+- datasets podem ser cadastrados como catalogo declarativo;
+- campos podem ser mapeados por De/Para;
+- query-definitions e dashboard-definitions podem ser cadastradas e consultadas por tenant;
+- previews demo deixam claro que os dados sao ficticios;
+- permissoes temporarias impedem mutacoes indevidas;
+- contratos de erro incluem `requestId`/`correlationId`;
+- audit interno nao grava segredo ou payload sensivel;
+- a arquitetura permanece pronta para evoluir para `delfos-connectors`, local agent e execucao real futura.
 
 ---
 
-## 6. Limitações aceitas
+## 6. Limitacoes aceitas
 
-São limitações conscientes da Fase 1:
+Sao limitacoes conscientes do estado atual:
 
-- dependência da disponibilidade da API do cliente
-- latência variável conforme API externa
-- cache apenas transitório
-- sem histórico se a API do cliente não fornecer
-- cada cliente pode exigir configuração própria
-- integrações altamente específicas podem exigir adapter dedicado no futuro
+- nao ha dado real de cliente;
+- nao ha teste real de conexao;
+- nao ha execucao real;
+- nao ha cache/fila/scheduler;
+- nao ha login/JWT/OAuth real;
+- nao ha dashboard runtime final;
+- o preview e apenas demo em memoria.
 
 ---
 
@@ -208,11 +177,14 @@ São limitações conscientes da Fase 1:
 
 Criar ADR quando houver proposta de:
 
-- armazenar dado operacional do cliente
-- adicionar Redis, fila ou worker
-- acessar banco de cliente diretamente
-- mudar mecanismo de autenticação
-- adicionar biblioteca paga ou restritiva
-- alterar estratégia de repositórios
-- mudar motor de gráficos
-- alterar isolamento multi-tenant
+- armazenar dado operacional do cliente;
+- adicionar Redis, cache, fila, worker ou scheduler;
+- acessar banco de cliente diretamente;
+- consumir API, banco, arquivo ou sistema de cliente;
+- criar conector real, `delfos-connectors` ou local agent;
+- mudar mecanismo de autenticacao;
+- criar execucao real de query;
+- adicionar biblioteca paga ou restritiva;
+- alterar estrategia de repositorios;
+- mudar motor de graficos;
+- alterar isolamento multi-tenant.

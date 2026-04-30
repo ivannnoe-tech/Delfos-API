@@ -17,6 +17,7 @@
     "format:check": "prettier --check \"src/**/*.ts\" \"scripts/**/*.ts\" \"*.json\" \"*.js\" \"*.mjs\"",
     "seed:dev": "ts-node -r tsconfig-paths/register scripts/seed-dev.ts",
     "test": "jest",
+    "test:cov": "jest --coverage",
     "test:watch": "jest --watch"
   },
   "dependencies": {

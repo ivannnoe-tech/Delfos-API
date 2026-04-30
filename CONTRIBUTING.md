@@ -54,7 +54,7 @@ PRs sempre vão para `develop`. Releases sobem `develop → main`.
 
 ## 5. Conventional Commits
 
-Todo commit segue [Conventional Commits](https://www.conventionalcommits.org/). O `commitlint` valida no CI.
+Todo commit deve seguir [Conventional Commits](https://www.conventionalcommits.org/). `commitlint` e CI estão planejados/futuros; ainda não há workflow ou validação automatizada configurada no estado atual.
 
 Tipos aceitos: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
 
@@ -81,7 +81,7 @@ npm test
 npm run build
 ```
 
-PR sem CI verde não entra.
+Quando o CI for configurado, PRs deverão passar nele antes de entrar. No estado atual, rode os comandos acima localmente.
 
 ---
 

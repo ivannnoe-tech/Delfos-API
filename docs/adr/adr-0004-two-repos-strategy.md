@@ -46,7 +46,7 @@ A documentação compartilhada (AGENTS, DESIGN, /docs, /prompts, ADRs) vive no `
 ### Positivas
 
 - Cada repo é simples, com toolchain único
-- CI roda só o necessário em cada PR
+- Quando o CI for configurado, ele rodará só o necessário em cada PR
 - Permissões granulares (e.g. um colaborador só do front)
 - Versionamento independente: o `delfos-api` pode evoluir sem release do `delfos-web` e vice-versa
 - Onboarding mais simples por especialização
@@ -67,7 +67,7 @@ A documentação compartilhada (AGENTS, DESIGN, /docs, /prompts, ADRs) vive no `
 ## Impacto na Fase 1
 
 - Criar dois repositórios privados no GitHub: `delfos-api`, `delfos-web`
-- CI configurado independente em cada (`.github/workflows/ci.yml` (a ser configurado futuramente))
+- CI independente em cada repositório está planejado/futuro (`.github/workflows/ci.yml` ainda não existe no estado atual)
 - Doc compartilhada (`docs/`, `prompts/`, ADRs) vive **apenas** em `delfos-api`
 - `delfos-web/AGENTS.md` aponta pra `delfos-api/AGENTS.md` como fonte canônica
 - `delfos-web/DESIGN.md` aponta pra `delfos-api/DESIGN.md`

@@ -6,6 +6,21 @@
 
 Este arquivo é o ponto de entrada. Ele intencionalmente é curto. Cada bloco aponta para um documento dedicado em `docs/` ou `prompts/`.
 
+## Estado atual implementado
+
+Leia esta seção antes de qualquer tarefa. O estado atual do `delfos-api` é foundation administrativa/declarativa:
+
+- auth temporária por `x-delfos-admin-key`;
+- `tenants`, `users`, `connections`, `credentials`, `datasets`, `field-mappings`, `query-definitions`, `dashboard-definitions` e `execution-preview` demo;
+- seed/dev local com dados fictícios;
+- sem JWT real, login ou OAuth;
+- sem conectores reais;
+- sem cache, fila ou scheduler;
+- sem execução real de query;
+- sem conexão com banco, API ou sistema de cliente.
+
+Documentos sobre conectores, cache, JWT ou execução real descrevem conceitos ou planos futuros, não autorização para implementar esses componentes.
+
 Antes de qualquer implementação, ler:
 
 - `AGENTS.md` (este arquivo)
@@ -13,7 +28,7 @@ Antes de qualquer implementação, ler:
 - `docs/architecture.md`
 - `docs/phase-1-scope.md`
 - `docs/data-access-policy.md`
-- `docs/api-connectors.md`
+- `docs/api-connectors.md` (conceitual/futuro; não autoriza criar motor real)
 - `docs/components-strategy.md`
 - `docs/libraries-policy.md`
 - `docs/development-guide.md`
@@ -26,7 +41,7 @@ Antes de qualquer implementação, ler:
 
 O Delfos Analytics é uma plataforma web de dashboards, gráficos, KPIs e relatórios personalizados para empresas e parceiros white label.
 
-A **Fase 1** entrega a experiência analítica completa **consumindo APIs custom expostas pelos próprios clientes** (cada cliente tem seu contrato). O Delfos não armazena dado operacional do cliente em banco próprio. O banco do Delfos guarda **apenas configuração** (empresas, usuários, permissões, conexões, dashboards, widgets, relatórios, layouts, De/Para, white label, logs e auditoria).
+A etapa atual entrega a foundation administrativa/declarativa do produto. O `delfos-api` guarda configurações, catálogos, referências seguras de credenciais e auditoria interna. O consumo real de APIs/bancos de clientes, conectores, sync, ingestão, cache, filas, schedulers e execução real permanecem planejados para fases futuras e dependem de decisão explícita.
 
 A **Fase 2** poderá evoluir para ingestão própria, cache analítico, filas, workers e armazenamento independente. Não é foco desta fase.
 
@@ -114,7 +129,7 @@ Use a skill mais específica quando a tarefa se encaixar em um destes fluxos:
 | `security-lgpd-review` | revisar autenticação, autorização, multi-tenant, LGPD, secrets e logs |
 | `mongo-modeling-review` | criar/revisar schemas MongoDB, índices, De/Para, auditoria e metadados |
 | `testing-quality-review` | revisar testes, lint, build, DoD e qualidade final |
-| `ci-fix-review` | corrigir falhas de CI, build, lint e testes com causa raiz |
+| `ci-fix-review` | corrigir falhas de build, lint, testes e, quando houver CI configurado, falhas de workflow |
 
 Regras:
 
@@ -126,7 +141,7 @@ Regras:
 - se a tarefa tocar auth, tenant, permissão, secrets, logs ou dados pessoais, use `security-lgpd-review`.
 - se a tarefa criar ou alterar schema MongoDB, use `mongo-modeling-review`.
 - antes de finalizar PR/commit relevante, use `testing-quality-review`.
-- se houver erro de lint/test/build/CI, use `ci-fix-review`.
+- se houver erro de lint/test/build ou CI futuro, use `ci-fix-review`.
 
 ---
 
@@ -174,7 +189,7 @@ Regras:
 | Escopo da Fase 1 | `docs/phase-1-scope.md` |
 | Fora de escopo | `docs/out-of-scope.md` |
 | Política de acesso a dados | `docs/data-access-policy.md` |
-| Motor de consumo de APIs | `docs/api-connectors.md` |
+| Motor de consumo de APIs | `docs/api-connectors.md` (conceitual/futuro; não autoriza implementação atual) |
 | De/Para campo a campo | `docs/de-para.md` |
 | Modelo do banco do Delfos | `docs/database-model.md` |
 | Contratos do delfos-api | `docs/api-contracts.md` |
@@ -199,7 +214,7 @@ Regras:
 
 Uma entrega só é considerada pronta quando:
 
-- compila sem erros e passa no CI
+- compila sem erros; quando houver CI configurado, passa no workflow
 - segue a arquitetura definida
 - não introduz gambiarra
 - não cria arquivo monolítico (> 500 linhas sem justificativa documentada)
