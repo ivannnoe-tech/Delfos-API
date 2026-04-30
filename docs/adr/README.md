@@ -51,3 +51,4 @@ Mudanças de bug fix, refatoração local ou estilização **não** viram ADR.
 | [0009](./adr-0009-deployment-isolation-and-tenant-model.md) | Deployment isolation and tenant model | Accepted |
 | [0010](./adr-0010-analytics-storage-and-retention.md) | Analytics storage and retention | Accepted |
 | [0011](./adr-0011-dashboard-builder-and-widget-model.md) | Dashboard builder and widget model | Accepted |
+| [0012](./adr-0012-local-connectors-agent-and-on-premise-sources.md) | Local connectors agent and on-premise sources | Accepted |
