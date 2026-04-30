@@ -108,28 +108,65 @@ Use a skill mais específica quando a tarefa se encaixar em um destes fluxos:
 
 | Skill | Quando usar |
 |---|---|
-| `delfos-api-execution-plan` | planejar tarefa estrutural, refatoração ou mudança com vários arquivos antes de editar |
-| `delfos-api-nestjs-structure` | criar/reorganizar estrutura NestJS, módulos, config, healthcheck, Swagger e testes base |
-| `delfos-api-contract-review` | criar/revisar endpoints, DTOs, OpenAPI, paginação, filtros e erros |
-| `delfos-api-security-lgpd-review` | revisar autenticação, autorização, multi-tenant, LGPD, secrets e logs |
-| `delfos-api-mongo-modeling-review` | criar/revisar schemas MongoDB, índices, De/Para, auditoria e metadados |
-| `delfos-api-testing-quality-review` | revisar testes, lint, build, DoD e qualidade final |
-| `delfos-api-ci-fix-review` | corrigir falhas de CI, build, lint e testes com causa raiz |
+| `execution-plan` | planejar tarefa estrutural, refatoração ou mudança com vários arquivos antes de editar |
+| `nestjs-structure` | criar/reorganizar estrutura NestJS, módulos, config, healthcheck, Swagger e testes base |
+| `api-contract-review` | criar/revisar endpoints, DTOs, OpenAPI, paginação, filtros e erros |
+| `security-lgpd-review` | revisar autenticação, autorização, multi-tenant, LGPD, secrets e logs |
+| `mongo-modeling-review` | criar/revisar schemas MongoDB, índices, De/Para, auditoria e metadados |
+| `testing-quality-review` | revisar testes, lint, build, DoD e qualidade final |
+| `ci-fix-review` | corrigir falhas de CI, build, lint e testes com causa raiz |
 
 Regras:
 
 - skills complementam este `AGENTS.md`; não substituem `docs/`.
-- se a tarefa for grande, estrutural ou tocar vários arquivos, comece com `delfos-api-execution-plan`.
-- se a tarefa for de estrutura NestJS, use `delfos-api-nestjs-structure`.
-- se a tarefa alterar contrato público, use `delfos-api-contract-review`.
-- se a tarefa tocar auth, tenant, permissão, secrets, logs ou dados pessoais, use `delfos-api-security-lgpd-review`.
-- se a tarefa criar ou alterar schema MongoDB, use `delfos-api-mongo-modeling-review`.
-- antes de finalizar PR/commit relevante, use `delfos-api-testing-quality-review`.
-- se houver erro de lint/test/build/CI, use `delfos-api-ci-fix-review`.
+- nomes das skills são os diretórios em `.agents/skills/` — usar sem prefixo.
+- se a tarefa for grande, estrutural ou tocar vários arquivos, comece com `execution-plan`.
+- se a tarefa for de estrutura NestJS, use `nestjs-structure`.
+- se a tarefa alterar contrato público, use `api-contract-review`.
+- se a tarefa tocar auth, tenant, permissão, secrets, logs ou dados pessoais, use `security-lgpd-review`.
+- se a tarefa criar ou alterar schema MongoDB, use `mongo-modeling-review`.
+- antes de finalizar PR/commit relevante, use `testing-quality-review`.
+- se houver erro de lint/test/build/CI, use `ci-fix-review`.
 
 ---
 
-## 6. Onde achar cada coisa
+## 6. Estado atual da implementação
+
+> Leia esta seção antes de qualquer tarefa. Implementar algo fora do estado atual requer autorização explícita.
+
+### O que já existe (foundation)
+
+| Módulo | Caminho | Status |
+|---|---|---|
+| health | `src/modules/health/` | Implementado |
+| auth (foundation) | `src/modules/auth/` | Implementado — admin-key temporário, sem JWT real |
+| audit | `src/modules/audit/` | Implementado |
+| tenants | `src/modules/tenants/` | Implementado |
+| users | `src/modules/users/` | Implementado |
+| connections | `src/modules/connections/` | Implementado — declarativo, sem chamada externa |
+| credentials | `src/modules/credentials/` | Implementado — criptografia local, credentialRef |
+| datasets | `src/modules/datasets/` | Implementado — declarativo |
+| field-mappings | `src/modules/field-mappings/` | Implementado — declarativo |
+| query-definitions | `src/modules/query-definitions/` | Implementado — declarativo |
+| dashboard-definitions | `src/modules/dashboard-definitions/` | Implementado — declarativo |
+| execution-preview | `src/modules/execution-preview/` | Implementado — demo em memória, sem execução real |
+
+### O que NÃO existe ainda
+
+**Não implementar sem autorização explícita e ADR quando necessário:**
+
+- JWT auth real (login, refresh, bcrypt, strategies) — planejado, não iniciado
+- Motor de consumo de APIs de clientes (`data-connectors`) — planejado, não iniciado
+- Teste de conexão real — planejado, não iniciado
+- Execução real de query — Fase 2
+- Cache Redis / fila / worker / scheduler — Fase 2
+- Relatórios, exportações, white-label, preferências — não implementados
+- delfos-connectors — serviço futuro separado
+- Módulo `dashboards` ou `widgets` de runtime — não implementados
+
+---
+
+## 7. Onde achar cada coisa
 
 | Tema | Documento |
 |---|---|
@@ -158,7 +195,7 @@ Regras:
 
 ---
 
-## 7. Definition of Done
+## 8. Definition of Done
 
 Uma entrega só é considerada pronta quando:
 
@@ -180,7 +217,7 @@ Checklist completo em `docs/quality-checklist.md`.
 
 ---
 
-## 8. Regra final
+## 9. Regra final
 
 Sempre que houver dúvida, escolher na seguinte ordem:
 

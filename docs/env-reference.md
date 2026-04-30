@@ -15,7 +15,7 @@ Este documento descreve variaveis esperadas para local, homologacao e producao.
 | Variavel | Obrigatoria | Exemplo | Descricao |
 |---|---:|---|---|
 | `NODE_ENV` | Sim | `development` | Ambiente de execucao. |
-| `PORT` | Sim | `3001` | Porta HTTP da API. |
+| `PORT` | Sim | `3000` | Porta HTTP da API. |
 | `CORS_ORIGIN` | Nao | `http://localhost:8080` | Origens permitidas separadas por virgula. Quando omitida, CORS fica desabilitado. |
 | `LOG_LEVEL` | Sim | `info` | Nivel de log. |
 
@@ -55,10 +55,9 @@ As variaveis abaixo ja aparecem em `.env.example` como referencia de Fase 1, mas
 
 | Variavel | Obrigatoria | Exemplo | Descricao |
 |---|---:|---|---|
-| `SWAGGER_ENABLED` | Futuro | `true` | Feature flag planejada para habilitar Swagger em ambientes permitidos. |
-| `SWAGGER_PATH` | Futuro | `/docs` | Caminho planejado da documentacao. |
+| `SWAGGER_ENABLED` | Nao | `true` | Habilita Swagger UI em `/docs`. Default: `true` em desenvolvimento/teste, `false` em producao. Desabilitar antes de deploy em producao. |
 
-No checkpoint atual, Swagger fica exposto em `/docs` sem feature flag.
+Caminho fixo: `/docs`. Em producao, omitir a variavel ou definir `SWAGGER_ENABLED=false`.
 
 ## Checklist
 

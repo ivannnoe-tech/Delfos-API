@@ -1,8 +1,9 @@
 # ADR-0011 - Dashboard builder and widget model
 
-- **Status**: Accepted
+- **Status**: Accepted — decisão tomada, nada implementado além dos catálogos declarativos
 - **Data**: 2026-04-29
 - **Fase impactada**: Fase 1 e Fase 2, como decisao arquitetural e de produto
+- **Implementação atual**: `dashboard-definitions` e `query-definitions` existem como catálogos declarativos (sem execução). O módulo `execution-preview` gera demonstração em memória. Dashboard builder, widget runtime, renderização real e query builder **não implementados**.
 
 ---
 

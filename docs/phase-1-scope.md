@@ -7,6 +7,42 @@ A Fase 1 valida o produto como plataforma analítica configurável consumindo **
 
 ---
 
+## Estado atual da implementação (Fase 1 em andamento)
+
+> Esta seção reflete o que está **implementado** versus o que ainda está **planejado** dentro da Fase 1.  
+> O escopo das seções seguintes descreve a visão completa da Fase 1, não o estado atual.
+
+**Implementado (foundation):**
+
+| Módulo | Status |
+|---|---|
+| health | Implementado |
+| auth (admin-key temporário) | Implementado — JWT real planejado, não iniciado |
+| audit | Implementado |
+| tenants | Implementado |
+| users | Implementado |
+| connections | Implementado — declarativo, sem chamada externa |
+| credentials | Implementado — criptografia local, credentialRef |
+| datasets | Implementado — declarativo |
+| field-mappings | Implementado — declarativo |
+| query-definitions | Implementado — declarativo |
+| dashboard-definitions | Implementado — declarativo |
+| execution-preview | Implementado — demo em memória, sem execução real |
+
+**Planejado (não iniciado):**
+
+- JWT auth real (login, refresh, bcrypt, strategies)
+- Motor de consumo de APIs de clientes (`data-connectors`)
+- Teste de conexão real
+- Execução real de query
+- Dashboard builder e widgets de runtime
+- Relatórios e exportações
+- White-label e preferências
+
+**Não implementar sem autorização explícita e ADR quando necessário.**
+
+---
+
 ## 1. Objetivo da Fase 1
 
 Entregar uma plataforma web capaz de:

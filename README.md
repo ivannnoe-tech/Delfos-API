@@ -39,7 +39,7 @@ docker compose up -d mongo    # ou aponte DELFOS_DATABASE_URL para outra instân
 npm run start:dev
 ```
 
-A API sobe em `http://localhost:3001`. Swagger em `http://localhost:3001/docs`.
+A API sobe em `http://localhost:3000`. Swagger em `http://localhost:3000/docs`.
 
 Para o fluxo local validado no Windows com MongoDB local, veja [`docs/local-development.md`](./docs/local-development.md).
 

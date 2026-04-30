@@ -8,6 +8,7 @@ export interface EnvironmentVariables {
   ENCRYPTION_KEY_BASE64: string;
   CORS_ORIGIN: string[];
   LOG_LEVEL: 'debug' | 'info' | 'warn' | 'error';
+  SWAGGER_ENABLED: boolean;
 }
 
 const allowedNodeEnvironments = new Set<NodeEnvironment>(['development', 'test', 'production']);
@@ -22,10 +23,11 @@ export function validateEnvironment(config: Record<string, unknown>): Environmen
   const nodeEnv = readEnum(config, 'NODE_ENV', allowedNodeEnvironments, 'development');
   const port = readPort(config);
   const databaseUrl = readRequiredString(config, 'DELFOS_DATABASE_URL');
-  const adminKey = readRequiredString(config, 'DELFOS_ADMIN_KEY');
+  const adminKey = readAdminKey(config);
   const encryptionKeyBase64 = readEncryptionKey(config);
   const corsOrigin = readCsv(config, 'CORS_ORIGIN');
   const logLevel = readEnum(config, 'LOG_LEVEL', allowedLogLevels, 'info');
+  const swaggerEnabled = readBoolean(config, 'SWAGGER_ENABLED', nodeEnv !== 'production');
 
   return {
     NODE_ENV: nodeEnv,
@@ -35,11 +37,12 @@ export function validateEnvironment(config: Record<string, unknown>): Environmen
     ENCRYPTION_KEY_BASE64: encryptionKeyBase64,
     CORS_ORIGIN: corsOrigin,
     LOG_LEVEL: logLevel,
+    SWAGGER_ENABLED: swaggerEnabled,
   };
 }
 
 function readPort(config: Record<string, unknown>): number {
-  const rawPort = config.PORT ?? 3001;
+  const rawPort = config.PORT ?? 3000;
   const port = Number(rawPort);
 
   if (!Number.isInteger(port) || port < 1 || port > 65535) {
@@ -47,6 +50,16 @@ function readPort(config: Record<string, unknown>): number {
   }
 
   return port;
+}
+
+function readAdminKey(config: Record<string, unknown>): string {
+  const value = readRequiredString(config, 'DELFOS_ADMIN_KEY');
+
+  if (value.length < 32) {
+    throw new Error('DELFOS_ADMIN_KEY must be at least 32 characters.');
+  }
+
+  return value;
 }
 
 function readRequiredString(config: Record<string, unknown>, key: string): string {
@@ -81,6 +94,23 @@ function readCsv(config: Record<string, unknown>, key: string): string[] {
     .split(',')
     .map((item) => item.trim())
     .filter((item) => item.length > 0);
+}
+
+function readBoolean(
+  config: Record<string, unknown>,
+  key: string,
+  defaultValue: boolean,
+): boolean {
+  const value = config[key];
+
+  if (value === undefined || value === null || value === '') {
+    return defaultValue;
+  }
+
+  if (value === true || value === 'true' || value === '1') return true;
+  if (value === false || value === 'false' || value === '0') return false;
+
+  throw new Error(`${key} must be a boolean ('true'/'false'/'1'/'0').`);
 }
 
 function readEnum<T extends string>(

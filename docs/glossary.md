@@ -97,3 +97,43 @@ Fase atual: Delfos consome APIs dos clientes e armazena apenas configuração.
 ### Fase 2
 
 Fase futura possível: ingestão própria, histórico, cache persistente, filas e recursos avançados.
+
+---
+
+## Termos da foundation e execução
+
+### QueryDefinition
+
+Configuração declarativa de uma consulta: dataset, filtros, campos, ordenação e limites. Define *o que* será consultado, não executa diretamente.
+
+### DashboardDefinition
+
+Configuração declarativa de um dashboard: título, widgets ordenados, cada widget referenciando uma QueryDefinition.
+
+### credentialRef
+
+Referência opaca a uma credencial armazenada de forma criptografada. Formato: `cred_<ObjectId>`. O segredo real nunca trafega pelo frontend nem aparece em logs ou respostas de API.
+
+### execution-preview
+
+Módulo que gera dados de demonstração em memória para simular a execução de QueryDefinitions e DashboardDefinitions. Não executa chamadas externas reais e não persiste resultados.
+
+### delfos-connectors
+
+Serviço futuro (Fase 2) responsável por conectar o Delfos a fontes externas, executar queries reais e realizar sync/ingestão. Não existe ainda — ver ADR-0008.
+
+### local agent
+
+Componente futuro do `delfos-connectors` que seria instalado na rede do cliente para acessar fontes locais (bancos, APIs internas, arquivos) sem expô-las à internet. Não implementado — ver ADR-0012.
+
+### sync run
+
+Execução de coleta de dados de um dataset, com registro de status, contadores, duração e erros. Planejado para Fase 2.
+
+### snapshot
+
+Resultado materializado de uma execução de query, armazenado para servir visualizações sem nova chamada externa. Planejado para Fase 2.
+
+### materialized result
+
+Dado analítico pré-calculado e armazenado, equivalente a snapshot. Distinto do cache transitório em memória da Fase 1.

@@ -3,6 +3,8 @@
 > Status: contrato inicial da Fase 1  
 > Escopo: formato e diretrizes dos endpoints REST do `delfos-api` consumidos pelo `delfos-web`.
 
+Este documento define padrões gerais. Para os contratos detalhados dos endpoints da foundation já implementados, ver **`docs/api-foundation-contracts.md`**.
+
 Este documento define padrões. Endpoints finais devem ser detalhados conforme implementação.
 
 ---

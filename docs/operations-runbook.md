@@ -101,10 +101,48 @@ O seed deve apenas criar ou atualizar configuracoes ficticias da foundation. Ele
 executar query, chamar API externa, conectar em banco de cliente, criar cache, worker,
 scheduler ou fila.
 
+## Rotacao de DELFOS_ADMIN_KEY
+
+A `DELFOS_ADMIN_KEY` e uma autenticacao temporaria da foundation. Deve ser rotacionada
+proativamente e imediatamente apos suspeita de comprometimento.
+
+**Procedimento:**
+
+1. Gerar novo valor com comprimento minimo de 32 caracteres e alta entropia.
+   Exemplo local (nao usar em producao): `openssl rand -hex 32`
+2. Atualizar a variavel no ambiente de destino (secret manager, pipeline, env seguro).
+3. Reiniciar a aplicacao para carregar o novo valor.
+4. Verificar que endpoints protegidos por `x-delfos-admin-key` respondem com a nova chave.
+5. Invalidar o valor antigo no ambiente (remover do secret manager ou sobrescrever).
+6. Registrar o incidente de rotacao com data, motivo e responsavel.
+
+Nunca registrar o valor real da chave em log, auditoria, documento ou PR.
+A chave antiga nao deve continuar ativa apos confirmacao da nova.
+
+## Rotacao de ENCRYPTION_KEY_BASE64
+
+A `ENCRYPTION_KEY_BASE64` protege `secretValue` das credenciais armazenadas.
+A rotacao exige re-criptografia de todos os segredos ativos — nao e uma troca simples de variavel.
+
+**Procedimento:**
+
+1. Gerar nova chave de 32 bytes em base64.
+   Exemplo local: `openssl rand -base64 32`
+2. Criar rotina de migracao que:
+   a. Descriptografe cada credencial com a chave atual.
+   b. Re-criptografe com a nova chave.
+   c. Salve o novo `protectedSecretValue`.
+   Essa rotina deve ser executada em ambiente seguro, sem expor `secretValue` em log.
+3. Somente apos migracao bem-sucedida, atualizar `ENCRYPTION_KEY_BASE64` no ambiente.
+4. Reiniciar a aplicacao e validar que credenciais existentes ainda funcionam.
+5. Registrar o incidente com data, motivo e responsavel.
+
+Nao substituir a variavel sem a migracao — todas as credenciais existentes ficarao ilegíveis.
+
 ## Incidente de seguranca
 
 1. Isolar impacto.
 2. Preservar evidencias.
-3. Revogar secrets/tokens suspeitos.
+3. Revogar secrets/tokens suspeitos (ver rotacao acima).
 4. Verificar logs e auditoria.
 5. Registrar plano de correcao.

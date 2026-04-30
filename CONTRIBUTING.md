@@ -26,7 +26,7 @@ cp .env.example .env       # edite os valores antes de subir o app
 npm run start:dev
 ```
 
-A API sobe em `http://localhost:3001`. Documentação Swagger em `http://localhost:3001/docs` (em ambiente não-produção).
+A API sobe em `http://localhost:3000`. Documentação Swagger em `http://localhost:3000/docs` (em ambiente não-produção).
 
 ---
 

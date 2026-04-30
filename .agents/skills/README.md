@@ -6,25 +6,25 @@ Skills de repositório para orientar o Codex em fluxos repetitivos do `delfos-ap
 
 Ao pedir uma tarefa ao Codex, mencione a skill quando quiser forçar o fluxo:
 
-- `Use a skill delfos-api-execution-plan`
-- `Use a skill delfos-api-nestjs-structure`
-- `Use a skill delfos-api-contract-review`
-- `Use a skill delfos-api-security-lgpd-review`
-- `Use a skill delfos-api-mongo-modeling-review`
-- `Use a skill delfos-api-testing-quality-review`
-- `Use a skill delfos-api-ci-fix-review`
+- `Use a skill execution-plan`
+- `Use a skill nestjs-structure`
+- `Use a skill api-contract-review`
+- `Use a skill security-lgpd-review`
+- `Use a skill mongo-modeling-review`
+- `Use a skill testing-quality-review`
+- `Use a skill ci-fix-review`
 
 ## Skills disponíveis
 
 | Skill | Uso principal |
 |---|---|
-| `delfos-api-execution-plan` | planejar tarefas estruturais antes de editar código |
-| `delfos-api-nestjs-structure` | base técnica NestJS, módulos, config, healthcheck, Swagger e testes |
-| `delfos-api-contract-review` | endpoints, DTOs, OpenAPI, erros, paginação e contratos |
-| `delfos-api-security-lgpd-review` | auth, permissões, multi-tenant, secrets, logs e LGPD |
-| `delfos-api-mongo-modeling-review` | schemas MongoDB, índices, De/Para, metadados e auditoria |
-| `delfos-api-testing-quality-review` | testes, lint, build, DoD e revisão final |
-| `delfos-api-ci-fix-review` | falhas de CI, build, lint e testes |
+| `execution-plan` | planejar tarefas estruturais antes de editar código |
+| `nestjs-structure` | base técnica NestJS, módulos, config, healthcheck, Swagger e testes |
+| `api-contract-review` | endpoints, DTOs, OpenAPI, erros, paginação e contratos |
+| `security-lgpd-review` | auth, permissões, multi-tenant, secrets, logs e LGPD |
+| `mongo-modeling-review` | schemas MongoDB, índices, De/Para, metadados e auditoria |
+| `testing-quality-review` | testes, lint, build, DoD e revisão final |
+| `ci-fix-review` | falhas de CI, build, lint e testes |
 
 ## Regra
 

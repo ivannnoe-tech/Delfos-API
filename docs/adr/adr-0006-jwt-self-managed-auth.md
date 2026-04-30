@@ -1,8 +1,9 @@
 # ADR-0006 — Self-managed JWT auth (no Auth0/Clerk)
 
-- **Status**: Accepted
+- **Status**: Accepted — decisão tomada, implementação não iniciada
 - **Data**: 2026-04-25
 - **Fase impactada**: Fase 1
+- **Implementação atual**: auth temporária via `x-delfos-admin-key` (`AdminKeyGuard`). JWT real (login, refresh, bcrypt, strategies) está planejado nesta ADR mas **ainda não implementado**.
 
 ---
 

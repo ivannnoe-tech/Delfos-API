@@ -48,9 +48,9 @@ O backend é responsável por:
 - armazenamento criptografado de credenciais
 - cadastro de datasets/endpoints
 - cadastro de De/Para por dataset
-- execução segura de chamadas HTTP externas
-- validação, normalização e paginação de respostas
-- cache transitório em memória quando permitido
+- execução segura de chamadas HTTP externas *(planejado — módulo `data-connectors` não implementado; ver ADR-0008)*
+- validação, normalização e paginação de respostas *(planejado — dependente do motor acima)*
+- cache transitório em memória quando permitido *(planejado — Fase 1, não iniciado)*
 - logs e auditoria
 - contratos REST consumidos pelo front
 - exportações quando dependerem de regra de backend

@@ -34,4 +34,8 @@ export class AppConfigService {
   get logLevel(): EnvironmentVariables['LOG_LEVEL'] {
     return this.configService.get('LOG_LEVEL', { infer: true });
   }
+
+  get swaggerEnabled(): boolean {
+    return this.configService.get('SWAGGER_ENABLED', { infer: true });
+  }
 }

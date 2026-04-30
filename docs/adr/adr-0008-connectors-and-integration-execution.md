@@ -1,8 +1,9 @@
 # ADR-0008 - delfos-connectors and integration execution
 
-- **Status**: Accepted
+- **Status**: Accepted — decisão tomada, nada implementado
 - **Data**: 2026-04-29
 - **Fase impactada**: Fase 2, com fronteira arquitetural registrada desde a foundation
+- **Implementação atual**: `delfos-connectors` **não existe**. Nenhum conector real, fila, cache, scheduler, execução de query ou staging foi implementado. O módulo `execution-preview` gera apenas dados de demonstração em memória.
 
 ---
 

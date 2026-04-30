@@ -22,22 +22,24 @@ async function bootstrap(): Promise<void> {
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new RequestContextInterceptor());
 
-  const openApiConfig = new DocumentBuilder()
-    .setTitle('Delfos Analytics API')
-    .setDescription('HTTP contracts for Delfos Analytics.')
-    .setVersion('0.1.0')
-    .addApiKey(
-      {
-        type: 'apiKey',
-        name: DELFOS_ADMIN_KEY_HEADER,
-        in: 'header',
-        description: 'Temporary foundation admin key for protected administrative endpoints.',
-      },
-      'delfos-admin-key',
-    )
-    .build();
-  const document = SwaggerModule.createDocument(app, openApiConfig);
-  SwaggerModule.setup('docs', app, document);
+  if (config.swaggerEnabled) {
+    const openApiConfig = new DocumentBuilder()
+      .setTitle('Delfos Analytics API')
+      .setDescription('HTTP contracts for Delfos Analytics.')
+      .setVersion('0.1.0')
+      .addApiKey(
+        {
+          type: 'apiKey',
+          name: DELFOS_ADMIN_KEY_HEADER,
+          in: 'header',
+          description: 'Temporary foundation admin key for protected administrative endpoints.',
+        },
+        'delfos-admin-key',
+      )
+      .build();
+    const document = SwaggerModule.createDocument(app, openApiConfig);
+    SwaggerModule.setup('docs', app, document);
+  }
 
   await app.listen(config.port);
 }
