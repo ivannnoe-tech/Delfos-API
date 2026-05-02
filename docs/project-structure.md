@@ -97,7 +97,12 @@ lib/
 ## 5. Regras de organização
 
 - Arquivos pequenos e focados.
-- Sem arquivo acima de 500 linhas sem refatorar/justificar.
+- Produção deve ficar preferencialmente até 400 linhas por arquivo.
+- Arquivos de produção entre 400 e 600 linhas exigem atenção ativa para coesão e extração.
+- Arquivos de produção acima de 600 linhas devem ser candidatos a extração.
+- Arquivos de produção acima de 900 linhas não devem ser aceitos em novas implementações,
+  salvo exceção justificada e documentada.
+- Testes acima de 1000 linhas devem ser considerados para split por responsabilidade.
 - Código compartilhado vai para `core` ou `shared` conforme contexto.
 - Regra de negócio fica em service/use-case, não em controller/widget.
 - Contratos públicos ficam em DTOs e documentação.

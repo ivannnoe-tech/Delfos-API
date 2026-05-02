@@ -15,6 +15,10 @@ import {
   ExecutionRequestEvent,
   ExecutionRequestEventSchema,
 } from './schemas/execution-request-event.schema';
+import { ExecutionRequestAuditService } from './services/execution-request-audit.service';
+import { ExecutionRequestDryRunService } from './services/execution-request-dry-run.service';
+import { ExecutionRequestEventsService } from './services/execution-request-events.service';
+import { ExecutionRequestReadinessService } from './services/execution-request-readiness.service';
 import { ExecutionRequestsService } from './services/execution-requests.service';
 
 @Module({
@@ -32,7 +36,11 @@ import { ExecutionRequestsService } from './services/execution-requests.service'
   ],
   controllers: [ExecutionRequestsController],
   providers: [
+    ExecutionRequestAuditService,
+    ExecutionRequestDryRunService,
     ExecutionRequestEventsRepository,
+    ExecutionRequestEventsService,
+    ExecutionRequestReadinessService,
     ExecutionRequestsRepository,
     ExecutionRequestsService,
   ],
