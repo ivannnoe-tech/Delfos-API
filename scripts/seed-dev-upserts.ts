@@ -37,6 +37,12 @@ import {
   QueryDefinitionDocument,
   QueryDefinitionStatus,
 } from '../src/modules/query-definitions/schemas/query-definition.schema';
+import {
+  ReportDefinition,
+  ReportDefinitionDocument,
+  ReportDefinitionStatus,
+  ReportDefinitionVisibility,
+} from '../src/modules/report-definitions/schemas/report-definition.schema';
 import { Tenant, TenantDocument, TenantStatus } from '../src/modules/tenants/schemas/tenant.schema';
 import { User, UserDocument, UserRole, UserStatus } from '../src/modules/users/schemas/user.schema';
 import {
@@ -45,6 +51,7 @@ import {
   buildFieldMappingInputs,
   buildQueryFilter,
   buildQueryInputs,
+  buildReportInput,
   buildQuerySorts,
   demoActorId,
   demoAllowedGranularities,
@@ -58,6 +65,7 @@ export {
   DashboardDefinition,
   FieldMapping,
   QueryDefinition,
+  ReportDefinition,
   Tenant,
   User,
 };
@@ -312,6 +320,37 @@ export async function upsertDashboardDefinitions(
   return [dashboard];
 }
 
+export async function upsertReportDefinitions(
+  model: Model<ReportDefinitionDocument>,
+  tenantId: Types.ObjectId,
+  queries: QueryDefinitionDocument[],
+  dashboards: DashboardDefinitionDocument[],
+): Promise<ReportDefinitionDocument[]> {
+  const input = buildReportInput({
+    salesOverview: requireQuery(queries, 'sales_overview_demo')._id,
+    commercialDashboard: requireDashboard(dashboards, 'commercial_dashboard_demo')._id,
+  });
+
+  const report = await model
+    .findOneAndUpdate(
+      { tenantId, reportKey: input.reportKey },
+      {
+        $set: {
+          ...input,
+          tenantId,
+          status: ReportDefinitionStatus.Active,
+          visibility: ReportDefinitionVisibility.Tenant,
+          updatedBy: demoActorId,
+        },
+        $setOnInsert: { createdBy: demoActorId },
+      },
+      upsertOptions(),
+    )
+    .exec();
+
+  return [report];
+}
+
 export function toCredentialRef(id: Types.ObjectId): string {
   return `cred_${id.toString()}`;
 }
@@ -327,6 +366,19 @@ function requireQuery(
   }
 
   return query;
+}
+
+function requireDashboard(
+  dashboards: DashboardDefinitionDocument[],
+  dashboardKey: string,
+): DashboardDefinitionDocument {
+  const dashboard = dashboards.find((item) => item.dashboardKey === dashboardKey);
+
+  if (!dashboard) {
+    throw new Error(`Dashboard definition ${dashboardKey} is required for report seed.`);
+  }
+
+  return dashboard;
 }
 
 function upsertOptions(): {

@@ -43,6 +43,7 @@ O MongoDB atual armazena dados proprios do Delfos e configuracoes da foundation:
 - field-mappings declarativos;
 - query-definitions declarativas;
 - dashboard-definitions declarativas;
+- report-definitions declarativas;
 - logs e auditoria interna sanitizada;
 - dados ficticios de seed/dev local.
 

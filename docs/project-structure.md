@@ -45,6 +45,7 @@ delfos-api/
 │       ├── field-mappings/
 │       ├── query-definitions/
 │       ├── dashboard-definitions/
+│       ├── report-definitions/
 │       └── execution-preview/
 ├── scripts/
 ├── docs/

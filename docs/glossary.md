@@ -78,7 +78,9 @@ Widgets com dados devem apontar para uma `queryDefinition`; eles nao acessam ban
 
 ### Report
 
-Relatorio configuravel, geralmente tabular, com filtros, colunas e exportacao. Planejado/futuro.
+Relatorio configuravel, geralmente tabular, com filtros, parametros, blocos e opcoes declarativas
+de exportacao. Na foundation atual existe como `reportDefinition`; runtime, geracao real de
+arquivo, envio e agendamento continuam futuros.
 
 ### ChartRenderer
 
@@ -139,6 +141,12 @@ limites. Define o que podera ser consultado no futuro; nao executa query real no
 
 Configuracao declarativa de um dashboard: layout, secoes, filtros, widgets e referencias a
 queryDefinitions. Nao e dashboard runtime final.
+
+### reportDefinition
+
+Configuracao declarativa de um relatorio: layout, secoes, blocos, filtros, parametros,
+exportOptions e referencias opcionais a queryDefinitions/dashboardDefinitions. Nao gera arquivo,
+nao executa query e nao agenda envio no estado atual.
 
 ### credentialRef
 

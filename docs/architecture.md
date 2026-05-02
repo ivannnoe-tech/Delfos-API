@@ -49,6 +49,7 @@ O backend é responsável por:
 - cadastro declarativo de datasets
 - cadastro de De/Para declarativo por dataset
 - cadastro declarativo de query-definitions e dashboard-definitions
+- cadastro declarativo de report-definitions
 - `execution-preview` demo em memoria
 - execucao segura de chamadas HTTP externas *(planejado/futuro — `data-connectors` nao implementado; ver ADR-0008)*
 - validacao, normalizacao e paginacao de respostas reais *(planejado/futuro — dependente do executor futuro)*

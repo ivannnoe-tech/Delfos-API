@@ -25,6 +25,7 @@ Implementado atualmente:
 - field-mappings declarativos;
 - query-definitions declarativas;
 - dashboard-definitions declarativas;
+- report-definitions declarativas;
 - audit interno;
 - seed/dev local com dados ficticios;
 - `execution-preview` demo em memoria;
@@ -41,7 +42,7 @@ Nao implementado atualmente:
 - cache, fila, worker, scheduler, staging ou snapshot;
 - dashboard builder/runtime final;
 - query builder;
-- report builder/exportacoes finais;
+- report builder/runtime e exportacoes finais;
 - CI/commitlint.
 
 ---

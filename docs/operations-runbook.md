@@ -20,6 +20,7 @@ O estado atual cobre:
 - headers temporarios de tenant, actor e role;
 - seed/dev local com dados ficticios;
 - catalogos foundation declarativos;
+- report-definitions declarativas;
 - `execution-preview` demo em memoria;
 - Swagger em `/docs` conforme `SWAGGER_ENABLED`.
 
@@ -82,7 +83,7 @@ JWT, login, refresh token e OAuth sao futuros e nao fazem parte do procedimento 
 ## Erro em catalogos foundation
 
 Aplica-se a `tenants`, `users`, `connections`, `credentials`, `datasets`, `field-mappings`,
-`query-definitions` e `dashboard-definitions`.
+`query-definitions`, `dashboard-definitions` e `report-definitions`.
 
 Verificar:
 
@@ -111,6 +112,14 @@ Dashboard definitions sao configuracao declarativa. Se houver erro em
 
 Nao deve haver tentativa de renderizacao final, execucao de query, conexao externa, cache, worker,
 scheduler ou fila nesse fluxo.
+
+## Erro em report definitions
+
+Report definitions sao configuracao declarativa. Se houver erro em
+`/api/v1/report-definitions`, verifique `tenantId`, `reportKey`, status, visibility e `requestId`.
+
+Nao deve haver tentativa de geracao de PDF/Excel/CSV, execucao de query, envio de e-mail,
+agendamento, conexao externa, cache, worker, scheduler ou fila nesse fluxo.
 
 ## Erro em preview/demo execution
 

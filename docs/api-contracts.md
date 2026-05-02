@@ -342,6 +342,32 @@ Regras do preview de dashboard:
 - Nao persiste resultado e nao cria snapshot/cache.
 - Evento interno de audit: `execution_preview.dashboard.generated`.
 
+### Report definitions
+
+- `GET /api/v1/report-definitions`
+- `POST /api/v1/report-definitions`
+- `GET /api/v1/report-definitions/:id`
+- `PATCH /api/v1/report-definitions/:id`
+- `DELETE /api/v1/report-definitions/:id`
+
+Na foundation atual, report definitions sao apenas configuracao declarativa para relatorios
+futuros. Elas podem referenciar `queryDefinitionId` e `dashboardDefinitionId`, alem de descrever
+`layout`, `sections`, `blocks`, `filters`, `parameters`, `exportOptions`, tags e metadados
+seguros. Nenhum endpoint gera PDF, Excel ou CSV, executa query, renderiza relatorio, envia e-mail,
+agenda job, cria fila, scheduler, cache, worker, conector ou chamada externa.
+
+`tenantId`, `reportKey` e `name` sao obrigatorios. `reportKey` e unico por tenant e deve ser
+estavel para integracoes. `queryDefinitionId` e `dashboardDefinitionId` sao referencias
+declarativas opcionais nesta etapa; a existencia real nao e validada para permitir montagem
+incremental dos cadastros.
+
+`DELETE` e soft delete: o recurso passa para `status: "archived"`. `metadata`, `settings`,
+`exportOptions`, `blocks.options`, `filters.defaultValue`, `filters.allowedValues`,
+`parameters.defaultValue` e `parameters.allowedValues` sao sanitizados e nao podem conter secrets,
+tokens, senhas, connection strings reais, authorization headers ou valores de alta entropia.
+Eventos internos de audit registram apenas `reportKey`, `status`, `visibility`, referencias
+declarativas e contadores de secoes/blocos.
+
 ### Field mappings
 
 - `GET /api/v1/field-mappings?tenantId=...&datasetKey=...`
@@ -360,7 +386,7 @@ Regras do preview de dashboard:
 - `DELETE /api/v1/widgets/:id`
 - `POST /api/v1/widgets/:id/data`
 
-### Reports planejados/futuros
+### Reports runtime/export planejados/futuros
 
 - `GET /api/v1/reports`
 - `POST /api/v1/reports`

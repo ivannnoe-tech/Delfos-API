@@ -55,7 +55,7 @@ Detalhes completos de headers, erros, envelope de lista e healthcheck ficam em
 |---|---|
 | [`foundation-auth-and-errors.md`](./foundation-auth-and-errors.md) | Escopo, headers temporarios, envelope de lista, contrato de erro e `GET /health`. |
 | [`foundation-tenancy-and-admin-resources.md`](./foundation-tenancy-and-admin-resources.md) | Contratos de `tenants`, `users` e `connections`. |
-| [`foundation-data-catalog.md`](./foundation-data-catalog.md) | Contratos de `datasets`, `query-definitions`, `dashboard-definitions` e `field-mappings`. |
+| [`foundation-data-catalog.md`](./foundation-data-catalog.md) | Contratos de `datasets`, `query-definitions`, `dashboard-definitions`, `report-definitions` e `field-mappings`. |
 | [`foundation-credentials-and-security.md`](./foundation-credentials-and-security.md) | Contrato de `credentials`, seguranca dos exemplos e checkpoint tecnico da foundation. |
 
 ## 4. Indice de endpoints
@@ -69,8 +69,9 @@ Detalhes completos de headers, erros, envelope de lista e healthcheck ficam em
 | Datasets | `POST /api/v1/datasets`, `GET /api/v1/datasets`, `GET /api/v1/datasets/:id`, `PATCH /api/v1/datasets/:id`, `DELETE /api/v1/datasets/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#1-datasets) |
 | Query definitions | `POST /api/v1/query-definitions`, `GET /api/v1/query-definitions`, `GET /api/v1/query-definitions/:id`, `PATCH /api/v1/query-definitions/:id`, `DELETE /api/v1/query-definitions/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#2-query-definitions--semantic-layer) |
 | Dashboard definitions | `POST /api/v1/dashboard-definitions`, `GET /api/v1/dashboard-definitions`, `GET /api/v1/dashboard-definitions/:id`, `PATCH /api/v1/dashboard-definitions/:id`, `DELETE /api/v1/dashboard-definitions/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#3-dashboard-definitions) |
-| Field mappings | `POST /api/v1/field-mappings`, `GET /api/v1/field-mappings`, `PATCH /api/v1/field-mappings/:id`, `DELETE /api/v1/field-mappings/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#4-field-mappings) |
-| Execution preview | `POST /api/v1/query-definitions/:id/preview`, `POST /api/v1/dashboard-definitions/:id/preview` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#5-previewdemo-execution) |
+| Report definitions | `POST /api/v1/report-definitions`, `GET /api/v1/report-definitions`, `GET /api/v1/report-definitions/:id`, `PATCH /api/v1/report-definitions/:id`, `DELETE /api/v1/report-definitions/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#4-report-definitions) |
+| Field mappings | `POST /api/v1/field-mappings`, `GET /api/v1/field-mappings`, `PATCH /api/v1/field-mappings/:id`, `DELETE /api/v1/field-mappings/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#5-field-mappings) |
+| Execution preview | `POST /api/v1/query-definitions/:id/preview`, `POST /api/v1/dashboard-definitions/:id/preview` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#6-previewdemo-execution) |
 | Credentials | `POST /api/v1/credentials`, `GET /api/v1/credentials`, `GET /api/v1/credentials/:id`, `PATCH /api/v1/credentials/:id/rotate`, `PATCH /api/v1/credentials/:id/revoke` | [`foundation-credentials-and-security.md`](./foundation-credentials-and-security.md#1-credentials--secrets) |
 
 ## 5. Regras transversais
@@ -78,7 +79,7 @@ Detalhes completos de headers, erros, envelope de lista e healthcheck ficam em
 - Recursos tenant-scoped exigem `tenantId` explicito em body ou query enquanto nao existir contexto autenticado final.
 - Buscas, updates e deletes por id em recursos tenant-scoped sao tenant-scoped.
 - `createdBy` e `updatedBy` usam `x-delfos-actor-id` nos recursos que possuem esses campos.
-- `metadata`, `settings`, filtros e opcoes livres sao sanitizados conforme o recurso.
+- `metadata`, `settings`, filtros, parametros, exportOptions e opcoes livres sao sanitizados conforme o recurso.
 - Auditoria interna nao possui rota publica e nao grava segredo real, credenciais, metadata livre, settings ou payload operacional.
 - Swagger documenta os headers temporarios via `ApiFoundationAuthHeaders` nos controllers protegidos.
 - O contrato de erro global padronizado vale para validacao, auth, forbidden, not found e erros inesperados.

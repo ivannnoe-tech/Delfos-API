@@ -138,7 +138,7 @@ Principais erros esperados:
 Estado revisado neste checkpoint:
 
 - `GET /health` permanece publico e fora de `/api/v1`.
-- Endpoints administrativos de `tenants`, `users`, `connections`, `credentials`, `datasets`, `query-definitions`, `dashboard-definitions` e `field-mappings` exigem `x-delfos-admin-key`.
+- Endpoints administrativos de `tenants`, `users`, `connections`, `credentials`, `datasets`, `query-definitions`, `dashboard-definitions`, `report-definitions` e `field-mappings` exigem `x-delfos-admin-key`.
 - Leitura/listagem usa o padrao temporario atual: admin key obrigatoria, sem role obrigatoria.
 - Mutacoes gerais usam `owner`, `admin` ou `operator`, exceto operacoes sensiveis de credenciais.
 - Operacoes sensiveis de credenciais (`POST`, `rotate`, `revoke`) usam apenas `owner` ou `admin`.
@@ -146,10 +146,12 @@ Estado revisado neste checkpoint:
 - Buscas/updates/deletes por id em `users`, `connections`, `credentials`, `datasets` e `field-mappings` sao tenant-scoped.
 - Buscas/updates/deletes por id em `query-definitions` tambem sao tenant-scoped.
 - Buscas/updates/deletes por id em `dashboard-definitions` tambem sao tenant-scoped.
+- Buscas/updates/deletes por id em `report-definitions` tambem sao tenant-scoped.
 - `createdBy` e `updatedBy` usam `x-delfos-actor-id` nos recursos que possuem esses campos (`credentials`, `datasets`, `query-definitions` e `dashboard-definitions`).
-- `metadata`/`settings` sao sanitizados em `tenants`, `connections`, `datasets`, `query-definitions` e `dashboard-definitions`; secrets, tokens, credenciais, connection strings e valores nao escalares sao descartados.
+- `metadata`/`settings` sao sanitizados em `tenants`, `connections`, `datasets`, `query-definitions`, `dashboard-definitions` e `report-definitions`; secrets, tokens, credenciais, connection strings e valores nao escalares sao descartados.
 - `query-definitions` tambem sanitiza `filters.defaultValue` e `filters.allowedValues`, mantendo apenas escalares seguros.
 - `dashboard-definitions` tambem sanitiza `widgets.options`, `filters.defaultValue` e `filters.allowedValues`, mantendo apenas escalares seguros.
+- `report-definitions` tambem sanitiza `exportOptions`, `blocks.options`, `filters.defaultValue`, `filters.allowedValues`, `parameters.defaultValue` e `parameters.allowedValues`, mantendo apenas escalares seguros.
 - Auditoria interna nao possui rota publica e nao grava segredo real, `secretValue`, `protectedSecretValue`, `credentialRef`, `baseUrl`, `sourcePath`, `metadata` livre, `settings` ou payload operacional.
 - Swagger documenta os headers temporarios via `ApiFoundationAuthHeaders` nos controllers protegidos.
 - O contrato de erro global padronizado vale para validacao, auth, forbidden, not found e erros inesperados.

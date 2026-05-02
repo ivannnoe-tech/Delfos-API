@@ -26,6 +26,7 @@ O consumo real de APIs custom, conectores, cache, fila, scheduler, dashboard run
 | field-mappings | Implementado - declarativo |
 | query-definitions | Implementado - declarativo |
 | dashboard-definitions | Implementado - declarativo |
+| report-definitions | Implementado - declarativo |
 | execution-preview | Implementado - demo em memoria, sem execucao real |
 | seed/dev local | Implementado - dados ficticios |
 
@@ -39,7 +40,7 @@ O consumo real de APIs custom, conectores, cache, fila, scheduler, dashboard run
 - Execucao real de query.
 - Conexao com banco, API, arquivo ou sistema de cliente.
 - Dashboard runtime final, widget builder final ou query builder guiado.
-- Relatorios, exportacoes, white-label e preferencias finais.
+- Runtime de relatorios, exportacoes reais, white-label e preferencias finais.
 
 ---
 
@@ -50,7 +51,7 @@ Entregar uma foundation capaz de:
 - expor contratos administrativos protegidos por `x-delfos-admin-key`;
 - separar recursos por tenant;
 - cadastrar tenants, usuarios administrativos, connections declarativas e credentials protegidas;
-- cadastrar datasets, field-mappings, query-definitions e dashboard-definitions declarativos;
+- cadastrar datasets, field-mappings, query-definitions, dashboard-definitions e report-definitions declarativos;
 - gerar `execution-preview` demo em memoria, sempre ficticio;
 - popular ambiente local com seed/dev ficticio;
 - auditar mutacoes sensiveis sem gravar payloads ou secrets.
@@ -150,7 +151,7 @@ Esta etapa da Fase 1 e considerada bem-sucedida quando:
 - tenants, usuarios administrativos, connections e credentials podem ser cadastrados com seguranca;
 - datasets podem ser cadastrados como catalogo declarativo;
 - campos podem ser mapeados por De/Para;
-- query-definitions e dashboard-definitions podem ser cadastradas e consultadas por tenant;
+- query-definitions, dashboard-definitions e report-definitions podem ser cadastradas e consultadas por tenant;
 - previews demo deixam claro que os dados sao ficticios;
 - permissoes temporarias impedem mutacoes indevidas;
 - contratos de erro incluem `requestId`/`correlationId`;

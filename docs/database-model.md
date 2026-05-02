@@ -220,17 +220,42 @@ Nao persistem resultado, nao criam cache, nao criam snapshots, nao criam `query_
 e nao armazenam dado operacional de cliente. Apenas eventos seguros de audit podem ser gravados
 em `audit_logs`.
 
-### reports
+### report_definitions
 
-Relatórios configurados.
+Definicoes administrativas e declarativas de relatorios. Na foundation atual, armazena apenas
+configuracao para relatorios futuros; nao gera PDF, Excel ou CSV, nao executa query, nao envia
+e-mail, nao agenda job e nao consome fonte externa.
 
 - `tenantId`
+- `reportKey`
 - `name`
-- `datasetId`
-- `columns`
+- `description`
+- `status`
+- `visibility`
+- `queryDefinitionId`
+- `dashboardDefinitionId`
+- `layout`
+- `sections`
+- `blocks`
 - `filters`
-- `sorting`
+- `parameters`
 - `exportOptions`
+- `tags`
+- `metadata`
+- `settings`
+- `createdBy`
+- `updatedBy`
+- `createdAt`
+- `updatedAt`
+
+Regras:
+
+- `reportKey` e unico por tenant e deve ser estavel para integracoes.
+- `queryDefinitionId` e `dashboardDefinitionId` sao referencias declarativas opcionais sem
+  validacao cruzada nesta etapa.
+- `metadata`, `settings`, `exportOptions`, `blocks.options`, filtros e parametros guardam apenas
+  valores sanitizados.
+- `DELETE` logico usa `status: archived`.
 
 ### white_label_settings
 
@@ -281,6 +306,11 @@ Auditoria de ações sensíveis.
 - `dashboard_definitions.tenantId + dashboardKey` unico
 - `dashboard_definitions.tenantId + status`
 - `dashboard_definitions.tenantId + visibility`
+- `report_definitions.tenantId + reportKey` unico
+- `report_definitions.tenantId + status`
+- `report_definitions.tenantId + visibility`
+- `report_definitions.tenantId + queryDefinitionId`
+- `report_definitions.tenantId + dashboardDefinitionId`
 - `audit_logs.tenantId + createdAt`
 
 ---

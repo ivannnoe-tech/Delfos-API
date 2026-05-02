@@ -11,7 +11,7 @@ Este arquivo é o ponto de entrada. Ele intencionalmente é curto. Cada bloco ap
 Leia esta seção antes de qualquer tarefa. O estado atual do `delfos-api` é foundation administrativa/declarativa:
 
 - auth temporária por `x-delfos-admin-key`;
-- `tenants`, `users`, `connections`, `credentials`, `datasets`, `field-mappings`, `query-definitions`, `dashboard-definitions` e `execution-preview` demo;
+- `tenants`, `users`, `connections`, `credentials`, `datasets`, `field-mappings`, `query-definitions`, `dashboard-definitions`, `report-definitions` e `execution-preview` demo;
 - seed/dev local com dados fictícios;
 - sem JWT real, login ou OAuth;
 - sem conectores reais;
@@ -164,6 +164,7 @@ Regras:
 | field-mappings | `src/modules/field-mappings/` | Implementado — declarativo |
 | query-definitions | `src/modules/query-definitions/` | Implementado — declarativo |
 | dashboard-definitions | `src/modules/dashboard-definitions/` | Implementado — declarativo |
+| report-definitions | `src/modules/report-definitions/` | Implementado — declarativo |
 | execution-preview | `src/modules/execution-preview/` | Implementado — demo em memória, sem execução real |
 
 ### O que NÃO existe ainda
@@ -175,7 +176,7 @@ Regras:
 - Teste de conexão real — planejado, não iniciado
 - Execução real de query — Fase 2
 - Cache Redis / fila / worker / scheduler — Fase 2
-- Relatórios, exportações, white-label, preferências — não implementados
+- Runtime de relatórios, exportações reais, white-label, preferências — não implementados
 - delfos-connectors — serviço futuro separado
 - Módulo `dashboards` ou `widgets` de runtime — não implementados
 

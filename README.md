@@ -93,6 +93,7 @@ src/
     ├── field-mappings/      # De/Para
     ├── query-definitions/   # camada semântica declarativa
     ├── dashboard-definitions/
+    ├── report-definitions/
     └── execution-preview/   # preview demo em memória
 ```
 

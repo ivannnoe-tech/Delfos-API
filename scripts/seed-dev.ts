@@ -11,6 +11,7 @@ import { DashboardDefinitionDocument } from '../src/modules/dashboard-definition
 import { DatasetDocument } from '../src/modules/datasets/schemas/dataset.schema';
 import { FieldMappingDocument } from '../src/modules/field-mappings/schemas/field-mapping.schema';
 import { QueryDefinitionDocument } from '../src/modules/query-definitions/schemas/query-definition.schema';
+import { ReportDefinitionDocument } from '../src/modules/report-definitions/schemas/report-definition.schema';
 import { TenantDocument } from '../src/modules/tenants/schemas/tenant.schema';
 import { UserDocument } from '../src/modules/users/schemas/user.schema';
 import {
@@ -28,6 +29,7 @@ import {
   DashboardDefinition,
   FieldMapping,
   QueryDefinition,
+  ReportDefinition,
   Tenant,
   User,
   attachCredentialRef,
@@ -39,6 +41,7 @@ import {
   upsertFieldMappings,
   upsertOwnerUser,
   upsertQueryDefinitions,
+  upsertReportDefinitions,
   upsertTenant,
 } from './seed-dev-upserts';
 
@@ -51,6 +54,7 @@ interface SeedModels {
   fieldMappings: Model<FieldMappingDocument>;
   queryDefinitions: Model<QueryDefinitionDocument>;
   dashboardDefinitions: Model<DashboardDefinitionDocument>;
+  reportDefinitions: Model<ReportDefinitionDocument>;
 }
 
 interface SeedCatalogItem {
@@ -74,6 +78,7 @@ interface SeedResult {
   datasets: SeedCatalogItem[];
   queryDefinitions: SeedCatalogItem[];
   dashboardDefinitions: SeedCatalogItem[];
+  reportDefinitions: SeedCatalogItem[];
   webCommand: string;
   previewCommands: SeedPreviewCommands;
 }
@@ -119,12 +124,21 @@ export async function seedDevFoundation(app: INestApplicationContext): Promise<S
     tenant._id,
     queries,
   );
+  const reports = await upsertReportDefinitions(
+    models.reportDefinitions,
+    tenant._id,
+    queries,
+    dashboards,
+  );
 
   const tenantId = tenant._id.toString();
   const actorId = user._id.toString();
   const queryItems = queries.map((query) => toCatalogItem(query._id, query.queryKey, query.name));
   const dashboardItems = dashboards.map((dashboard) =>
     toCatalogItem(dashboard._id, dashboard.dashboardKey, dashboard.name),
+  );
+  const reportItems = reports.map((report) =>
+    toCatalogItem(report._id, report.reportKey, report.name),
   );
   const previewQuery = requireCatalogItem(queryItems, 'sales_overview_demo');
   const previewDashboard = requireCatalogItem(dashboardItems, 'commercial_dashboard_demo');
@@ -139,6 +153,7 @@ export async function seedDevFoundation(app: INestApplicationContext): Promise<S
     ),
     queryDefinitions: queryItems,
     dashboardDefinitions: dashboardItems,
+    reportDefinitions: reportItems,
     webCommand: buildDelfosWebCommand(tenantId, actorId),
     previewCommands: {
       listQueryDefinitions: buildListQueryDefinitionsCommand(tenantId, actorId),
@@ -171,6 +186,9 @@ function getSeedModels(app: INestApplicationContext): SeedModels {
     dashboardDefinitions: app.get<Model<DashboardDefinitionDocument>>(
       getModelToken(DashboardDefinition.name),
     ),
+    reportDefinitions: app.get<Model<ReportDefinitionDocument>>(
+      getModelToken(ReportDefinition.name),
+    ),
   };
 }
 
@@ -200,6 +218,8 @@ function printSeedResult(result: SeedResult): void {
   printCatalog('Query definitions:', result.queryDefinitions);
   console.log('');
   printCatalog('Dashboard definitions:', result.dashboardDefinitions);
+  console.log('');
+  printCatalog('Report definitions:', result.reportDefinitions);
   console.log('');
   console.log('Comando sugerido no delfos-web (PowerShell):');
   console.log(result.webCommand);

@@ -14,6 +14,7 @@ import { ExecutionPreviewModule } from './modules/execution-preview/execution-pr
 import { FieldMappingsModule } from './modules/field-mappings/field-mappings.module';
 import { HealthModule } from './modules/health/health.module';
 import { QueryDefinitionsModule } from './modules/query-definitions/query-definitions.module';
+import { ReportDefinitionsModule } from './modules/report-definitions/report-definitions.module';
 import { TenantsModule } from './modules/tenants/tenants.module';
 import { UsersModule } from './modules/users/users.module';
 
@@ -35,6 +36,7 @@ import { UsersModule } from './modules/users/users.module';
     DatasetsModule,
     ExecutionPreviewModule,
     QueryDefinitionsModule,
+    ReportDefinitionsModule,
     FieldMappingsModule,
     AuditModule,
   ],

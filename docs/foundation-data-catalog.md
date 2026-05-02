@@ -1,6 +1,6 @@
 # Foundation: catalogo declarativo de dados e dashboards
 
-> Escopo: contratos administrativos temporarios de datasets, query definitions, dashboard definitions e field mappings.
+> Escopo: contratos administrativos temporarios de datasets, query definitions, dashboard definitions, report definitions e field mappings.
 
 Todos os endpoints deste documento seguem as regras transversais de
 [`foundation-auth-and-errors.md`](./foundation-auth-and-errors.md).
@@ -488,7 +488,188 @@ Principais erros esperados:
 - `409 Conflict` quando `dashboardKey` ja existir para o tenant.
 - `500 Internal Server Error` para falha inesperada de persistencia.
 
-## 4. Field mappings
+## 4. Report definitions
+
+Objetivo: cadastrar definicoes administrativas e declarativas de relatorios por tenant, com
+referencias opcionais para query definitions e dashboard definitions. Nesta etapa o recurso e
+apenas configuracao: nenhuma rota gera PDF, Excel, CSV, executa query, renderiza relatorio, envia
+e-mail, agenda job, cria fila, scheduler, cache, worker, conector ou chamada externa.
+
+Rotas:
+
+- `POST /api/v1/report-definitions`
+- `GET /api/v1/report-definitions?tenantId=...&page=1&pageSize=25`
+- `GET /api/v1/report-definitions/:id?tenantId=...`
+- `PATCH /api/v1/report-definitions/:id?tenantId=...`
+- `DELETE /api/v1/report-definitions/:id?tenantId=...`
+
+Request seguro:
+
+```http
+POST /api/v1/report-definitions
+Content-Type: application/json
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-role: operator
+```
+
+```json
+{
+  "tenantId": "662d4f6e7a1c2b00124f0001",
+  "reportKey": "monthly_sales_report",
+  "name": "Relatorio mensal de vendas",
+  "description": "Definicao declarativa para relatorio comercial mensal",
+  "status": "draft",
+  "visibility": "tenant",
+  "queryDefinitionId": "662d4f6e7a1c2b00124f0601",
+  "dashboardDefinitionId": "662d4f6e7a1c2b00124f0701",
+  "layout": {
+    "type": "paged",
+    "columns": 12,
+    "density": "comfortable"
+  },
+  "sections": [
+    {
+      "key": "summary",
+      "title": "Resumo executivo",
+      "order": 1
+    }
+  ],
+  "blocks": [
+    {
+      "key": "sales_table",
+      "title": "Tabela de vendas",
+      "type": "table",
+      "queryDefinitionId": "662d4f6e7a1c2b00124f0601",
+      "sectionKey": "summary",
+      "order": 1,
+      "options": {
+        "showTotals": true
+      }
+    }
+  ],
+  "filters": [
+    {
+      "key": "period",
+      "label": "Periodo",
+      "field": "created_at",
+      "operator": "date_range",
+      "required": true,
+      "defaultValue": "last_30_days",
+      "allowedValues": ["last_7_days", "last_30_days"]
+    }
+  ],
+  "parameters": [
+    {
+      "key": "report_period",
+      "label": "Periodo do relatorio",
+      "type": "date_range",
+      "required": true,
+      "defaultValue": "last_30_days",
+      "allowedValues": ["last_7_days", "last_30_days"]
+    }
+  ],
+  "exportOptions": {
+    "defaultFormat": "pdf",
+    "includeFilters": true
+  },
+  "tags": ["sales", "monthly"],
+  "metadata": {
+    "domain": "sales"
+  },
+  "settings": {
+    "visibleInBuilder": true
+  }
+}
+```
+
+Response `201`:
+
+```json
+{
+  "id": "662d4f6e7a1c2b00124f0801",
+  "tenantId": "662d4f6e7a1c2b00124f0001",
+  "reportKey": "monthly_sales_report",
+  "name": "Relatorio mensal de vendas",
+  "description": "Definicao declarativa para relatorio comercial mensal",
+  "status": "draft",
+  "visibility": "tenant",
+  "queryDefinitionId": "662d4f6e7a1c2b00124f0601",
+  "dashboardDefinitionId": "662d4f6e7a1c2b00124f0701",
+  "layout": {
+    "type": "paged",
+    "columns": 12,
+    "density": "comfortable"
+  },
+  "sections": [],
+  "blocks": [],
+  "filters": [],
+  "parameters": [],
+  "exportOptions": {
+    "defaultFormat": "pdf",
+    "includeFilters": true
+  },
+  "tags": ["sales", "monthly"],
+  "metadata": {
+    "domain": "sales"
+  },
+  "settings": {
+    "visibleInBuilder": true
+  },
+  "createdAt": "2026-04-26T12:00:00.000Z",
+  "updatedAt": "2026-04-26T12:00:00.000Z",
+  "createdBy": "dev-actor-001",
+  "updatedBy": "dev-actor-001"
+}
+```
+
+Enums iniciais:
+
+- `status`: `draft`, `active`, `archived`
+- `visibility`: `private`, `tenant`
+- `layout.type`: `paged`, `sections`, `table`, `custom`
+- `layout.density`: `compact`, `comfortable`, `spacious`
+- `blocks.type`: `text`, `table`, `chart`, `metric`, `dashboard_widget`, `custom`
+- `filters.operator`: `eq`, `neq`, `gt`, `gte`, `lt`, `lte`, `in`, `not_in`, `contains`, `between`, `date_range`
+- `parameters.type`: `string`, `number`, `boolean`, `date`, `date_range`, `select`
+
+Exemplo de listagem:
+
+```http
+GET /api/v1/report-definitions?tenantId=662d4f6e7a1c2b00124f0001&status=active
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+```
+
+Exemplo de arquivamento logico:
+
+```http
+DELETE /api/v1/report-definitions/662d4f6e7a1c2b00124f0801?tenantId=662d4f6e7a1c2b00124f0001
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-role: operator
+```
+
+O `DELETE` atual nao remove fisicamente o documento. Ele aplica `status: "archived"` e retorna a report definition atualizada.
+
+Regras de seguranca:
+
+- `reportKey` e unico por tenant e deve ser estavel para integracoes futuras.
+- `queryDefinitionId` e `dashboardDefinitionId` sao referencias declarativas opcionais; a existencia real nao e validada nesta etapa para permitir montagem incremental.
+- `sections`, `blocks`, `filters`, `parameters` e `exportOptions` descrevem configuracao futura; nao carregam resultado real de cliente.
+- `exportOptions` e declarativo e nao aciona geracao de arquivo.
+- `metadata`, `settings`, `exportOptions`, `blocks.options`, `filters.defaultValue`, `filters.allowedValues`, `parameters.defaultValue` e `parameters.allowedValues` sao sanitizados. Valores com aparencia de segredo, token, senha, connection string real, authorization header ou alta entropia sao descartados.
+- Respostas retornam apenas configuracao segura e nunca campos sensiveis.
+- Eventos internos de audit: `report_definition.created`, `report_definition.updated`, `report_definition.archived`.
+- Auditoria registra apenas `reportKey`, `status`, `visibility`, referencias declarativas e contadores de secoes/blocos; nunca registra metadata/settings/exportOptions/options/filtros/parametros livres ou payload sensivel.
+
+Principais erros esperados:
+
+- `401 Unauthorized` para admin key ausente ou invalida.
+- `403 Forbidden` para role temporaria sem permissao em escrita.
+- `400 Bad Request` para `tenantId`, `reportKey`, enums, arrays, tags, `page` ou `pageSize` invalidos.
+- `404 Not Found` quando a report definition nao existir para o `tenantId` informado.
+- `409 Conflict` quando `reportKey` ja existir para o tenant.
+- `500 Internal Server Error` para falha inesperada de persistencia.
+
+## 5. Field mappings
 
 Objetivo: cadastrar De/Para de campos por tenant/dataset sem processar dados operacionais do cliente.
 
@@ -569,7 +750,7 @@ Principais erros esperados:
 - `404 Not Found` quando o mapping nao existir para o `tenantId` informado.
 - `500 Internal Server Error` para falha inesperada de persistencia, incluindo duplicidade de `tenantId + datasetKey + targetField` enquanto nao houver erro de dominio especifico.
 
-## 5. Preview/demo execution
+## 6. Preview/demo execution
 
 Objetivo: permitir que `delfos-web` renderize previews de query definitions e dashboard
 definitions com dados demonstrativos seguros, sem executar consultas reais e sem acessar dados de
@@ -590,7 +771,7 @@ Esses endpoints seguem as regras transversais de
   leitura/listagem da foundation, em que a admin key e suficiente.
 - Se `x-delfos-actor-role` for enviado, ele precisa ser uma role valida da foundation.
 
-### 5.1 Query preview
+### 6.1 Query preview
 
 Request:
 
@@ -657,7 +838,7 @@ Auditoria registra somente:
 Auditoria nunca registra `rows`, `columns`, metadata/settings, filtros livres, valores gerados,
 default values ou allowed values.
 
-### 5.2 Dashboard preview
+### 6.2 Dashboard preview
 
 Request:
 

@@ -38,6 +38,7 @@ proteger:
 - field-mappings declarativos;
 - query-definitions declarativas;
 - dashboard-definitions declarativas;
+- report-definitions declarativas;
 - `execution-preview` demo em memoria;
 - auditoria interna sem secrets ou payload operacional;
 - sanitizacao de metadata/settings/options/filtros;

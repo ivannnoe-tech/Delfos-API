@@ -10,6 +10,7 @@ import {
   buildPreviewDashboardDefinitionCommand,
   buildPreviewQueryDefinitionCommand,
   buildQueryInputs,
+  buildReportInput,
   buildSeedIdentityKeys,
   demoSeedKeys,
 } from './seed-dev-data';
@@ -26,6 +27,7 @@ describe('seed-dev data', () => {
         ...demoSeedKeys.datasetKeys,
         ...demoSeedKeys.queryKeys,
         ...demoSeedKeys.dashboardKeys,
+        ...demoSeedKeys.reportKeys,
       ]),
     );
   });
@@ -50,6 +52,15 @@ describe('seed-dev data', () => {
 
     expect(dashboard.dashboardKey).toBe('commercial_dashboard_demo');
     expect(dashboard.widgets).toHaveLength(3);
+
+    const report = buildReportInput({
+      salesOverview: new Types.ObjectId(),
+      commercialDashboard: new Types.ObjectId(),
+    });
+
+    expect(report.reportKey).toBe('monthly_sales_report_demo');
+    expect(report.blocks).toHaveLength(2);
+    expect(report.exportOptions).toMatchObject({ declarativeOnly: true });
   });
 
   it('keeps demo fixtures free of real-looking secrets', () => {
@@ -61,6 +72,10 @@ describe('seed-dev data', () => {
         salesOverview: new Types.ObjectId('662d4f6e7a1c2b00124f0601'),
         salesByDay: new Types.ObjectId('662d4f6e7a1c2b00124f0602'),
         customersSummary: new Types.ObjectId('662d4f6e7a1c2b00124f0603'),
+      }),
+      report: buildReportInput({
+        salesOverview: new Types.ObjectId('662d4f6e7a1c2b00124f0601'),
+        commercialDashboard: new Types.ObjectId('662d4f6e7a1c2b00124f0701'),
       }),
     }).toLowerCase();
 

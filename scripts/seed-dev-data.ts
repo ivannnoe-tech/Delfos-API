@@ -24,6 +24,13 @@ import {
   QueryDefinitionTimeGranularity,
   QueryDefinitionType,
 } from '../src/modules/query-definitions/schemas/query-definition.schema';
+import {
+  ReportDefinitionBlockType,
+  ReportDefinitionFilterOperator,
+  ReportDefinitionLayoutDensity,
+  ReportDefinitionLayoutType,
+  ReportDefinitionParameterType,
+} from '../src/modules/report-definitions/schemas/report-definition.schema';
 
 export const demoActorId = 'dev-demo-owner';
 export const demoCredentialPlaceholder = 'not-a-real-secret-value';
@@ -36,6 +43,7 @@ export const demoSeedKeys = {
   datasetKeys: ['sales_orders_demo', 'customers_demo', 'payments_demo'],
   queryKeys: ['sales_overview_demo', 'sales_by_day_demo', 'customers_summary_demo'],
   dashboardKeys: ['commercial_dashboard_demo'],
+  reportKeys: ['monthly_sales_report_demo'],
 } as const;
 
 export interface SeedDatasetInput {
@@ -133,6 +141,58 @@ export interface SeedDashboardInput {
     defaultValue: string;
     allowedValues: string[];
   }>;
+  tags: string[];
+  metadata: Record<string, string | boolean>;
+  settings: Record<string, boolean>;
+}
+
+export interface SeedReportInput {
+  reportKey: string;
+  name: string;
+  description: string;
+  queryDefinitionId: Types.ObjectId;
+  dashboardDefinitionId: Types.ObjectId;
+  layout: {
+    type: ReportDefinitionLayoutType;
+    columns: number;
+    density: ReportDefinitionLayoutDensity;
+  };
+  sections: Array<{
+    key: string;
+    title: string;
+    description: string;
+    order: number;
+    layout: { type: ReportDefinitionLayoutType; columns: number };
+  }>;
+  blocks: Array<{
+    key: string;
+    title: string;
+    description: string;
+    type: ReportDefinitionBlockType;
+    queryDefinitionId?: Types.ObjectId;
+    dashboardDefinitionId?: Types.ObjectId;
+    sectionKey: string;
+    order: number;
+    options: Record<string, boolean | string | number>;
+  }>;
+  filters: Array<{
+    key: string;
+    label: string;
+    field: string;
+    operator: ReportDefinitionFilterOperator;
+    required: boolean;
+    defaultValue: string;
+    allowedValues: string[];
+  }>;
+  parameters: Array<{
+    key: string;
+    label: string;
+    type: ReportDefinitionParameterType;
+    required: boolean;
+    defaultValue: string;
+    allowedValues: string[];
+  }>;
+  exportOptions: Record<string, boolean | string | number>;
   tags: string[];
   metadata: Record<string, string | boolean>;
   settings: Record<string, boolean>;
@@ -338,6 +398,85 @@ export function buildDashboardInput(queryIds: {
   };
 }
 
+export function buildReportInput(ids: {
+  salesOverview: Types.ObjectId;
+  commercialDashboard: Types.ObjectId;
+}): SeedReportInput {
+  return {
+    reportKey: 'monthly_sales_report_demo',
+    name: 'Relatorio Mensal de Vendas Demo',
+    description:
+      'Relatorio declarativo ficticio para validacao local, sem geracao real de arquivo.',
+    queryDefinitionId: ids.salesOverview,
+    dashboardDefinitionId: ids.commercialDashboard,
+    layout: {
+      type: ReportDefinitionLayoutType.Paged,
+      columns: 12,
+      density: ReportDefinitionLayoutDensity.Comfortable,
+    },
+    sections: [
+      {
+        key: 'summary',
+        title: 'Resumo demo',
+        description: 'Secao declarativa com configuracao ficticia.',
+        order: 1,
+        layout: { type: ReportDefinitionLayoutType.Sections, columns: 12 },
+      },
+    ],
+    blocks: [
+      {
+        key: 'sales_summary_table',
+        title: 'Tabela comercial demo',
+        description: 'Bloco declarativo ligado a query definition demo.',
+        type: ReportDefinitionBlockType.Table,
+        queryDefinitionId: ids.salesOverview,
+        sectionKey: 'summary',
+        order: 1,
+        options: { showTotals: true, format: 'currency' },
+      },
+      {
+        key: 'dashboard_reference',
+        title: 'Referencia de dashboard demo',
+        description: 'Referencia declarativa ao dashboard demo, sem renderizacao real.',
+        type: ReportDefinitionBlockType.DashboardWidget,
+        dashboardDefinitionId: ids.commercialDashboard,
+        sectionKey: 'summary',
+        order: 2,
+        options: { includeSnapshotPlaceholder: false },
+      },
+    ],
+    filters: [
+      {
+        key: 'period',
+        label: 'Periodo demo',
+        field: 'saleDate',
+        operator: ReportDefinitionFilterOperator.DateRange,
+        required: true,
+        defaultValue: 'last_30_days',
+        allowedValues: ['last_7_days', 'last_30_days', 'this_month'],
+      },
+    ],
+    parameters: [
+      {
+        key: 'report_period',
+        label: 'Periodo do relatorio demo',
+        type: ReportDefinitionParameterType.DateRange,
+        required: true,
+        defaultValue: 'last_30_days',
+        allowedValues: ['last_7_days', 'last_30_days', 'this_month'],
+      },
+    ],
+    exportOptions: {
+      defaultFormat: 'pdf',
+      includeFilters: true,
+      declarativeOnly: true,
+    },
+    tags: ['demo', 'reports', 'sales'],
+    metadata: { domain: 'reports-demo', devSeed: true },
+    settings: { visibleInBuilder: true },
+  };
+}
+
 function field(
   key: string,
   label: string,
@@ -437,6 +576,7 @@ export function buildSeedIdentityKeys(): string[] {
     ...demoSeedKeys.datasetKeys,
     ...demoSeedKeys.queryKeys,
     ...demoSeedKeys.dashboardKeys,
+    ...demoSeedKeys.reportKeys,
   ];
 }
 

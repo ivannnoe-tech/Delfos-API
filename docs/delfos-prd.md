@@ -29,7 +29,7 @@ Objetivo da etapa atual:
 
 - consolidar contratos e governanca;
 - administrar tenants, users, connections declarativas, credentials, datasets e mappings;
-- manter query-definitions e dashboard-definitions declarativas;
+- manter query-definitions, dashboard-definitions e report-definitions declarativas;
 - oferecer preview demo seguro e explicitamente ficticio;
 - evitar qualquer acesso real a API, banco, arquivo ou sistema de cliente.
 
@@ -80,6 +80,7 @@ Valor futuro:
 - field-mappings declarativos;
 - query-definitions declarativas;
 - dashboard-definitions declarativas;
+- report-definitions declarativas;
 - audit interno;
 - seed/dev com dados ficticios;
 - `execution-preview` demo em memoria.
