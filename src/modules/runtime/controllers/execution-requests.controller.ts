@@ -15,6 +15,12 @@ import { AdminRolesGuard } from '../../auth/guards/admin-roles.guard';
 import { AdminRole } from '../../auth/types/admin-role';
 import { AuthenticatedRequest } from '../../auth/types/authenticated-request';
 import { CreateExecutionRequestDto } from '../dto/create-execution-request.dto';
+import { CreateExecutionRequestEventDto } from '../dto/create-execution-request-event.dto';
+import { ListExecutionRequestEventsQueryDto } from '../dto/execution-request-event-query.dto';
+import {
+  ExecutionRequestEventListResponseDto,
+  ExecutionRequestEventResponseDto,
+} from '../dto/execution-request-event-response.dto';
 import {
   ExecutionRequestTenantQueryDto,
   ListExecutionRequestsQueryDto,
@@ -78,6 +84,38 @@ export class ExecutionRequestsController {
     @Query() query: ExecutionRequestTenantQueryDto,
   ): Promise<ExecutionRequestResponseDto> {
     return this.executionRequestsService.findOne(query.tenantId, params.id);
+  }
+
+  @Get(':id/events')
+  @ApiOperation({
+    summary: 'List safe lifecycle events for one runtime execution request.',
+    description:
+      'Protected by temporary foundation admin-key auth. Lookup is tenant scoped and only returns safe administrative lifecycle metadata; it never starts runtime execution.',
+  })
+  @ApiParam({ name: 'id' })
+  @ApiOkResponse({ type: ExecutionRequestEventListResponseDto })
+  findEvents(
+    @Param() params: ExecutionRequestIdParamDto,
+    @Query() query: ListExecutionRequestEventsQueryDto,
+  ): Promise<ExecutionRequestEventListResponseDto> {
+    return this.executionRequestsService.findEvents(params.id, query);
+  }
+
+  @Post(':id/events')
+  @ApiOperation({
+    summary: 'Register a safe lifecycle event or status transition.',
+    description:
+      'Protected by temporary foundation admin-key auth. This endpoint only records lifecycle metadata and may update the execution request status; it never executes queries, connectors, workers, queues, schedulers, exports or external data access.',
+  })
+  @AdminRoles(AdminRole.Owner, AdminRole.Admin, AdminRole.Operator)
+  @ApiParam({ name: 'id' })
+  @ApiCreatedResponse({ type: ExecutionRequestEventResponseDto })
+  createEvent(
+    @Param() params: ExecutionRequestIdParamDto,
+    @Body() dto: CreateExecutionRequestEventDto,
+    @Req() request: AuthenticatedRequest,
+  ): Promise<ExecutionRequestEventResponseDto> {
+    return this.executionRequestsService.createEvent(params.id, dto, this.toActorContext(request));
   }
 
   private toActorContext(request: AuthenticatedRequest): {

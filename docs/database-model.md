@@ -255,6 +255,39 @@ Regras:
 - Nao armazenar filters, parameters, settings livres, secrets, rows, payload operacional,
   credentialRef, token, senha, authorization header ou connection string.
 
+### execution_request_events
+
+Eventos administrativos foundation de ciclo de vida para `execution_requests`. Armazenam historico
+seguro de solicitacao, notas e transicoes de status futuras; nao representam execucao real e nao
+executam query, conector, worker, fila, scheduler, cache, exportacao, chamada externa ou acesso a
+fonte de cliente.
+
+- `tenantId`
+- `executionRequestId`
+- `requestKey`
+- `eventType`
+- `previousStatus`
+- `nextStatus`
+- `message`
+- `reason`
+- `actorId`
+- `actorRole`
+- `metadata`
+- `createdAt`
+
+Regras:
+
+- Ao criar uma execution request, a API registra um evento inicial `accepted` com
+  `reason: "runtime_foundation_only"`.
+- `status_changed` exige `nextStatus`; eventos `accepted`, `blocked`, `failed`,
+  `completed_demo` e `not_supported` atualizam o status administrativo correspondente da
+  execution request.
+- `note_added` nao altera status.
+- `previousStatus` e calculado pela API e nao vem do cliente.
+- `metadata`, `message` e `reason` sao sanitizados.
+- Nao armazenar filters, parameters, settings livres, secrets, rows, payload operacional,
+  credentialRef, token, senha, authorization header ou connection string.
+
 ### report_definitions
 
 Definicoes administrativas e declarativas de relatorios. Na foundation atual, armazena apenas
@@ -353,6 +386,9 @@ Auditoria de ações sensíveis.
 - `execution_requests.tenantId + queryDefinitionId`
 - `execution_requests.tenantId + dashboardDefinitionId`
 - `execution_requests.tenantId + reportDefinitionId`
+- `execution_request_events.tenantId + executionRequestId + createdAt`
+- `execution_request_events.tenantId + requestKey + createdAt`
+- `execution_request_events.tenantId + eventType`
 - `audit_logs.tenantId + createdAt`
 
 ---

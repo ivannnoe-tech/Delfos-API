@@ -22,7 +22,8 @@ O estado atual cobre:
 - catalogos foundation declarativos;
 - report-definitions declarativas;
 - `execution-preview` demo em memoria;
-- `runtime/execution-requests` foundation, apenas registro administrativo de solicitacoes futuras;
+- `runtime/execution-requests` foundation, apenas registro administrativo de solicitacoes futuras
+  e eventos administrativos seguros de ciclo de vida;
 - Swagger em `/docs` conforme `SWAGGER_ENABLED`.
 
 Nao existe procedimento operacional atual para JWT/login, conectores reais, teste real de API de
@@ -158,6 +159,8 @@ Os endpoints foundation de solicitacao futura sao:
 - `POST /api/v1/runtime/execution-requests`
 - `GET /api/v1/runtime/execution-requests?tenantId=...`
 - `GET /api/v1/runtime/execution-requests/:id?tenantId=...`
+- `GET /api/v1/runtime/execution-requests/:id/events?tenantId=...`
+- `POST /api/v1/runtime/execution-requests/:id/events`
 
 Se houver erro, verifique:
 
@@ -169,7 +172,8 @@ Se houver erro, verifique:
    `reportDefinitionId`.
 6. Ausencia de campos fora do contrato, como `filters`, `parameters`, `settings`, `secretValue`,
    tokens, senhas, headers sensiveis, connection strings ou payload operacional bruto.
-7. `requestId` e `correlationId` no envelope de erro.
+7. Para eventos, `eventType` permitido e `nextStatus` coerente com a transicao foundation.
+8. `requestId` e `correlationId` no envelope de erro.
 
 Esse fluxo deve apenas persistir metadados administrativos com status foundation, normalmente
 `accepted` e `reason: "runtime_foundation_only"`. Nao deve haver runtime real, connector real,
@@ -177,13 +181,22 @@ Esse fluxo deve apenas persistir metadados administrativos com status foundation
 conexao, discovery real de schema, chamada externa, cache, fila, scheduler, worker, staging,
 snapshot ou materializacao.
 
+Eventos de ciclo de vida tambem sao foundation administrativa. Um evento inicial `accepted` e
+registrado quando a execution request e criada. `POST /:id/events` pode registrar nota ou transicao
+de status administrativo, mas isso nao dispara runtime, conector, worker, fila, scheduler, cache,
+query, exportacao, e-mail ou qualquer chamada externa.
+
 Para incidentes de vazamento, conferir que:
 
 - respostas nao incluem payload bruto, rows, segredo, credentialRef, token, senha, authorization
   header, connection string, filters, parameters ou settings livres;
-- `metadata` da execution request foi sanitizado;
+- `metadata` da execution request e dos eventos foi sanitizado;
+- `message` e `reason` de eventos nao contem segredo;
 - auditoria de `execution_request.created` contem apenas `tenantId`, `kind`, `status`, references
   declarativas e ator/role;
+- auditoria de `execution_request.event.created` e `execution_request.status_changed` contem apenas
+  `tenantId`, `executionRequestId`, `requestKey`, `eventType`, `previousStatus`, `nextStatus` e
+  ator/role;
 - auditoria nunca contem metadata livre, payload bruto ou campos sensiveis.
 
 ## Erro no seed local de desenvolvimento
@@ -245,7 +258,7 @@ Os itens abaixo nao sao operacionais no estado atual:
 - conectores reais ou `data-connectors`;
 - `delfos-connectors` e local agent;
 - cache, fila, worker, scheduler, staging ou snapshot;
-- runtime real de execution requests;
+- runtime real de execution requests ou seus eventos foundation;
 - dashboard runtime final e query builder.
 
 Quando essas capacidades forem aprovadas e implementadas, este runbook deve ganhar secoes

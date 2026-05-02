@@ -78,6 +78,16 @@ export class ExecutionRequestsRepository {
     return this.executionRequestModel.findOne({ _id: id, tenantId }).exec();
   }
 
+  updateStatusByTenantAndId(
+    tenantId: Types.ObjectId,
+    id: string,
+    status: ExecutionRequestStatus,
+  ): Promise<ExecutionRequestDocument | null> {
+    return this.executionRequestModel
+      .findOneAndUpdate({ _id: id, tenantId }, { status }, { new: true })
+      .exec();
+  }
+
   private toMongoFilters(filters: ExecutionRequestFilters): FilterQuery<ExecutionRequestDocument> {
     return {
       tenantId: filters.tenantId,

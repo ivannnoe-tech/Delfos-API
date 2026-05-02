@@ -21,6 +21,7 @@ import {
   ExecutionRequestMode,
   ExecutionRequestStatus,
 } from '../schemas/execution-request.schema';
+import { ExecutionRequestEventType } from '../schemas/execution-request-event.schema';
 import { ExecutionRequestsService } from '../services/execution-requests.service';
 
 const tenantId = '662d4f6e7a1c2b00124f0001';
@@ -33,7 +34,7 @@ describe('ExecutionRequestsController', () => {
   let baseUrl: string;
   let executionRequestsService: Pick<
     ExecutionRequestsService,
-    'create' | 'findByFilters' | 'findOne'
+    'create' | 'findByFilters' | 'findOne' | 'findEvents' | 'createEvent'
   >;
 
   beforeAll(async () => {
@@ -44,6 +45,11 @@ describe('ExecutionRequestsController', () => {
         meta: { page: 1, pageSize: 25, total: 1, totalPages: 1 },
       })),
       findOne: jest.fn(async () => createExecutionRequestResponse()),
+      findEvents: jest.fn(async () => ({
+        items: [createExecutionRequestEventResponse()],
+        meta: { page: 1, pageSize: 25, total: 1, totalPages: 1 },
+      })),
+      createEvent: jest.fn(async () => createExecutionRequestEventResponse()),
     };
 
     const moduleRef = await Test.createTestingModule({
@@ -120,6 +126,31 @@ describe('ExecutionRequestsController', () => {
     expect(executionRequestsService.findOne).toHaveBeenCalledWith(tenantId, executionRequestId);
   });
 
+  it('allows event listing with admin key and explicit tenant scope', async () => {
+    const response = await fetch(
+      `${baseUrl}/api/v1/runtime/execution-requests/${executionRequestId}/events?tenantId=${tenantId}`,
+      {
+        headers: { [DELFOS_ADMIN_KEY_HEADER]: adminKey },
+      },
+    );
+    const body = await readJsonRecord(response);
+
+    expect(response.status).toBe(200);
+    expect(body).toMatchObject({
+      items: [
+        {
+          executionRequestId,
+          eventType: ExecutionRequestEventType.Accepted,
+          nextStatus: ExecutionRequestStatus.Accepted,
+        },
+      ],
+    });
+    expect(executionRequestsService.findEvents).toHaveBeenCalledWith(
+      executionRequestId,
+      expect.objectContaining({ tenantId }),
+    );
+  });
+
   it('rejects viewer role on create endpoint', async () => {
     const response = await fetch(`${baseUrl}/api/v1/runtime/execution-requests`, {
       method: 'POST',
@@ -182,6 +213,72 @@ describe('ExecutionRequestsController', () => {
       );
     },
   );
+
+  it.each([AdminRole.Owner, AdminRole.Admin, AdminRole.Operator])(
+    'allows %s role to create an execution request lifecycle event',
+    async (role) => {
+      const response = await fetch(
+        `${baseUrl}/api/v1/runtime/execution-requests/${executionRequestId}/events`,
+        {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            [DELFOS_ADMIN_KEY_HEADER]: adminKey,
+            [DELFOS_ACTOR_ID_HEADER]: 'dev-actor-001',
+            [DELFOS_ACTOR_ROLE_HEADER]: role,
+          },
+          body: JSON.stringify({
+            tenantId,
+            eventType: ExecutionRequestEventType.Blocked,
+            message: 'Blocked by foundation policy.',
+            reason: 'runtime_foundation_only',
+            metadata: { domain: 'sales' },
+          }),
+        },
+      );
+      const body = await readJsonRecord(response);
+
+      expect(response.status).toBe(201);
+      expect(body).toMatchObject({
+        executionRequestId,
+        eventType: ExecutionRequestEventType.Accepted,
+        nextStatus: ExecutionRequestStatus.Accepted,
+      });
+      expect(executionRequestsService.createEvent).toHaveBeenCalledWith(
+        executionRequestId,
+        expect.objectContaining({
+          tenantId,
+          eventType: ExecutionRequestEventType.Blocked,
+          message: 'Blocked by foundation policy.',
+          reason: 'runtime_foundation_only',
+          metadata: { domain: 'sales' },
+        }),
+        { actorId: 'dev-actor-001', actorRole: role },
+      );
+    },
+  );
+
+  it('rejects viewer role on event create endpoint', async () => {
+    const response = await fetch(
+      `${baseUrl}/api/v1/runtime/execution-requests/${executionRequestId}/events`,
+      {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          [DELFOS_ADMIN_KEY_HEADER]: adminKey,
+          [DELFOS_ACTOR_ROLE_HEADER]: AdminRole.Viewer,
+        },
+        body: JSON.stringify({
+          tenantId,
+          eventType: ExecutionRequestEventType.NoteAdded,
+          message: 'safe note',
+        }),
+      },
+    );
+
+    expect(response.status).toBe(403);
+    expect(executionRequestsService.createEvent).not.toHaveBeenCalled();
+  });
 
   it('returns standardized validation error when tenantId is missing', async () => {
     const response = await fetch(`${baseUrl}/api/v1/runtime/execution-requests`, {
@@ -254,6 +351,22 @@ function createExecutionRequestResponse(overrides: Record<string, unknown> = {})
     metadata: { domain: 'sales' },
     createdAt: '2026-05-02T12:00:00.000Z',
     updatedAt: '2026-05-02T12:00:00.000Z',
+    ...overrides,
+  };
+}
+
+function createExecutionRequestEventResponse(overrides: Record<string, unknown> = {}) {
+  return {
+    id: '662d4f6e7a1c2b00124f0902',
+    tenantId,
+    executionRequestId,
+    requestKey: `exec_req_${executionRequestId}`,
+    eventType: ExecutionRequestEventType.Accepted,
+    nextStatus: ExecutionRequestStatus.Accepted,
+    reason: 'runtime_foundation_only',
+    message: 'Runtime foundation request accepted. No real execution was started.',
+    metadata: { domain: 'sales' },
+    createdAt: '2026-05-02T12:00:00.000Z',
     ...overrides,
   };
 }

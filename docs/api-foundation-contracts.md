@@ -72,7 +72,7 @@ Detalhes completos de headers, erros, envelope de lista e healthcheck ficam em
 | Report definitions | `POST /api/v1/report-definitions`, `GET /api/v1/report-definitions`, `GET /api/v1/report-definitions/:id`, `PATCH /api/v1/report-definitions/:id`, `DELETE /api/v1/report-definitions/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#4-report-definitions) |
 | Field mappings | `POST /api/v1/field-mappings`, `GET /api/v1/field-mappings`, `PATCH /api/v1/field-mappings/:id`, `DELETE /api/v1/field-mappings/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#5-field-mappings) |
 | Execution preview | `POST /api/v1/query-definitions/:id/preview`, `POST /api/v1/dashboard-definitions/:id/preview` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#6-previewdemo-execution) |
-| Runtime execution requests foundation | `POST /api/v1/runtime/execution-requests`, `GET /api/v1/runtime/execution-requests`, `GET /api/v1/runtime/execution-requests/:id` | [`api-foundation-contracts.md`](./api-foundation-contracts.md#5-runtime-execution-requests-foundation) |
+| Runtime execution requests foundation | `POST /api/v1/runtime/execution-requests`, `GET /api/v1/runtime/execution-requests`, `GET /api/v1/runtime/execution-requests/:id`, `GET /api/v1/runtime/execution-requests/:id/events`, `POST /api/v1/runtime/execution-requests/:id/events` | [`api-foundation-contracts.md`](./api-foundation-contracts.md#5-runtime-execution-requests-foundation) |
 | Credentials | `POST /api/v1/credentials`, `GET /api/v1/credentials`, `GET /api/v1/credentials/:id`, `PATCH /api/v1/credentials/:id/rotate`, `PATCH /api/v1/credentials/:id/revoke` | [`foundation-credentials-and-security.md`](./foundation-credentials-and-security.md#1-credentials--secrets) |
 
 ## 5. Runtime execution requests foundation
@@ -86,6 +86,8 @@ Rotas:
 - `POST /api/v1/runtime/execution-requests`
 - `GET /api/v1/runtime/execution-requests?tenantId=...&page=1&pageSize=25`
 - `GET /api/v1/runtime/execution-requests/:id?tenantId=...`
+- `GET /api/v1/runtime/execution-requests/:id/events?tenantId=...&page=1&pageSize=25`
+- `POST /api/v1/runtime/execution-requests/:id/events`
 
 Request seguro:
 
@@ -141,6 +143,52 @@ Enums iniciais:
 - `kind`: `query`, `dashboard`, `report`
 - `status`: `queued`, `accepted`, `blocked`, `failed`, `completed_demo`, `not_supported`
 - `mode`: `demo`, `dry_run`, `future_runtime`
+- `eventType`: `requested`, `accepted`, `status_changed`, `blocked`, `failed`,
+  `completed_demo`, `not_supported`, `note_added`
+
+Evento de ciclo de vida seguro:
+
+```http
+POST /api/v1/runtime/execution-requests/662d4f6e7a1c2b00124f0901/events
+Content-Type: application/json
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-id: dev-actor-001
+x-delfos-actor-role: operator
+```
+
+```json
+{
+  "tenantId": "662d4f6e7a1c2b00124f0001",
+  "eventType": "blocked",
+  "message": "Reference validation pending for future runtime.",
+  "reason": "runtime_foundation_only",
+  "metadata": {
+    "origin": "admin_console"
+  }
+}
+```
+
+Response `201`:
+
+```json
+{
+  "id": "662d4f6e7a1c2b00124f0911",
+  "tenantId": "662d4f6e7a1c2b00124f0001",
+  "executionRequestId": "662d4f6e7a1c2b00124f0901",
+  "requestKey": "exec_req_662d4f6e7a1c2b00124f0901",
+  "eventType": "blocked",
+  "previousStatus": "accepted",
+  "nextStatus": "blocked",
+  "message": "Reference validation pending for future runtime.",
+  "reason": "runtime_foundation_only",
+  "actorId": "dev-actor-001",
+  "actorRole": "operator",
+  "metadata": {
+    "origin": "admin_console"
+  },
+  "createdAt": "2026-05-02T12:05:00.000Z"
+}
+```
 
 Regras:
 
@@ -154,18 +202,33 @@ Regras:
 - `connectionId` e `datasetId` sao referencias opcionais para rastreabilidade declarativa.
 - `requestKey` e gerado pela API no formato `exec_req_<ObjectId>`.
 - O status gravado atualmente e `accepted` com `reason: "runtime_foundation_only"`.
+- A criacao de execution request registra automaticamente um evento inicial `accepted` em
+  `execution_request_events`.
+- `POST /:id/events` apenas registra evento foundation e, quando aplicavel, atualiza o status
+  administrativo da execution request. Isso nao dispara runtime, worker, conector, fila ou query.
+- `status_changed` exige `nextStatus`; eventos `accepted`, `blocked`, `failed`,
+  `completed_demo` e `not_supported` definem o status correspondente; `note_added` nao altera
+  status.
+- `previousStatus` e calculado pela API a partir da execution request existente; clientes nao
+  enviam esse campo.
 - `metadata` e sanitizado; chaves ou valores com aparencia de segredo sao descartados.
+- `message` e `reason` tambem sao sanitizados; textos com aparencia de segredo sao omitidos.
 - Campos livres de execucao como `filters`, `parameters`, `settings`, `secretValue`, tokens,
   senhas, headers sensiveis, connection strings ou payload operacional bruto nao fazem parte do
   contrato e sao rejeitados pela validacao global.
 - Leitura/listagem exige admin key, conforme padrao dos catalogos.
-- Criacao exige role temporaria `owner`, `admin` ou `operator`; `viewer` nao cria solicitacao.
+- Criacao de solicitacao e criacao de evento/status exigem role temporaria `owner`, `admin` ou
+  `operator`; `viewer` nao cria solicitacao nem evento.
 - `GET /health` continua publico e inalterado.
 
 Auditoria:
 
 - Evento interno: `execution_request.created`.
+- Evento interno: `execution_request.event.created`.
+- Quando ha transicao de status, tambem ha `execution_request.status_changed`.
 - Auditoria registra apenas `tenantId`, `kind`, `status`, references declarativas e ator/role.
+- Auditoria de eventos registra apenas `tenantId`, `executionRequestId`, `requestKey`,
+  `eventType`, `previousStatus`, `nextStatus` e ator/role.
 - Auditoria nunca registra metadata livre, filters, parameters, settings, payload bruto, rows,
   secrets, credentialRef, token, senha, authorization header ou connection string.
 

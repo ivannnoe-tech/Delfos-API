@@ -6,11 +6,18 @@ import { sanitizeMetadata } from '../../../core/utils/sanitize-metadata';
 import { AuditService } from '../../audit/services/audit.service';
 import { AdminRole } from '../../auth/types/admin-role';
 import { CreateExecutionRequestDto } from '../dto/create-execution-request.dto';
+import { CreateExecutionRequestEventDto } from '../dto/create-execution-request-event.dto';
+import { ListExecutionRequestEventsQueryDto } from '../dto/execution-request-event-query.dto';
+import {
+  ExecutionRequestEventListResponseDto,
+  ExecutionRequestEventResponseDto,
+} from '../dto/execution-request-event-response.dto';
 import {
   ExecutionRequestTenantQueryDto,
   ListExecutionRequestsQueryDto,
 } from '../dto/execution-request-query.dto';
 import { ExecutionRequestResponseDto } from '../dto/execution-request-response.dto';
+import { ExecutionRequestEventsRepository } from '../repositories/execution-request-events.repository';
 import { ExecutionRequestsRepository } from '../repositories/execution-requests.repository';
 import {
   ExecutionRequestDocument,
@@ -18,6 +25,10 @@ import {
   ExecutionRequestMode,
   ExecutionRequestStatus,
 } from '../schemas/execution-request.schema';
+import {
+  ExecutionRequestEventDocument,
+  ExecutionRequestEventType,
+} from '../schemas/execution-request-event.schema';
 
 export interface ExecutionRequestActorContext {
   actorId?: string;
@@ -28,6 +39,7 @@ export interface ExecutionRequestActorContext {
 export class ExecutionRequestsService {
   constructor(
     private readonly executionRequestsRepository: ExecutionRequestsRepository,
+    private readonly executionRequestEventsRepository: ExecutionRequestEventsRepository,
     private readonly auditService: AuditService,
   ) {}
 
@@ -57,7 +69,21 @@ export class ExecutionRequestsService {
       metadata: sanitizeMetadata(dto.metadata),
     });
 
-    await this.recordAudit(executionRequest, actor);
+    const initialEvent = await this.executionRequestEventsRepository.create({
+      tenantId: executionRequest.tenantId,
+      executionRequestId: executionRequest._id,
+      requestKey: executionRequest.requestKey,
+      eventType: ExecutionRequestEventType.Accepted,
+      nextStatus: executionRequest.status,
+      reason: executionRequest.reason,
+      message: executionRequest.message,
+      actorId: actor.actorId,
+      actorRole: actor.actorRole,
+      metadata: {},
+    });
+
+    await this.recordAudit('execution_request.created', executionRequest, actor);
+    await this.recordEventAudit(initialEvent, actor);
 
     return this.toResponse(executionRequest);
   }
@@ -91,16 +117,82 @@ export class ExecutionRequestsService {
     tenantId: ExecutionRequestTenantQueryDto['tenantId'],
     id: string,
   ): Promise<ExecutionRequestResponseDto> {
-    const executionRequest = await this.executionRequestsRepository.findByTenantAndId(
-      new Types.ObjectId(tenantId),
-      id,
-    );
-
-    if (!executionRequest) {
-      throw new NotFoundException('Execution request not found.');
-    }
+    const executionRequest = await this.getExecutionRequestOrThrow(tenantId, id);
 
     return this.toResponse(executionRequest);
+  }
+
+  async findEvents(
+    executionRequestId: string,
+    query: ListExecutionRequestEventsQueryDto,
+  ): Promise<ExecutionRequestEventListResponseDto> {
+    const executionRequest = await this.getExecutionRequestOrThrow(
+      query.tenantId,
+      executionRequestId,
+    );
+    const filters = {
+      tenantId: executionRequest.tenantId,
+      executionRequestId: executionRequest._id,
+      eventType: query.eventType,
+    };
+    const [items, total] = await Promise.all([
+      this.executionRequestEventsRepository.findByFilters(filters, query.page, query.pageSize),
+      this.executionRequestEventsRepository.countByFilters(filters),
+    ]);
+
+    return {
+      items: items.map((event) => this.toEventResponse(event)),
+      meta: buildListMeta(query.page, query.pageSize, total),
+    };
+  }
+
+  async createEvent(
+    executionRequestId: string,
+    dto: CreateExecutionRequestEventDto,
+    actor: ExecutionRequestActorContext = {},
+  ): Promise<ExecutionRequestEventResponseDto> {
+    const executionRequest = await this.getExecutionRequestOrThrow(
+      dto.tenantId,
+      executionRequestId,
+    );
+    const nextStatus = this.resolveNextStatus(dto);
+    const previousStatus = executionRequest.status;
+    let updatedExecutionRequest = executionRequest;
+
+    if (nextStatus && nextStatus !== previousStatus) {
+      updatedExecutionRequest =
+        (await this.executionRequestsRepository.updateStatusByTenantAndId(
+          executionRequest.tenantId,
+          executionRequest._id.toString(),
+          nextStatus,
+        )) ?? executionRequest;
+    }
+
+    const event = await this.executionRequestEventsRepository.create({
+      tenantId: executionRequest.tenantId,
+      executionRequestId: executionRequest._id,
+      requestKey: executionRequest.requestKey,
+      eventType: dto.eventType,
+      previousStatus,
+      nextStatus: nextStatus ?? previousStatus,
+      message: this.sanitizeOptionalText(dto.message, 'message'),
+      reason: this.sanitizeOptionalText(dto.reason, 'reason'),
+      actorId: actor.actorId,
+      actorRole: actor.actorRole,
+      metadata: sanitizeMetadata(dto.metadata),
+    });
+
+    await this.recordEventAudit(event, actor);
+
+    if (nextStatus && nextStatus !== previousStatus) {
+      await this.recordAudit('execution_request.status_changed', updatedExecutionRequest, actor, {
+        eventType: event.eventType,
+        previousStatus,
+        nextStatus,
+      });
+    }
+
+    return this.toEventResponse(event);
   }
 
   private validateRequiredReference(dto: CreateExecutionRequestDto): void {
@@ -118,13 +210,15 @@ export class ExecutionRequestsService {
   }
 
   private async recordAudit(
+    action: string,
     executionRequest: ExecutionRequestDocument,
     actor: ExecutionRequestActorContext,
+    extraMetadata: Record<string, unknown> = {},
   ): Promise<void> {
     await this.auditService.record({
       tenantId: executionRequest.tenantId.toString(),
       actorUserId: this.toAuditActorUserId(actor.actorId),
-      action: 'execution_request.created',
+      action,
       entity: 'execution_request',
       entityId: executionRequest._id.toString(),
       metadata: {
@@ -134,6 +228,30 @@ export class ExecutionRequestsService {
         queryDefinitionId: executionRequest.queryDefinitionId?.toString(),
         dashboardDefinitionId: executionRequest.dashboardDefinitionId?.toString(),
         reportDefinitionId: executionRequest.reportDefinitionId?.toString(),
+        actorId: actor.actorId,
+        actorRole: actor.actorRole,
+        ...extraMetadata,
+      },
+    });
+  }
+
+  private async recordEventAudit(
+    event: ExecutionRequestEventDocument,
+    actor: ExecutionRequestActorContext,
+  ): Promise<void> {
+    await this.auditService.record({
+      tenantId: event.tenantId.toString(),
+      actorUserId: this.toAuditActorUserId(actor.actorId),
+      action: 'execution_request.event.created',
+      entity: 'execution_request_event',
+      entityId: event._id.toString(),
+      metadata: {
+        tenantId: event.tenantId.toString(),
+        executionRequestId: event.executionRequestId.toString(),
+        requestKey: event.requestKey,
+        eventType: event.eventType,
+        previousStatus: event.previousStatus,
+        nextStatus: event.nextStatus,
         actorId: actor.actorId,
         actorRole: actor.actorRole,
       },
@@ -150,6 +268,73 @@ export class ExecutionRequestsService {
 
   private toOptionalObjectId(value?: string): Types.ObjectId | undefined {
     return value ? new Types.ObjectId(value) : undefined;
+  }
+
+  private async getExecutionRequestOrThrow(
+    tenantId: string,
+    executionRequestId: string,
+  ): Promise<ExecutionRequestDocument> {
+    const executionRequest = await this.executionRequestsRepository.findByTenantAndId(
+      new Types.ObjectId(tenantId),
+      executionRequestId,
+    );
+
+    if (!executionRequest) {
+      throw new NotFoundException('Execution request not found.');
+    }
+
+    return executionRequest;
+  }
+
+  private resolveNextStatus(
+    dto: CreateExecutionRequestEventDto,
+  ): ExecutionRequestStatus | undefined {
+    const eventStatus = this.statusFromEventType(dto.eventType);
+
+    if (dto.eventType === ExecutionRequestEventType.StatusChanged && !dto.nextStatus) {
+      throw new BadRequestException('nextStatus is required when eventType is status_changed.');
+    }
+
+    if (dto.eventType === ExecutionRequestEventType.NoteAdded && dto.nextStatus) {
+      throw new BadRequestException('nextStatus is not allowed when eventType is note_added.');
+    }
+
+    if (eventStatus && dto.nextStatus && dto.nextStatus !== eventStatus) {
+      throw new BadRequestException('nextStatus must match the selected eventType.');
+    }
+
+    return eventStatus ?? dto.nextStatus;
+  }
+
+  private statusFromEventType(
+    eventType: ExecutionRequestEventType,
+  ): ExecutionRequestStatus | undefined {
+    switch (eventType) {
+      case ExecutionRequestEventType.Accepted:
+        return ExecutionRequestStatus.Accepted;
+      case ExecutionRequestEventType.Blocked:
+        return ExecutionRequestStatus.Blocked;
+      case ExecutionRequestEventType.Failed:
+        return ExecutionRequestStatus.Failed;
+      case ExecutionRequestEventType.CompletedDemo:
+        return ExecutionRequestStatus.CompletedDemo;
+      case ExecutionRequestEventType.NotSupported:
+        return ExecutionRequestStatus.NotSupported;
+      default:
+        return undefined;
+    }
+  }
+
+  private sanitizeOptionalText(value: string | undefined, key: string): string | undefined {
+    const trimmed = value?.trim();
+
+    if (!trimmed) {
+      return undefined;
+    }
+
+    const sanitized = sanitizeMetadata({ [key]: trimmed })[key];
+
+    return typeof sanitized === 'string' ? sanitized : undefined;
   }
 
   private toResponse(executionRequest: ExecutionRequestDocument): ExecutionRequestResponseDto {
@@ -172,6 +357,24 @@ export class ExecutionRequestsService {
       metadata: executionRequest.metadata,
       createdAt: executionRequest.createdAt.toISOString(),
       updatedAt: executionRequest.updatedAt.toISOString(),
+    };
+  }
+
+  private toEventResponse(event: ExecutionRequestEventDocument): ExecutionRequestEventResponseDto {
+    return {
+      id: event._id.toString(),
+      tenantId: event.tenantId.toString(),
+      executionRequestId: event.executionRequestId.toString(),
+      requestKey: event.requestKey,
+      eventType: event.eventType,
+      previousStatus: event.previousStatus,
+      nextStatus: event.nextStatus,
+      message: event.message,
+      reason: event.reason,
+      actorId: event.actorId,
+      actorRole: event.actorRole,
+      metadata: event.metadata,
+      createdAt: event.createdAt.toISOString(),
     };
   }
 }

@@ -3,6 +3,7 @@ import { Types } from 'mongoose';
 
 import { AuditService } from '../../audit/services/audit.service';
 import { AdminRole } from '../../auth/types/admin-role';
+import { ExecutionRequestEventsRepository } from '../repositories/execution-request-events.repository';
 import { ExecutionRequestsRepository } from '../repositories/execution-requests.repository';
 import {
   ExecutionRequestDocument,
@@ -10,6 +11,10 @@ import {
   ExecutionRequestMode,
   ExecutionRequestStatus,
 } from '../schemas/execution-request.schema';
+import {
+  ExecutionRequestEventDocument,
+  ExecutionRequestEventType,
+} from '../schemas/execution-request-event.schema';
 import { ExecutionRequestsService } from '../services/execution-requests.service';
 
 type AuditServiceMock = {
@@ -62,8 +67,27 @@ describe('ExecutionRequestsService', () => {
         }),
       ),
     };
+    const eventRepository: Pick<ExecutionRequestEventsRepository, 'create'> = {
+      create: jest.fn(async (record) =>
+        createExecutionRequestEventDocument({
+          _id: new Types.ObjectId(),
+          tenantId: record.tenantId,
+          executionRequestId: record.executionRequestId,
+          requestKey: record.requestKey,
+          eventType: record.eventType,
+          previousStatus: record.previousStatus,
+          nextStatus: record.nextStatus,
+          reason: record.reason,
+          message: record.message,
+          actorId: record.actorId,
+          actorRole: record.actorRole,
+          metadata: record.metadata,
+          createdAt,
+        }),
+      ),
+    };
     const auditService = createAuditService();
-    const service = createService(repository, auditService);
+    const service = createService(repository, eventRepository, auditService);
 
     const result = await service.create(
       {
@@ -103,6 +127,17 @@ describe('ExecutionRequestsService', () => {
     expect(createRecord.mode).toBe(ExecutionRequestMode.FutureRuntime);
     expect(createRecord.reason).toBe('runtime_foundation_only');
     expect(createRecord.metadata).toEqual({ domain: 'sales' });
+    expect(eventRepository.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tenantId,
+        executionRequestId: createRecord._id,
+        requestKey: createRecord.requestKey,
+        eventType: ExecutionRequestEventType.Accepted,
+        nextStatus: ExecutionRequestStatus.Accepted,
+        reason: 'runtime_foundation_only',
+        metadata: {},
+      }),
+    );
     expect(result.requestKey).toMatch(/^exec_req_[0-9a-f]{24}$/);
     expect(result[caseData.referenceField]).toBe(caseData.referenceId.toString());
     expect(result).toMatchObject({
@@ -118,8 +153,9 @@ describe('ExecutionRequestsService', () => {
       metadata: { domain: 'sales' },
     });
     const auditRecord = auditService.record.mock.calls[0]?.[0];
+    const eventAuditRecord = auditService.record.mock.calls[1]?.[0];
 
-    if (!auditRecord) {
+    if (!auditRecord || !eventAuditRecord) {
       throw new Error('Expected audit record call.');
     }
 
@@ -136,6 +172,17 @@ describe('ExecutionRequestsService', () => {
       status: ExecutionRequestStatus.Accepted,
       actorId: '662d4f6e7a1c2b00124f0999',
       actorRole: AdminRole.Operator,
+    });
+    expect(eventAuditRecord).toMatchObject({
+      tenantId: tenantId.toString(),
+      actorUserId: '662d4f6e7a1c2b00124f0999',
+      action: 'execution_request.event.created',
+      entity: 'execution_request_event',
+    });
+    expect(eventAuditRecord.metadata).toMatchObject({
+      executionRequestId: result.id,
+      eventType: ExecutionRequestEventType.Accepted,
+      nextStatus: ExecutionRequestStatus.Accepted,
     });
     expect(JSON.stringify(result)).not.toContain('must-not-leak');
     expect(JSON.stringify(auditService.record.mock.calls)).not.toContain('must-not-leak');
@@ -219,16 +266,226 @@ describe('ExecutionRequestsService', () => {
       executionRequestId.toString(),
     );
   });
+
+  it('lists events by execution request and tenant scope', async () => {
+    const tenantId = new Types.ObjectId();
+    const executionRequestId = new Types.ObjectId();
+    const createdAt = new Date('2026-05-02T13:00:00.000Z');
+    const repository: Pick<ExecutionRequestsRepository, 'findByTenantAndId'> = {
+      findByTenantAndId: jest.fn(async () =>
+        createExecutionRequestDocument({
+          _id: executionRequestId,
+          tenantId,
+          requestKey: `exec_req_${executionRequestId.toString()}`,
+          kind: ExecutionRequestKind.Query,
+          status: ExecutionRequestStatus.Accepted,
+          mode: ExecutionRequestMode.FutureRuntime,
+          metadata: {},
+          createdAt,
+          updatedAt: createdAt,
+        }),
+      ),
+    };
+    const eventRepository: Pick<
+      ExecutionRequestEventsRepository,
+      'findByFilters' | 'countByFilters'
+    > = {
+      findByFilters: jest.fn(async () => [
+        createExecutionRequestEventDocument({
+          _id: new Types.ObjectId(),
+          tenantId,
+          executionRequestId,
+          requestKey: `exec_req_${executionRequestId.toString()}`,
+          eventType: ExecutionRequestEventType.Accepted,
+          nextStatus: ExecutionRequestStatus.Accepted,
+          metadata: {},
+          createdAt,
+        }),
+      ]),
+      countByFilters: jest.fn(async () => 1),
+    };
+    const service = createService(repository, eventRepository);
+
+    const result = await service.findEvents(executionRequestId.toString(), {
+      tenantId: tenantId.toString(),
+      page: 1,
+      pageSize: 25,
+    });
+
+    expect(repository.findByTenantAndId).toHaveBeenCalledWith(
+      tenantId,
+      executionRequestId.toString(),
+    );
+    expect(eventRepository.findByFilters).toHaveBeenCalledWith(
+      {
+        tenantId,
+        executionRequestId,
+        eventType: undefined,
+      },
+      1,
+      25,
+    );
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0]).toMatchObject({
+      executionRequestId: executionRequestId.toString(),
+      eventType: ExecutionRequestEventType.Accepted,
+      nextStatus: ExecutionRequestStatus.Accepted,
+    });
+  });
+
+  it('creates a safe status event and updates execution request status', async () => {
+    const tenantId = new Types.ObjectId();
+    const executionRequestId = new Types.ObjectId();
+    const createdAt = new Date('2026-05-02T13:30:00.000Z');
+    const request = createExecutionRequestDocument({
+      _id: executionRequestId,
+      tenantId,
+      requestKey: `exec_req_${executionRequestId.toString()}`,
+      kind: ExecutionRequestKind.Query,
+      status: ExecutionRequestStatus.Accepted,
+      mode: ExecutionRequestMode.FutureRuntime,
+      metadata: {},
+      createdAt,
+      updatedAt: createdAt,
+    });
+    const repository: Pick<
+      ExecutionRequestsRepository,
+      'findByTenantAndId' | 'updateStatusByTenantAndId'
+    > = {
+      findByTenantAndId: jest.fn(async () => request),
+      updateStatusByTenantAndId: jest.fn(async () =>
+        createExecutionRequestDocument({
+          ...request,
+          status: ExecutionRequestStatus.Blocked,
+          updatedAt: new Date('2026-05-02T13:31:00.000Z'),
+        }),
+      ),
+    };
+    const eventRepository: Pick<ExecutionRequestEventsRepository, 'create'> = {
+      create: jest.fn(async (record) =>
+        createExecutionRequestEventDocument({
+          _id: new Types.ObjectId(),
+          tenantId: record.tenantId,
+          executionRequestId: record.executionRequestId,
+          requestKey: record.requestKey,
+          eventType: record.eventType,
+          previousStatus: record.previousStatus,
+          nextStatus: record.nextStatus,
+          message: record.message,
+          reason: record.reason,
+          actorId: record.actorId,
+          actorRole: record.actorRole,
+          metadata: record.metadata,
+          createdAt,
+        }),
+      ),
+    };
+    const auditService = createAuditService();
+    const service = createService(repository, eventRepository, auditService);
+
+    const result = await service.createEvent(
+      executionRequestId.toString(),
+      {
+        tenantId: tenantId.toString(),
+        eventType: ExecutionRequestEventType.Blocked,
+        message: 'Blocked by foundation policy.',
+        reason: 'runtime_foundation_only',
+        metadata: {
+          domain: 'sales',
+          token: 'must-not-leak',
+          authorization: 'Bearer must-not-leak-token',
+        },
+      },
+      {
+        actorId: '662d4f6e7a1c2b00124f0999',
+        actorRole: AdminRole.Operator,
+      },
+    );
+
+    expect(repository.updateStatusByTenantAndId).toHaveBeenCalledWith(
+      tenantId,
+      executionRequestId.toString(),
+      ExecutionRequestStatus.Blocked,
+    );
+    expect(eventRepository.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        eventType: ExecutionRequestEventType.Blocked,
+        previousStatus: ExecutionRequestStatus.Accepted,
+        nextStatus: ExecutionRequestStatus.Blocked,
+        message: 'Blocked by foundation policy.',
+        reason: 'runtime_foundation_only',
+        metadata: { domain: 'sales' },
+      }),
+    );
+    expect(result).toMatchObject({
+      executionRequestId: executionRequestId.toString(),
+      eventType: ExecutionRequestEventType.Blocked,
+      previousStatus: ExecutionRequestStatus.Accepted,
+      nextStatus: ExecutionRequestStatus.Blocked,
+      metadata: { domain: 'sales' },
+    });
+    expect(auditService.record).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: 'execution_request.event.created',
+        entity: 'execution_request_event',
+      }),
+    );
+    expect(auditService.record).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: 'execution_request.status_changed',
+        entity: 'execution_request',
+      }),
+    );
+    expect(JSON.stringify(result)).not.toContain('must-not-leak');
+    expect(JSON.stringify(auditService.record.mock.calls)).not.toContain('must-not-leak');
+  });
+
+  it('rejects invalid event transition payloads', async () => {
+    const tenantId = new Types.ObjectId();
+    const executionRequestId = new Types.ObjectId();
+    const service = createService({
+      findByTenantAndId: jest.fn(async () =>
+        createExecutionRequestDocument({
+          _id: executionRequestId,
+          tenantId,
+          requestKey: `exec_req_${executionRequestId.toString()}`,
+          kind: ExecutionRequestKind.Query,
+          status: ExecutionRequestStatus.Accepted,
+          mode: ExecutionRequestMode.FutureRuntime,
+          metadata: {},
+          createdAt: new Date('2026-05-02T14:00:00.000Z'),
+          updatedAt: new Date('2026-05-02T14:00:00.000Z'),
+        }),
+      ),
+    });
+
+    await expect(
+      service.createEvent(executionRequestId.toString(), {
+        tenantId: tenantId.toString(),
+        eventType: ExecutionRequestEventType.StatusChanged,
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
 });
 
 function createService(
   repository: Partial<ExecutionRequestsRepository>,
+  eventRepository: Partial<ExecutionRequestEventsRepository> = createEventRepository(),
   auditService: AuditServiceMock = createAuditService(),
 ): ExecutionRequestsService {
   return new ExecutionRequestsService(
     repository as ExecutionRequestsRepository,
+    eventRepository as ExecutionRequestEventsRepository,
     auditService as unknown as AuditService,
   );
+}
+
+function createEventRepository(): Partial<ExecutionRequestEventsRepository> {
+  return {
+    create: jest.fn(),
+    findByFilters: jest.fn(),
+    countByFilters: jest.fn(),
+  };
 }
 
 function createAuditService(): AuditServiceMock {
@@ -250,4 +507,10 @@ function createExecutionRequestDocument(
   record: Partial<ExecutionRequestDocument>,
 ): ExecutionRequestDocument {
   return record as ExecutionRequestDocument;
+}
+
+function createExecutionRequestEventDocument(
+  record: Partial<ExecutionRequestEventDocument>,
+): ExecutionRequestEventDocument {
+  return record as ExecutionRequestEventDocument;
 }
