@@ -162,20 +162,21 @@ Os endpoints foundation de solicitacao futura sao:
 - `GET /api/v1/runtime/execution-requests/:id/events?tenantId=...`
 - `POST /api/v1/runtime/execution-requests/:id/events`
 - `POST /api/v1/runtime/execution-requests/:id/dry-run?tenantId=...`
+- `POST /api/v1/runtime/execution-requests/:id/demo-execute?tenantId=...`
 
 Se houver erro, verifique:
 
 1. `x-delfos-admin-key` presente e valido.
 2. `tenantId` informado e valido.
 3. Role temporaria `owner`, `admin` ou `operator` no `POST`; `viewer` nao cria solicitacao,
-   evento nem dry-run.
+   evento, dry-run nem demo-execute.
 4. `kind` informado como `query`, `dashboard` ou `report`.
 5. Referencia obrigatoria conforme o kind: `queryDefinitionId`, `dashboardDefinitionId` ou
    `reportDefinitionId`.
 6. Ausencia de campos fora do contrato, como `filters`, `parameters`, `settings`, `secretValue`,
    tokens, senhas, headers sensiveis, connection strings ou payload operacional bruto.
 7. Para eventos, `eventType` permitido e `nextStatus` coerente com a transicao foundation.
-8. Para dry-run, a execution request pertence ao tenant e as referencias declarativas existem
+8. Para dry-run e demo-execute, a execution request pertence ao tenant e as referencias declarativas existem
    conforme o `kind`.
 9. `requestId` e `correlationId` no envelope de erro.
 
@@ -198,6 +199,15 @@ registra evento `accepted` ou `blocked` na timeline com `reason:
 cache, scheduler, credential decrypt, chamada externa, teste de conexao ou acesso a fonte de
 cliente.
 
+Demo-execute tambem e foundation administrativa. `POST /:id/demo-execute` le apenas contratos
+declarativos via readiness, retorna resultado ficticio limitado quando pronto, registra evento
+`completed_demo` ou `blocked` na timeline com `reason:
+"demo_runtime_executor_foundation"` e atualiza o status administrativo para `completed_demo` ou
+`blocked`. Ele nao aceita body e nao executa runtime real, query, dashboard, report, export,
+conector, worker, fila, cache, scheduler, credential decrypt, chamada externa, teste de conexao ou
+acesso a fonte de cliente. O `demoResult` nunca deve ser tratado como dado real nem auditado
+integralmente.
+
 Para incidentes de vazamento, conferir que:
 
 - respostas nao incluem payload bruto, rows, segredo, credentialRef, token, senha, authorization
@@ -212,6 +222,8 @@ Para incidentes de vazamento, conferir que:
 - auditoria de `execution_request.dry_run_checked` contem apenas `tenantId`,
   `executionRequestId`, `requestKey`, `kind`, `ready`, `blockersCount`, `warningsCount` e
   `nextStatus`;
+- auditoria de `execution_request.demo_executed` contem apenas `tenantId`, `executionRequestId`,
+  `requestKey`, `kind`, `status`, `ready`, `blockersCount` e `warningsCount`;
 - auditoria nunca contem metadata livre, payload bruto ou campos sensiveis.
 
 ## Erro no seed local de desenvolvimento

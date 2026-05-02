@@ -51,29 +51,29 @@ Detalhes completos de headers, erros, envelope de lista e healthcheck ficam em
 
 ## 3. Documentos detalhados
 
-| Documento | Conteudo |
-|---|---|
-| [`foundation-auth-and-errors.md`](./foundation-auth-and-errors.md) | Escopo, headers temporarios, envelope de lista, contrato de erro e `GET /health`. |
-| [`foundation-tenancy-and-admin-resources.md`](./foundation-tenancy-and-admin-resources.md) | Contratos de `tenants`, `users` e `connections`. |
-| [`foundation-data-catalog.md`](./foundation-data-catalog.md) | Contratos de `datasets`, `query-definitions`, `dashboard-definitions`, `report-definitions` e `field-mappings`. |
-| [`foundation-credentials-and-security.md`](./foundation-credentials-and-security.md) | Contrato de `credentials`, seguranca dos exemplos e checkpoint tecnico da foundation. |
+| Documento                                                                                  | Conteudo                                                                                                        |
+| ------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| [`foundation-auth-and-errors.md`](./foundation-auth-and-errors.md)                         | Escopo, headers temporarios, envelope de lista, contrato de erro e `GET /health`.                               |
+| [`foundation-tenancy-and-admin-resources.md`](./foundation-tenancy-and-admin-resources.md) | Contratos de `tenants`, `users` e `connections`.                                                                |
+| [`foundation-data-catalog.md`](./foundation-data-catalog.md)                               | Contratos de `datasets`, `query-definitions`, `dashboard-definitions`, `report-definitions` e `field-mappings`. |
+| [`foundation-credentials-and-security.md`](./foundation-credentials-and-security.md)       | Contrato de `credentials`, seguranca dos exemplos e checkpoint tecnico da foundation.                           |
 
 ## 4. Indice de endpoints
 
-| Recurso | Rotas | Detalhes |
-|---|---|---|
-| Health | `GET /health` | [`foundation-auth-and-errors.md`](./foundation-auth-and-errors.md#3-health) |
-| Tenants | `POST /api/v1/tenants`, `GET /api/v1/tenants`, `GET /api/v1/tenants/:id`, `PATCH /api/v1/tenants/:id` | [`foundation-tenancy-and-admin-resources.md`](./foundation-tenancy-and-admin-resources.md#1-tenants) |
-| Users | `POST /api/v1/users`, `GET /api/v1/users`, `PATCH /api/v1/users/:id` | [`foundation-tenancy-and-admin-resources.md`](./foundation-tenancy-and-admin-resources.md#2-users) |
-| Connections | `POST /api/v1/connections`, `GET /api/v1/connections`, `GET /api/v1/connections/:id`, `PATCH /api/v1/connections/:id` | [`foundation-tenancy-and-admin-resources.md`](./foundation-tenancy-and-admin-resources.md#3-connections) |
-| Datasets | `POST /api/v1/datasets`, `GET /api/v1/datasets`, `GET /api/v1/datasets/:id`, `PATCH /api/v1/datasets/:id`, `DELETE /api/v1/datasets/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#1-datasets) |
-| Query definitions | `POST /api/v1/query-definitions`, `GET /api/v1/query-definitions`, `GET /api/v1/query-definitions/:id`, `PATCH /api/v1/query-definitions/:id`, `DELETE /api/v1/query-definitions/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#2-query-definitions--semantic-layer) |
-| Dashboard definitions | `POST /api/v1/dashboard-definitions`, `GET /api/v1/dashboard-definitions`, `GET /api/v1/dashboard-definitions/:id`, `PATCH /api/v1/dashboard-definitions/:id`, `DELETE /api/v1/dashboard-definitions/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#3-dashboard-definitions) |
-| Report definitions | `POST /api/v1/report-definitions`, `GET /api/v1/report-definitions`, `GET /api/v1/report-definitions/:id`, `PATCH /api/v1/report-definitions/:id`, `DELETE /api/v1/report-definitions/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#4-report-definitions) |
-| Field mappings | `POST /api/v1/field-mappings`, `GET /api/v1/field-mappings`, `PATCH /api/v1/field-mappings/:id`, `DELETE /api/v1/field-mappings/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#5-field-mappings) |
-| Execution preview | `POST /api/v1/query-definitions/:id/preview`, `POST /api/v1/dashboard-definitions/:id/preview` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#6-previewdemo-execution) |
-| Runtime execution requests foundation | `POST /api/v1/runtime/execution-requests`, `GET /api/v1/runtime/execution-requests`, `GET /api/v1/runtime/execution-requests/:id`, `GET /api/v1/runtime/execution-requests/:id/events`, `POST /api/v1/runtime/execution-requests/:id/events`, `POST /api/v1/runtime/execution-requests/:id/dry-run` | [`api-foundation-contracts.md`](./api-foundation-contracts.md#5-runtime-execution-requests-foundation) |
-| Credentials | `POST /api/v1/credentials`, `GET /api/v1/credentials`, `GET /api/v1/credentials/:id`, `PATCH /api/v1/credentials/:id/rotate`, `PATCH /api/v1/credentials/:id/revoke` | [`foundation-credentials-and-security.md`](./foundation-credentials-and-security.md#1-credentials--secrets) |
+| Recurso                               | Rotas                                                                                                                                                                                                                                                                                                                                                           | Detalhes                                                                                                    |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Health                                | `GET /health`                                                                                                                                                                                                                                                                                                                                                   | [`foundation-auth-and-errors.md`](./foundation-auth-and-errors.md#3-health)                                 |
+| Tenants                               | `POST /api/v1/tenants`, `GET /api/v1/tenants`, `GET /api/v1/tenants/:id`, `PATCH /api/v1/tenants/:id`                                                                                                                                                                                                                                                           | [`foundation-tenancy-and-admin-resources.md`](./foundation-tenancy-and-admin-resources.md#1-tenants)        |
+| Users                                 | `POST /api/v1/users`, `GET /api/v1/users`, `PATCH /api/v1/users/:id`                                                                                                                                                                                                                                                                                            | [`foundation-tenancy-and-admin-resources.md`](./foundation-tenancy-and-admin-resources.md#2-users)          |
+| Connections                           | `POST /api/v1/connections`, `GET /api/v1/connections`, `GET /api/v1/connections/:id`, `PATCH /api/v1/connections/:id`                                                                                                                                                                                                                                           | [`foundation-tenancy-and-admin-resources.md`](./foundation-tenancy-and-admin-resources.md#3-connections)    |
+| Datasets                              | `POST /api/v1/datasets`, `GET /api/v1/datasets`, `GET /api/v1/datasets/:id`, `PATCH /api/v1/datasets/:id`, `DELETE /api/v1/datasets/:id`                                                                                                                                                                                                                        | [`foundation-data-catalog.md`](./foundation-data-catalog.md#1-datasets)                                     |
+| Query definitions                     | `POST /api/v1/query-definitions`, `GET /api/v1/query-definitions`, `GET /api/v1/query-definitions/:id`, `PATCH /api/v1/query-definitions/:id`, `DELETE /api/v1/query-definitions/:id`                                                                                                                                                                           | [`foundation-data-catalog.md`](./foundation-data-catalog.md#2-query-definitions--semantic-layer)            |
+| Dashboard definitions                 | `POST /api/v1/dashboard-definitions`, `GET /api/v1/dashboard-definitions`, `GET /api/v1/dashboard-definitions/:id`, `PATCH /api/v1/dashboard-definitions/:id`, `DELETE /api/v1/dashboard-definitions/:id`                                                                                                                                                       | [`foundation-data-catalog.md`](./foundation-data-catalog.md#3-dashboard-definitions)                        |
+| Report definitions                    | `POST /api/v1/report-definitions`, `GET /api/v1/report-definitions`, `GET /api/v1/report-definitions/:id`, `PATCH /api/v1/report-definitions/:id`, `DELETE /api/v1/report-definitions/:id`                                                                                                                                                                      | [`foundation-data-catalog.md`](./foundation-data-catalog.md#4-report-definitions)                           |
+| Field mappings                        | `POST /api/v1/field-mappings`, `GET /api/v1/field-mappings`, `PATCH /api/v1/field-mappings/:id`, `DELETE /api/v1/field-mappings/:id`                                                                                                                                                                                                                            | [`foundation-data-catalog.md`](./foundation-data-catalog.md#5-field-mappings)                               |
+| Execution preview                     | `POST /api/v1/query-definitions/:id/preview`, `POST /api/v1/dashboard-definitions/:id/preview`                                                                                                                                                                                                                                                                  | [`foundation-data-catalog.md`](./foundation-data-catalog.md#6-previewdemo-execution)                        |
+| Runtime execution requests foundation | `POST /api/v1/runtime/execution-requests`, `GET /api/v1/runtime/execution-requests`, `GET /api/v1/runtime/execution-requests/:id`, `GET /api/v1/runtime/execution-requests/:id/events`, `POST /api/v1/runtime/execution-requests/:id/events`, `POST /api/v1/runtime/execution-requests/:id/dry-run`, `POST /api/v1/runtime/execution-requests/:id/demo-execute` | [`api-foundation-contracts.md`](./api-foundation-contracts.md#5-runtime-execution-requests-foundation)      |
+| Credentials                           | `POST /api/v1/credentials`, `GET /api/v1/credentials`, `GET /api/v1/credentials/:id`, `PATCH /api/v1/credentials/:id/rotate`, `PATCH /api/v1/credentials/:id/revoke`                                                                                                                                                                                            | [`foundation-credentials-and-security.md`](./foundation-credentials-and-security.md#1-credentials--secrets) |
 
 ## 5. Runtime execution requests foundation
 
@@ -89,6 +89,7 @@ Rotas:
 - `GET /api/v1/runtime/execution-requests/:id/events?tenantId=...&page=1&pageSize=25`
 - `POST /api/v1/runtime/execution-requests/:id/events`
 - `POST /api/v1/runtime/execution-requests/:id/dry-run?tenantId=...`
+- `POST /api/v1/runtime/execution-requests/:id/demo-execute?tenantId=...`
 
 Request seguro:
 
@@ -173,6 +174,54 @@ Response `200`:
 }
 ```
 
+Demo runtime executor foundation:
+
+```http
+POST /api/v1/runtime/execution-requests/662d4f6e7a1c2b00124f0901/demo-execute?tenantId=662d4f6e7a1c2b00124f0001
+Content-Type: application/json
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-id: dev-actor-001
+x-delfos-actor-role: operator
+```
+
+Response `200` quando readiness declarativa permite demo:
+
+```json
+{
+  "executionRequestId": "662d4f6e7a1c2b00124f0901",
+  "requestKey": "exec_req_662d4f6e7a1c2b00124f0901",
+  "kind": "query",
+  "status": "completed_demo",
+  "mode": "demo",
+  "generatedAt": "2026-05-02T12:00:00.000Z",
+  "ready": true,
+  "summary": "Demo execution completed with fictitious data only. No connector, query, export, worker, queue, cache or scheduler was used.",
+  "checksCount": 6,
+  "warningsCount": 0,
+  "blockersCount": 0,
+  "demoResult": {
+    "query": {
+      "sampleRows": [
+        { "period": "Jan demo", "total_demo_value": 125000, "records_demo_count": 42 }
+      ],
+      "sampleMetrics": [
+        {
+          "key": "demo_total_value",
+          "label": "Demo total value",
+          "value": 257500,
+          "unit": "demo_currency"
+        }
+      ]
+    }
+  },
+  "message": "Demo runtime executor foundation generated a safe demo result. No real runtime execution was started.",
+  "reason": "demo_runtime_executor_foundation"
+}
+```
+
+Quando a readiness declarativa tiver blockers, o endpoint retorna `200` com `status: "blocked"`,
+`ready: false`, contadores e sem `demoResult`.
+
 Enums iniciais:
 
 - `kind`: `query`, `dashboard`, `report`
@@ -245,6 +294,11 @@ Regras:
   administrativo do Delfos e retorna `checks`, `warnings` e `blockers`. Ele nao executa query,
   dashboard, report, export, conector, credencial, worker, fila, cache, scheduler, chamada externa
   ou acesso a fonte de cliente.
+- `POST /:id/demo-execute` inspeciona readiness declarativa, gera somente resultado ficticio
+  limitado quando nao ha blockers, registra evento seguro e atualiza status para `completed_demo`.
+  Quando ha blockers, registra evento seguro e atualiza status para `blocked`. Ele nao aceita body,
+  nao executa query, dashboard, report, export, conector, credencial, worker, fila, cache,
+  scheduler, chamada externa ou acesso a fonte de cliente.
 - O dry-run valida referencias declarativas por `kind`: query definitions, datasets e field
   mappings para `query`; dashboard definition, widgets e queries resolviveis para `dashboard`;
   report definition, referencias de query/dashboard e `exportOptions` apenas como configuracao
@@ -278,6 +332,8 @@ Auditoria:
   `eventType`, `previousStatus`, `nextStatus` e ator/role.
 - Auditoria de dry-run registra apenas `tenantId`, `executionRequestId`, `requestKey`, `kind`,
   `ready`, `blockersCount`, `warningsCount` e `nextStatus`.
+- Auditoria de demo-execute registra apenas `tenantId`, `executionRequestId`, `requestKey`,
+  `kind`, `status`, `ready`, `blockersCount` e `warningsCount`.
 - Auditoria nunca registra metadata livre, filters, parameters, settings, payload bruto, rows,
   secrets, credentialRef, token, senha, authorization header ou connection string.
 

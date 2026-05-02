@@ -96,6 +96,37 @@ export class ExecutionRequestAuditService {
       .then(() => undefined);
   }
 
+  recordDemoExecute(
+    executionRequest: ExecutionRequestDocument,
+    actor: ExecutionRequestActorContext,
+    metadata: {
+      ready: boolean;
+      blockersCount: number;
+      warningsCount: number;
+      status: ExecutionRequestStatus.CompletedDemo | ExecutionRequestStatus.Blocked;
+    },
+  ): Promise<void> {
+    return this.auditService
+      .record({
+        tenantId: executionRequest.tenantId.toString(),
+        actorUserId: this.toAuditActorUserId(actor.actorId),
+        action: 'execution_request.demo_executed',
+        entity: 'execution_request',
+        entityId: executionRequest._id.toString(),
+        metadata: {
+          tenantId: executionRequest.tenantId.toString(),
+          executionRequestId: executionRequest._id.toString(),
+          requestKey: executionRequest.requestKey,
+          kind: executionRequest.kind,
+          status: metadata.status,
+          ready: metadata.ready,
+          blockersCount: metadata.blockersCount,
+          warningsCount: metadata.warningsCount,
+        },
+      })
+      .then(() => undefined);
+  }
+
   private toAuditActorUserId(actorId: string | undefined): string | undefined {
     if (!actorId || !/^[0-9a-f]{24}$/i.test(actorId)) {
       return undefined;

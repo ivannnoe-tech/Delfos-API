@@ -5,6 +5,7 @@ import { buildListMeta, ListResponse } from '../../../core/dto/list-meta.dto';
 import { sanitizeMetadata } from '../../../core/utils/sanitize-metadata';
 import { CreateExecutionRequestDto } from '../dto/create-execution-request.dto';
 import { CreateExecutionRequestEventDto } from '../dto/create-execution-request-event.dto';
+import { ExecutionRequestDemoExecuteResponseDto } from '../dto/execution-request-demo-execute-response.dto';
 import { ExecutionRequestDryRunResponseDto } from '../dto/execution-request-dry-run-response.dto';
 import { ListExecutionRequestEventsQueryDto } from '../dto/execution-request-event-query.dto';
 import {
@@ -25,6 +26,7 @@ import {
 } from '../schemas/execution-request.schema';
 import { ExecutionRequestActorContext } from './execution-request-actor-context';
 import { ExecutionRequestAuditService } from './execution-request-audit.service';
+import { ExecutionRequestDemoExecutorService } from './execution-request-demo-executor.service';
 import { ExecutionRequestDryRunService } from './execution-request-dry-run.service';
 import { ExecutionRequestEventsService } from './execution-request-events.service';
 
@@ -35,6 +37,7 @@ export class ExecutionRequestsService {
     private readonly executionRequestAuditService: ExecutionRequestAuditService,
     private readonly executionRequestEventsService: ExecutionRequestEventsService,
     private readonly executionRequestDryRunService: ExecutionRequestDryRunService,
+    private readonly executionRequestDemoExecutorService: ExecutionRequestDemoExecutorService,
   ) {}
 
   async create(
@@ -133,6 +136,14 @@ export class ExecutionRequestsService {
     actor: ExecutionRequestActorContext = {},
   ): Promise<ExecutionRequestDryRunResponseDto> {
     return this.executionRequestDryRunService.dryRun(executionRequestId, query, actor);
+  }
+
+  demoExecute(
+    executionRequestId: string,
+    query: ExecutionRequestTenantQueryDto,
+    actor: ExecutionRequestActorContext = {},
+  ): Promise<ExecutionRequestDemoExecuteResponseDto> {
+    return this.executionRequestDemoExecutorService.demoExecute(executionRequestId, query, actor);
   }
 
   private validateRequiredReference(dto: CreateExecutionRequestDto): void {

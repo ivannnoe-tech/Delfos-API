@@ -74,19 +74,19 @@ payload sensivel ou detalhes internos.
 
 ## 4. Códigos de erro comuns
 
-| Código | Uso |
-|---|---|
-| `VALIDATION_ERROR` | entrada inválida |
-| `UNAUTHENTICATED` | credencial temporária ausente/inválida |
-| `FORBIDDEN` | sem permissão |
-| `NOT_FOUND` | recurso inexistente ou inacessível |
-| `TENANT_REQUIRED` | tenant não informado/selecionado |
-| `EXTERNAL_API_UNAVAILABLE` | Planejado/futuro para conectores reais; nao usado pela foundation atual |
-| `EXTERNAL_API_TIMEOUT` | Planejado/futuro para conectores reais; nao usado pela foundation atual |
-| `EXTERNAL_API_AUTH_FAILED` | Planejado/futuro para conectores reais; nao usado pela foundation atual |
-| `DATASET_SCHEMA_INVALID` | Planejado/futuro para resposta real de dataset/mapping; nao usado pela foundation atual |
-| `CONFIGURATION_INCOMPLETE` | conexão/dataset/mapping incompleto |
-| `INTERNAL_ERROR` | erro inesperado |
+| Código                     | Uso                                                                                     |
+| -------------------------- | --------------------------------------------------------------------------------------- |
+| `VALIDATION_ERROR`         | entrada inválida                                                                        |
+| `UNAUTHENTICATED`          | credencial temporária ausente/inválida                                                  |
+| `FORBIDDEN`                | sem permissão                                                                           |
+| `NOT_FOUND`                | recurso inexistente ou inacessível                                                      |
+| `TENANT_REQUIRED`          | tenant não informado/selecionado                                                        |
+| `EXTERNAL_API_UNAVAILABLE` | Planejado/futuro para conectores reais; nao usado pela foundation atual                 |
+| `EXTERNAL_API_TIMEOUT`     | Planejado/futuro para conectores reais; nao usado pela foundation atual                 |
+| `EXTERNAL_API_AUTH_FAILED` | Planejado/futuro para conectores reais; nao usado pela foundation atual                 |
+| `DATASET_SCHEMA_INVALID`   | Planejado/futuro para resposta real de dataset/mapping; nao usado pela foundation atual |
+| `CONFIGURATION_INCOMPLETE` | conexão/dataset/mapping incompleto                                                      |
+| `INTERNAL_ERROR`           | erro inesperado                                                                         |
 
 Erros externos permanecem documentados para compatibilidade conceitual futura. No estado atual,
 nao ha chamada externa, conector real, API de cliente, cache, fila, scheduler ou execucao real.
@@ -375,6 +375,7 @@ declarativas e contadores de secoes/blocos.
 - `GET /api/v1/runtime/execution-requests`
 - `POST /api/v1/runtime/execution-requests`
 - `GET /api/v1/runtime/execution-requests/:id`
+- `POST /api/v1/runtime/execution-requests/:id/demo-execute`
 
 Na foundation atual, execution requests registram apenas uma solicitacao administrativa futura
 com `tenantId`, `requestKey`, `kind`, `status`, references e metadados seguros. `POST` retorna
@@ -393,6 +394,10 @@ Regras:
 - Nao ha runtime real, conector real, worker, fila, scheduler, cache, query real, acesso a fonte
   de cliente, exportacao PDF/Excel/CSV, envio de e-mail, teste real de conexao ou discovery real
   de schema.
+- `demo-execute` gera apenas resultado ficticio limitado com `mode: "demo"` quando a readiness
+  declarativa nao possui blockers; caso contrario retorna `status: "blocked"` sem `demoResult`.
+  Ele nao aceita body e nao executa runtime real, query, conector, exportacao, worker, fila,
+  cache, scheduler, credential decrypt ou chamada externa.
 
 ### Field mappings
 

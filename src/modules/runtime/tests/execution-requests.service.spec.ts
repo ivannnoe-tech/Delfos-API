@@ -3,6 +3,7 @@ import { Types } from 'mongoose';
 
 import { AdminRole } from '../../auth/types/admin-role';
 import { ExecutionRequestsRepository } from '../repositories/execution-requests.repository';
+import { ExecutionRequestDemoExecuteResponseDto } from '../dto/execution-request-demo-execute-response.dto';
 import { ExecutionRequestDryRunResponseDto } from '../dto/execution-request-dry-run-response.dto';
 import {
   ExecutionRequestKind,
@@ -11,6 +12,7 @@ import {
 } from '../schemas/execution-request.schema';
 import { ExecutionRequestEventType } from '../schemas/execution-request-event.schema';
 import { ExecutionRequestAuditService } from '../services/execution-request-audit.service';
+import { ExecutionRequestDemoExecutorService } from '../services/execution-request-demo-executor.service';
 import { ExecutionRequestDryRunService } from '../services/execution-request-dry-run.service';
 import { ExecutionRequestEventsService } from '../services/execution-request-events.service';
 import { ExecutionRequestsService } from '../services/execution-requests.service';
@@ -194,10 +196,17 @@ describe('ExecutionRequestsService', () => {
     );
   });
 
-  it('delegates events and dry-run to focused services', async () => {
+  it('delegates events, dry-run, and demo execution to focused services', async () => {
     const eventsService = createEventsServiceMock();
     const dryRunService = createDryRunServiceMock();
-    const service = createService({}, createAuditServiceMock(), eventsService, dryRunService);
+    const demoExecutorService = createDemoExecutorServiceMock();
+    const service = createService(
+      {},
+      createAuditServiceMock(),
+      eventsService,
+      dryRunService,
+      demoExecutorService,
+    );
     const executionRequestId = new Types.ObjectId().toString();
     const tenantId = new Types.ObjectId().toString();
 
@@ -208,6 +217,7 @@ describe('ExecutionRequestsService', () => {
       createActorFixture(),
     );
     await service.dryRun(executionRequestId, { tenantId }, createActorFixture());
+    await service.demoExecute(executionRequestId, { tenantId }, createActorFixture());
 
     expect(eventsService.findEvents).toHaveBeenCalledWith(executionRequestId, {
       tenantId,
@@ -224,6 +234,11 @@ describe('ExecutionRequestsService', () => {
       { tenantId },
       createActorFixture(),
     );
+    expect(demoExecutorService.demoExecute).toHaveBeenCalledWith(
+      executionRequestId,
+      { tenantId },
+      createActorFixture(),
+    );
   });
 });
 
@@ -232,12 +247,14 @@ function createService(
   auditService: Partial<ExecutionRequestAuditService> = createAuditServiceMock(),
   eventsService: Partial<ExecutionRequestEventsService> = createEventsServiceMock(),
   dryRunService: Partial<ExecutionRequestDryRunService> = createDryRunServiceMock(),
+  demoExecutorService: Partial<ExecutionRequestDemoExecutorService> = createDemoExecutorServiceMock(),
 ): ExecutionRequestsService {
   return new ExecutionRequestsService(
     repository as ExecutionRequestsRepository,
     auditService as ExecutionRequestAuditService,
     eventsService as ExecutionRequestEventsService,
     dryRunService as ExecutionRequestDryRunService,
+    demoExecutorService as ExecutionRequestDemoExecutorService,
   );
 }
 
@@ -293,5 +310,30 @@ function createDryRunServiceMock(): Pick<ExecutionRequestDryRunService, 'dryRun'
 
   return {
     dryRun: jest.fn(async () => response),
+  };
+}
+
+function createDemoExecutorServiceMock(): Pick<ExecutionRequestDemoExecutorService, 'demoExecute'> {
+  const response: ExecutionRequestDemoExecuteResponseDto = {
+    executionRequestId: new Types.ObjectId().toString(),
+    requestKey: 'exec_req_662d4f6e7a1c2b00124f0901',
+    kind: ExecutionRequestKind.Query,
+    status: ExecutionRequestStatus.CompletedDemo,
+    mode: ExecutionRequestMode.Demo,
+    generatedAt: '2026-05-02T12:00:00.000Z',
+    ready: true,
+    summary:
+      'Demo execution completed with fictitious data only. No connector, query, export, worker, queue, cache or scheduler was used.',
+    checksCount: 1,
+    warningsCount: 0,
+    blockersCount: 0,
+    demoResult: { query: { sampleRows: [], sampleMetrics: [] } },
+    message:
+      'Demo runtime executor foundation generated a safe demo result. No real runtime execution was started.',
+    reason: 'demo_runtime_executor_foundation',
+  };
+
+  return {
+    demoExecute: jest.fn(async () => response),
   };
 }

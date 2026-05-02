@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -26,6 +27,7 @@ import { AdminRole } from '../../auth/types/admin-role';
 import { AuthenticatedRequest } from '../../auth/types/authenticated-request';
 import { CreateExecutionRequestDto } from '../dto/create-execution-request.dto';
 import { CreateExecutionRequestEventDto } from '../dto/create-execution-request-event.dto';
+import { ExecutionRequestDemoExecuteResponseDto } from '../dto/execution-request-demo-execute-response.dto';
 import { ExecutionRequestDryRunResponseDto } from '../dto/execution-request-dry-run-response.dto';
 import { ListExecutionRequestEventsQueryDto } from '../dto/execution-request-event-query.dto';
 import {
@@ -147,6 +149,31 @@ export class ExecutionRequestsController {
     return this.executionRequestsService.dryRun(params.id, query, this.toActorContext(request));
   }
 
+  @Post(':id/demo-execute')
+  @ApiOperation({
+    summary: 'Run a safe demo execution for one runtime execution request.',
+    description:
+      'Protected by temporary foundation admin-key auth. This endpoint checks declarative readiness, records a safe lifecycle event, returns a limited fictitious demo result, and never executes queries, connectors, workers, queues, schedulers, exports, credential decryption or external data access.',
+  })
+  @AdminRoles(AdminRole.Owner, AdminRole.Admin, AdminRole.Operator)
+  @ApiParam({ name: 'id' })
+  @ApiOkResponse({ type: ExecutionRequestDemoExecuteResponseDto })
+  @HttpCode(200)
+  demoExecute(
+    @Param() params: ExecutionRequestIdParamDto,
+    @Query() query: ExecutionRequestTenantQueryDto,
+    @Body() body: Record<string, unknown> | undefined,
+    @Req() request: AuthenticatedRequest,
+  ): Promise<ExecutionRequestDemoExecuteResponseDto> {
+    this.rejectPayload(body);
+
+    return this.executionRequestsService.demoExecute(
+      params.id,
+      query,
+      this.toActorContext(request),
+    );
+  }
+
   private toActorContext(request: AuthenticatedRequest): {
     actorId?: string;
     actorRole?: AdminRole;
@@ -155,5 +182,11 @@ export class ExecutionRequestsController {
       actorId: request.delfosAuthContext?.actorId,
       actorRole: request.delfosAuthContext?.actorRole,
     };
+  }
+
+  private rejectPayload(body: Record<string, unknown> | undefined): void {
+    if (body && Object.keys(body).length > 0) {
+      throw new BadRequestException('Request body is not accepted for demo execution.');
+    }
   }
 }

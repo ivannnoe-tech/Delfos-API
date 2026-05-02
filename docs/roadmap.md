@@ -26,7 +26,8 @@ Implementado atualmente:
 - query-definitions declarativas;
 - dashboard-definitions declarativas;
 - report-definitions declarativas;
-- runtime execution requests foundation, apenas contratos/estados/eventos administrativos;
+- runtime execution requests foundation, apenas contratos/estados/eventos administrativos,
+  readiness dry-run e demo-execute ficticio;
 - audit interno;
 - seed/dev local com dados ficticios;
 - `execution-preview` demo em memoria;
@@ -40,7 +41,7 @@ Nao implementado atualmente:
 - local agent;
 - teste real de conexao;
 - execucao real de dataset/query;
-- execucao real das runtime execution requests ou de seus eventos foundation;
+- execucao real das runtime execution requests, dry-run, demo-execute ou eventos foundation;
 - cache, fila, worker, scheduler, staging ou snapshot;
 - dashboard builder/runtime final;
 - query builder;
@@ -80,7 +81,7 @@ Entregas atuais:
 - auditoria interna;
 - preview demo;
 - contratos foundation para solicitacoes futuras de runtime e eventos administrativos de ciclo de
-  vida, sem execucao real;
+  vida, readiness dry-run e demo-execute ficticio, sem execucao real;
 - documentacao operacional e de desenvolvimento.
 
 ---

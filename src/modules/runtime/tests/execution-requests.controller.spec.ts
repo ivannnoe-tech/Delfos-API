@@ -16,6 +16,7 @@ import { AdminRolesGuard } from '../../auth/guards/admin-roles.guard';
 import { RequestAuthContextService } from '../../auth/services/request-auth-context.service';
 import { AdminRole } from '../../auth/types/admin-role';
 import { ExecutionRequestsController } from '../controllers/execution-requests.controller';
+import { ExecutionRequestDemoExecuteResponseDto } from '../dto/execution-request-demo-execute-response.dto';
 import {
   ExecutionRequestKind,
   ExecutionRequestMode,
@@ -34,7 +35,7 @@ describe('ExecutionRequestsController', () => {
   let baseUrl: string;
   let executionRequestsService: Pick<
     ExecutionRequestsService,
-    'create' | 'findByFilters' | 'findOne' | 'findEvents' | 'createEvent' | 'dryRun'
+    'create' | 'findByFilters' | 'findOne' | 'findEvents' | 'createEvent' | 'dryRun' | 'demoExecute'
   >;
 
   beforeAll(async () => {
@@ -51,6 +52,7 @@ describe('ExecutionRequestsController', () => {
       })),
       createEvent: jest.fn(async () => createExecutionRequestEventResponse()),
       dryRun: jest.fn(async () => createExecutionRequestDryRunResponse()),
+      demoExecute: jest.fn(async () => createExecutionRequestDemoExecuteResponse()),
     };
 
     const moduleRef = await Test.createTestingModule({
@@ -330,6 +332,82 @@ describe('ExecutionRequestsController', () => {
     expect(executionRequestsService.dryRun).not.toHaveBeenCalled();
   });
 
+  it.each([AdminRole.Owner, AdminRole.Admin, AdminRole.Operator])(
+    'allows %s role to run demo execution foundation',
+    async (role) => {
+      const response = await fetch(
+        `${baseUrl}/api/v1/runtime/execution-requests/${executionRequestId}/demo-execute?tenantId=${tenantId}`,
+        {
+          method: 'POST',
+          headers: {
+            [DELFOS_ADMIN_KEY_HEADER]: adminKey,
+            [DELFOS_ACTOR_ID_HEADER]: 'dev-actor-001',
+            [DELFOS_ACTOR_ROLE_HEADER]: role,
+          },
+        },
+      );
+      const body = await readJsonRecord(response);
+
+      expect(response.status).toBe(200);
+      expect(body).toMatchObject({
+        executionRequestId,
+        kind: ExecutionRequestKind.Query,
+        status: ExecutionRequestStatus.CompletedDemo,
+        ready: true,
+        mode: ExecutionRequestMode.Demo,
+        reason: 'demo_runtime_executor_foundation',
+      });
+      expect(JSON.stringify(body)).not.toMatch(/secret|token|password|apiKey|clientSecret/i);
+      expect(executionRequestsService.demoExecute).toHaveBeenCalledWith(
+        executionRequestId,
+        expect.objectContaining({ tenantId }),
+        { actorId: 'dev-actor-001', actorRole: role },
+      );
+    },
+  );
+
+  it('rejects viewer role on demo execution endpoint', async () => {
+    const response = await fetch(
+      `${baseUrl}/api/v1/runtime/execution-requests/${executionRequestId}/demo-execute?tenantId=${tenantId}`,
+      {
+        method: 'POST',
+        headers: {
+          [DELFOS_ADMIN_KEY_HEADER]: adminKey,
+          [DELFOS_ACTOR_ROLE_HEADER]: AdminRole.Viewer,
+        },
+      },
+    );
+
+    expect(response.status).toBe(403);
+    expect(executionRequestsService.demoExecute).not.toHaveBeenCalled();
+  });
+
+  it('rejects arbitrary payload on demo execution endpoint', async () => {
+    const response = await fetch(
+      `${baseUrl}/api/v1/runtime/execution-requests/${executionRequestId}/demo-execute?tenantId=${tenantId}`,
+      {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          [DELFOS_ADMIN_KEY_HEADER]: adminKey,
+          [DELFOS_ACTOR_ROLE_HEADER]: AdminRole.Operator,
+        },
+        body: JSON.stringify({
+          filters: { authorization: 'Bearer must-not-leak' },
+        }),
+      },
+    );
+    const body = await readJsonRecord(response);
+
+    expect(response.status).toBe(400);
+    expect(body).toMatchObject({
+      statusCode: 400,
+      error: 'Bad Request',
+    });
+    expect(JSON.stringify(body)).not.toContain('must-not-leak');
+    expect(executionRequestsService.demoExecute).not.toHaveBeenCalled();
+  });
+
   it('returns standardized validation error when tenantId is missing', async () => {
     const response = await fetch(`${baseUrl}/api/v1/runtime/execution-requests`, {
       method: 'POST',
@@ -435,6 +513,35 @@ function createExecutionRequestDryRunResponse(overrides: Record<string, unknown>
     message:
       'Dry-run readiness checked declarative contracts only. No real runtime execution was started.',
     reason: 'dry_run_readiness_checked',
+    ...overrides,
+  };
+}
+
+function createExecutionRequestDemoExecuteResponse(
+  overrides: Partial<ExecutionRequestDemoExecuteResponseDto> = {},
+): ExecutionRequestDemoExecuteResponseDto {
+  return {
+    executionRequestId,
+    requestKey: `exec_req_${executionRequestId}`,
+    kind: ExecutionRequestKind.Query,
+    status: ExecutionRequestStatus.CompletedDemo,
+    mode: ExecutionRequestMode.Demo,
+    generatedAt: '2026-05-02T12:00:00.000Z',
+    ready: true,
+    summary:
+      'Demo execution completed with fictitious data only. No connector, query, export, worker, queue, cache or scheduler was used.',
+    checksCount: 2,
+    warningsCount: 0,
+    blockersCount: 0,
+    demoResult: {
+      query: {
+        sampleRows: [{ period: 'Jan demo', total_demo_value: 125000 }],
+        sampleMetrics: [{ key: 'demo_total_value', label: 'Demo total value', value: 125000 }],
+      },
+    },
+    message:
+      'Demo runtime executor foundation generated a safe demo result. No real runtime execution was started.',
+    reason: 'demo_runtime_executor_foundation',
     ...overrides,
   };
 }
