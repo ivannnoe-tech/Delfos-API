@@ -34,7 +34,7 @@ describe('ExecutionRequestsController', () => {
   let baseUrl: string;
   let executionRequestsService: Pick<
     ExecutionRequestsService,
-    'create' | 'findByFilters' | 'findOne' | 'findEvents' | 'createEvent'
+    'create' | 'findByFilters' | 'findOne' | 'findEvents' | 'createEvent' | 'dryRun'
   >;
 
   beforeAll(async () => {
@@ -50,6 +50,7 @@ describe('ExecutionRequestsController', () => {
         meta: { page: 1, pageSize: 25, total: 1, totalPages: 1 },
       })),
       createEvent: jest.fn(async () => createExecutionRequestEventResponse()),
+      dryRun: jest.fn(async () => createExecutionRequestDryRunResponse()),
     };
 
     const moduleRef = await Test.createTestingModule({
@@ -280,6 +281,55 @@ describe('ExecutionRequestsController', () => {
     expect(executionRequestsService.createEvent).not.toHaveBeenCalled();
   });
 
+  it.each([AdminRole.Owner, AdminRole.Admin, AdminRole.Operator])(
+    'allows %s role to run declarative dry-run readiness',
+    async (role) => {
+      const response = await fetch(
+        `${baseUrl}/api/v1/runtime/execution-requests/${executionRequestId}/dry-run?tenantId=${tenantId}`,
+        {
+          method: 'POST',
+          headers: {
+            [DELFOS_ADMIN_KEY_HEADER]: adminKey,
+            [DELFOS_ACTOR_ID_HEADER]: 'dev-actor-001',
+            [DELFOS_ACTOR_ROLE_HEADER]: role,
+          },
+        },
+      );
+      const body = await readJsonRecord(response);
+
+      expect(response.status).toBe(200);
+      expect(body).toMatchObject({
+        executionRequestId,
+        kind: ExecutionRequestKind.Query,
+        recommendedStatus: ExecutionRequestStatus.Accepted,
+        ready: true,
+        mode: ExecutionRequestMode.DryRun,
+        reason: 'dry_run_readiness_checked',
+      });
+      expect(executionRequestsService.dryRun).toHaveBeenCalledWith(
+        executionRequestId,
+        expect.objectContaining({ tenantId }),
+        { actorId: 'dev-actor-001', actorRole: role },
+      );
+    },
+  );
+
+  it('rejects viewer role on dry-run readiness endpoint', async () => {
+    const response = await fetch(
+      `${baseUrl}/api/v1/runtime/execution-requests/${executionRequestId}/dry-run?tenantId=${tenantId}`,
+      {
+        method: 'POST',
+        headers: {
+          [DELFOS_ADMIN_KEY_HEADER]: adminKey,
+          [DELFOS_ACTOR_ROLE_HEADER]: AdminRole.Viewer,
+        },
+      },
+    );
+
+    expect(response.status).toBe(403);
+    expect(executionRequestsService.dryRun).not.toHaveBeenCalled();
+  });
+
   it('returns standardized validation error when tenantId is missing', async () => {
     const response = await fetch(`${baseUrl}/api/v1/runtime/execution-requests`, {
       method: 'POST',
@@ -367,6 +417,24 @@ function createExecutionRequestEventResponse(overrides: Record<string, unknown> 
     message: 'Runtime foundation request accepted. No real execution was started.',
     metadata: { domain: 'sales' },
     createdAt: '2026-05-02T12:00:00.000Z',
+    ...overrides,
+  };
+}
+
+function createExecutionRequestDryRunResponse(overrides: Record<string, unknown> = {}) {
+  return {
+    executionRequestId,
+    requestKey: `exec_req_${executionRequestId}`,
+    kind: ExecutionRequestKind.Query,
+    recommendedStatus: ExecutionRequestStatus.Accepted,
+    ready: true,
+    checks: [{ code: 'query_definition_found', message: 'Query definition exists.' }],
+    warnings: [],
+    blockers: [],
+    mode: ExecutionRequestMode.DryRun as ExecutionRequestMode.DryRun,
+    message:
+      'Dry-run readiness checked declarative contracts only. No real runtime execution was started.',
+    reason: 'dry_run_readiness_checked',
     ...overrides,
   };
 }

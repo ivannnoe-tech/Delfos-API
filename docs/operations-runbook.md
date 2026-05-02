@@ -161,19 +161,23 @@ Os endpoints foundation de solicitacao futura sao:
 - `GET /api/v1/runtime/execution-requests/:id?tenantId=...`
 - `GET /api/v1/runtime/execution-requests/:id/events?tenantId=...`
 - `POST /api/v1/runtime/execution-requests/:id/events`
+- `POST /api/v1/runtime/execution-requests/:id/dry-run?tenantId=...`
 
 Se houver erro, verifique:
 
 1. `x-delfos-admin-key` presente e valido.
 2. `tenantId` informado e valido.
-3. Role temporaria `owner`, `admin` ou `operator` no `POST`; `viewer` nao cria solicitacao.
+3. Role temporaria `owner`, `admin` ou `operator` no `POST`; `viewer` nao cria solicitacao,
+   evento nem dry-run.
 4. `kind` informado como `query`, `dashboard` ou `report`.
 5. Referencia obrigatoria conforme o kind: `queryDefinitionId`, `dashboardDefinitionId` ou
    `reportDefinitionId`.
 6. Ausencia de campos fora do contrato, como `filters`, `parameters`, `settings`, `secretValue`,
    tokens, senhas, headers sensiveis, connection strings ou payload operacional bruto.
 7. Para eventos, `eventType` permitido e `nextStatus` coerente com a transicao foundation.
-8. `requestId` e `correlationId` no envelope de erro.
+8. Para dry-run, a execution request pertence ao tenant e as referencias declarativas existem
+   conforme o `kind`.
+9. `requestId` e `correlationId` no envelope de erro.
 
 Esse fluxo deve apenas persistir metadados administrativos com status foundation, normalmente
 `accepted` e `reason: "runtime_foundation_only"`. Nao deve haver runtime real, connector real,
@@ -186,6 +190,14 @@ registrado quando a execution request e criada. `POST /:id/events` pode registra
 de status administrativo, mas isso nao dispara runtime, conector, worker, fila, scheduler, cache,
 query, exportacao, e-mail ou qualquer chamada externa.
 
+Dry-run/readiness tambem e foundation administrativa. `POST /:id/dry-run` le apenas contratos
+declarativos ja persistidos no Mongo administrativo do Delfos, retorna checks/warnings/blockers,
+registra evento `accepted` ou `blocked` na timeline com `reason:
+"dry_run_readiness_checked"` e pode atualizar o status administrativo para `accepted` ou
+`blocked`. Ele nao executa runtime real, query, dashboard, report, export, conector, worker, fila,
+cache, scheduler, credential decrypt, chamada externa, teste de conexao ou acesso a fonte de
+cliente.
+
 Para incidentes de vazamento, conferir que:
 
 - respostas nao incluem payload bruto, rows, segredo, credentialRef, token, senha, authorization
@@ -197,6 +209,9 @@ Para incidentes de vazamento, conferir que:
 - auditoria de `execution_request.event.created` e `execution_request.status_changed` contem apenas
   `tenantId`, `executionRequestId`, `requestKey`, `eventType`, `previousStatus`, `nextStatus` e
   ator/role;
+- auditoria de `execution_request.dry_run_checked` contem apenas `tenantId`,
+  `executionRequestId`, `requestKey`, `kind`, `ready`, `blockersCount`, `warningsCount` e
+  `nextStatus`;
 - auditoria nunca contem metadata livre, payload bruto ou campos sensiveis.
 
 ## Erro no seed local de desenvolvimento

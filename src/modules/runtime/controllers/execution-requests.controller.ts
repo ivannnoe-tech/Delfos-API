@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -16,6 +26,7 @@ import { AdminRole } from '../../auth/types/admin-role';
 import { AuthenticatedRequest } from '../../auth/types/authenticated-request';
 import { CreateExecutionRequestDto } from '../dto/create-execution-request.dto';
 import { CreateExecutionRequestEventDto } from '../dto/create-execution-request-event.dto';
+import { ExecutionRequestDryRunResponseDto } from '../dto/execution-request-dry-run-response.dto';
 import { ListExecutionRequestEventsQueryDto } from '../dto/execution-request-event-query.dto';
 import {
   ExecutionRequestEventListResponseDto,
@@ -116,6 +127,24 @@ export class ExecutionRequestsController {
     @Req() request: AuthenticatedRequest,
   ): Promise<ExecutionRequestEventResponseDto> {
     return this.executionRequestsService.createEvent(params.id, dto, this.toActorContext(request));
+  }
+
+  @Post(':id/dry-run')
+  @ApiOperation({
+    summary: 'Check declarative readiness for one runtime execution request.',
+    description:
+      'Protected by temporary foundation admin-key auth. This endpoint inspects only existing declarative contracts, records a safe lifecycle event, and never executes queries, connectors, workers, queues, schedulers, exports, credential decryption or external data access.',
+  })
+  @AdminRoles(AdminRole.Owner, AdminRole.Admin, AdminRole.Operator)
+  @ApiParam({ name: 'id' })
+  @ApiOkResponse({ type: ExecutionRequestDryRunResponseDto })
+  @HttpCode(200)
+  dryRun(
+    @Param() params: ExecutionRequestIdParamDto,
+    @Query() query: ExecutionRequestTenantQueryDto,
+    @Req() request: AuthenticatedRequest,
+  ): Promise<ExecutionRequestDryRunResponseDto> {
+    return this.executionRequestsService.dryRun(params.id, query, this.toActorContext(request));
   }
 
   private toActorContext(request: AuthenticatedRequest): {

@@ -72,7 +72,7 @@ Detalhes completos de headers, erros, envelope de lista e healthcheck ficam em
 | Report definitions | `POST /api/v1/report-definitions`, `GET /api/v1/report-definitions`, `GET /api/v1/report-definitions/:id`, `PATCH /api/v1/report-definitions/:id`, `DELETE /api/v1/report-definitions/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#4-report-definitions) |
 | Field mappings | `POST /api/v1/field-mappings`, `GET /api/v1/field-mappings`, `PATCH /api/v1/field-mappings/:id`, `DELETE /api/v1/field-mappings/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#5-field-mappings) |
 | Execution preview | `POST /api/v1/query-definitions/:id/preview`, `POST /api/v1/dashboard-definitions/:id/preview` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#6-previewdemo-execution) |
-| Runtime execution requests foundation | `POST /api/v1/runtime/execution-requests`, `GET /api/v1/runtime/execution-requests`, `GET /api/v1/runtime/execution-requests/:id`, `GET /api/v1/runtime/execution-requests/:id/events`, `POST /api/v1/runtime/execution-requests/:id/events` | [`api-foundation-contracts.md`](./api-foundation-contracts.md#5-runtime-execution-requests-foundation) |
+| Runtime execution requests foundation | `POST /api/v1/runtime/execution-requests`, `GET /api/v1/runtime/execution-requests`, `GET /api/v1/runtime/execution-requests/:id`, `GET /api/v1/runtime/execution-requests/:id/events`, `POST /api/v1/runtime/execution-requests/:id/events`, `POST /api/v1/runtime/execution-requests/:id/dry-run` | [`api-foundation-contracts.md`](./api-foundation-contracts.md#5-runtime-execution-requests-foundation) |
 | Credentials | `POST /api/v1/credentials`, `GET /api/v1/credentials`, `GET /api/v1/credentials/:id`, `PATCH /api/v1/credentials/:id/rotate`, `PATCH /api/v1/credentials/:id/revoke` | [`foundation-credentials-and-security.md`](./foundation-credentials-and-security.md#1-credentials--secrets) |
 
 ## 5. Runtime execution requests foundation
@@ -88,6 +88,7 @@ Rotas:
 - `GET /api/v1/runtime/execution-requests/:id?tenantId=...`
 - `GET /api/v1/runtime/execution-requests/:id/events?tenantId=...&page=1&pageSize=25`
 - `POST /api/v1/runtime/execution-requests/:id/events`
+- `POST /api/v1/runtime/execution-requests/:id/dry-run?tenantId=...`
 
 Request seguro:
 
@@ -135,6 +136,40 @@ Response `201`:
   },
   "createdAt": "2026-05-02T12:00:00.000Z",
   "updatedAt": "2026-05-02T12:00:00.000Z"
+}
+```
+
+Dry-run/readiness administrativo:
+
+```http
+POST /api/v1/runtime/execution-requests/662d4f6e7a1c2b00124f0901/dry-run?tenantId=662d4f6e7a1c2b00124f0001
+Content-Type: application/json
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-id: dev-actor-001
+x-delfos-actor-role: operator
+```
+
+Response `200`:
+
+```json
+{
+  "executionRequestId": "662d4f6e7a1c2b00124f0901",
+  "requestKey": "exec_req_662d4f6e7a1c2b00124f0901",
+  "kind": "query",
+  "recommendedStatus": "accepted",
+  "ready": true,
+  "checks": [
+    {
+      "code": "query_definition_found",
+      "message": "Query definition exists for this tenant.",
+      "target": "executionRequest.queryDefinitionId"
+    }
+  ],
+  "warnings": [],
+  "blockers": [],
+  "mode": "dry_run",
+  "message": "Dry-run readiness checked declarative contracts only. No real runtime execution was started.",
+  "reason": "dry_run_readiness_checked"
 }
 ```
 
@@ -206,6 +241,17 @@ Regras:
   `execution_request_events`.
 - `POST /:id/events` apenas registra evento foundation e, quando aplicavel, atualiza o status
   administrativo da execution request. Isso nao dispara runtime, worker, conector, fila ou query.
+- `POST /:id/dry-run` inspeciona somente contratos declarativos ja persistidos no Mongo
+  administrativo do Delfos e retorna `checks`, `warnings` e `blockers`. Ele nao executa query,
+  dashboard, report, export, conector, credencial, worker, fila, cache, scheduler, chamada externa
+  ou acesso a fonte de cliente.
+- O dry-run valida referencias declarativas por `kind`: query definitions, datasets e field
+  mappings para `query`; dashboard definition, widgets e queries resolviveis para `dashboard`;
+  report definition, referencias de query/dashboard e `exportOptions` apenas como configuracao
+  declarativa para `report`.
+- O dry-run registra evento seguro na timeline com `reason: "dry_run_readiness_checked"` e
+  metadata apenas com contadores/flags seguros. Quando ha blockers, o status recomendado e
+  `blocked`; sem blockers, o status recomendado e `accepted`.
 - `status_changed` exige `nextStatus`; eventos `accepted`, `blocked`, `failed`,
   `completed_demo` e `not_supported` definem o status correspondente; `note_added` nao altera
   status.
@@ -217,18 +263,21 @@ Regras:
   senhas, headers sensiveis, connection strings ou payload operacional bruto nao fazem parte do
   contrato e sao rejeitados pela validacao global.
 - Leitura/listagem exige admin key, conforme padrao dos catalogos.
-- Criacao de solicitacao e criacao de evento/status exigem role temporaria `owner`, `admin` ou
-  `operator`; `viewer` nao cria solicitacao nem evento.
+- Criacao de solicitacao, criacao de evento/status e dry-run exigem role temporaria `owner`,
+  `admin` ou `operator`; `viewer` nao cria solicitacao, evento nem dry-run.
 - `GET /health` continua publico e inalterado.
 
 Auditoria:
 
 - Evento interno: `execution_request.created`.
 - Evento interno: `execution_request.event.created`.
+- Evento interno: `execution_request.dry_run_checked`.
 - Quando ha transicao de status, tambem ha `execution_request.status_changed`.
 - Auditoria registra apenas `tenantId`, `kind`, `status`, references declarativas e ator/role.
 - Auditoria de eventos registra apenas `tenantId`, `executionRequestId`, `requestKey`,
   `eventType`, `previousStatus`, `nextStatus` e ator/role.
+- Auditoria de dry-run registra apenas `tenantId`, `executionRequestId`, `requestKey`, `kind`,
+  `ready`, `blockersCount`, `warningsCount` e `nextStatus`.
 - Auditoria nunca registra metadata livre, filters, parameters, settings, payload bruto, rows,
   secrets, credentialRef, token, senha, authorization header ou connection string.
 
