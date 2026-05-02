@@ -40,6 +40,7 @@ proteger:
 - dashboard-definitions declarativas;
 - report-definitions declarativas;
 - `execution-preview` demo em memoria;
+- runtime execution requests foundation sem execucao real;
 - auditoria interna sem secrets ou payload operacional;
 - sanitizacao de metadata/settings/options/filtros;
 - seed/dev local e dados ficticios.
@@ -76,6 +77,7 @@ existirem implementacao, scripts e escopo aprovado:
 - `data-connectors`, conectores reais e teste real de conexao;
 - cache service, Redis, fila, worker ou scheduler;
 - execucao real de dataset/query;
+- processamento real de execution requests;
 - chamada real a API, banco, arquivo ou sistema de cliente;
 - dashboard runtime final;
 - dashboard builder e query builder;

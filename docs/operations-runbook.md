@@ -22,10 +22,11 @@ O estado atual cobre:
 - catalogos foundation declarativos;
 - report-definitions declarativas;
 - `execution-preview` demo em memoria;
+- `runtime/execution-requests` foundation, apenas registro administrativo de solicitacoes futuras;
 - Swagger em `/docs` conforme `SWAGGER_ENABLED`.
 
 Nao existe procedimento operacional atual para JWT/login, conectores reais, teste real de API de
-cliente, cache, fila, scheduler, dashboard runtime ou query builder.
+cliente, cache, fila, scheduler, worker real, dashboard runtime ou query builder.
 
 ## API indisponivel
 
@@ -150,6 +151,41 @@ Para incidentes de vazamento, conferir que:
 - auditoria nunca contem `rows`, valores gerados, payload operacional, default values ou
   allowed values.
 
+## Erro em runtime execution requests foundation
+
+Os endpoints foundation de solicitacao futura sao:
+
+- `POST /api/v1/runtime/execution-requests`
+- `GET /api/v1/runtime/execution-requests?tenantId=...`
+- `GET /api/v1/runtime/execution-requests/:id?tenantId=...`
+
+Se houver erro, verifique:
+
+1. `x-delfos-admin-key` presente e valido.
+2. `tenantId` informado e valido.
+3. Role temporaria `owner`, `admin` ou `operator` no `POST`; `viewer` nao cria solicitacao.
+4. `kind` informado como `query`, `dashboard` ou `report`.
+5. Referencia obrigatoria conforme o kind: `queryDefinitionId`, `dashboardDefinitionId` ou
+   `reportDefinitionId`.
+6. Ausencia de campos fora do contrato, como `filters`, `parameters`, `settings`, `secretValue`,
+   tokens, senhas, headers sensiveis, connection strings ou payload operacional bruto.
+7. `requestId` e `correlationId` no envelope de erro.
+
+Esse fluxo deve apenas persistir metadados administrativos com status foundation, normalmente
+`accepted` e `reason: "runtime_foundation_only"`. Nao deve haver runtime real, connector real,
+`delfos-connectors`, local agent, query real, PDF/Excel/CSV real, envio de e-mail, teste real de
+conexao, discovery real de schema, chamada externa, cache, fila, scheduler, worker, staging,
+snapshot ou materializacao.
+
+Para incidentes de vazamento, conferir que:
+
+- respostas nao incluem payload bruto, rows, segredo, credentialRef, token, senha, authorization
+  header, connection string, filters, parameters ou settings livres;
+- `metadata` da execution request foi sanitizado;
+- auditoria de `execution_request.created` contem apenas `tenantId`, `kind`, `status`, references
+  declarativas e ator/role;
+- auditoria nunca contem metadata livre, payload bruto ou campos sensiveis.
+
 ## Erro no seed local de desenvolvimento
 
 O comando `npm run seed:dev` e exclusivo para ambiente local. Se falhar, verifique:
@@ -209,6 +245,7 @@ Os itens abaixo nao sao operacionais no estado atual:
 - conectores reais ou `data-connectors`;
 - `delfos-connectors` e local agent;
 - cache, fila, worker, scheduler, staging ou snapshot;
+- runtime real de execution requests;
 - dashboard runtime final e query builder.
 
 Quando essas capacidades forem aprovadas e implementadas, este runbook deve ganhar secoes

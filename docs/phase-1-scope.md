@@ -27,6 +27,7 @@ O consumo real de APIs custom, conectores, cache, fila, scheduler, dashboard run
 | query-definitions | Implementado - declarativo |
 | dashboard-definitions | Implementado - declarativo |
 | report-definitions | Implementado - declarativo |
+| runtime/execution-requests | Implementado - foundation de contratos/estados, sem execucao real |
 | execution-preview | Implementado - demo em memoria, sem execucao real |
 | seed/dev local | Implementado - dados ficticios |
 
@@ -52,6 +53,7 @@ Entregar uma foundation capaz de:
 - separar recursos por tenant;
 - cadastrar tenants, usuarios administrativos, connections declarativas e credentials protegidas;
 - cadastrar datasets, field-mappings, query-definitions, dashboard-definitions e report-definitions declarativos;
+- registrar execution requests foundation com references e estados seguros para runtime futuro;
 - gerar `execution-preview` demo em memoria, sempre ficticio;
 - popular ambiente local com seed/dev ficticio;
 - auditar mutacoes sensiveis sem gravar payloads ou secrets.
@@ -152,6 +154,7 @@ Esta etapa da Fase 1 e considerada bem-sucedida quando:
 - datasets podem ser cadastrados como catalogo declarativo;
 - campos podem ser mapeados por De/Para;
 - query-definitions, dashboard-definitions e report-definitions podem ser cadastradas e consultadas por tenant;
+- execution requests foundation podem ser criadas e consultadas por tenant sem disparar runtime real;
 - previews demo deixam claro que os dados sao ficticios;
 - permissoes temporarias impedem mutacoes indevidas;
 - contratos de erro incluem `requestId`/`correlationId`;

@@ -94,6 +94,7 @@ src/
     ├── query-definitions/   # camada semântica declarativa
     ├── dashboard-definitions/
     ├── report-definitions/
+    ├── runtime/             # execution requests foundation; sem runtime real
     └── execution-preview/   # preview demo em memória
 ```
 

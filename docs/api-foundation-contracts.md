@@ -72,9 +72,130 @@ Detalhes completos de headers, erros, envelope de lista e healthcheck ficam em
 | Report definitions | `POST /api/v1/report-definitions`, `GET /api/v1/report-definitions`, `GET /api/v1/report-definitions/:id`, `PATCH /api/v1/report-definitions/:id`, `DELETE /api/v1/report-definitions/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#4-report-definitions) |
 | Field mappings | `POST /api/v1/field-mappings`, `GET /api/v1/field-mappings`, `PATCH /api/v1/field-mappings/:id`, `DELETE /api/v1/field-mappings/:id` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#5-field-mappings) |
 | Execution preview | `POST /api/v1/query-definitions/:id/preview`, `POST /api/v1/dashboard-definitions/:id/preview` | [`foundation-data-catalog.md`](./foundation-data-catalog.md#6-previewdemo-execution) |
+| Runtime execution requests foundation | `POST /api/v1/runtime/execution-requests`, `GET /api/v1/runtime/execution-requests`, `GET /api/v1/runtime/execution-requests/:id` | [`api-foundation-contracts.md`](./api-foundation-contracts.md#5-runtime-execution-requests-foundation) |
 | Credentials | `POST /api/v1/credentials`, `GET /api/v1/credentials`, `GET /api/v1/credentials/:id`, `PATCH /api/v1/credentials/:id/rotate`, `PATCH /api/v1/credentials/:id/revoke` | [`foundation-credentials-and-security.md`](./foundation-credentials-and-security.md#1-credentials--secrets) |
 
-## 5. Regras transversais
+## 5. Runtime execution requests foundation
+
+Objetivo: registrar contratos administrativos para solicitacoes futuras de execucao, sem executar
+nada. Este recurso prepara estados, referencias e auditoria segura para uma etapa futura de
+runtime/conectores.
+
+Rotas:
+
+- `POST /api/v1/runtime/execution-requests`
+- `GET /api/v1/runtime/execution-requests?tenantId=...&page=1&pageSize=25`
+- `GET /api/v1/runtime/execution-requests/:id?tenantId=...`
+
+Request seguro:
+
+```http
+POST /api/v1/runtime/execution-requests
+Content-Type: application/json
+x-delfos-admin-key: <valor de DELFOS_ADMIN_KEY>
+x-delfos-actor-id: dev-actor-001
+x-delfos-actor-role: operator
+```
+
+```json
+{
+  "tenantId": "662d4f6e7a1c2b00124f0001",
+  "kind": "query",
+  "queryDefinitionId": "662d4f6e7a1c2b00124f0601",
+  "connectionId": "662d4f6e7a1c2b00124f0201",
+  "datasetId": "662d4f6e7a1c2b00124f0501",
+  "mode": "future_runtime",
+  "metadata": {
+    "domain": "sales"
+  }
+}
+```
+
+Response `201`:
+
+```json
+{
+  "id": "662d4f6e7a1c2b00124f0901",
+  "tenantId": "662d4f6e7a1c2b00124f0001",
+  "requestKey": "exec_req_662d4f6e7a1c2b00124f0901",
+  "kind": "query",
+  "status": "accepted",
+  "queryDefinitionId": "662d4f6e7a1c2b00124f0601",
+  "connectionId": "662d4f6e7a1c2b00124f0201",
+  "datasetId": "662d4f6e7a1c2b00124f0501",
+  "requestedByActorId": "dev-actor-001",
+  "requestedByRole": "operator",
+  "mode": "future_runtime",
+  "reason": "runtime_foundation_only",
+  "message": "Runtime foundation request accepted. No real execution was started.",
+  "metadata": {
+    "domain": "sales"
+  },
+  "createdAt": "2026-05-02T12:00:00.000Z",
+  "updatedAt": "2026-05-02T12:00:00.000Z"
+}
+```
+
+Enums iniciais:
+
+- `kind`: `query`, `dashboard`, `report`
+- `status`: `queued`, `accepted`, `blocked`, `failed`, `completed_demo`, `not_supported`
+- `mode`: `demo`, `dry_run`, `future_runtime`
+
+Regras:
+
+- `POST` nao executa query, dashboard, report, conector, worker, fila, scheduler, cache ou
+  chamada externa.
+- `kind=query` exige `queryDefinitionId`.
+- `kind=dashboard` exige `dashboardDefinitionId`.
+- `kind=report` exige `reportDefinitionId`.
+- A existencia real da definition referenciada nao e validada nesta etapa; o objetivo e registrar
+  contrato foundation tenant-scoped para futura orquestracao.
+- `connectionId` e `datasetId` sao referencias opcionais para rastreabilidade declarativa.
+- `requestKey` e gerado pela API no formato `exec_req_<ObjectId>`.
+- O status gravado atualmente e `accepted` com `reason: "runtime_foundation_only"`.
+- `metadata` e sanitizado; chaves ou valores com aparencia de segredo sao descartados.
+- Campos livres de execucao como `filters`, `parameters`, `settings`, `secretValue`, tokens,
+  senhas, headers sensiveis, connection strings ou payload operacional bruto nao fazem parte do
+  contrato e sao rejeitados pela validacao global.
+- Leitura/listagem exige admin key, conforme padrao dos catalogos.
+- Criacao exige role temporaria `owner`, `admin` ou `operator`; `viewer` nao cria solicitacao.
+- `GET /health` continua publico e inalterado.
+
+Auditoria:
+
+- Evento interno: `execution_request.created`.
+- Auditoria registra apenas `tenantId`, `kind`, `status`, references declarativas e ator/role.
+- Auditoria nunca registra metadata livre, filters, parameters, settings, payload bruto, rows,
+  secrets, credentialRef, token, senha, authorization header ou connection string.
+
+Fora de escopo explicito:
+
+- runtime real;
+- connector real;
+- `delfos-connectors`;
+- local agent;
+- worker/fila real;
+- query real;
+- acesso a fonte de cliente;
+- cache, staging, snapshot ou materializacao real;
+- PDF, Excel ou CSV real;
+- envio de e-mail;
+- scheduler;
+- descriptografia de credenciais;
+- teste real de conexao;
+- discovery real de schema.
+
+Principais erros esperados:
+
+- `401 Unauthorized` para admin key ausente ou invalida.
+- `403 Forbidden` para role temporaria sem permissao de criacao.
+- `400 Bad Request` para `tenantId`, `kind`, references obrigatorias, ObjectIds, enums ou campos
+  nao permitidos.
+- `404 Not Found` quando a execution request nao existir para o `tenantId` informado.
+- `500 Internal Server Error` para falha inesperada de persistencia ou auditoria.
+
+## 6. Regras transversais
 
 - Recursos tenant-scoped exigem `tenantId` explicito em body ou query enquanto nao existir contexto autenticado final.
 - Buscas, updates e deletes por id em recursos tenant-scoped sao tenant-scoped.

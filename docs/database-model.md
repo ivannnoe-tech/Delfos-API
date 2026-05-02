@@ -220,6 +220,41 @@ Nao persistem resultado, nao criam cache, nao criam snapshots, nao criam `query_
 e nao armazenam dado operacional de cliente. Apenas eventos seguros de audit podem ser gravados
 em `audit_logs`.
 
+### execution_requests
+
+Registros administrativos foundation para solicitacoes futuras de runtime. Na foundation atual,
+armazenam apenas contrato, references e estado seguro; nao executam query, conector, worker, fila,
+scheduler, cache, exportacao, chamada externa ou acesso a fonte de cliente.
+
+- `tenantId`
+- `requestKey`
+- `kind`
+- `status`
+- `queryDefinitionId`
+- `dashboardDefinitionId`
+- `reportDefinitionId`
+- `connectionId`
+- `datasetId`
+- `requestedByActorId`
+- `requestedByRole`
+- `mode`
+- `reason`
+- `message`
+- `metadata`
+- `createdAt`
+- `updatedAt`
+
+Regras:
+
+- `kind=query` exige `queryDefinitionId`.
+- `kind=dashboard` exige `dashboardDefinitionId`.
+- `kind=report` exige `reportDefinitionId`.
+- `status` atual e `accepted`; estados como `queued`, `blocked`, `failed`, `completed_demo` e
+  `not_supported` ficam registrados para compatibilidade futura.
+- `metadata` guarda apenas valores sanitizados.
+- Nao armazenar filters, parameters, settings livres, secrets, rows, payload operacional,
+  credentialRef, token, senha, authorization header ou connection string.
+
 ### report_definitions
 
 Definicoes administrativas e declarativas de relatorios. Na foundation atual, armazena apenas
@@ -311,6 +346,13 @@ Auditoria de ações sensíveis.
 - `report_definitions.tenantId + visibility`
 - `report_definitions.tenantId + queryDefinitionId`
 - `report_definitions.tenantId + dashboardDefinitionId`
+- `execution_requests.tenantId + requestKey` unico
+- `execution_requests.tenantId + createdAt`
+- `execution_requests.tenantId + status`
+- `execution_requests.tenantId + kind`
+- `execution_requests.tenantId + queryDefinitionId`
+- `execution_requests.tenantId + dashboardDefinitionId`
+- `execution_requests.tenantId + reportDefinitionId`
 - `audit_logs.tenantId + createdAt`
 
 ---

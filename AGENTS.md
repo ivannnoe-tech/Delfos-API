@@ -11,7 +11,7 @@ Este arquivo é o ponto de entrada. Ele intencionalmente é curto. Cada bloco ap
 Leia esta seção antes de qualquer tarefa. O estado atual do `delfos-api` é foundation administrativa/declarativa:
 
 - auth temporária por `x-delfos-admin-key`;
-- `tenants`, `users`, `connections`, `credentials`, `datasets`, `field-mappings`, `query-definitions`, `dashboard-definitions`, `report-definitions` e `execution-preview` demo;
+- `tenants`, `users`, `connections`, `credentials`, `datasets`, `field-mappings`, `query-definitions`, `dashboard-definitions`, `report-definitions`, `runtime/execution-requests` foundation e `execution-preview` demo;
 - seed/dev local com dados fictícios;
 - sem JWT real, login ou OAuth;
 - sem conectores reais;

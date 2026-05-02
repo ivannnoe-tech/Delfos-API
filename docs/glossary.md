@@ -160,6 +160,12 @@ Modulo que gera dados de demonstracao em memoria para simular previews de queryD
 dashboardDefinitions. Nao executa chamadas externas reais, nao persiste resultados e sempre deve
 ficar identificado como demo.
 
+### executionRequest
+
+Registro administrativo foundation de uma solicitacao futura de runtime, com `kind`, references,
+status e metadados seguros. Na foundation atual, nao executa query, conector, worker, fila,
+scheduler, cache, exportacao, e-mail ou acesso a fonte de cliente.
+
 ### delfos-connectors
 
 Servico futuro responsavel por integracoes, sync, ingestao, preview real ou query real quando essa

@@ -11,7 +11,9 @@ Estado atual implementado:
 - Recursos tenant-scoped recebem `tenantId` explícito enquanto não há auth final.
 - Bearer JWT, login e `/auth/*` são planejados/futuros, não implementados.
 - `execution-preview` está implementado somente como demo em memória com `mode: "demo"`.
-- Não há conector real, execução real de query, cache, fila, scheduler ou chamada externa para cliente.
+- `runtime/execution-requests` esta implementado somente como foundation de contratos/estados,
+  sem execucao real.
+- Não há conector real, execução real de query, cache, fila, worker, scheduler ou chamada externa para cliente.
 
 ---
 
@@ -367,6 +369,30 @@ incremental dos cadastros.
 tokens, senhas, connection strings reais, authorization headers ou valores de alta entropia.
 Eventos internos de audit registram apenas `reportKey`, `status`, `visibility`, referencias
 declarativas e contadores de secoes/blocos.
+
+### Runtime execution requests foundation
+
+- `GET /api/v1/runtime/execution-requests`
+- `POST /api/v1/runtime/execution-requests`
+- `GET /api/v1/runtime/execution-requests/:id`
+
+Na foundation atual, execution requests registram apenas uma solicitacao administrativa futura
+com `tenantId`, `requestKey`, `kind`, `status`, references e metadados seguros. `POST` retorna
+status `accepted` e `reason: "runtime_foundation_only"` quando a referencia obrigatoria do
+`kind` esta presente.
+
+Regras:
+
+- `kind=query` exige `queryDefinitionId`.
+- `kind=dashboard` exige `dashboardDefinitionId`.
+- `kind=report` exige `reportDefinitionId`.
+- Criacao exige role `owner`, `admin` ou `operator`; `viewer` nao cria.
+- Listagem e leitura seguem o padrao temporario de admin key.
+- Metadata e sanitizada; campos operacionais livres como `filters`, `parameters`, `settings`,
+  `secretValue`, tokens, senhas, headers sensiveis e payload bruto sao rejeitados.
+- Nao ha runtime real, conector real, worker, fila, scheduler, cache, query real, acesso a fonte
+  de cliente, exportacao PDF/Excel/CSV, envio de e-mail, teste real de conexao ou discovery real
+  de schema.
 
 ### Field mappings
 
