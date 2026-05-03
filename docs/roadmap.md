@@ -33,6 +33,9 @@ Implementado atualmente:
 - Bridge Resolver Design documentado em
   [`docs/runtime-connectors-bridge-resolver-design.md`](./runtime-connectors-bridge-resolver-design.md),
   sem provider, endpoint, transporte ou dispatch real;
+- BridgeResolver Foundation - Tests & Interfaces Only em `src/modules/runtime/bridge`, com types
+  locais, mapper, limits policy, safe metadata builder, validation port conceitual/local e testes,
+  ainda sem provider, endpoint, transporte, dispatch ou integracao real;
 - audit interno;
 - seed/dev local com dados ficticios;
 - `execution-preview` demo em memoria;
@@ -50,6 +53,7 @@ Nao implementado atualmente:
 - execucao real de dataset/query;
 - execucao real das runtime execution requests, dry-run, demo-execute ou eventos foundation;
 - bridge real entre `delfos-api` e `delfos-connectors`;
+- dispatch real do Bridge Resolver ou chamada ao `delfos-connectors`;
 - cache, fila, worker, scheduler, staging ou snapshot;
 - dashboard builder/runtime final;
 - query builder;
@@ -118,6 +122,8 @@ Planejado/futuro, nao implementado atualmente:
 - implementacao da bridge `ExecutionRequest -> ConnectorExecutionCommand`, apos escopo explicito;
 - implementacao do Bridge Resolver, apos o design documentado e mantendo command preparation antes
   de qualquer dispatch;
+- integracao do Bridge Resolver ao runtime real somente apos nova fase explicita, com testes,
+  threat model e decisao de transporte;
 - servico/runtime `delfos-connectors` (foundation documental disponivel via ADR-0013 no repositorio
   `delfos-connectors`);
 - local agent;

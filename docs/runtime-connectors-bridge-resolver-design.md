@@ -2,12 +2,45 @@
 
 ## Status
 
-Design tecnico futuro. Sem implementacao nesta fase.
+Design tecnico futuro. Foundation de interfaces/types, mappers, policies, builder seguro,
+validation port e testes unitarios criada. Ainda sem implementacao de bridge real.
 
 Este documento nao cria provider/service NestJS operacional, controller, endpoint, transporte,
 dispatch, worker, fila, cache, scheduler, local agent, conector real, SQL/API externa,
 descriptografia de credenciais ou alteracao de schema/DTO. Ele descreve como uma fase futura
 podera transformar uma `ExecutionRequest` em um `ConnectorExecutionCommandShape` seguro.
+
+## Foundation Atual
+
+A fase **BridgeResolver Foundation - Tests & Interfaces Only** criou arquivos internos e puros em
+`src/modules/runtime/bridge/`, sem plugar nada em controller, service runtime operacional,
+endpoint ou modulo NestJS.
+
+Arquivos criados:
+
+- `src/modules/runtime/bridge/connector-command-shape.ts`;
+- `src/modules/runtime/bridge/bridge-types.ts`;
+- `src/modules/runtime/bridge/runtime-connector-capability-mapper.ts`;
+- `src/modules/runtime/bridge/runtime-connector-limits-policy.ts`;
+- `src/modules/runtime/bridge/runtime-connector-safe-metadata-builder.ts`;
+- `src/modules/runtime/bridge/runtime-connector-command-validation.port.ts`;
+- `src/modules/runtime/bridge/runtime-connector-reference.types.ts`;
+- `src/modules/runtime/bridge/runtime-connector-security.ts`;
+- `src/modules/runtime/bridge/index.ts`.
+
+Testes unitarios criados em `src/modules/runtime/tests/` cobrem mapper, limits policy,
+safe metadata builder, command shape/local validator e source-agnostic reference types.
+
+Esta foundation:
+
+- nao cria `BridgeResolver` operacional;
+- nao faz dispatch;
+- nao chama `delfos-connectors`;
+- nao importa `delfos-connectors`;
+- nao altera controller, schema, DTO publico, endpoint ou comportamento runtime atual;
+- nao executa SQL/API externa;
+- nao descriptografa credenciais;
+- nao acessa fonte de cliente.
 
 ## Objetivo
 
