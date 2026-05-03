@@ -99,9 +99,10 @@ export interface RuntimeConnectionLike {
 export interface RuntimeCredentialReferenceLike {
   readonly credentialRef: string;
   readonly tenantId?: string;
+  readonly connectionId?: string;
   readonly status: string;
   readonly provider?: string;
-  readonly maskedPreview?: string | null;
+  readonly type?: string;
   readonly safeMetadata?: Record<string, unknown>;
 }
 

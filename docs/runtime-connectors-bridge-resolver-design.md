@@ -12,6 +12,10 @@ com testes em `src/modules/runtime/tests/runtime-reference-reader-adapters.spec.
 Adapter Wiring Design futuro documentado em
 [`docs/runtime-reference-reader-adapter-wiring-design.md`](./runtime-reference-reader-adapter-wiring-design.md),
 ainda sem provider, `RuntimeModule`, endpoint, dispatch ou decrypt.
+CredentialReference Safe Lookup Foundation implementada internamente em
+`src/modules/runtime/bridge/adapters/runtime-credential-reference-safe-lookup.adapter.ts`, com
+dependency minima fakeavel, sem `CredentialsService` real, sem provider, sem `RuntimeModule`, sem
+endpoint, sem dispatch, sem decrypt e sem `protectedSecretValue`/`secretValue`/`maskedPreview`.
 Ainda sem bridge real operacional.
 
 Este documento nao cria provider/service NestJS operacional, controller, endpoint, transporte,
@@ -248,6 +252,15 @@ Lacuna preservada: `ConnectionsService.findOne` publico expoe `hasCredentialRefe
 `credentialRef`. O adapter de connection so retorna `credentialRef` quando a dependencia segura o
 expuser explicitamente; caso contrario retorna `credentialRef` ausente e deixa o
 `ReferenceResolver` bloquear com `credential_ref_missing` quando necessario.
+
+A fase **CredentialReference Safe Lookup Foundation** adicionou um caminho interno seguro para
+resolver `credentialRef` por `tenantId + connectionId` ou por `tenantId + credentialRef`. A
+politica esta documentada em
+[`docs/runtime-reference-reader-adapter-wiring-design.md`](./runtime-reference-reader-adapter-wiring-design.md):
+zero credenciais ativas bloqueia com `credential_ref_missing`, uma credencial ativa retorna
+referencia/status/provider/type/metadados seguros, multiplas ativas bloqueiam com
+`multiple_active_credentials_not_supported` e credenciais non-active bloqueiam com
+`credential_ref_inactive`.
 
 ## Objetivo
 

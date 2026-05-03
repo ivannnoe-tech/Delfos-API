@@ -863,7 +863,6 @@ function createCredential(
     tenantId: TENANT_ID,
     status: 'active',
     provider: 'internal-fixture',
-    maskedPreview: '********demo',
     safeMetadata: {
       provider: 'internal-fixture',
     },

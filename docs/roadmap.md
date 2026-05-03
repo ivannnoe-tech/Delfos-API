@@ -63,6 +63,12 @@ Implementado atualmente:
   dependency graph, gates de provider/`RuntimeModule`, politica segura de `credentialRef` e plano
   de testes, ainda sem provider, `RuntimeModule`, endpoint, dispatch, decrypt ou chamada ao
   `delfos-connectors`;
+- CredentialReference Safe Lookup Foundation em
+  `src/modules/runtime/bridge/adapters/runtime-credential-reference-safe-lookup.adapter.ts`, com
+  lookup seguro por `tenantId + connectionId` ou `tenantId + credentialRef`, dependency minima
+  fakeavel, politica de zero/uma/multiplas credenciais ativas e testes, ainda sem
+  `CredentialsService` real, provider, `RuntimeModule`, endpoint, dispatch, decrypt ou chamada ao
+  `delfos-connectors`;
 - audit interno;
 - seed/dev local com dados ficticios;
 - `execution-preview` demo em memoria;
@@ -151,10 +157,9 @@ Planejado/futuro, nao implementado atualmente:
   de qualquer dispatch;
 - integracao do Bridge Resolver ao runtime real somente apos nova fase explicita, com testes,
   threat model e decisao de transporte;
-- proxima fase possivel: ExecutionRequest/Readiness Reader Adapters Foundation - Tests Only ou
-  CredentialReference Safe Lookup Foundation, ainda sem provider, `RuntimeModule`, endpoint,
-  transporte ou dispatch real; alternativa posterior: ReferenceReader Adapters Integration With
-  Real Services, tambem iniciando por tests-only;
+- proxima fase recomendada: ExecutionRequest/Readiness Reader Adapters Foundation - Tests Only ou
+  ReferenceReader Adapters Real Service Wiring - Tests Only, ainda sem provider, `RuntimeModule`,
+  endpoint, transporte ou dispatch real;
 - servico/runtime `delfos-connectors` (foundation documental disponivel via ADR-0013 no repositorio
   `delfos-connectors`);
 - local agent;

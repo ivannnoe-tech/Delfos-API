@@ -2,7 +2,8 @@
 
 ## Status
 
-Design tecnico futuro. Sem implementacao nesta fase.
+Design tecnico futuro, com **CredentialReference Safe Lookup Foundation** implementada
+internamente em codigo puro e tests-only.
 
 Este documento nao cria provider NestJS, nao altera `RuntimeModule`, nao cria endpoint, nao faz
 dispatch, nao chama ou importa `delfos-connectors`, nao descriptografa credenciais e nao acessa
@@ -30,8 +31,13 @@ strings, payload bruto, SQL livre, URL livre, headers sensiveis ou dados de outr
 - Nenhum endpoint, controller, DTO publico, schema, dispatch ou transporte existe para o bridge.
 - Nenhuma chamada ao `delfos-connectors`, decrypt, SQL/API externa, fonte de cliente, worker,
   fila, cache, scheduler ou local agent existe.
-- Lacuna conhecida: a connection real pode expor apenas `hasCredentialReference`; o `credentialRef`
-  real precisa de politica segura antes de wiring operacional.
+- `CredentialReference Safe Lookup Foundation` existe em
+  `src/modules/runtime/bridge/adapters/runtime-credential-reference-safe-lookup.adapter.ts`,
+  com dependency minima fakeavel e testes internos.
+- A foundation de safe lookup ainda nao usa `CredentialsService`, repository real, provider
+  NestJS ou wiring operacional.
+- A connection real pode expor apenas `hasCredentialReference`; o `ConnectionReaderAdapter` nao
+  inventa `credentialRef` a partir desse booleano.
 
 ## Fora de Escopo
 
@@ -185,6 +191,67 @@ RuntimeConnectorBridgeResolver
 
 Todos esses componentes sao internos. Nenhum chama fonte externa, nenhum faz decrypt, nenhum faz
 dispatch e nenhum deve importar `delfos-connectors`.
+
+## CredentialReference Safe Lookup Foundation
+
+Implementado internamente em
+`src/modules/runtime/bridge/adapters/runtime-credential-reference-safe-lookup.adapter.ts`, com
+testes em `src/modules/runtime/tests/runtime-credential-reference-safe-lookup.spec.ts`.
+
+Esta foundation cria um port interno seguro:
+
+- `findActiveByTenantAndConnection(tenantId, connectionId)`;
+- `findByCredentialRef(tenantId, credentialRef)`.
+
+O adapter recebe uma dependencia minima fakeavel com buscas por `tenantId + connectionId` e por
+`tenantId + credentialRef`. Ele retorna somente:
+
+- `credentialRef`;
+- `tenantId`;
+- `connectionId`;
+- `status`;
+- `provider`;
+- `type`;
+- `safeMetadata` sanitizada.
+
+Ele nao retorna `protectedSecretValue`, `secretValue`, `maskedPreview`, segredo bruto, connection
+string, headers, payload de auth ou token. Ele tambem nao importa nem chama
+`LocalCredentialProtectorService`, nao faz decrypt e nao acessa fonte externa.
+
+Politica para `findActiveByTenantAndConnection`:
+
+- zero credenciais ativas retorna blocker `credential_ref_missing`;
+- exatamente uma credencial ativa retorna `found=true` com shape seguro;
+- multiplas credenciais ativas retornam blocker `multiple_active_credentials_not_supported`;
+- apenas credenciais non-active/revoked retornam blocker `credential_ref_inactive`.
+
+Status ativos:
+
+- `active`;
+- `Active`;
+- `ACTIVE`.
+
+Status inativos/revogados:
+
+- `revoked`;
+- `inactive`;
+- `disabled`;
+- `archived`;
+- `draft`.
+
+Politica para `findByCredentialRef`:
+
+- valida `tenantId`;
+- valida formato seguro de `credentialRef`;
+- busca por `tenantId + credentialRef`;
+- not found retorna `credential_ref_missing`;
+- tenant divergente retorna `tenant_mismatch`;
+- status non-active retorna `credential_ref_inactive`;
+- resultado seguro retorna somente a referencia e metadados permitidos.
+
+Esta foundation ainda nao altera `RuntimeConnectorReferenceResolver` para depender
+obrigatoriamente dela e nao conecta services/repositories reais. O uso operacional deve ficar para
+fase futura de wiring tests-only ou provider explicitamente aprovado.
 
 ## Adapters Faltantes
 
@@ -344,18 +411,20 @@ Se a `Connection` real indicar apenas `hasCredentialReference`, o wiring futuro 
 - nunca retornar `maskedPreview` no command;
 - nunca retornar connection string.
 
-Fase propria recomendada: **CredentialReference Safe Lookup Foundation**.
+Fase propria recomendada: **CredentialReference Safe Lookup Foundation**. Esta foundation ja foi
+implementada internamente como codigo puro e tests-only, ainda sem wiring real.
 
-Essa fase deve:
+Essa foundation implementou:
 
-- criar metodo interno seguro, se necessario;
-- retornar somente `credentialRef`, `status` e `provider`;
+- metodo interno seguro com dependency minima fakeavel;
+- retorno somente de `credentialRef`, `tenantId`, `connectionId`, `status`, `provider`, `type` e
+  `safeMetadata`;
 - nunca retornar `protectedSecretValue`;
-- nunca selecionar `protectedSecretValue`;
-- ter testes de tenant isolation;
-- ter testes de credencial revoked/inactive;
-- ter testes de multiplas credenciais ativas;
-- ter teste de ausencia de `maskedPreview`, `secretValue`, connection string e decrypt.
+- nao usar service/repository real nem selecionar `protectedSecretValue`;
+- testes de tenant isolation;
+- testes de credencial revoked/inactive/disabled/archived/draft;
+- testes de multiplas credenciais ativas;
+- testes de ausencia de `maskedPreview`, `secretValue`, connection string e decrypt.
 
 ## Politica de Provider e RuntimeModule
 
@@ -436,7 +505,8 @@ transporte, sem decrypt e sem chamada ao `delfos-connectors`.
 1. Manter esta fase como docs-only.
 2. Implementar, em fase futura tests-only, `RuntimeExecutionRequestReaderAdapter` e
    `RuntimeReadinessEvaluatorAdapter`.
-3. Implementar ou documentar **CredentialReference Safe Lookup Foundation** antes de provider.
+3. Implementar `RuntimeExecutionRequestReaderAdapter` e `RuntimeReadinessEvaluatorAdapter` em
+   tests-only ou evoluir para ReferenceReader Adapters Real Service Wiring - Tests Only.
 4. Criar factory interna nao operacional para reduzir duplicacao de composicao.
 5. Testar adapters contra fakes que imitam services/repositories reais.
 6. Avaliar provider NestJS apenas com caso interno aprovado e gates satisfeitos.

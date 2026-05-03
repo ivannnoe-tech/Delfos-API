@@ -52,6 +52,9 @@ campos minimos exigidos pelos ports, com metadados sanitizados e sem secrets.
 - O wiring futuro dos adapters com services/repositories reais esta documentado em
   [`docs/runtime-reference-reader-adapter-wiring-design.md`](./runtime-reference-reader-adapter-wiring-design.md),
   ainda sem implementacao operacional.
+- `CredentialReference Safe Lookup Foundation` existe internamente em
+  `src/modules/runtime/bridge/adapters/runtime-credential-reference-safe-lookup.adapter.ts`, com
+  dependency minima fakeavel, sem `CredentialsService` real, sem decrypt e sem provider.
 - Ainda nao ha provider NestJS, endpoint, dispatch, transporte, executor real ou chamada ao
   `delfos-connectors`.
 
@@ -104,12 +107,14 @@ Arquivos adicionados:
 - `src/modules/runtime/bridge/adapters/runtime-field-mapping-reader.adapter.ts`;
 - `src/modules/runtime/bridge/adapters/runtime-connection-reader.adapter.ts`;
 - `src/modules/runtime/bridge/adapters/runtime-credential-reference-reader.adapter.ts`;
+- `src/modules/runtime/bridge/adapters/runtime-credential-reference-safe-lookup.adapter.ts`;
 - `src/modules/runtime/bridge/adapters/runtime-reader-adapter-utils.ts`;
 - `src/modules/runtime/bridge/adapters/index.ts`.
 
 Testes adicionados:
 
 - `src/modules/runtime/tests/runtime-reference-reader-adapters.spec.ts`.
+- `src/modules/runtime/tests/runtime-credential-reference-safe-lookup.spec.ts`.
 
 Cobertura:
 
@@ -121,6 +126,8 @@ Cobertura:
 - source-agnostic mappings para SQL, REST/JSON, MongoDB e file;
 - `credentialRef` seguro sem `protectedSecretValue`, sem `secretValue`, sem decrypt e sem
   `maskedPreview`;
+- safe lookup de `credentialRef` por `tenantId + connectionId` ou por
+  `tenantId + credentialRef`, sem retornar segredo e sem usar service/repository real;
 - integracao interna `adapters fakeados -> RuntimeConnectorReferenceResolver` para happy path de
   query.
 
@@ -137,7 +144,7 @@ sem dispatch, sem chamada externa e sem import de `delfos-connectors`.
 | `RuntimeDatasetReaderPort`             | `DatasetsService` ou `DatasetsRepository`                         | `findOne(tenantId, id)` ou `findByTenantAndId(tenantId, id)`                            | Retornar `datasetKey`, `connectionId`, `sourceType`, `status` e futura `schemaMappingVersion` quando existir.                                                       |
 | `RuntimeFieldMappingReaderPort`        | `FieldMappingsService` ou `FieldMappingsRepository`               | `findByFilters({ tenantId, datasetKey, page, pageSize })` ou filtro interno equivalente | Preferencia futura: retornar apenas mappings `active`; se qualquer mapping non-active for relevante para command, bloquear de forma conservadora.                   |
 | `RuntimeConnectionReaderPort`          | `ConnectionsService` ou `ConnectionsRepository`                   | `findOne(tenantId, id)` ou `findByTenantAndId(tenantId, id)`                            | O DTO publico atual nao retorna `credentialRef`; adapter interno pode precisar de repository/mapper seguro ou metodo interno que exponha referencia, nunca segredo. |
-| `RuntimeCredentialReferenceReaderPort` | `CredentialsService` ou `CredentialsRepository`                   | buscar por `tenantId + credentialRef` ou por `tenantId + connectionId`                  | Nunca selecionar, ler, retornar ou descriptografar `protectedSecretValue`. Se resolver por connection, tratar multiplas credenciais ativas como blocker.            |
+| `RuntimeCredentialReferenceReaderPort` | `CredentialsService` ou `CredentialsRepository`                   | buscar por `tenantId + credentialRef` ou por `tenantId + connectionId`                  | Nunca selecionar, ler, retornar ou descriptografar `protectedSecretValue`. Se resolver por connection, usar o safe lookup interno e tratar multiplas credenciais ativas como blocker. |
 
 Regra geral: se o service publico esconder um campo necessario por seguranca, o adapter futuro
 pode usar repository interno ou um metodo interno dedicado, desde que retorne somente shape minimo
@@ -535,6 +542,13 @@ O modelo atual permite `connection.credentialRef`, mas a resposta publica de con
 apenas `hasCredentialReference`. O adapter real deve preservar o boundary de segredo e resolver
 somente a referencia.
 
+O caminho interno tests-only para essa resolucao agora existe como
+`RuntimeCredentialReferenceSafeLookupAdapter`. Ele recebe uma dependency minima fakeavel, nao usa
+`CredentialsService` real e nao esta conectado a provider, `RuntimeModule`, endpoint ou dispatch.
+Essa foundation deve ser o caminho futuro para resolver `credentialRef` quando a connection expuser
+apenas `hasCredentialReference`; o `ConnectionReaderAdapter` continua sem inventar
+`credentialRef`.
+
 Regras:
 
 - `credentialRef` nao e secret.
@@ -547,6 +561,8 @@ Regras:
   `multiple_active_credentials_not_supported`.
 - Se nenhuma credencial ativa existir e a fonte exigir auth, bloquear com
   `credential_ref_missing`.
+- Se houver apenas credenciais `revoked`, `inactive`, `disabled`, `archived` ou `draft`,
+  bloquear com `credential_ref_inactive`.
 - Se a connection usa `authType: "none"` ou fonte declarativa `manual`/`computed`, credential pode
   ser opcional.
 - Nunca selecionar, ler, retornar, logar ou descriptografar `protectedSecretValue`.

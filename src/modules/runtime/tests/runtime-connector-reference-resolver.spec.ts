@@ -737,7 +737,6 @@ function createCredential(
     tenantId: 'tenant_001',
     status: 'active',
     provider: 'customer-api',
-    maskedPreview: '********demo',
     safeMetadata: {
       provider: 'customer-api',
     },
