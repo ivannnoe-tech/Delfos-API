@@ -4,7 +4,8 @@
 
 Design tecnico futuro. Foundation de interfaces/types, mappers, policies, builder seguro,
 validation port, `prepareCommand` em memoria, `ReferenceResolver` declarativo e testes unitarios
-criada. Ainda sem bridge real operacional.
+criada. Testes internos integrados de `prepareCommand` + `ReferenceResolver` real adicionados com
+fakes/readers em memoria. Ainda sem bridge real operacional.
 
 Este documento nao cria provider/service NestJS operacional, controller, endpoint, transporte,
 dispatch, worker, fila, cache, scheduler, local agent, conector real, SQL/API externa,
@@ -147,6 +148,48 @@ Esta foundation ainda:
 - nao acessa fonte externa;
 - nao faz dispatch;
 - nao persiste eventos.
+
+## BridgeResolver Internal Integration Tests Atual
+
+A fase **BridgeResolver Internal Integration Tests** adicionou
+`src/modules/runtime/tests/runtime-connector-bridge-internal-integration.spec.ts`.
+
+Esses testes exercitam o fluxo interno completo em memoria:
+
+```text
+ExecutionRequest fake
+  -> readiness fake
+  -> RuntimeConnectorReferenceResolver real
+  -> RuntimeConnectorBridgeResolver.prepareCommand
+  -> ConnectorExecutionCommandShape em memoria
+```
+
+O spec instancia os componentes reais internos:
+
+- `RuntimeConnectorBridgeResolver`;
+- `RuntimeConnectorReferenceResolver`;
+- `RuntimeConnectorCapabilityMapper`;
+- `RuntimeConnectorLimitsPolicy`;
+- `RuntimeConnectorSafeMetadataBuilder`;
+- `RuntimeConnectorLocalCommandShapeValidator`;
+- clock deterministico;
+- readers/fakes tenant-scoped para query definitions, dashboard definitions, report definitions,
+  datasets, field mappings, connections, credential references e execution requests.
+
+Cobertura adicionada:
+
+- happy paths integrados para query demo, query `future_runtime`, dashboard demo e report demo;
+- blockers de execution request ausente, tenant mismatch defensivo, readiness, referencias,
+  multiplas fontes, capability nao suportada e falha de validacao local;
+- sanitizacao de metadata insegura, eventos e erros seguros sem secrets;
+- fontes `sql_server`, `rest_api`, `mongodb` e `file` sem assumir tabela/coluna SQL;
+- determinismo com fake clock;
+- teste estrutural de que `prepareCommand` nao tem dependency de dispatch.
+
+Esta fase continua sem dispatch, transporte, endpoint, controller, provider NestJS operacional,
+alteracao de `RuntimeModule`, chamada ao `delfos-connectors`, import de `delfos-connectors`,
+descriptografia de credenciais, banco real, Mongoose real, services reais ou acesso externo. Os
+eventos retornados continuam sendo shapes em memoria e nao sao persistidos.
 
 ## Objetivo
 
