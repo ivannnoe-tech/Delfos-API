@@ -2,21 +2,24 @@
 
 ## Status
 
-Design tecnico futuro. Sem implementacao nesta fase.
+Foundation tests-only implementada. Os adapters internos existem como classes puras, isoladas e
+testaveis em `src/modules/runtime/bridge/adapters/`, sem provider NestJS, sem decorators, sem
+registro no `RuntimeModule`, sem endpoint, sem controller, sem DTO/schema publico, sem dispatch,
+sem chamada ao `delfos-connectors`, sem SQL/API externa, sem descriptografia de credencial, sem
+worker, fila, cache, scheduler, local agent, PDF/Excel/CSV real ou acesso a fonte de cliente.
 
-Este documento nao cria adapter real, arquivo TypeScript operacional, provider NestJS,
-alteracao de `RuntimeModule`, endpoint, controller, DTO publico, schema, dispatch, chamada ao
-`delfos-connectors`, SQL/API externa, descriptografia de credencial, worker, fila, cache,
-scheduler, local agent, PDF/Excel/CSV real ou acesso a fonte de cliente.
+Esta foundation converte shapes retornados por dependencias minimas/fakes em shapes minimos dos
+ports do `RuntimeConnectorReferenceResolver`. Ela ainda nao pluga services/repositories reais do
+Mongo administrativo em fluxo operacional.
 
 ## Objetivo
 
-Desenhar como os ports/readers do `RuntimeConnectorReferenceResolver` poderao ser alimentados
-futuramente por readers/adapters baseados nos modulos declarativos reais do Mongo administrativo
-do `delfos-api`.
+Desenhar e registrar a foundation tests-only de como os ports/readers do
+`RuntimeConnectorReferenceResolver` poderao ser alimentados futuramente por readers/adapters
+baseados nos modulos declarativos reais do Mongo administrativo do `delfos-api`.
 
-O objetivo dos adapters futuros e transformar recursos administrativos tenant-scoped em shapes
-minimos internos:
+O objetivo dos adapters e transformar recursos administrativos tenant-scoped em shapes minimos
+internos:
 
 ```text
 services/repositories reais do Mongo administrativo
@@ -38,14 +41,16 @@ campos minimos exigidos pelos ports, com metadados sanitizados e sem secrets.
 - Testes unitarios usam fakes em memoria para o `ReferenceResolver`.
 - Testes internos integrados cobrem `prepareCommand` + `RuntimeConnectorReferenceResolver` real
   com fakes/readers declarativos em memoria.
-- Ainda nao ha adapters reais para services/repositories do Mongo administrativo.
+- Adapters foundation tests-only existem em `src/modules/runtime/bridge/adapters/`.
+- Os adapters recebem dependencias minimas por constructor e sao testados com fakes em memoria.
+- Os adapters ainda nao estao conectados a services/repositories reais por provider NestJS.
 - Ainda nao ha provider NestJS, endpoint, dispatch, transporte, executor real ou chamada ao
   `delfos-connectors`.
 
 ## Fora de Escopo
 
-- implementar adapters reais;
-- criar arquivos `.ts` de adapters operacionais;
+- registrar adapters como providers operacionais;
+- plugar adapters reais no `RuntimeModule`;
 - alterar service/repository existente;
 - registrar provider NestJS;
 - alterar `RuntimeModule`;
@@ -80,17 +85,51 @@ campos minimos exigidos pelos ports, com metadados sanitizados e sem secrets.
   connection string.
 - A politica de preparo de command deve ser mais conservadora que a readiness diagnostica.
 
+## Foundation Implementada
+
+Arquivos adicionados:
+
+- `src/modules/runtime/bridge/adapters/runtime-query-definition-reader.adapter.ts`;
+- `src/modules/runtime/bridge/adapters/runtime-dashboard-definition-reader.adapter.ts`;
+- `src/modules/runtime/bridge/adapters/runtime-report-definition-reader.adapter.ts`;
+- `src/modules/runtime/bridge/adapters/runtime-dataset-reader.adapter.ts`;
+- `src/modules/runtime/bridge/adapters/runtime-field-mapping-reader.adapter.ts`;
+- `src/modules/runtime/bridge/adapters/runtime-connection-reader.adapter.ts`;
+- `src/modules/runtime/bridge/adapters/runtime-credential-reference-reader.adapter.ts`;
+- `src/modules/runtime/bridge/adapters/runtime-reader-adapter-utils.ts`;
+- `src/modules/runtime/bridge/adapters/index.ts`.
+
+Testes adicionados:
+
+- `src/modules/runtime/tests/runtime-reference-reader-adapters.spec.ts`.
+
+Cobertura:
+
+- shapes minimos por adapter, sem retornar documento bruto;
+- tenant scope defensivo;
+- `null`/`[]` para not found, outro tenant e falha interna de reader;
+- sanitizacao de metadata com `RuntimeConnectorSafeMetadataBuilder`;
+- preservacao de status para policy do resolver;
+- source-agnostic mappings para SQL, REST/JSON, MongoDB e file;
+- `credentialRef` seguro sem `protectedSecretValue`, sem `secretValue`, sem decrypt e sem
+  `maskedPreview`;
+- integracao interna `adapters fakeados -> RuntimeConnectorReferenceResolver` para happy path de
+  query.
+
+Esta foundation continua sem Nest `@Injectable`, sem provider, sem `RuntimeModule`, sem endpoint,
+sem dispatch, sem chamada externa e sem import de `delfos-connectors`.
+
 ## Matriz Port -> Modulo Real
 
-| Port | Fonte real futura | Metodo/servico provavel | Observacoes |
-| --- | --- | --- | --- |
-| `RuntimeQueryDefinitionReaderPort` | `QueryDefinitionsService` ou `QueryDefinitionsRepository` | `findOne(tenantId, id)` ou `findByTenantAndId(tenantId, id)` | Retornar `id`, `tenantId`, `datasetId`, `queryKey`, `status`, `type` e metadata segura minima. |
-| `RuntimeDashboardDefinitionReaderPort` | `DashboardDefinitionsService` ou `DashboardDefinitionsRepository` | `findOne(tenantId, id)` ou `findByTenantAndId(tenantId, id)` | Retornar `id`, `tenantId`, `dashboardKey`, `widgets` minimos com `key`, `type`, `queryDefinitionId`, `status` e metadata segura. |
-| `RuntimeReportDefinitionReaderPort` | `ReportDefinitionsService` ou `ReportDefinitionsRepository` | `findOne(tenantId, id)` ou `findByTenantAndId(tenantId, id)` | Retornar `id`, `tenantId`, `reportKey`, `queryDefinitionId`, `dashboardDefinitionId`, blocks minimos e metadata segura. |
-| `RuntimeDatasetReaderPort` | `DatasetsService` ou `DatasetsRepository` | `findOne(tenantId, id)` ou `findByTenantAndId(tenantId, id)` | Retornar `datasetKey`, `connectionId`, `sourceType`, `status` e futura `schemaMappingVersion` quando existir. |
-| `RuntimeFieldMappingReaderPort` | `FieldMappingsService` ou `FieldMappingsRepository` | `findByFilters({ tenantId, datasetKey, page, pageSize })` ou filtro interno equivalente | Preferencia futura: retornar apenas mappings `active`; se qualquer mapping non-active for relevante para command, bloquear de forma conservadora. |
-| `RuntimeConnectionReaderPort` | `ConnectionsService` ou `ConnectionsRepository` | `findOne(tenantId, id)` ou `findByTenantAndId(tenantId, id)` | O DTO publico atual nao retorna `credentialRef`; adapter interno pode precisar de repository/mapper seguro ou metodo interno que exponha referencia, nunca segredo. |
-| `RuntimeCredentialReferenceReaderPort` | `CredentialsService` ou `CredentialsRepository` | buscar por `tenantId + credentialRef` ou por `tenantId + connectionId` | Nunca selecionar, ler, retornar ou descriptografar `protectedSecretValue`. Se resolver por connection, tratar multiplas credenciais ativas como blocker. |
+| Port                                   | Fonte real futura                                                 | Metodo/servico provavel                                                                 | Observacoes                                                                                                                                                         |
+| -------------------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `RuntimeQueryDefinitionReaderPort`     | `QueryDefinitionsService` ou `QueryDefinitionsRepository`         | `findOne(tenantId, id)` ou `findByTenantAndId(tenantId, id)`                            | Retornar `id`, `tenantId`, `datasetId`, `queryKey`, `status`, `type` e metadata segura minima.                                                                      |
+| `RuntimeDashboardDefinitionReaderPort` | `DashboardDefinitionsService` ou `DashboardDefinitionsRepository` | `findOne(tenantId, id)` ou `findByTenantAndId(tenantId, id)`                            | Retornar `id`, `tenantId`, `dashboardKey`, `widgets` minimos com `key`, `type`, `queryDefinitionId`, `status` e metadata segura.                                    |
+| `RuntimeReportDefinitionReaderPort`    | `ReportDefinitionsService` ou `ReportDefinitionsRepository`       | `findOne(tenantId, id)` ou `findByTenantAndId(tenantId, id)`                            | Retornar `id`, `tenantId`, `reportKey`, `queryDefinitionId`, `dashboardDefinitionId`, blocks minimos e metadata segura.                                             |
+| `RuntimeDatasetReaderPort`             | `DatasetsService` ou `DatasetsRepository`                         | `findOne(tenantId, id)` ou `findByTenantAndId(tenantId, id)`                            | Retornar `datasetKey`, `connectionId`, `sourceType`, `status` e futura `schemaMappingVersion` quando existir.                                                       |
+| `RuntimeFieldMappingReaderPort`        | `FieldMappingsService` ou `FieldMappingsRepository`               | `findByFilters({ tenantId, datasetKey, page, pageSize })` ou filtro interno equivalente | Preferencia futura: retornar apenas mappings `active`; se qualquer mapping non-active for relevante para command, bloquear de forma conservadora.                   |
+| `RuntimeConnectionReaderPort`          | `ConnectionsService` ou `ConnectionsRepository`                   | `findOne(tenantId, id)` ou `findByTenantAndId(tenantId, id)`                            | O DTO publico atual nao retorna `credentialRef`; adapter interno pode precisar de repository/mapper seguro ou metodo interno que exponha referencia, nunca segredo. |
+| `RuntimeCredentialReferenceReaderPort` | `CredentialsService` ou `CredentialsRepository`                   | buscar por `tenantId + credentialRef` ou por `tenantId + connectionId`                  | Nunca selecionar, ler, retornar ou descriptografar `protectedSecretValue`. Se resolver por connection, tratar multiplas credenciais ativas como blocker.            |
 
 Regra geral: se o service publico esconder um campo necessario por seguranca, o adapter futuro
 pode usar repository interno ou um metodo interno dedicado, desde que retorne somente shape minimo
@@ -98,7 +137,8 @@ seguro. Isso nao autoriza alterar contratos publicos.
 
 ## Shapes de Adapter
 
-Os pseudocodigos abaixo sao documentais. Nao criar estes arquivos nesta fase.
+Os pseudocodigos abaixo ficam como referencia de design. A foundation tests-only ja criou classes
+internas equivalentes, ainda sem wiring operacional.
 
 ### RuntimeQueryDefinitionReaderAdapter
 
@@ -248,10 +288,7 @@ class RuntimeDatasetReaderAdapter implements RuntimeDatasetReaderPort {
     private readonly safeMetadataBuilder: RuntimeConnectorSafeMetadataBuilder,
   ) {}
 
-  async findByTenantAndId(
-    tenantId: string,
-    datasetId: string,
-  ): Promise<RuntimeDatasetLike | null> {
+  async findByTenantAndId(tenantId: string, datasetId: string): Promise<RuntimeDatasetLike | null> {
     try {
       const dataset = await this.datasets.findOne(tenantId, datasetId);
 
@@ -304,7 +341,7 @@ class RuntimeFieldMappingReaderAdapter implements RuntimeFieldMappingReaderPort 
       });
 
       return result.items
-        .filter((mapping) => mapping.status === "active")
+        .filter((mapping) => mapping.status === 'active')
         .map((mapping) => ({
           id: mapping.id,
           tenantId: mapping.tenantId,
@@ -364,7 +401,7 @@ class RuntimeConnectionReaderAdapter implements RuntimeConnectionReaderPort {
         status: connection.status,
         credentialRef: connection.credentialRef,
         authType: connection.authType,
-        requiresCredential: connection.authType !== "none",
+        requiresCredential: connection.authType !== 'none',
         safeMetadata: this.safeMetadataBuilder.build({
           metadata: {
             type: connection.type,
@@ -384,8 +421,11 @@ class RuntimeConnectionReaderAdapter implements RuntimeConnectionReaderPort {
 Notas:
 
 - `ConnectionsService.findOne` retorna DTO publico com `hasCredentialReference`, mas nao retorna
-  `credentialRef`. O adapter futuro precisa de uma fonte interna segura que exponha apenas a
-  referencia.
+  `credentialRef`. A foundation atual nao inventa referencia a partir desse booleano: quando a
+  dependencia do adapter nao expuser `credentialRef`, o adapter retorna `credentialRef:
+undefined` e inclui apenas `hasCredentialReference` em `safeMetadata`.
+- Com `credentialRef: undefined`, o `RuntimeConnectorReferenceResolver` mantem o blocker
+  conservador `credential_ref_missing` quando credencial for obrigatoria.
 - `baseUrl`, `allowedHeaders` e metadata livre nao devem entrar no command.
 - `connectionId` continua sendo ID tecnico, nunca connection string.
 
@@ -462,16 +502,16 @@ contrato futuro de connectors:
 
 Blockers sugeridos:
 
-| Condicao | Blocker sugerido |
-| --- | --- |
-| Query non-active | `query_definition_not_active` |
-| Dashboard non-active | `dashboard_definition_not_active` |
-| Report non-active | `report_definition_not_active` |
-| Dataset non-active | `dataset_not_active` |
-| Mapping non-active | `field_mapping_not_active` |
-| Connection non-active | `connection_not_active` |
+| Condicao                      | Blocker sugerido                                        |
+| ----------------------------- | ------------------------------------------------------- |
+| Query non-active              | `query_definition_not_active`                           |
+| Dashboard non-active          | `dashboard_definition_not_active`                       |
+| Report non-active             | `report_definition_not_active`                          |
+| Dataset non-active            | `dataset_not_active`                                    |
+| Mapping non-active            | `field_mapping_not_active`                              |
+| Connection non-active         | `connection_not_active`                                 |
 | Credential non-active/revoked | `credential_ref_missing` ou `credential_ref_not_active` |
-| Status desconhecido | `<resource>_status_not_supported` |
+| Status desconhecido           | `<resource>_status_not_supported`                       |
 
 Se o `RuntimeConnectorReferenceResolver` atual nao bloqueia todos esses status por si so, a fase
 de implementacao dos adapters deve decidir entre:
@@ -513,17 +553,17 @@ async function resolveCredentialRefForConnection(tenantId: string, connectionId:
   const activeCredentials = await credentials.findByFilters({
     tenantId,
     connectionId,
-    status: "active",
+    status: 'active',
     page: 1,
     pageSize: 2,
   });
 
   if (activeCredentials.items.length === 0) {
-    return blocker("credential_ref_missing");
+    return blocker('credential_ref_missing');
   }
 
   if (activeCredentials.items.length > 1) {
-    return blocker("multiple_active_credentials_not_supported");
+    return blocker('multiple_active_credentials_not_supported');
   }
 
   return { credentialRef: activeCredentials.items[0].credentialRef };
@@ -552,12 +592,12 @@ Adapters nao devem assumir SQL nem exigir campos `table`/`column`.
 
 Representacao por fonte:
 
-| Fonte | `sourceObject` | `sourceFieldPath` | Proibido nesta fase |
-| --- | --- | --- | --- |
-| SQL | Nome declarativo de tabela/view/objeto, ex. `Pedidos` | Campo declarativo, ex. `ValorTotal` | SQL livre, connection string, query text com valores. |
-| REST/JSON | JSON path de objeto/lista, ex. `$.items[*]` | Campo/path relativo, ex. `amount` | URL livre, headers sensiveis, body bruto, response bruto. |
-| MongoDB | Collection/logical object, ex. `orders` | Document path, ex. `items.amount` | Aggregation livre, pipeline bruto, connection URI. |
-| File | Aba/objeto declarativo, ex. `sheet:Vendas` | Coluna/path, ex. `Valor Total` | Caminho real de arquivo operacional, leitura de arquivo, payload bruto. |
+| Fonte     | `sourceObject`                                        | `sourceFieldPath`                   | Proibido nesta fase                                                     |
+| --------- | ----------------------------------------------------- | ----------------------------------- | ----------------------------------------------------------------------- |
+| SQL       | Nome declarativo de tabela/view/objeto, ex. `Pedidos` | Campo declarativo, ex. `ValorTotal` | SQL livre, connection string, query text com valores.                   |
+| REST/JSON | JSON path de objeto/lista, ex. `$.items[*]`           | Campo/path relativo, ex. `amount`   | URL livre, headers sensiveis, body bruto, response bruto.               |
+| MongoDB   | Collection/logical object, ex. `orders`               | Document path, ex. `items.amount`   | Aggregation livre, pipeline bruto, connection URI.                      |
+| File      | Aba/objeto declarativo, ex. `sheet:Vendas`            | Coluna/path, ex. `Valor Total`      | Caminho real de arquivo operacional, leitura de arquivo, payload bruto. |
 
 O schema atual de `field_mappings` possui `sourcePath`. Adapter futuro pode mapear:
 
@@ -571,23 +611,23 @@ O schema atual de `field_mappings` possui `sourcePath`. Adapter futuro pode mape
 `sql_server`, `mongodb`, `file`). A fase de adapter real deve definir uma tabela interna segura de
 normalizacao, por exemplo:
 
-| Dataset/Connection atual | `sourceType` runtime sugerido |
-| --- | --- |
-| `api` + provider REST allowlisted | `rest_api` |
-| `database` + provider SQL Server allowlisted | `sql_server` |
-| `database` + provider MongoDB allowlisted | `mongodb` |
-| `file` | `file` |
-| `manual`/`computed` | sem credential obrigatoria, capability limitada |
+| Dataset/Connection atual                     | `sourceType` runtime sugerido                   |
+| -------------------------------------------- | ----------------------------------------------- |
+| `api` + provider REST allowlisted            | `rest_api`                                      |
+| `database` + provider SQL Server allowlisted | `sql_server`                                    |
+| `database` + provider MongoDB allowlisted    | `mongodb`                                       |
+| `file`                                       | `file`                                          |
+| `manual`/`computed`                          | sem credential obrigatoria, capability limitada |
 
 Essa normalizacao nao deve executar discovery nem validar conectividade real.
 
 ## Erros e Sanitizacao
 
-Adapters futuros devem tratar erros de forma segura:
+Adapters devem tratar erros de forma segura:
 
 - `NotFoundException` ou retorno ausente vira `null`/`[]`;
-- erro inesperado de service/repository nao deve vazar `error.message`, `error.toString()`,
-  `rawError`, stack trace ou payload bruto;
+- a foundation tests-only tambem converte erro inesperado de dependency em `null`/`[]`, sem usar
+  `error.message`, `error.toString()`, `rawError`, stack trace ou payload bruto;
 - camada de resolver deve transformar falha inesperada em `reference_resolution_failed` seguro;
 - se a implementacao precisar diferenciar falha de persistencia, usar blocker seguro como
   `reference_reader_failed`, com metadata apenas de recurso, contadores e codigo;
@@ -612,14 +652,15 @@ Allowlist minima de metadata:
 
 ## Plano de Testes Futuro
 
-Checklist para a fase futura de implementacao dos adapters internos com tests only:
+Checklist para fases futuras de integracao dos adapters com services/repositories reais:
 
-- cada adapter retorna shape minimo e nao documento Mongoose inteiro;
-- cada adapter filtra por `tenantId`;
-- recurso de outro tenant retorna `null`/`[]`;
-- not found retorna `null`/`[]`;
-- adapter nao propaga `NotFoundException` ao resolver;
-- erro inesperado vira falha/blocker seguro sem stack, `error.toString()` ou raw error;
+- manter cada adapter retornando shape minimo e nao documento Mongoose inteiro;
+- manter cada adapter filtrando por `tenantId`;
+- manter recurso de outro tenant retornando `null`/`[]`;
+- manter not found retornando `null`/`[]`;
+- manter adapter sem propagar `NotFoundException` ao resolver;
+- avaliar se erro inesperado em service/repository real deve continuar como `null`/`[]` ou virar
+  blocker seguro dedicado na camada de wiring, sem stack, `error.toString()` ou raw error;
 - query definition active retorna `RuntimeQueryDefinitionLike`;
 - query definition non-active vira blocker antes de command;
 - dashboard active retorna widgets minimos;
@@ -658,14 +699,15 @@ Checklist para a fase futura de implementacao dos adapters internos com tests on
 
 ## Sequencia Recomendada de Implementacao Futura
 
-1. Criar adapters internos em arquivos `.ts` somente em fase futura explicita.
-2. Adicionar testes unitarios por adapter com fakes de service/repository.
-3. Adicionar testes de integracao interna `ReferenceResolver + adapters fakeados`, ainda sem
-   provider operacional.
-4. Validar ausencia de secrets com `JSON.stringify`.
-5. Decidir se adapters usam services existentes ou repositories internos seguros para campos que
+1. Desenhar o wiring interno dos adapters com services/repositories reais, ainda sem endpoint e
+   sem dispatch.
+2. Decidir se adapters usam services existentes ou repositories internos seguros para campos que
    DTO publico omite.
-6. So depois avaliar wiring interno no `RuntimeModule`, ainda sem endpoint/dispatch.
+3. Criar testes com fake services que imitam os contracts reais antes de qualquer provider
+   operacional.
+4. Manter validacao de ausencia de secrets com `JSON.stringify`.
+5. So depois avaliar provider interno no `RuntimeModule`, ainda sem endpoint/dispatch.
+6. Qualquer dispatch/transporte continua exigindo fase propria, threat model e ADR.
 
 ## Referencias
 

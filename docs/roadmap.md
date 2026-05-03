@@ -52,6 +52,11 @@ Implementado atualmente:
   mapeando ports/readers para modulos declarativos reais futuros, ainda sem adapters `.ts`,
   provider, `RuntimeModule`, endpoint, transporte, dispatch, decrypt ou chamada ao
   `delfos-connectors`;
+- ReferenceReader Adapters Foundation - Tests Only em `src/modules/runtime/bridge/adapters`, com
+  adapters internos puros para os ports do `RuntimeConnectorReferenceResolver`, testes com fakes em
+  memoria e happy path integrado com o resolver real, ainda sem provider, `RuntimeModule`,
+  endpoint, services/repositories reais, transporte, dispatch, decrypt ou chamada ao
+  `delfos-connectors`;
 - audit interno;
 - seed/dev local com dados ficticios;
 - `execution-preview` demo em memoria;
@@ -140,9 +145,9 @@ Planejado/futuro, nao implementado atualmente:
   de qualquer dispatch;
 - integracao do Bridge Resolver ao runtime real somente apos nova fase explicita, com testes,
   threat model e decisao de transporte;
-- proxima fase possivel: implementar adapters internos com tests only, ainda sem provider
-  operacional, `RuntimeModule`, endpoint, transporte ou dispatch real; alternativa posterior:
-  BridgeResolver Wiring Design;
+- proxima fase possivel: Adapter Wiring Design ou ReferenceReader Adapters Integration With Real
+  Services, ainda sem endpoint, transporte ou dispatch real; alternativa posterior: BridgeResolver
+  Wiring Design;
 - servico/runtime `delfos-connectors` (foundation documental disponivel via ADR-0013 no repositorio
   `delfos-connectors`);
 - local agent;

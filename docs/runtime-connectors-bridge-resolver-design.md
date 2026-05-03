@@ -7,6 +7,8 @@ validation port, `prepareCommand` em memoria, `ReferenceResolver` declarativo e 
 criada. Testes internos integrados de `prepareCommand` + `ReferenceResolver` real adicionados com
 fakes/readers em memoria. Design dos adapters futuros para readers reais documentado em
 [`docs/runtime-reference-reader-adapters-design.md`](./runtime-reference-reader-adapters-design.md).
+Foundation tests-only dos adapters internos adicionada em `src/modules/runtime/bridge/adapters/`
+com testes em `src/modules/runtime/tests/runtime-reference-reader-adapters.spec.ts`.
 Ainda sem bridge real operacional.
 
 Este documento nao cria provider/service NestJS operacional, controller, endpoint, transporte,
@@ -99,7 +101,7 @@ O resolver:
 - recebe readers declarativos por ports no constructor;
 - resolve `query`, `dashboard` e `report` a partir de `ExecutionRequestLike`;
 - resolve a cadeia `QueryDefinition / DashboardDefinition / ReportDefinition -> Dataset ->
-  FieldMappings -> Connection -> credentialRef/sourceType`;
+FieldMappings -> Connection -> credentialRef/sourceType`;
 - retorna `RuntimeConnectorReferenceBundle` source-agnostic;
 - usa `sourceObject` e `sourceFieldPath`, sem exigir `table` ou `column`;
 - sanitiza `safeMetadata` de dataset, connection, mapping e source descriptor;
@@ -193,7 +195,7 @@ alteracao de `RuntimeModule`, chamada ao `delfos-connectors`, import de `delfos-
 descriptografia de credenciais, banco real, Mongoose real, services reais ou acesso externo. Os
 eventos retornados continuam sendo shapes em memoria e nao sao persistidos.
 
-## Reference Reader Adapters Design Atual
+## Reference Reader Adapters Foundation Atual
 
 A fase **ReferenceResolver Real Reader Adapter Design** adicionou
 [`docs/runtime-reference-reader-adapters-design.md`](./runtime-reference-reader-adapters-design.md).
@@ -211,9 +213,31 @@ Esse documento define como uma fase futura podera adaptar os ports/readers do
 - estrategia source-agnostic para SQL, REST/JSON, MongoDB e file;
 - plano de testes futuro para adapters internos.
 
-Adapters reais ainda nao existem. A proxima implementacao possivel deve seguir esse design e
-comecar por tests only, sem provider operacional, endpoint, `RuntimeModule`, dispatch,
-transporte, chamada ao `delfos-connectors`, decrypt ou acesso externo.
+A fase **ReferenceReader Adapters Foundation - Tests Only** adicionou classes internas e puras em
+`src/modules/runtime/bridge/adapters/`:
+
+- `RuntimeQueryDefinitionReaderAdapter`;
+- `RuntimeDashboardDefinitionReaderAdapter`;
+- `RuntimeReportDefinitionReaderAdapter`;
+- `RuntimeDatasetReaderAdapter`;
+- `RuntimeFieldMappingReaderAdapter`;
+- `RuntimeConnectionReaderAdapter`;
+- `RuntimeCredentialReferenceReaderAdapter`.
+
+Esses adapters recebem dependencias minimas por constructor e convertem resultados de
+services/repositories futuros em shapes minimos dos ports do `RuntimeConnectorReferenceResolver`.
+Os testes usam fakes em memoria e incluem um happy path integrado com o
+`RuntimeConnectorReferenceResolver` real.
+
+A foundation de adapters ainda nao esta registrada como provider NestJS, nao altera
+`RuntimeModule`, nao usa services/repositories reais, nao cria endpoint, nao faz dispatch, nao
+chama ou importa `delfos-connectors`, nao descriptografa credenciais, nao acessa fonte externa e
+nao altera comportamento runtime publico.
+
+Lacuna preservada: `ConnectionsService.findOne` publico expoe `hasCredentialReference`, mas nao
+`credentialRef`. O adapter de connection so retorna `credentialRef` quando a dependencia segura o
+expuser explicitamente; caso contrario retorna `credentialRef` ausente e deixa o
+`ReferenceResolver` bloquear com `credential_ref_missing` quando necessario.
 
 ## Objetivo
 
@@ -284,11 +308,15 @@ interface RuntimeConnectorCommandBuilder {
 }
 
 interface RuntimeConnectorReferenceResolver {
-  resolveReferences(input: RuntimeConnectorReferenceResolverInput): Promise<ResolvedRuntimeReferences>;
+  resolveReferences(
+    input: RuntimeConnectorReferenceResolverInput,
+  ): Promise<ResolvedRuntimeReferences>;
 }
 
 interface RuntimeConnectorCapabilityMapper {
-  mapCapability(input: RuntimeConnectorCapabilityMapperInput): RuntimeConnectorCapabilityMappingResult;
+  mapCapability(
+    input: RuntimeConnectorCapabilityMapperInput,
+  ): RuntimeConnectorCapabilityMappingResult;
 }
 
 interface RuntimeConnectorLimitsPolicy {
@@ -300,7 +328,9 @@ interface RuntimeConnectorSafeMetadataBuilder {
 }
 
 interface RuntimeConnectorCommandValidationPort {
-  validate(command: ConnectorExecutionCommandShape): Promise<RuntimeConnectorCommandValidationResult>;
+  validate(
+    command: ConnectorExecutionCommandShape,
+  ): Promise<RuntimeConnectorCommandValidationResult>;
 }
 
 interface RuntimeConnectorDispatchPort {
@@ -347,7 +377,7 @@ interface ReadinessBlockerShape {
 interface SafeBridgeErrorShape {
   code: string;
   safeMessage: string;
-  category: "validation" | "security" | "not_supported" | "readiness";
+  category: 'validation' | 'security' | 'not_supported' | 'readiness';
   retryable: false;
   safeMetadata: Record<string, SafeMetadataValue>;
 }
@@ -355,7 +385,7 @@ interface SafeBridgeErrorShape {
 interface BridgeEventShape {
   tenantId: string;
   executionRequestId: string;
-  eventType: "command_prepared" | "command_blocked" | "command_validation_failed";
+  eventType: 'command_prepared' | 'command_blocked' | 'command_validation_failed';
   requestId: string;
   correlationId: string;
   occurredAt: string;
@@ -373,8 +403,8 @@ interface RuntimeConnectorReferenceResolverInput {
 }
 
 interface RuntimeConnectorCapabilityMapperInput {
-  kind: "query" | "dashboard" | "report";
-  apiMode: "demo" | "dry_run" | "future_runtime";
+  kind: 'query' | 'dashboard' | 'report';
+  apiMode: 'demo' | 'dry_run' | 'future_runtime';
   resolvedReferences: ResolvedRuntimeReferences;
 }
 
@@ -412,17 +442,17 @@ em implementacao futura, manter um shape local equivalente ao contrato do connec
 
 ```ts
 type ConnectorCapabilityShape =
-  | "test_connection"
-  | "inspect_schema"
-  | "preview_dataset"
-  | "execute_query_preview"
-  | "generate_report_preview"
-  | "export_report"
-  | "refresh_dashboard_data"
-  | "validate_mapping"
-  | "estimate_query_cost";
+  | 'test_connection'
+  | 'inspect_schema'
+  | 'preview_dataset'
+  | 'execute_query_preview'
+  | 'generate_report_preview'
+  | 'export_report'
+  | 'refresh_dashboard_data'
+  | 'validate_mapping'
+  | 'estimate_query_cost';
 
-type ConnectorExecutionModeShape = "dry_run" | "demo" | "preview" | "execute" | "export";
+type ConnectorExecutionModeShape = 'dry_run' | 'demo' | 'preview' | 'execute' | 'export';
 
 type SafeMetadataValue =
   | string
@@ -553,14 +583,14 @@ Responsabilidades futuras:
 
 Tabela inicial:
 
-| API kind | API mode | Capability futura | Connector mode | Resultado nesta fase futura inicial |
-| --- | --- | --- | --- | --- |
-| `query` | `future_runtime` | `execute_query_preview` | `preview` | Preparavel, sem dispatch. |
-| `query` | `dry_run` | `validate_mapping` ou `estimate_query_cost` | `dry_run` | Preparavel apenas como validacao/custo futuro. |
-| `dashboard` | `future_runtime` | `refresh_dashboard_data` | `preview` | Preparavel, sem dispatch. |
-| `report` | `future_runtime` | `generate_report_preview` | `preview` | Preparavel, sem export real. |
-| `report` | export futuro | `export_report` | `export` | Bloqueado como `not_supported` ate politica propria. |
-| qualquer | `demo` | n/a | `demo` | Permanece no fluxo demo atual da API, sem connectors. |
+| API kind    | API mode         | Capability futura                           | Connector mode | Resultado nesta fase futura inicial                   |
+| ----------- | ---------------- | ------------------------------------------- | -------------- | ----------------------------------------------------- |
+| `query`     | `future_runtime` | `execute_query_preview`                     | `preview`      | Preparavel, sem dispatch.                             |
+| `query`     | `dry_run`        | `validate_mapping` ou `estimate_query_cost` | `dry_run`      | Preparavel apenas como validacao/custo futuro.        |
+| `dashboard` | `future_runtime` | `refresh_dashboard_data`                    | `preview`      | Preparavel, sem dispatch.                             |
+| `report`    | `future_runtime` | `generate_report_preview`                   | `preview`      | Preparavel, sem export real.                          |
+| `report`    | export futuro    | `export_report`                             | `export`       | Bloqueado como `not_supported` ate politica propria.  |
+| qualquer    | `demo`           | n/a                                         | `demo`         | Permanece no fluxo demo atual da API, sem connectors. |
 
 ### LimitsPolicy
 
@@ -577,14 +607,14 @@ Responsabilidades futuras:
 
 Defaults conceituais iniciais:
 
-| Limite | Default | Regra |
-| --- | ---: | --- |
-| `timeoutMs` | `5000` | Obrigatorio quando houver operacao externa futura. |
-| `maxRows` | `100` | Nunca dataset completo. |
-| `previewLimit` | `20` | Preview pequeno e limitado. |
-| `maxMetadataLength` | `256` | Strings truncadas ou descartadas. |
-| `maxBlockers` | `50` | Excesso vira contador truncado. |
-| `maxWarnings` | `50` | Excesso vira contador truncado. |
+| Limite              | Default | Regra                                              |
+| ------------------- | ------: | -------------------------------------------------- |
+| `timeoutMs`         |  `5000` | Obrigatorio quando houver operacao externa futura. |
+| `maxRows`           |   `100` | Nunca dataset completo.                            |
+| `previewLimit`      |    `20` | Preview pequeno e limitado.                        |
+| `maxMetadataLength` |   `256` | Strings truncadas ou descartadas.                  |
+| `maxBlockers`       |    `50` | Excesso vira contador truncado.                    |
+| `maxWarnings`       |    `50` | Excesso vira contador truncado.                    |
 
 ### SafeMetadataBuilder
 
@@ -690,7 +720,7 @@ async function prepareCommand(input: PrepareRuntimeConnectorCommandInput) {
 
   const readiness = await readinessService.evaluate(executionRequest);
   if (readiness.blockers.length > 0) {
-    return blocked("READINESS_BLOCKED", readiness.blockers);
+    return blocked('READINESS_BLOCKED', readiness.blockers);
   }
 
   const references = await referenceResolver.resolveReferences({
@@ -735,7 +765,7 @@ async function prepareCommand(input: PrepareRuntimeConnectorCommandInput) {
 
   const validation = await commandValidationPort.validate(command);
   if (!validation.valid) {
-    return blocked("COMMAND_VALIDATION_FAILED", [], validation.error);
+    return blocked('COMMAND_VALIDATION_FAILED', [], validation.error);
   }
 
   return prepared(command);
@@ -749,7 +779,7 @@ dashboard, report ou query definition conhecem nomes fisicos de tabela/coluna.
 
 ```ts
 interface SourceDescriptor {
-  sourceType: "sql" | "rest_json" | "mongodb" | "file" | string;
+  sourceType: 'sql' | 'rest_json' | 'mongodb' | 'file' | string;
   sourceObject?: string;
   connectionId: string;
   credentialRef: string;
@@ -767,7 +797,7 @@ interface SourceFieldDescriptor {
 interface LogicalFieldDescriptor {
   logicalField: string;
   logicalType?: string;
-  semanticRole?: "metric" | "dimension" | "time" | "identifier" | string;
+  semanticRole?: 'metric' | 'dimension' | 'time' | 'identifier' | string;
 }
 
 interface FieldMappingDescriptor {
@@ -777,7 +807,7 @@ interface FieldMappingDescriptor {
   source: SourceFieldDescriptor;
   logical: LogicalFieldDescriptor;
   transform?: string;
-  status: "active" | "inactive" | string;
+  status: 'active' | 'inactive' | string;
 }
 
 interface ResolvedRuntimeReferences {
@@ -798,12 +828,12 @@ interface ResolvedRuntimeReferences {
 
 Exemplos ficticios:
 
-| Fonte | `sourceObject` | `sourceFieldPath` | `logicalField` |
-| --- | --- | --- | --- |
-| SQL | `Pedidos` | `ValorTotal` | `sales.totalAmount` |
-| REST/JSON | `$.items[*]` | `amount` | `sales.totalAmount` |
-| MongoDB | `orders` | `items.amount` | `sales.totalAmount` |
-| Arquivos | `sheet:Vendas` | `Valor Total` | `sales.totalAmount` |
+| Fonte     | `sourceObject` | `sourceFieldPath` | `logicalField`      |
+| --------- | -------------- | ----------------- | ------------------- |
+| SQL       | `Pedidos`      | `ValorTotal`      | `sales.totalAmount` |
+| REST/JSON | `$.items[*]`   | `amount`          | `sales.totalAmount` |
+| MongoDB   | `orders`       | `items.amount`    | `sales.totalAmount` |
+| Arquivos  | `sheet:Vendas` | `Valor Total`     | `sales.totalAmount` |
 
 Regras por familia:
 
@@ -814,64 +844,64 @@ Regras por familia:
 
 ## Matriz de Testes Futuros
 
-| Caso | Esperado |
-| --- | --- |
-| Query execution request pronta | Vira `execute_query_preview` com mode `preview`. |
-| Dashboard request pronta | Vira `refresh_dashboard_data` com mode `preview`. |
-| Report request pronta | Vira `generate_report_preview` com mode `preview`. |
-| Export real | Permanece `not_supported`/futuro. |
-| Request sem `tenantId` | Bloqueia. |
-| Request de outro tenant | Nao resolve. |
-| Readiness com blockers | Nao prepara command. |
-| Dataset sem mapping | Bloqueia. |
-| Connection sem `credentialRef` | Bloqueia ou retorna `safeError` conforme politica. |
-| `credentialRef` | Nunca contem secret. |
-| `protectedSecretValue` | Nunca entra no command. |
-| Connection string | Nunca entra no command. |
-| `safeParameters` com forbidden fields | Remove ou bloqueia conforme politica. |
-| `metadata` com forbidden fields | Remove ou bloqueia conforme politica. |
-| `requestId` | Preservado no command. |
-| `correlationId` | Preservado no command. |
-| `requestedAt` | Obrigatorio e ISO. |
-| `sourceType` | Obrigatorio quando capability exigir fonte. |
-| REST/JSON source | Usa field paths, nao exige tabela/coluna SQL. |
-| SQL source | Usa source field/table como metadata segura, sem SQL livre. |
-| MongoDB source | Usa document paths, sem pipeline livre. |
-| `execute` real | Permanece bloqueado. |
-| `export` real | Permanece bloqueado. |
-| Command invalido | Validation port rejeita com erro seguro. |
-| Eventos futuros | Nao contem secrets. |
-| Actor ausente quando politica exigir | Bloqueia ou retorna erro seguro. |
-| Unknown command field | Validation port rejeita. |
-| Limites negativos ou zero | Validation port rejeita. |
-| Limites acima da politica | Limits policy faz clamp ou bloqueia. |
-| URL livre em parametros | Remove ou bloqueia ate allowlist futura. |
-| SQL livre em parametros | Remove ou bloqueia. |
-| Payload bruto em metadata | Remove ou bloqueia. |
-| `connectionId` com padrao de connection string | Rejeita. |
-| `credentialRef` com padrao de token/senha | Rejeita. |
-| Dashboard sem widgets resolviveis | Readiness bloqueia. |
-| Report sem referencia resolvivel | Readiness bloqueia. |
-| Field mapping inativo | Warning ou blocker conforme politica futura. |
-| Cross-tenant reference chain | Bloqueia. |
+| Caso                                           | Esperado                                                    |
+| ---------------------------------------------- | ----------------------------------------------------------- |
+| Query execution request pronta                 | Vira `execute_query_preview` com mode `preview`.            |
+| Dashboard request pronta                       | Vira `refresh_dashboard_data` com mode `preview`.           |
+| Report request pronta                          | Vira `generate_report_preview` com mode `preview`.          |
+| Export real                                    | Permanece `not_supported`/futuro.                           |
+| Request sem `tenantId`                         | Bloqueia.                                                   |
+| Request de outro tenant                        | Nao resolve.                                                |
+| Readiness com blockers                         | Nao prepara command.                                        |
+| Dataset sem mapping                            | Bloqueia.                                                   |
+| Connection sem `credentialRef`                 | Bloqueia ou retorna `safeError` conforme politica.          |
+| `credentialRef`                                | Nunca contem secret.                                        |
+| `protectedSecretValue`                         | Nunca entra no command.                                     |
+| Connection string                              | Nunca entra no command.                                     |
+| `safeParameters` com forbidden fields          | Remove ou bloqueia conforme politica.                       |
+| `metadata` com forbidden fields                | Remove ou bloqueia conforme politica.                       |
+| `requestId`                                    | Preservado no command.                                      |
+| `correlationId`                                | Preservado no command.                                      |
+| `requestedAt`                                  | Obrigatorio e ISO.                                          |
+| `sourceType`                                   | Obrigatorio quando capability exigir fonte.                 |
+| REST/JSON source                               | Usa field paths, nao exige tabela/coluna SQL.               |
+| SQL source                                     | Usa source field/table como metadata segura, sem SQL livre. |
+| MongoDB source                                 | Usa document paths, sem pipeline livre.                     |
+| `execute` real                                 | Permanece bloqueado.                                        |
+| `export` real                                  | Permanece bloqueado.                                        |
+| Command invalido                               | Validation port rejeita com erro seguro.                    |
+| Eventos futuros                                | Nao contem secrets.                                         |
+| Actor ausente quando politica exigir           | Bloqueia ou retorna erro seguro.                            |
+| Unknown command field                          | Validation port rejeita.                                    |
+| Limites negativos ou zero                      | Validation port rejeita.                                    |
+| Limites acima da politica                      | Limits policy faz clamp ou bloqueia.                        |
+| URL livre em parametros                        | Remove ou bloqueia ate allowlist futura.                    |
+| SQL livre em parametros                        | Remove ou bloqueia.                                         |
+| Payload bruto em metadata                      | Remove ou bloqueia.                                         |
+| `connectionId` com padrao de connection string | Rejeita.                                                    |
+| `credentialRef` com padrao de token/senha      | Rejeita.                                                    |
+| Dashboard sem widgets resolviveis              | Readiness bloqueia.                                         |
+| Report sem referencia resolvivel               | Readiness bloqueia.                                         |
+| Field mapping inativo                          | Warning ou blocker conforme politica futura.                |
+| Cross-tenant reference chain                   | Bloqueia.                                                   |
 
 ## Riscos e Mitigacoes
 
-| Risco | Mitigacao |
-| --- | --- |
-| Bridge virar executor real por acidente | Resolver prepara command e nao recebe dispatch ativo; testes garantem que nenhum transport e chamado. |
-| Payload bruto vazar | Allowlist de command, sanitizacao e forbidden fields. |
-| SQL livre atravessar command | `safeParameters` declarativos, testes e validation port. |
-| URL livre/SSRF futuro | Source allowlist futura antes de REST real; URL livre bloqueada. |
-| `credentialRef` confundido com secret | Nome e testes reforcam que e referencia; padroes suspeitos rejeitados. |
-| `connectionId` confundido com connection string | Padroes de connection string rejeitados. |
-| `tenantId` como filtro opcional | Busca por tenant obrigatoria; testes cross-tenant. |
-| Cache/fila futura sem tenant scope | ADR de transporte/cache/fila antes de implementacao; envelope carrega `tenantId`. |
-| Drift entre contrato local API e contrato connectors | Validation port, matriz de compatibilidade e revisao conjunta de docs. |
-| Drift entre docs e codigo | Checklist de implementacao futura e testes obrigatorios. |
-| Eventos com segredo | Event recorder metadata-only e testes de forbidden fields. |
-| Limites livres vindos do usuario | Limits policy com clamp e defaults. |
-| Acoplamento direto API -> connectors | Sem import direto; package compartilhado exige ADR propria. |
+| Risco                                                | Mitigacao                                                                                             |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Bridge virar executor real por acidente              | Resolver prepara command e nao recebe dispatch ativo; testes garantem que nenhum transport e chamado. |
+| Payload bruto vazar                                  | Allowlist de command, sanitizacao e forbidden fields.                                                 |
+| SQL livre atravessar command                         | `safeParameters` declarativos, testes e validation port.                                              |
+| URL livre/SSRF futuro                                | Source allowlist futura antes de REST real; URL livre bloqueada.                                      |
+| `credentialRef` confundido com secret                | Nome e testes reforcam que e referencia; padroes suspeitos rejeitados.                                |
+| `connectionId` confundido com connection string      | Padroes de connection string rejeitados.                                                              |
+| `tenantId` como filtro opcional                      | Busca por tenant obrigatoria; testes cross-tenant.                                                    |
+| Cache/fila futura sem tenant scope                   | ADR de transporte/cache/fila antes de implementacao; envelope carrega `tenantId`.                     |
+| Drift entre contrato local API e contrato connectors | Validation port, matriz de compatibilidade e revisao conjunta de docs.                                |
+| Drift entre docs e codigo                            | Checklist de implementacao futura e testes obrigatorios.                                              |
+| Eventos com segredo                                  | Event recorder metadata-only e testes de forbidden fields.                                            |
+| Limites livres vindos do usuario                     | Limits policy com clamp e defaults.                                                                   |
+| Acoplamento direto API -> connectors                 | Sem import direto; package compartilhado exige ADR propria.                                           |
 
 ## Checklist de Implementacao Futura
 
