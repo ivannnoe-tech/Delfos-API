@@ -52,3 +52,6 @@ Mudanças de bug fix, refatoração local ou estilização **não** viram ADR.
 | [0010](./adr-0010-analytics-storage-and-retention.md) | Analytics storage and retention | Accepted |
 | [0011](./adr-0011-dashboard-builder-and-widget-model.md) | Dashboard builder and widget model | Accepted |
 | [0012](./adr-0012-local-connectors-agent-and-on-premise-sources.md) | Local connectors agent and on-premise sources | Accepted |
+| 0013 | Connectors boundary and multitenant runtime contract (vive em `delfos-connectors/docs/adr/`) | Accepted |
+
+> **Nota sobre ADR-0013**: vive no repositório `delfos-connectors`, no caminho `docs/adr/ADR-0013-connectors-boundary-and-multitenant-runtime-contract.md`. Ela complementa ADR-0008 no eixo de governança documental do `delfos-connectors` (foundation documental, contratos conceituais, fronteiras multitenant). Não supersede ADR-0008 no ponto de execução real — serviço/runtime, conectores reais, workers, filas, cache, scheduler, local agent e execução de SQL/API externa continuam fora de escopo.

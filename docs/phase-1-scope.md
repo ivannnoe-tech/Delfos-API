@@ -35,7 +35,8 @@ O consumo real de APIs custom, conectores, cache, fila, scheduler, dashboard run
 
 - JWT auth real, login, refresh, bcrypt, OAuth ou MFA.
 - Conectores reais.
-- `delfos-connectors` ou local agent.
+- Servico/runtime `delfos-connectors` ou local agent (o repositorio `delfos-connectors` existe
+  apenas como foundation documental/governanca, autorizada via ADR-0013).
 - Teste real de conexao.
 - Cache real, fila, worker ou scheduler.
 - Execucao real de query.
@@ -135,7 +136,7 @@ Fora do escopo imediato:
 - Acesso direto ao banco de dados do cliente.
 - Consumo direto de API, banco, arquivo ou sistema de cliente.
 - Conector real.
-- `delfos-connectors`.
+- Servico/runtime `delfos-connectors` (foundation documental existe; ver ADR-0013).
 - Local agent.
 - Login/JWT/OAuth real.
 - Dashboard runtime final.
@@ -185,7 +186,7 @@ Criar ADR quando houver proposta de:
 - adicionar Redis, cache, fila, worker ou scheduler;
 - acessar banco de cliente diretamente;
 - consumir API, banco, arquivo ou sistema de cliente;
-- criar conector real, `delfos-connectors` ou local agent;
+- criar conector real, servico/runtime `delfos-connectors` ou local agent;
 - mudar mecanismo de autenticacao;
 - criar execucao real de query;
 - adicionar biblioteca paga ou restritiva;

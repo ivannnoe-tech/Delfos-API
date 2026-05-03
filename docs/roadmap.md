@@ -37,7 +37,8 @@ Nao implementado atualmente:
 
 - JWT/login/OAuth real;
 - conectores reais ou `data-connectors`;
-- `delfos-connectors`;
+- servico/runtime `delfos-connectors` (o repositorio `delfos-connectors` existe apenas como
+  foundation documental/governanca, autorizada via ADR-0013);
 - local agent;
 - teste real de conexao;
 - execucao real de dataset/query;
@@ -107,7 +108,8 @@ escopo.
 
 Planejado/futuro, nao implementado atualmente:
 
-- `delfos-connectors`;
+- servico/runtime `delfos-connectors` (foundation documental disponivel via ADR-0013 no repositorio
+  `delfos-connectors`);
 - local agent;
 - teste real de conexao;
 - sync/ingestao;

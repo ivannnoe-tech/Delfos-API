@@ -168,8 +168,16 @@ scheduler, cache, exportacao, e-mail ou acesso a fonte de cliente.
 
 ### delfos-connectors
 
-Servico futuro responsavel por integracoes, sync, ingestao, preview real ou query real quando essa
-capacidade for aprovada. Nao existe ainda; ver ADR-0008.
+Tem dois sentidos:
+
+1. **Repositorio `delfos-connectors`**: existe como foundation documental e governanca. Versiona
+   contratos conceituais, fronteiras multitenant, security boundaries e ADR-0013. Nao contem
+   codigo, conector real, worker, fila, cache, scheduler, local agent ou execucao.
+2. **Servico/runtime `delfos-connectors`**: nao existe ainda. Sera o executor futuro de
+   integracoes, sync, ingestao, preview real ou query real quando essa capacidade for aprovada.
+
+Ver ADR-0008 (decisao original) e ADR-0013 (foundation documental) no repositorio
+`delfos-connectors` (`docs/adr/ADR-0013-connectors-boundary-and-multitenant-runtime-contract.md`).
 
 ### local agent
 

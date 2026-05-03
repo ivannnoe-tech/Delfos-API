@@ -22,7 +22,9 @@ Nao existe atualmente:
 
 - conector real;
 - `data-connectors`;
-- `delfos-connectors`;
+- servico/runtime `delfos-connectors` (o repositorio `delfos-connectors` existe apenas como
+  foundation documental/governanca, autorizada via ADR-0013; o servico/runtime continua fora de
+  escopo);
 - local agent;
 - chamada a API, banco, arquivo ou sistema de cliente;
 - execucao real de query;
@@ -166,5 +168,6 @@ dashboard builder, query builder ou conectores devem ser interpretados como hist
 ou futuros quando conflitarem com ADR-0008 a ADR-0012 e `docs/phase-1-scope.md`.
 
 Qualquer proposta de armazenar dados operacionais, criar ingestao, conectar direto em banco/API de
-cliente, criar `delfos-connectors`, criar local agent ou usar cache/snapshot/staging real exige
-autorizacao explicita e ADR quando necessario.
+cliente, criar servico/runtime `delfos-connectors`, criar local agent ou usar
+cache/snapshot/staging real exige autorizacao explicita e ADR quando necessario. A foundation
+documental do repositorio `delfos-connectors` (ADR-0013) nao autoriza execucao real.

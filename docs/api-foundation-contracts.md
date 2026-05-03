@@ -341,7 +341,8 @@ Fora de escopo explicito:
 
 - runtime real;
 - connector real;
-- `delfos-connectors`;
+- servico/runtime `delfos-connectors` (o repositorio `delfos-connectors` existe apenas como
+  foundation documental/governanca; ver ADR-0013);
 - local agent;
 - worker/fila real;
 - query real;

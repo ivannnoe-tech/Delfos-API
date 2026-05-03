@@ -3,7 +3,8 @@
 - **Status**: Accepted — decisão tomada, nada implementado
 - **Data**: 2026-04-29
 - **Fase impactada**: Fase 2, com fronteira arquitetural registrada desde a foundation
-- **Implementação atual**: `delfos-connectors` **não existe**. Nenhum conector real, fila, cache, scheduler, execução de query ou staging foi implementado. O módulo `execution-preview` gera apenas dados de demonstração em memória.
+- **Implementação atual**: serviço/runtime `delfos-connectors` **não existe**. Nenhum conector real, fila, cache, scheduler, execução de query ou staging foi implementado. O módulo `execution-preview` gera apenas dados de demonstração em memória.
+- **Atualização 2026-05-03**: a ADR-0013, mantida no repositório `delfos-connectors`, autorizou apenas a foundation documental, contratos conceituais e fronteiras multitenant do `delfos-connectors`. O serviço/runtime real, conectores reais, workers, filas, cache, scheduler, local agent, execução de SQL/API externa e descriptografia real de credenciais continuam fora de escopo. Esta ADR permanece válida; ADR-0013 a complementa no eixo documental, sem supersedê-la no ponto de execução real.
 
 ---
 

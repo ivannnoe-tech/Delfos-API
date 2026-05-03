@@ -12,6 +12,7 @@ Este documento **não descreve implementação atual** e **não autoriza** criar
 - Consumo de API/banco de cliente não está implementado.
 - Cache, fila, scheduler, sync, ingestão e execução real não estão implementados.
 - As decisões atuais estão em ADR-0008 e ADR-0012.
+- ADR-0013, mantida no repositório `delfos-connectors`, registra a foundation documental e os contratos conceituais futuros do `delfos-connectors`, sem autorizar execução real.
 
 Use este arquivo apenas como referência conceitual para planejamento futuro. Qualquer implementação real depende de autorização explícita, revisão de escopo e ADR quando necessário.
 
@@ -210,3 +211,16 @@ Quando a fase de conectores for aprovada, a prioridade deve ser configuração g
 - não quebre o motor genérico
 - seja isolado por módulo
 - tenha ADR se virar padrão relevante
+
+---
+
+## 12. Referências cruzadas (delfos-connectors)
+
+A foundation documental do repositório `delfos-connectors` consolida contratos conceituais, fronteiras de segurança e isolamento multitenant do runtime futuro. Como o repositório vive separado, consultar localmente em `D:\Delfos_Analytics_Project\delfos-connectors\`:
+
+- `docs/runtime-contracts.md` — modelos conceituais (`ConnectorExecutionCommand`, `ConnectorSourceScope`, `ConnectorExecutionResult`, `ConnectorExecutionError`, etc.) e bridge conceitual `kind -> capability`;
+- `docs/security-boundaries.md` — campos proibidos, erro sanitizado e proibições de cache/fila;
+- `docs/multitenancy-and-isolation.md` — `tenantId` como boundary obrigatório;
+- `docs/adr/ADR-0013-connectors-boundary-and-multitenant-runtime-contract.md` — decisão arquitetural complementar.
+
+Esses documentos não autorizam execução real. Eles preparam contratos para uma fase posterior, alinhada com ADR-0008 e ADR-0012.

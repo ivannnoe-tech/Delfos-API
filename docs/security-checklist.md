@@ -7,12 +7,14 @@
 
 ## 1. Autenticação
 
-- [ ] Login valida credenciais de forma segura.
-- [ ] Senhas são armazenadas com hash forte.
-- [ ] Access token tem expiração curta.
-- [ ] Refresh token é rotacionável.
-- [ ] Logout invalida refresh token quando aplicável.
-- [ ] Erros de login não revelam se e-mail existe.
+> Items abaixo são `[futuro]` enquanto auth real (login/JWT/refresh/MFA) não existir. Hoje a foundation usa apenas `x-delfos-admin-key` temporário. Ver ADR-0006 e roadmap.
+
+- [ ] [futuro] Login valida credenciais de forma segura.
+- [ ] [futuro] Senhas são armazenadas com hash forte.
+- [ ] [futuro] Access token tem expiração curta.
+- [ ] [futuro] Refresh token é rotacionável.
+- [ ] [futuro] Logout invalida refresh token quando aplicável.
+- [ ] [futuro] Erros de login não revelam se e-mail existe.
 
 ---
 
@@ -49,13 +51,15 @@
 
 ## 5. Conectores externos
 
-- [ ] URL base é validada.
-- [ ] Método HTTP vem de configuração permitida.
-- [ ] Timeout configurado.
-- [ ] Rate limit aplicado.
-- [ ] Resposta tem limite de tamanho.
-- [ ] Erro externo é sanitizado.
-- [ ] Credenciais não aparecem em logs.
+> Items abaixo são `[futuro]` enquanto conectores reais não existirem. Hoje não há conector, worker, fila, cache, scheduler, local agent ou execução externa. Ver ADR-0008, ADR-0012 e ADR-0013 (foundation documental em `delfos-connectors`).
+
+- [ ] [futuro] URL base é validada.
+- [ ] [futuro] Método HTTP vem de configuração permitida.
+- [ ] [futuro] Timeout configurado.
+- [ ] [futuro] Rate limit aplicado.
+- [ ] [futuro] Resposta tem limite de tamanho.
+- [ ] [futuro] Erro externo é sanitizado.
+- [ ] [futuro] Credenciais não aparecem em logs.
 
 ---
 
