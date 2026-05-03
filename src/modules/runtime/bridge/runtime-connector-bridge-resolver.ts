@@ -144,7 +144,10 @@ export class RuntimeConnectorBridgeResolver {
       connectorMode: mapping.connectorMode,
     });
     const metadata = this.dependencies.safeMetadataBuilder.build({
-      metadata: referenceResult.references.source?.metadata,
+      metadata:
+        referenceResult.references.safeMetadata ??
+        referenceResult.references.sourceDescriptor?.safeMetadata ??
+        referenceResult.references.source?.metadata,
       context: this.toSafeMetadataContext(
         executionRequest,
         referenceResult.references,
@@ -225,7 +228,10 @@ export class RuntimeConnectorBridgeResolver {
       dashboardDefinitionId:
         references.dashboardDefinitionId ?? executionRequest.dashboardDefinitionId,
       reportDefinitionId: references.reportDefinitionId ?? executionRequest.reportDefinitionId,
-      sourceType: references.sourceType ?? references.source?.sourceType,
+      sourceType:
+        references.sourceType ??
+        references.sourceDescriptor?.sourceType ??
+        references.source?.sourceType,
       capability,
       mode,
       requestedAt: this.dependencies.clock.now().toISOString(),
@@ -233,7 +239,9 @@ export class RuntimeConnectorBridgeResolver {
       correlationId: input.correlationId,
       safeParameters: {},
       schemaMappingVersion:
-        references.schemaMappingVersion ?? references.source?.schemaMappingVersion,
+        references.schemaMappingVersion ??
+        references.sourceDescriptor?.schemaMappingVersion ??
+        references.source?.schemaMappingVersion,
       maxRows: limits.maxRows,
       timeoutMs: limits.timeoutMs,
       previewLimit: limits.previewLimit,
@@ -322,7 +330,10 @@ export class RuntimeConnectorBridgeResolver {
       kind: executionRequest.kind,
       mode,
       capability,
-      sourceType: references.sourceType ?? references.source?.sourceType,
+      sourceType:
+        references.sourceType ??
+        references.sourceDescriptor?.sourceType ??
+        references.source?.sourceType,
       status: executionRequest.status,
       readiness: {
         ready: readiness.blockers.length === 0,

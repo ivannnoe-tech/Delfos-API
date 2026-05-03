@@ -39,6 +39,10 @@ Implementado atualmente:
 - BridgeResolver PrepareCommand Foundation em `src/modules/runtime/bridge`, com
   `RuntimeConnectorBridgeResolver.prepareCommand` interno, ports/fakes em testes e command
   preparation em memoria, ainda sem provider, endpoint, transporte, dispatch ou integracao real;
+- Runtime ReferenceResolver Foundation em `src/modules/runtime/bridge`, com
+  `RuntimeConnectorReferenceResolver` interno, readers/ports declarativos, fakes em testes,
+  politica conservadora de uma fonte principal e bundles source-agnostic, ainda sem provider,
+  endpoint, decrypt, acesso externo, transporte, dispatch ou integracao real;
 - audit interno;
 - seed/dev local com dados ficticios;
 - `execution-preview` demo em memoria;
@@ -127,8 +131,8 @@ Planejado/futuro, nao implementado atualmente:
   de qualquer dispatch;
 - integracao do Bridge Resolver ao runtime real somente apos nova fase explicita, com testes,
   threat model e decisao de transporte;
-- ReferenceResolver Foundation ou testes de integracao internos do prepare command, ainda sem
-  dispatch real;
+- testes de integracao internos `PrepareCommand + ReferenceResolver` ou wiring interno sem
+  endpoint, ainda sem dispatch real;
 - servico/runtime `delfos-connectors` (foundation documental disponivel via ADR-0013 no repositorio
   `delfos-connectors`);
 - local agent;

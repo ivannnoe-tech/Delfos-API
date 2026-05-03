@@ -178,6 +178,7 @@ export interface RuntimeConnectorReferenceBundleResult {
   readonly resolved: boolean;
   readonly references?: RuntimeConnectorReferenceBundle;
   readonly blockers: readonly BridgeReadinessBlockerShape[];
+  readonly safeMetadata?: ConnectorCommandSafeMetadata;
 }
 
 export interface RuntimeReferenceResolverPort {

@@ -136,6 +136,7 @@ describe('RuntimeConnectorBridgeResolver', () => {
           sourceObject: '$.items[*]',
           connectionId: 'conn_001',
           credentialRef: 'cred_001',
+          safeMetadata: {},
           metadata: {
             domain: 'sales',
             secretValue: 'must-not-leak',
@@ -373,6 +374,7 @@ describe('RuntimeConnectorBridgeResolver', () => {
           connectionId: 'conn_001',
           credentialRef: 'cred_001',
           schemaMappingVersion: 'mapping_v1',
+          safeMetadata: {},
           metadata: {
             sourceObject: source.sourceObject,
             sourceFieldPath: source.sourceFieldPath,
@@ -383,9 +385,14 @@ describe('RuntimeConnectorBridgeResolver', () => {
             fieldMappingId: 'mapping_001',
             datasetId: 'dataset_001',
             datasetKey: 'sales_orders',
+            targetField: 'total_amount',
+            sourceObject: source.sourceObject,
+            sourceFieldPath: source.sourceFieldPath,
+            logicalField: 'sales.totalAmount',
             source,
             logical: {
               logicalField: 'sales.totalAmount',
+              sourceFieldPath: source.sourceFieldPath,
               semanticRole: 'metric',
             },
             status: 'active',
@@ -498,7 +505,14 @@ function createReferences(
   overrides: Partial<RuntimeConnectorReferenceBundle> = {},
 ): RuntimeConnectorReferenceBundle {
   return {
+    executionRequestId: 'exec_req_001',
     tenantId: 'tenant_001',
+    kind: ExecutionRequestKind.Query,
+    mode: ExecutionRequestMode.FutureRuntime,
+    rootReference: {
+      kind: ExecutionRequestKind.Query,
+      id: 'query_001',
+    },
     connectionId: 'conn_001',
     credentialRef: 'cred_001',
     datasetId: 'dataset_001',
@@ -511,6 +525,9 @@ function createReferences(
       connectionId: 'conn_001',
       credentialRef: 'cred_001',
       schemaMappingVersion: 'mapping_v1',
+      safeMetadata: {
+        domain: 'sales',
+      },
       metadata: {
         domain: 'sales',
       },
@@ -520,6 +537,10 @@ function createReferences(
         fieldMappingId: 'mapping_001',
         datasetId: 'dataset_001',
         datasetKey: 'sales_orders',
+        targetField: 'total_amount',
+        sourceObject: '$.items[*]',
+        sourceFieldPath: '$.items[*].amount',
+        logicalField: 'sales.totalAmount',
         source: {
           sourceObject: '$.items[*]',
           sourceFieldPath: '$.items[*].amount',
@@ -531,7 +552,17 @@ function createReferences(
         status: 'active',
       },
     ],
+    logicalFields: [
+      {
+        logicalField: 'sales.totalAmount',
+        semanticRole: 'metric',
+        sourceFieldPath: '$.items[*].amount',
+      },
+    ],
     schemaMappingVersion: 'mapping_v1',
+    safeMetadata: {
+      domain: 'sales',
+    },
     ...overrides,
   };
 }

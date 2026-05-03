@@ -3,8 +3,8 @@
 ## Status
 
 Design tecnico futuro. Foundation de interfaces/types, mappers, policies, builder seguro,
-validation port, `prepareCommand` em memoria e testes unitarios criada. Ainda sem bridge real
-operacional.
+validation port, `prepareCommand` em memoria, `ReferenceResolver` declarativo e testes unitarios
+criada. Ainda sem bridge real operacional.
 
 Este documento nao cria provider/service NestJS operacional, controller, endpoint, transporte,
 dispatch, worker, fila, cache, scheduler, local agent, conector real, SQL/API externa,
@@ -26,6 +26,7 @@ Arquivos criados:
 - `src/modules/runtime/bridge/runtime-connector-safe-metadata-builder.ts`;
 - `src/modules/runtime/bridge/runtime-connector-command-validation.port.ts`;
 - `src/modules/runtime/bridge/runtime-connector-reference.types.ts`;
+- `src/modules/runtime/bridge/runtime-connector-reference-resolver.ts`;
 - `src/modules/runtime/bridge/runtime-connector-security.ts`;
 - `src/modules/runtime/bridge/index.ts`.
 
@@ -84,6 +85,68 @@ Testes em `src/modules/runtime/tests/runtime-connector-bridge-resolver.spec.ts` 
 reader, readiness evaluator, reference resolver e clock. Eles cobrem happy paths, tenant
 isolation, readiness blockers, reference blockers, capability unsupported, command validation
 failure, sanitizacao, source-agnostic references e determinismo.
+
+## ReferenceResolver Foundation Atual
+
+A fase **Runtime ReferenceResolver Foundation** adicionou
+`src/modules/runtime/bridge/runtime-connector-reference-resolver.ts`.
+
+O resolver:
+
+- recebe readers declarativos por ports no constructor;
+- resolve `query`, `dashboard` e `report` a partir de `ExecutionRequestLike`;
+- resolve a cadeia `QueryDefinition / DashboardDefinition / ReportDefinition -> Dataset ->
+  FieldMappings -> Connection -> credentialRef/sourceType`;
+- retorna `RuntimeConnectorReferenceBundle` source-agnostic;
+- usa `sourceObject` e `sourceFieldPath`, sem exigir `table` ou `column`;
+- sanitiza `safeMetadata` de dataset, connection, mapping e source descriptor;
+- bloqueia referencias de outro tenant;
+- bloqueia dataset sem `datasetKey`, dataset sem mappings, connection ausente, `credentialRef`
+  ausente quando a fonte exige credencial e `sourceType` ausente;
+- bloqueia `credentialRef` ou `connectionId` com aparencia de secret/connection string;
+- usa politica conservadora de uma fonte principal por command.
+
+Ports/readers criados:
+
+- `RuntimeQueryDefinitionReaderPort`;
+- `RuntimeDashboardDefinitionReaderPort`;
+- `RuntimeReportDefinitionReaderPort`;
+- `RuntimeDatasetReaderPort`;
+- `RuntimeFieldMappingReaderPort`;
+- `RuntimeConnectionReaderPort`;
+- `RuntimeCredentialReferenceReaderPort`.
+
+Shapes minimos criados:
+
+- `RuntimeQueryDefinitionLike`;
+- `RuntimeDashboardDefinitionLike`;
+- `RuntimeReportDefinitionLike`;
+- `RuntimeDatasetLike`;
+- `RuntimeFieldMappingLike`;
+- `RuntimeConnectionLike`;
+- `RuntimeCredentialReferenceLike`.
+
+Testes em `src/modules/runtime/tests/runtime-connector-reference-resolver.spec.ts` usam fakes em
+memoria e cobrem query, dashboard, report, blockers, seguranca, source-agnostic mappings e
+determinismo.
+
+Limite conservador desta foundation:
+
+- uma `ExecutionRequest` preparada para command aponta para uma fonte principal;
+- dashboards/reports com widgets/blocos que resolvem para fontes diferentes retornam
+  `multiple_sources_not_supported`;
+- fase futura pode decompor dashboards/reports em multiplos commands por fonte/capability, com
+  ADR ou design proprio.
+
+Esta foundation ainda:
+
+- nao registra provider NestJS;
+- nao altera `RuntimeModule`;
+- nao chama services/repositories reais;
+- nao descriptografa credenciais;
+- nao acessa fonte externa;
+- nao faz dispatch;
+- nao persiste eventos.
 
 ## Objetivo
 
