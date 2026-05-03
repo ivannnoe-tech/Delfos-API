@@ -12,6 +12,11 @@ Esta foundation converte shapes retornados por dependencias minimas/fakes em sha
 ports do `RuntimeConnectorReferenceResolver`. Ela ainda nao pluga services/repositories reais do
 Mongo administrativo em fluxo operacional.
 
+O desenho futuro de wiring dos adapters foundation com services/repositories reais esta em
+[`docs/runtime-reference-reader-adapter-wiring-design.md`](./runtime-reference-reader-adapter-wiring-design.md).
+Esse wiring tambem e apenas design: ainda nao ha provider, `RuntimeModule`, endpoint, dispatch,
+decrypt ou chamada externa.
+
 ## Objetivo
 
 Desenhar e registrar a foundation tests-only de como os ports/readers do
@@ -44,6 +49,9 @@ campos minimos exigidos pelos ports, com metadados sanitizados e sem secrets.
 - Adapters foundation tests-only existem em `src/modules/runtime/bridge/adapters/`.
 - Os adapters recebem dependencias minimas por constructor e sao testados com fakes em memoria.
 - Os adapters ainda nao estao conectados a services/repositories reais por provider NestJS.
+- O wiring futuro dos adapters com services/repositories reais esta documentado em
+  [`docs/runtime-reference-reader-adapter-wiring-design.md`](./runtime-reference-reader-adapter-wiring-design.md),
+  ainda sem implementacao operacional.
 - Ainda nao ha provider NestJS, endpoint, dispatch, transporte, executor real ou chamada ao
   `delfos-connectors`.
 
@@ -699,8 +707,9 @@ Checklist para fases futuras de integracao dos adapters com services/repositorie
 
 ## Sequencia Recomendada de Implementacao Futura
 
-1. Desenhar o wiring interno dos adapters com services/repositories reais, ainda sem endpoint e
-   sem dispatch.
+1. Usar o wiring design em
+   [`docs/runtime-reference-reader-adapter-wiring-design.md`](./runtime-reference-reader-adapter-wiring-design.md)
+   como referencia para a proxima fase, ainda sem endpoint e sem dispatch.
 2. Decidir se adapters usam services existentes ou repositories internos seguros para campos que
    DTO publico omite.
 3. Criar testes com fake services que imitam os contracts reais antes de qualquer provider
@@ -713,6 +722,7 @@ Checklist para fases futuras de integracao dos adapters com services/repositorie
 
 - [`docs/runtime-connectors-bridge-plan.md`](./runtime-connectors-bridge-plan.md)
 - [`docs/runtime-connectors-bridge-resolver-design.md`](./runtime-connectors-bridge-resolver-design.md)
+- [`docs/runtime-reference-reader-adapter-wiring-design.md`](./runtime-reference-reader-adapter-wiring-design.md)
 - [`docs/adr/adr-0015-runtime-connectors-command-envelope-bridge.md`](./adr/adr-0015-runtime-connectors-command-envelope-bridge.md)
 - [`docs/adr/adr-0014-runtime-execution-requests-foundation.md`](./adr/adr-0014-runtime-execution-requests-foundation.md)
 - [`docs/adr/adr-0008-connectors-and-integration-execution.md`](./adr/adr-0008-connectors-and-integration-execution.md)

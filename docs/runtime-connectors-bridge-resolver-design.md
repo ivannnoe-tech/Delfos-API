@@ -9,6 +9,9 @@ fakes/readers em memoria. Design dos adapters futuros para readers reais documen
 [`docs/runtime-reference-reader-adapters-design.md`](./runtime-reference-reader-adapters-design.md).
 Foundation tests-only dos adapters internos adicionada em `src/modules/runtime/bridge/adapters/`
 com testes em `src/modules/runtime/tests/runtime-reference-reader-adapters.spec.ts`.
+Adapter Wiring Design futuro documentado em
+[`docs/runtime-reference-reader-adapter-wiring-design.md`](./runtime-reference-reader-adapter-wiring-design.md),
+ainda sem provider, `RuntimeModule`, endpoint, dispatch ou decrypt.
 Ainda sem bridge real operacional.
 
 Este documento nao cria provider/service NestJS operacional, controller, endpoint, transporte,
@@ -70,6 +73,7 @@ O resolver:
 - nao persiste eventos;
 - nao registra provider NestJS;
 - nao altera `RuntimeModule`;
+- nao esta plugado no `RuntimeModule` e nao e provider NestJS;
 - nao faz dispatch, transporte ou chamada externa.
 
 Ports e tipos adicionados/expandidos em `src/modules/runtime/bridge/bridge-types.ts`:
@@ -233,6 +237,12 @@ A foundation de adapters ainda nao esta registrada como provider NestJS, nao alt
 `RuntimeModule`, nao usa services/repositories reais, nao cria endpoint, nao faz dispatch, nao
 chama ou importa `delfos-connectors`, nao descriptografa credenciais, nao acessa fonte externa e
 nao altera comportamento runtime publico.
+
+A fase **Adapter Wiring Design** documenta em
+[`docs/runtime-reference-reader-adapter-wiring-design.md`](./runtime-reference-reader-adapter-wiring-design.md)
+como essa composicao pode evoluir futuramente por factory interna ou provider. Esse desenho reforca
+que `prepareCommand` ainda nao esta plugado no Nest `RuntimeModule`, nao tem endpoint, nao tem
+dispatch, nao faz decrypt e nao altera comportamento publico.
 
 Lacuna preservada: `ConnectionsService.findOne` publico expoe `hasCredentialReference`, mas nao
 `credentialRef`. O adapter de connection so retorna `credentialRef` quando a dependencia segura o
@@ -926,6 +936,7 @@ Regras por familia:
 
 - [`docs/runtime-connectors-bridge-plan.md`](./runtime-connectors-bridge-plan.md)
 - [`docs/runtime-reference-reader-adapters-design.md`](./runtime-reference-reader-adapters-design.md)
+- [`docs/runtime-reference-reader-adapter-wiring-design.md`](./runtime-reference-reader-adapter-wiring-design.md)
 - [`docs/adr/adr-0015-runtime-connectors-command-envelope-bridge.md`](./adr/adr-0015-runtime-connectors-command-envelope-bridge.md)
 - [`docs/adr/adr-0014-runtime-execution-requests-foundation.md`](./adr/adr-0014-runtime-execution-requests-foundation.md)
 - [`docs/adr/adr-0008-connectors-and-integration-execution.md`](./adr/adr-0008-connectors-and-integration-execution.md)
