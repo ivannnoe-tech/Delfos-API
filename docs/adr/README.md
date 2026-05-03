@@ -54,5 +54,6 @@ Mudanças de bug fix, refatoração local ou estilização **não** viram ADR.
 | [0012](./adr-0012-local-connectors-agent-and-on-premise-sources.md) | Local connectors agent and on-premise sources | Accepted |
 | 0013 | Connectors boundary and multitenant runtime contract (vive em `delfos-connectors/docs/adr/`) | Accepted |
 | [0014](./adr-0014-runtime-execution-requests-foundation.md) | Runtime execution requests foundation | Accepted |
+| [0015](./adr-0015-runtime-connectors-command-envelope-bridge.md) | Runtime connectors command envelope bridge | Proposed |
 
 > **Nota sobre ADR-0013**: vive no repositório `delfos-connectors`, no caminho `docs/adr/ADR-0013-connectors-boundary-and-multitenant-runtime-contract.md`. Ela complementa ADR-0008 no eixo de governança documental do `delfos-connectors` (foundation documental, contratos conceituais, fronteiras multitenant). Não supersede ADR-0008 no ponto de execução real — serviço/runtime, conectores reais, workers, filas, cache, scheduler, local agent e execução de SQL/API externa continuam fora de escopo.

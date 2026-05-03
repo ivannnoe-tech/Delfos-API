@@ -28,6 +28,8 @@ Implementado atualmente:
 - report-definitions declarativas;
 - runtime execution requests foundation, apenas contratos/estados/eventos administrativos,
   readiness dry-run e demo-execute ficticio;
+- planejamento documental da futura bridge `ExecutionRequest -> ConnectorExecutionCommand`, sem
+  implementacao real;
 - audit interno;
 - seed/dev local com dados ficticios;
 - `execution-preview` demo em memoria;
@@ -44,6 +46,7 @@ Nao implementado atualmente:
 - teste real de conexao;
 - execucao real de dataset/query;
 - execucao real das runtime execution requests, dry-run, demo-execute ou eventos foundation;
+- bridge real entre `delfos-api` e `delfos-connectors`;
 - cache, fila, worker, scheduler, staging ou snapshot;
 - dashboard builder/runtime final;
 - query builder;
@@ -109,6 +112,7 @@ escopo.
 
 Planejado/futuro, nao implementado atualmente:
 
+- implementacao da bridge `ExecutionRequest -> ConnectorExecutionCommand`, apos escopo explicito;
 - servico/runtime `delfos-connectors` (foundation documental disponivel via ADR-0013 no repositorio
   `delfos-connectors`);
 - local agent;
@@ -119,7 +123,8 @@ Planejado/futuro, nao implementado atualmente:
 - rate limit/retry/timeout de integracoes reais;
 - erros externos operacionais.
 
-Essa fase depende de autorizacao explicita e alinhamento com ADR-0008 e ADR-0012.
+Essa fase depende de autorizacao explicita e alinhamento com ADR-0008, ADR-0012, ADR-0013,
+ADR-0014 e ADR-0015 proposta.
 
 ---
 
