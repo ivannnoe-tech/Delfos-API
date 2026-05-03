@@ -30,6 +30,9 @@ Implementado atualmente:
   readiness dry-run e demo-execute ficticio;
 - planejamento documental da futura bridge `ExecutionRequest -> ConnectorExecutionCommand`, sem
   implementacao real;
+- Bridge Resolver Design documentado em
+  [`docs/runtime-connectors-bridge-resolver-design.md`](./runtime-connectors-bridge-resolver-design.md),
+  sem provider, endpoint, transporte ou dispatch real;
 - audit interno;
 - seed/dev local com dados ficticios;
 - `execution-preview` demo em memoria;
@@ -113,6 +116,8 @@ escopo.
 Planejado/futuro, nao implementado atualmente:
 
 - implementacao da bridge `ExecutionRequest -> ConnectorExecutionCommand`, apos escopo explicito;
+- implementacao do Bridge Resolver, apos o design documentado e mantendo command preparation antes
+  de qualquer dispatch;
 - servico/runtime `delfos-connectors` (foundation documental disponivel via ADR-0013 no repositorio
   `delfos-connectors`);
 - local agent;

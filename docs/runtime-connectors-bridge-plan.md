@@ -12,6 +12,9 @@ Explicar como uma `ExecutionRequest` futura do `delfos-api` podera virar um
 `ConnectorExecutionCommand` seguro para o `delfos-connectors`, mantendo isolamento por tenant,
 referencias seguras, sanitizacao e rastreabilidade.
 
+O desenho tecnico das interfaces internas futuras do resolver esta em
+[`docs/runtime-connectors-bridge-resolver-design.md`](./runtime-connectors-bridge-resolver-design.md).
+
 Esta ponte e documental. Nenhum codigo atual deve interpretar este documento como autorizacao para
 execucao real.
 
@@ -421,9 +424,10 @@ Regras:
 ## Plano de Fases Futuras
 
 1. Documentar e revisar este plano.
-2. Definir ADR de transporte real, sem conector real.
-3. Implementar `BridgeResolver` apenas com command preparation e validacao local/ficticia.
-4. Registrar eventos `command_prepared`/`command_validated` metadata-only.
-5. Integrar fake adapter por transporte aprovado, ainda sem fonte externa.
-6. Definir politica de credenciais real com Vault/KMS/local agent se necessario.
-7. Planejar primeiro conector real com escopo, limites, threat model e testes dedicados.
+2. Documentar o design tecnico do Bridge Resolver.
+3. Definir ADR de transporte real, sem conector real.
+4. Implementar `BridgeResolver` apenas com command preparation e validacao local/ficticia.
+5. Registrar eventos `command_prepared`/`command_validated` metadata-only.
+6. Integrar fake adapter por transporte aprovado, ainda sem fonte externa.
+7. Definir politica de credenciais real com Vault/KMS/local agent se necessario.
+8. Planejar primeiro conector real com escopo, limites, threat model e testes dedicados.
