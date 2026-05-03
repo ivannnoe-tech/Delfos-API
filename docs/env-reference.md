@@ -16,7 +16,7 @@ Este documento descreve variaveis esperadas para local, homologacao e producao.
 |---|---:|---|---|
 | `NODE_ENV` | Sim | `development` | Ambiente de execucao. |
 | `PORT` | Sim | `3000` | Porta HTTP da API. |
-| `CORS_ORIGIN` | Nao | `http://localhost:8080` | Origens permitidas separadas por virgula. Quando omitida, CORS fica desabilitado. |
+| `CORS_ORIGIN` | Nao | `http://localhost:5173,http://localhost:8080,http://localhost:3000` | Origens permitidas separadas por virgula. Quando omitida, CORS fica desabilitado. |
 | `LOG_LEVEL` | Sim | `info` | Nivel de log. |
 
 ## MongoDB

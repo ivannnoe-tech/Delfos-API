@@ -31,7 +31,8 @@ Implementado atualmente:
 - audit interno;
 - seed/dev local com dados ficticios;
 - `execution-preview` demo em memoria;
-- catalogos foundation no `delfos-web`.
+- catalogos foundation no `delfos-web`;
+- CI minimo com lint/test no `delfos-api`.
 
 Nao implementado atualmente:
 
@@ -47,7 +48,7 @@ Nao implementado atualmente:
 - dashboard builder/runtime final;
 - query builder;
 - report builder/runtime e exportacoes finais;
-- CI/commitlint.
+- commitlint e ampliacao do pipeline com format/build.
 
 ---
 

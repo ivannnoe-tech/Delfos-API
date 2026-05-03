@@ -54,7 +54,9 @@ PRs sempre vão para `develop`. Releases sobem `develop → main`.
 
 ## 5. Conventional Commits
 
-Todo commit deve seguir [Conventional Commits](https://www.conventionalcommits.org/). `commitlint` e CI estão planejados/futuros; ainda não há workflow ou validação automatizada configurada no estado atual.
+Todo commit deve seguir [Conventional Commits](https://www.conventionalcommits.org/). CI minimo ja existe via GitHub Actions e executa lint/test.
+
+`commitlint` permanece planejado.
 
 Tipos aceitos: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
 
@@ -81,7 +83,7 @@ npm test
 npm run build
 ```
 
-Quando o CI for configurado, PRs deverão passar nele antes de entrar. No estado atual, rode os comandos acima localmente.
+O CI minimo ja executa lint/test. Antes de PR/entrega, continue rodando localmente `format:check`, lint, test e build enquanto format/build nao entrarem no CI completo.
 
 ---
 

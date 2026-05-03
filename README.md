@@ -80,7 +80,7 @@ Testes end-to-end (`test:e2e`) são planejados/futuros; não há script operacio
 
 ```
 src/
-├── config/                  # @nestjs/config + Joi
+├── config/                  # @nestjs/config + validacao customizada de ambiente
 ├── core/                    # logger, guards, interceptors, decorators, pipes
 └── modules/
     ├── auth/                # admin-key temporário da foundation
@@ -112,7 +112,10 @@ Contratos públicos (REST) entre os dois ficam em [`docs/api-contracts.md`](./do
 
 ## Convenções
 
-- **Conventional Commits** — política atual; `commitlint`/CI estão planejados, ainda não configurados
+- **Conventional Commits** — politica atual; CI minimo ja existe via GitHub Actions e executa
+  lint/test. Antes de PR/entrega, continue rodando localmente `npm run format:check`,
+  `npm run lint`, `npm test` e `npm run build`. `commitlint` e ampliacao do CI com format/build
+  permanecem planejados.
 - **Idioma**: código em EN, docs em PT-BR
 - **Branches**: `feat/`, `fix/`, `chore/`, `docs/` → `develop` → `main`
 - **PRs**: 1 aprovação humana mínima
