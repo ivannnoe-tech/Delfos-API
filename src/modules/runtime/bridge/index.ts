@@ -1,5 +1,6 @@
 export * from './bridge-types';
 export * from './connector-command-shape';
+export * from './runtime-connector-bridge-resolver';
 export * from './runtime-connector-capability-mapper';
 export * from './runtime-connector-command-validation.port';
 export * from './runtime-connector-limits-policy';

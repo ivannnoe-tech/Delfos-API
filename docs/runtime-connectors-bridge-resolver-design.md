@@ -3,7 +3,8 @@
 ## Status
 
 Design tecnico futuro. Foundation de interfaces/types, mappers, policies, builder seguro,
-validation port e testes unitarios criada. Ainda sem implementacao de bridge real.
+validation port, `prepareCommand` em memoria e testes unitarios criada. Ainda sem bridge real
+operacional.
 
 Este documento nao cria provider/service NestJS operacional, controller, endpoint, transporte,
 dispatch, worker, fila, cache, scheduler, local agent, conector real, SQL/API externa,
@@ -33,7 +34,7 @@ safe metadata builder, command shape/local validator e source-agnostic reference
 
 Esta foundation:
 
-- nao cria `BridgeResolver` operacional;
+- cria `RuntimeConnectorBridgeResolver.prepareCommand` apenas como classe interna testavel;
 - nao faz dispatch;
 - nao chama `delfos-connectors`;
 - nao importa `delfos-connectors`;
@@ -41,6 +42,48 @@ Esta foundation:
 - nao executa SQL/API externa;
 - nao descriptografa credenciais;
 - nao acessa fonte de cliente.
+
+## PrepareCommand Foundation Atual
+
+A fase **BridgeResolver PrepareCommand Foundation** adicionou
+`src/modules/runtime/bridge/runtime-connector-bridge-resolver.ts`.
+
+O resolver:
+
+- recebe dependencias por ports/interfaces no constructor;
+- usa `RuntimeExecutionRequestReaderPort` para ler uma `ExecutionRequestLike` por
+  `tenantId + executionRequestId`;
+- usa `RuntimeReadinessEvaluatorPort` para readiness declarativo;
+- usa `RuntimeReferenceResolverPort` para referencias declarativas source-agnostic;
+- usa `RuntimeClockPort` para `requestedAt` deterministico em testes;
+- usa `RuntimeConnectorCapabilityMapper`, `RuntimeConnectorLimitsPolicy`,
+  `RuntimeConnectorSafeMetadataBuilder` e `RuntimeConnectorCommandValidationPort`;
+- monta um `ConnectorExecutionCommandShape` em memoria;
+- retorna eventos conceituais `command_prepared`, `command_blocked`,
+  `command_not_supported` ou `command_validation_failed` apenas no resultado;
+- nao persiste eventos;
+- nao registra provider NestJS;
+- nao altera `RuntimeModule`;
+- nao faz dispatch, transporte ou chamada externa.
+
+Ports e tipos adicionados/expandidos em `src/modules/runtime/bridge/bridge-types.ts`:
+
+- `PrepareRuntimeConnectorCommandInput`;
+- `PrepareRuntimeConnectorCommandResult`;
+- `RuntimeExecutionRequestReaderPort`;
+- `RuntimeReadinessEvaluatorPort`;
+- `RuntimeReferenceResolverPort`;
+- `RuntimeClockPort`;
+- `ExecutionRequestLike`;
+- `BridgeReadinessResult`;
+- `RuntimeConnectorReferenceBundleResult`;
+- `RuntimeConnectorBridgeSafeError`;
+- `RuntimeConnectorBridgeEventShape`.
+
+Testes em `src/modules/runtime/tests/runtime-connector-bridge-resolver.spec.ts` usam fakes para
+reader, readiness evaluator, reference resolver e clock. Eles cobrem happy paths, tenant
+isolation, readiness blockers, reference blockers, capability unsupported, command validation
+failure, sanitizacao, source-agnostic references e determinismo.
 
 ## Objetivo
 

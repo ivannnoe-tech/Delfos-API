@@ -1,12 +1,10 @@
-import { ConnectorCommandSafeMetadata } from './connector-command-shape';
-
 export interface RuntimeConnectorSourceDescriptor {
   readonly sourceType: string;
   readonly sourceObject?: string;
   readonly connectionId?: string;
   readonly credentialRef?: string;
   readonly schemaMappingVersion?: string;
-  readonly metadata?: ConnectorCommandSafeMetadata;
+  readonly metadata?: Record<string, unknown>;
 }
 
 export interface RuntimeConnectorSourceFieldDescriptor {

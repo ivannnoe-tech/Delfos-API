@@ -1,10 +1,15 @@
-import { ExecutionRequestKind, ExecutionRequestMode } from '../schemas/execution-request.schema';
+import {
+  ExecutionRequestKind,
+  ExecutionRequestMode,
+  ExecutionRequestStatus,
+} from '../schemas/execution-request.schema';
 import {
   ConnectorCapabilityShape,
   ConnectorCommandSafeMetadata,
   ConnectorExecutionCommandShape,
   ConnectorExecutionModeShape,
 } from './connector-command-shape';
+import { RuntimeConnectorReferenceBundle } from './runtime-connector-reference.types';
 
 export interface RuntimeConnectorCapabilityMapperInput {
   kind: ExecutionRequestKind | string;
@@ -80,3 +85,107 @@ export type RuntimeConnectorCommandValidationResult =
       readonly valid: false;
       readonly safeError: RuntimeConnectorCommandValidationSafeError;
     };
+
+export interface PrepareRuntimeConnectorCommandInput {
+  readonly executionRequestId: string;
+  readonly tenantId: string;
+  readonly actorId?: string;
+  readonly actorRole?: string;
+  readonly requestId: string;
+  readonly correlationId: string;
+}
+
+export interface BridgeReadinessItemShape {
+  readonly code: string;
+  readonly message: string;
+  readonly target?: string;
+}
+
+export type BridgeReadinessBlockerShape = BridgeReadinessItemShape;
+
+export interface BridgeReadinessResult {
+  readonly checks: readonly BridgeReadinessItemShape[];
+  readonly warnings: readonly BridgeReadinessItemShape[];
+  readonly blockers: readonly BridgeReadinessBlockerShape[];
+}
+
+export interface RuntimeConnectorBridgeSafeError {
+  readonly code: string;
+  readonly safeMessage: string;
+  readonly category: 'validation' | 'security' | 'not_supported' | 'readiness';
+  readonly retryable: false;
+  readonly safeMetadata: ConnectorCommandSafeMetadata;
+}
+
+export type RuntimeConnectorBridgeEventType =
+  | 'command_prepared'
+  | 'command_blocked'
+  | 'command_not_supported'
+  | 'command_validation_failed';
+
+export type RuntimeConnectorBridgeEventStatus =
+  | ExecutionRequestStatus.Accepted
+  | ExecutionRequestStatus.Blocked
+  | ExecutionRequestStatus.NotSupported
+  | ExecutionRequestStatus.Failed;
+
+export interface RuntimeConnectorBridgeEventShape {
+  readonly eventType: RuntimeConnectorBridgeEventType;
+  readonly status: RuntimeConnectorBridgeEventStatus;
+  readonly safeMessage: string;
+  readonly safeMetadata: ConnectorCommandSafeMetadata;
+}
+
+export interface PrepareRuntimeConnectorCommandResult {
+  readonly prepared: boolean;
+  readonly command?: ConnectorExecutionCommandShape;
+  readonly blockers: readonly BridgeReadinessBlockerShape[];
+  readonly safeError?: RuntimeConnectorBridgeSafeError;
+  readonly events: readonly RuntimeConnectorBridgeEventShape[];
+}
+
+export interface ExecutionRequestLike {
+  readonly id: string;
+  readonly tenantId: string;
+  readonly kind: ExecutionRequestKind | string;
+  readonly mode: ExecutionRequestMode | string;
+  readonly status: ExecutionRequestStatus | string;
+  readonly requestKey: string;
+  readonly queryDefinitionId?: string;
+  readonly dashboardDefinitionId?: string;
+  readonly reportDefinitionId?: string;
+  readonly createdAt?: Date | string;
+  readonly updatedAt?: Date | string;
+}
+
+export interface RuntimeExecutionRequestReaderPort {
+  findByTenantAndId(
+    tenantId: string,
+    executionRequestId: string,
+  ): Promise<ExecutionRequestLike | null>;
+}
+
+export interface RuntimeReadinessEvaluatorPort {
+  evaluate(executionRequest: ExecutionRequestLike): Promise<BridgeReadinessResult>;
+}
+
+export interface RuntimeConnectorReferenceResolverInput {
+  readonly tenantId: string;
+  readonly executionRequest: ExecutionRequestLike;
+}
+
+export interface RuntimeConnectorReferenceBundleResult {
+  readonly resolved: boolean;
+  readonly references?: RuntimeConnectorReferenceBundle;
+  readonly blockers: readonly BridgeReadinessBlockerShape[];
+}
+
+export interface RuntimeReferenceResolverPort {
+  resolveReferences(
+    input: RuntimeConnectorReferenceResolverInput,
+  ): Promise<RuntimeConnectorReferenceBundleResult>;
+}
+
+export interface RuntimeClockPort {
+  now(): Date;
+}
