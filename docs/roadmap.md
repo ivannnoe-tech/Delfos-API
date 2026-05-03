@@ -47,6 +47,11 @@ Implementado atualmente:
   `RuntimeConnectorBridgeResolver.prepareCommand` com `RuntimeConnectorReferenceResolver` real e
   readers/fakes em memoria, ainda sem provider, endpoint, transporte, dispatch, Mongoose real ou
   chamada ao `delfos-connectors`;
+- ReferenceResolver Real Reader Adapter Design documentado em
+  [`docs/runtime-reference-reader-adapters-design.md`](./runtime-reference-reader-adapters-design.md),
+  mapeando ports/readers para modulos declarativos reais futuros, ainda sem adapters `.ts`,
+  provider, `RuntimeModule`, endpoint, transporte, dispatch, decrypt ou chamada ao
+  `delfos-connectors`;
 - audit interno;
 - seed/dev local com dados ficticios;
 - `execution-preview` demo em memoria;
@@ -135,8 +140,9 @@ Planejado/futuro, nao implementado atualmente:
   de qualquer dispatch;
 - integracao do Bridge Resolver ao runtime real somente apos nova fase explicita, com testes,
   threat model e decisao de transporte;
-- proxima fase recomendada: `ReferenceResolver` Real Reader Adapter Design ou BridgeResolver
-  Wiring Design, ainda sem endpoint, provider operacional, transporte ou dispatch real;
+- proxima fase possivel: implementar adapters internos com tests only, ainda sem provider
+  operacional, `RuntimeModule`, endpoint, transporte ou dispatch real; alternativa posterior:
+  BridgeResolver Wiring Design;
 - servico/runtime `delfos-connectors` (foundation documental disponivel via ADR-0013 no repositorio
   `delfos-connectors`);
 - local agent;

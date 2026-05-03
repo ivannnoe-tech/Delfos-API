@@ -5,7 +5,9 @@
 Design tecnico futuro. Foundation de interfaces/types, mappers, policies, builder seguro,
 validation port, `prepareCommand` em memoria, `ReferenceResolver` declarativo e testes unitarios
 criada. Testes internos integrados de `prepareCommand` + `ReferenceResolver` real adicionados com
-fakes/readers em memoria. Ainda sem bridge real operacional.
+fakes/readers em memoria. Design dos adapters futuros para readers reais documentado em
+[`docs/runtime-reference-reader-adapters-design.md`](./runtime-reference-reader-adapters-design.md).
+Ainda sem bridge real operacional.
 
 Este documento nao cria provider/service NestJS operacional, controller, endpoint, transporte,
 dispatch, worker, fila, cache, scheduler, local agent, conector real, SQL/API externa,
@@ -190,6 +192,28 @@ Esta fase continua sem dispatch, transporte, endpoint, controller, provider Nest
 alteracao de `RuntimeModule`, chamada ao `delfos-connectors`, import de `delfos-connectors`,
 descriptografia de credenciais, banco real, Mongoose real, services reais ou acesso externo. Os
 eventos retornados continuam sendo shapes em memoria e nao sao persistidos.
+
+## Reference Reader Adapters Design Atual
+
+A fase **ReferenceResolver Real Reader Adapter Design** adicionou
+[`docs/runtime-reference-reader-adapters-design.md`](./runtime-reference-reader-adapters-design.md).
+
+Esse documento define como uma fase futura podera adaptar os ports/readers do
+`RuntimeConnectorReferenceResolver` aos services/repositories reais do Mongo administrativo:
+
+- matriz port -> modulo real futuro;
+- shapes minimos esperados por adapter;
+- pseudocodigo documental para adapters de query definitions, dashboard definitions, report
+  definitions, datasets, field mappings, connections e credential references;
+- politica conservadora de status para command preparation;
+- politica de `credentialRef` sem `protectedSecretValue` e sem decrypt;
+- preservacao da politica atual de uma fonte principal por command;
+- estrategia source-agnostic para SQL, REST/JSON, MongoDB e file;
+- plano de testes futuro para adapters internos.
+
+Adapters reais ainda nao existem. A proxima implementacao possivel deve seguir esse design e
+comecar por tests only, sem provider operacional, endpoint, `RuntimeModule`, dispatch,
+transporte, chamada ao `delfos-connectors`, decrypt ou acesso externo.
 
 ## Objetivo
 
@@ -871,6 +895,7 @@ Regras por familia:
 ## Referencias
 
 - [`docs/runtime-connectors-bridge-plan.md`](./runtime-connectors-bridge-plan.md)
+- [`docs/runtime-reference-reader-adapters-design.md`](./runtime-reference-reader-adapters-design.md)
 - [`docs/adr/adr-0015-runtime-connectors-command-envelope-bridge.md`](./adr/adr-0015-runtime-connectors-command-envelope-bridge.md)
 - [`docs/adr/adr-0014-runtime-execution-requests-foundation.md`](./adr/adr-0014-runtime-execution-requests-foundation.md)
 - [`docs/adr/adr-0008-connectors-and-integration-execution.md`](./adr/adr-0008-connectors-and-integration-execution.md)
