@@ -245,35 +245,51 @@ query, chamar API externa, conectar em banco de cliente, criar cache, worker, sc
 ## Rotacao de DELFOS_ADMIN_KEY
 
 A `DELFOS_ADMIN_KEY` e uma autenticacao temporaria da foundation. Deve ser rotacionada
-proativamente e imediatamente apos suspeita de comprometimento.
+proativamente a cada 90 dias, apos troca de responsavel operacional com acesso ao ambiente, e
+imediatamente apos suspeita de comprometimento.
 
 Procedimento:
 
 1. Gerar novo valor com comprimento minimo de 32 caracteres e alta entropia.
    Exemplo local, nao usar em producao: `openssl rand -hex 32`.
-2. Atualizar a variavel no ambiente de destino.
+2. Atualizar `DELFOS_ADMIN_KEY` no `.env` ou secret store do ambiente de destino.
 3. Reiniciar a aplicacao para carregar o novo valor.
 4. Verificar que endpoints protegidos por `x-delfos-admin-key` respondem com a nova chave.
 5. Invalidar o valor antigo no ambiente.
-6. Registrar o incidente de rotacao com data, motivo e responsavel.
+6. Registrar em log operacional, ticket ou trilha de audit a data, motivo, ambiente e
+   responsavel pela rotacao.
 
-Nunca registrar o valor real da chave em log, auditoria, documento ou PR.
+Em incidente de vazamento confirmado ou suspeito, a rotacao deve ser imediata. Nunca registrar o
+valor real da chave em log, auditoria, documento, PR ou historico versionado.
 
 ## Rotacao de ENCRYPTION_KEY_BASE64
 
-A `ENCRYPTION_KEY_BASE64` protege `secretValue` das credenciais armazenadas. A rotacao exige
-re-criptografia de todos os segredos ativos; nao e uma troca simples de variavel.
+A `ENCRYPTION_KEY_BASE64` protege `secretValue` das credenciais armazenadas via AES-256-GCM local,
+conforme `foundation-credentials-and-security.md` secao 1. Perda dessa chave torna as
+credenciais armazenadas irrecuperaveis.
+
+Backup recomendado:
+
+1. Guardar a chave em cofre/secret manager fora do repositorio e fora de documentos versionados.
+2. Restringir acesso por menor privilegio e registrar quem consultou ou alterou o segredo.
+3. Manter copia de recuperacao no mesmo padrao de cofre usado para outros secrets criticos.
 
 Procedimento:
 
 1. Gerar nova chave de 32 bytes em base64. Exemplo local: `openssl rand -base64 32`.
-2. Criar rotina de migracao em ambiente seguro que descriptografe com a chave atual,
-   re-criptografe com a nova chave e salve o novo `protectedSecretValue`.
+2. Criar pipeline de re-criptografia em ambiente seguro que descriptografe com a chave atual,
+   re-criptografe com a nova chave e salve o novo `protectedSecretValue` para todas as
+   credenciais existentes.
 3. Somente apos migracao bem-sucedida, atualizar `ENCRYPTION_KEY_BASE64`.
 4. Reiniciar a aplicacao e validar que credenciais existentes ainda funcionam.
-5. Registrar o incidente com data, motivo e responsavel.
+5. Registrar em log operacional, ticket ou trilha de audit a data, motivo, ambiente e
+   responsavel pela rotacao.
 
 Nao substituir a variavel sem a migracao; todas as credenciais existentes ficarao ilegíveis.
+
+O pipeline de rotacao real permanece **[futuro]** enquanto nao houver Vault/KMS/Secrets Manager ou
+mecanismo equivalente. A implementacao atual ja fica isolada em service proprio para troca futura
+por Vault/KMS/Secrets Manager, conforme `foundation-credentials-and-security.md` secao 1.
 
 ## Procedimentos futuros/deferidos
 
@@ -283,7 +299,7 @@ Os itens abaixo nao sao operacionais no estado atual:
 - teste real de connection;
 - falha em API de cliente;
 - conectores reais ou `data-connectors`;
-- `delfos-connectors` e local agent;
+- servico/runtime `delfos-connectors` e local agent (foundation documental existe via ADR-0013);
 - cache, fila, worker, scheduler, staging ou snapshot;
 - runtime real de execution requests ou seus eventos foundation;
 - dashboard runtime final e query builder.
