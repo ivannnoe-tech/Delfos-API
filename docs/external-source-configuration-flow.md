@@ -362,8 +362,8 @@ Responsabilidades futuras:
 
 - `delfos-api` salva contratos/configuracoes, valida tenant e permissoes, administra catalogo,
   registra auditoria e orquestra execucoes.
-- `delfos-connectors` executa testes, discovery, sync, ingestao e preview real controlado quando
-  implementado.
+- servico/runtime `delfos-connectors` executa testes, discovery, sync, ingestao e preview real
+  controlado quando implementado; a foundation documental existe via ADR-0013.
 - local agent executa quando a fonte esta dentro da rede do cliente.
 - cloud/server executa quando a fonte e acessivel pelo ambiente Delfos.
 

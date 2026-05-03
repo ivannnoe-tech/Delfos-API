@@ -94,7 +94,7 @@ Nao implementadas atualmente:
 - login/JWT/OAuth real;
 - conexoes reais com APIs, bancos, arquivos ou sistemas de clientes;
 - conectores reais ou `data-connectors`;
-- `delfos-connectors`;
+- servico/runtime `delfos-connectors` (foundation documental existe via ADR-0013);
 - local agent;
 - teste real de conexao;
 - sync/ingestao;

@@ -3,6 +3,9 @@
 - **Status**: Accepted
 - **Data**: 2026-04-30
 - **Fase impactada**: Fase 2 e evolucao posterior, sem implementacao nesta ADR
+- **Atualizacao 2026-05-03**: a ADR-0013 incluiu local agent na fronteira documental do futuro
+  `delfos-connectors`. O local agent continua nao implementado e esta ADR permanece valida como
+  decisao futura, sem supersedencia.
 
 ---
 

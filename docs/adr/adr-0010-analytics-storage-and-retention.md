@@ -3,6 +3,9 @@
 - **Status**: Accepted
 - **Data**: 2026-04-29
 - **Fase impactada**: Fase 2 e evolucao posterior, sem implementacao nesta ADR
+- **Atualizacao 2026-05-03**: a ADR-0013 detalhou o isolamento futuro de cache/eventos/resultados
+  no eixo documental do `delfos-connectors`. Cache, staging, snapshots e storage analitico
+  operacional continuam fora de escopo nesta fase.
 
 ---
 

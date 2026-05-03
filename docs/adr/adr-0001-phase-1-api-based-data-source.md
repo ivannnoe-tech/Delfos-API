@@ -86,7 +86,8 @@ No estado atual, o Delfos **nao** acessa banco de dados do cliente, **nao** cons
 
 ## Impacto futuro / Fase 2
 
-- `delfos-connectors` ou mecanismo equivalente aprovado devera ser o ponto controlado de execucao externa.
+- servico/runtime `delfos-connectors` ou mecanismo equivalente aprovado devera ser o ponto
+  controlado de execucao externa; a foundation documental existe via ADR-0013.
 - Conectores especificos de software de mercado (Bling, Tiny, Omie, etc.) podem ser planejados no futuro.
 - Cache, snapshots, staging ou Redis exigem nova decisao antes de implementacao.
 

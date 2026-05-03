@@ -109,8 +109,8 @@ Quando aprovado, a preferencia arquitetural e:
 
 - `delfos-api` continua como fronteira de contratos, auth/autorizacao, tenant scope, catalogo,
   governanca, auditoria e orquestracao;
-- `delfos-connectors` executa integracoes, sync, ingestao, preview real ou query real quando essa
-  capacidade existir;
+- servico/runtime `delfos-connectors` executa integracoes, sync, ingestao, preview real ou query
+  real quando essa capacidade existir; a foundation documental existe via ADR-0013;
 - local agent futuro acessa fontes locais/on-premise sem exigir exposicao direta de bancos ou
   servicos internos do cliente para a internet.
 

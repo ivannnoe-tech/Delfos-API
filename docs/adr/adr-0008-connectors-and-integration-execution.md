@@ -147,10 +147,10 @@ dados ou risco de degradar a API principal.
 
 ## Seguranca e governanca
 
-- `delfos-connectors` nunca deve logar segredo real, token, senha, chave privada, connection string
-  real ou header sensivel.
-- `delfos-connectors` deve usar `credentialRef` e provider seguro de credenciais; segredo real nao
-  deve trafegar pelo `delfos-web`.
+- O servico/runtime futuro `delfos-connectors` nunca deve logar segredo real, token, senha, chave
+  privada, connection string real ou header sensivel.
+- O servico/runtime futuro `delfos-connectors` deve usar `credentialRef` e provider seguro de
+  credenciais; segredo real nao deve trafegar pelo `delfos-web`.
 - Toda execucao deve respeitar tenant scope. Nenhum job pode depender apenas de ID global quando o
   recurso for tenant-scoped.
 - Auditoria deve registrar acoes, status, IDs tecnicos, tempos e classes de erro sem payload

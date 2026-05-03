@@ -3,6 +3,9 @@
 - **Status**: Accepted
 - **Data**: 2026-04-29
 - **Fase impactada**: Fase 1 e Fase 2
+- **Atualizacao 2026-05-03**: a ADR-0013, mantida no repositorio `delfos-connectors`, reforcou
+  a fronteira multitenant documental do futuro connectors. O modelo tenant-aware desta ADR
+  continua valido e nao foi supersedido.
 
 ---
 
