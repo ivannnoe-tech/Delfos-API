@@ -75,17 +75,17 @@ Nenhuma feature deve usar cor hardcoded. Cores de cliente white label entram por
 
 Toda cor usada em produto deve responder a uma intenção:
 
-| Intenção | Uso |
-|---|---|
-| `primary` | ação principal, seleção, destaque institucional |
-| `secondary` | ação secundária e elementos de apoio |
-| `success` | estados positivos, concluído, aprovado |
-| `warning` | atenção, risco moderado, pendência |
-| `danger` | erro, falha, ação destrutiva |
-| `info` | informação neutra contextual |
-| `surface` | fundo de cards, modais e painéis |
-| `border` | divisões discretas |
-| `muted` | textos secundários |
+| Intenção    | Uso                                             |
+| ----------- | ----------------------------------------------- |
+| `primary`   | ação principal, seleção, destaque institucional |
+| `secondary` | ação secundária e elementos de apoio            |
+| `success`   | estados positivos, concluído, aprovado          |
+| `warning`   | atenção, risco moderado, pendência              |
+| `danger`    | erro, falha, ação destrutiva                    |
+| `info`      | informação neutra contextual                    |
+| `surface`   | fundo de cards, modais e painéis                |
+| `border`    | divisões discretas                              |
+| `muted`     | textos secundários                              |
 
 A cor da marca do cliente pode substituir `primary`, desde que passe em contraste mínimo e não quebre os estados semânticos.
 
@@ -97,16 +97,16 @@ A tipografia deve priorizar leitura rápida.
 
 Hierarquia mínima:
 
-| Nível | Uso |
-|---|---|
-| Display | páginas de entrada, telas vazias especiais |
-| H1 | título principal da página |
-| H2 | seção importante |
-| H3 | card ou agrupamento |
-| Body | conteúdo padrão |
+| Nível      | Uso                                         |
+| ---------- | ------------------------------------------- |
+| Display    | páginas de entrada, telas vazias especiais  |
+| H1         | título principal da página                  |
+| H2         | seção importante                            |
+| H3         | card ou agrupamento                         |
+| Body       | conteúdo padrão                             |
 | Body small | metadados, legendas, informações auxiliares |
-| Label | campos, filtros, chips e botões |
-| Numeric | KPIs, valores monetários e indicadores |
+| Label      | campos, filtros, chips e botões             |
+| Numeric    | KPIs, valores monetários e indicadores      |
 
 KPIs e valores numéricos devem usar alinhamento, abreviação e formatação consistentes.
 
@@ -228,13 +228,13 @@ Campos sensíveis nunca exibem valor integral por padrão.
 
 Hierarquia obrigatória:
 
-| Tipo | Uso |
-|---|---|
-| Primary | ação principal da tela ou modal |
-| Secondary | ação complementar |
-| Ghost | ação discreta |
+| Tipo        | Uso                                 |
+| ----------- | ----------------------------------- |
+| Primary     | ação principal da tela ou modal     |
+| Secondary   | ação complementar                   |
+| Ghost       | ação discreta                       |
 | Destructive | exclusão, revogação, reset perigoso |
-| Link | navegação textual |
+| Link        | navegação textual                   |
 
 Ações de mesmo peso devem ter aparência equivalente. Ações destrutivas exigem confirmação quando houver perda de dados.
 
@@ -257,12 +257,12 @@ Modais não devem virar páginas escondidas. Se o conteúdo é grande, criar pá
 
 Breakpoints mínimos:
 
-| Faixa | Diretriz |
-|---|---|
-| Mobile | navegação compacta, foco em cards e listas |
-| Tablet | layout em 1–2 colunas |
-| Desktop | sidebar + conteúdo em grid |
-| Wide | largura máxima para leitura, grids ampliados com cuidado |
+| Faixa   | Diretriz                                                 |
+| ------- | -------------------------------------------------------- |
+| Mobile  | navegação compacta, foco em cards e listas               |
+| Tablet  | layout em 1–2 colunas                                    |
+| Desktop | sidebar + conteúdo em grid                               |
+| Wide    | largura máxima para leitura, grids ampliados com cuidado |
 
 A Fase 1 prioriza web desktop, mas não deve quebrar em telas menores.
 
