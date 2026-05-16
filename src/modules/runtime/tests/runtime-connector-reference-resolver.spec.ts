@@ -1,3 +1,10 @@
+/**
+ * Size note: this spec is above the 500-line guideline (see CLAUDE.md /
+ * AGENTS.md). It is kept as one file on purpose — a single cohesive suite for
+ * the reference resolver, sharing fakes and fixtures across the query,
+ * dashboard and report paths. Splitting is deferred to a dedicated,
+ * test-driven refactor.
+ */
 import {
   ExecutionRequestLike,
   ResolveRuntimeConnectorReferencesInput,
