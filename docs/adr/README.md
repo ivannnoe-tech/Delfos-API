@@ -33,6 +33,9 @@ Mudanças de bug fix, refatoração local ou estilização **não** viram ADR.
 - Numeração sequencial e contínua (não reaproveitar números)
 - Status: `Proposed`, `Accepted`, `Deprecated`, `Superseded by ADR-XXXX`
 - Datado com `YYYY-MM-DD`
+- Template canônico **único**: [`adr-template.md`](./adr-template.md). O antigo
+  `adr-0000-template.md` era uma cópia redundante e foi **removido** em
+  2026-05-15; não há mais template duplicado.
 
 ---
 
@@ -55,5 +58,15 @@ Mudanças de bug fix, refatoração local ou estilização **não** viram ADR.
 | 0013 | Connectors boundary and multitenant runtime contract (vive em `delfos-connectors/docs/adr/`) | Accepted |
 | [0014](./adr-0014-runtime-execution-requests-foundation.md) | Runtime execution requests foundation | Accepted |
 | [0015](./adr-0015-runtime-connectors-command-envelope-bridge.md) | Runtime connectors command envelope bridge | Proposed |
+| [0016](./adr-0016-temporary-admin-key-auth.md) | Temporary admin-key authentication | Accepted |
+| [0017](./adr-0017-roles-and-permissions-model.md) | Roles and permissions model | Accepted |
+| [0018](./adr-0018-secure-audit-strategy.md) | Secure audit strategy | Accepted |
+| [0019](./adr-0019-credential-encryption-and-rotation.md) | Credential encryption and rotation | Accepted |
+| [0020](./adr-0020-metadata-sanitization-and-forbidden-fields.md) | Metadata sanitization and forbidden fields | Accepted |
+| [0021](./adr-0021-credential-decryption-in-future-execution.md) | Credential decryption in future execution | Proposed |
+| [0022](./adr-0022-connector-dispatch-transport.md) | Connector dispatch transport | Proposed |
+| [0023](./adr-0023-data-masking-policy.md) | Data masking policy | Accepted |
+| [0024](./adr-0024-phase-1-and-phase-2-definition.md) | Phase 1 and Phase 2 formal definition | Accepted |
+| [0025](./adr-0025-llm-assisted-analytics-text-generation.md) | LLM-assisted analytics text generation | Accepted |
 
 > **Nota sobre ADR-0013**: vive no repositório `delfos-connectors`, no caminho `docs/adr/ADR-0013-connectors-boundary-and-multitenant-runtime-contract.md`. Ela complementa ADR-0008 no eixo de governança documental do `delfos-connectors` (foundation documental, contratos conceituais, fronteiras multitenant). Não supersede ADR-0008 no ponto de execução real — serviço/runtime, conectores reais, workers, filas, cache, scheduler, local agent e execução de SQL/API externa continuam fora de escopo.

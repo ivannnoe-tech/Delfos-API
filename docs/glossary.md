@@ -116,6 +116,13 @@ Architecture Decision Record. Documento que registra decisao arquitetural releva
 
 Lei Geral de Protecao de Dados. Lei brasileira que regula tratamento de dados pessoais.
 
+### Retencao (auditoria e logs)
+
+Prazo padrao pelo qual registros sao mantidos antes de eliminacao, anonimizacao ou compactacao.
+Politica inicial: logs de auditoria/seguranca seguros 365 dias; eventos de
+runtime/execution-requests 180 dias; logs tecnicos/debug/diagnostico 30 dias. Raw payloads,
+secrets e credenciais reais nunca sao persistidos. Ver ADR-0018.
+
 ### Fase 1
 
 Estado atual: foundation administrativa/declarativa. Inclui catalogos, contratos, auth temporaria,
@@ -204,3 +211,114 @@ execucao externa. Nao existe no estado atual.
 
 Dado analitico futuro pre-calculado e armazenado, equivalente a resultado materializado de uma
 query ou widget. Distinto do preview demo atual e inexistente na foundation.
+
+---
+
+## Termos do runtime/bridge e execucao futura
+
+### connector bridge
+
+Ponte conceitual entre o runtime do `delfos-api` e o executor `delfos-connectors`. Transforma um
+`executionRequest` em um command de conector. No estado atual existe apenas como `foundation-only`
+em `src/modules/runtime/bridge/` (types e testes), sem dispatch nem provider.
+
+### bridge resolver
+
+Componente `foundation-only` do `runtime/bridge` que prepara, em memoria, um command a partir de
+um `executionRequest` (`prepareCommand`). Nao faz transporte nem dispatch real.
+
+### reference resolver
+
+Componente `foundation-only` do `runtime/bridge` que resolve referencias declarativas (connections,
+datasets, field-mappings, `credentialRef`) de forma conservadora e source-agnostic. Nao faz decrypt
+e nao acessa fontes externas.
+
+### credentialRef
+
+Referencia opaca a uma credencial armazenada de forma protegida. Formato atual: `cred_<ObjectId>`.
+O segredo real nunca trafega pelo frontend nem aparece em logs ou respostas de API. Ver tambem a
+entrada `credentialRef` na secao de foundation.
+
+### safeMetadata
+
+Conjunto de metadados seguros expostos por contratos de runtime/bridge sem revelar segredos,
+payload bruto de cliente ou dados sensiveis. E o resultado de aplicar masking e exclusao de
+forbidden fields.
+
+### dry-run
+
+Verificacao de readiness de um `executionRequest` que valida pre-condicoes sem executar query,
+conector ou acesso a fonte real. Faz parte da foundation atual de runtime.
+
+### demo execute
+
+Operacao de demonstracao do runtime/`execution-preview` que produz resultado ficticio em memoria,
+sempre identificado como demo. Nao executa chamada externa nem persiste resultado.
+
+### execution request
+
+Registro administrativo `foundation implementada` de uma solicitacao futura de runtime, com `kind`,
+references, status e metadados seguros. Na foundation atual nao executa query, conector, worker,
+fila, scheduler, cache, exportacao, e-mail ou acesso a fonte de cliente. Equivale a
+`executionRequest`.
+
+### runtime event
+
+Evento administrativo de ciclo de vida emitido pelo runtime do `delfos-api` (por exemplo, mudancas
+de status de um `executionRequest`). E interno e administrativo; nao representa execucao real.
+
+### connector event
+
+Evento futuro originado do executor `delfos-connectors` durante execucao real. Nao existe no estado
+atual; depende da fase de execucao real.
+
+### capability
+
+Descricao declarativa do que um conector futuro consegue fazer (operacoes, formatos, limites). Usada
+para planejamento; nao habilita execucao real.
+
+### analytics_text_generation
+
+Capability assistiva de geracao textual analitica via LLM (narrativas de relatorio, explicacao de
+dashboard, comparacao entre periodos, resumo executivo de KPIs, leitura de graficos, comentarios de
+widget). Conceito de foundation/futuro: nao implementada e nao autorizada como integracao real.
+Apoia a montagem da narrativa; nao executa, nao decide e nao acessa dados reais. Ver ADR-0025.
+
+### LLM
+
+Large Language Model (modelo de linguagem). No Delfos tem uso estritamente assistivo: monta texto
+analitico a partir de dados ja agregados, sanitizados e mascarados. Modelo inicial recomendado
+`gpt-4o-mini` (provider OpenAI), configuravel por ambiente e desligado por padrao. O LLM nunca
+acessa banco, executa SQL, aciona conectores nem recebe secrets. Ver ADR-0025.
+
+### AI-assisted
+
+Marcacao de conteudo gerado por IA. Texto produzido pela capability `analytics_text_generation`
+deve ser identificado como AI-assisted / gerado por IA e exige revisao humana; nunca e usado como
+decisao automatica. Ver ADR-0025.
+
+### dispatch
+
+Envio efetivo de um command para execucao real pelo `delfos-connectors`. Permanece **proibido** no
+estado atual; o `runtime/bridge` para na preparacao de command (`prepareCommand`), sem dispatch.
+
+### foundation-only
+
+Estado de um item que possui apenas skeleton, types e testes, sem runtime, provider NestJS,
+endpoint ou dispatch. Aplica-se hoje ao `src/modules/runtime/bridge/` (bridge resolver, reference
+resolver e adapters).
+
+### masking
+
+Tecnica de ocultar ou substituir valores sensiveis (segredos, dados pessoais) em metadados, logs e
+respostas de API, preservando apenas o que e seguro expor.
+
+### forbidden fields
+
+Campos que nunca devem ser expostos em contratos, logs ou metadados (por exemplo, segredo de
+credencial, payload operacional bruto do cliente). Sao removidos ao construir `safeMetadata`.
+
+### tenant boundary
+
+Fronteira de isolamento por `tenantId`. Toda leitura, escrita e referencia em runtime/bridge deve
+respeitar essa fronteira; nenhum recurso de um tenant pode vazar para outro.

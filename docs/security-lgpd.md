@@ -117,11 +117,15 @@ Regras:
 Na Fase 1:
 
 - configurações ficam enquanto o tenant existir
-- logs têm retenção definida por ambiente
+- logs e auditoria seguem a **política de retenção inicial** definida na
+  ADR-0018: 365 dias (audit/segurança), 180 dias (runtime/execution-requests),
+  30 dias (técnico/debug/diagnóstico)
+- raw payloads, secrets e credenciais reais nunca são persistidos
 - cache é transitório
 - dados operacionais não são persistidos
 
-Política formal de retenção deve ser revisada antes da Fase 2.
+A política de retenção é uma decisão técnica inicial (ADR-0018) e deve ser
+**validada juridicamente** antes do uso em produção regulada.
 
 ---
 

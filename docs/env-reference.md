@@ -38,6 +38,11 @@ Na Fase 1, MongoDB armazena configuracao e metadados do Delfos, nao payload oper
 | `JWT_ACCESS_TTL` | Futuro | `15m` | TTL planejado do access token. |
 | `JWT_REFRESH_TTL` | Futuro | `7d` | TTL planejado do refresh token. |
 
+`ENCRYPTION_KEY_BASE64` e uma **chave unica por ambiente** na Fase 1 (decisao ADR-0019). E um
+secret de ambiente: **nunca** versionada, sempre via secret manager ou pipeline seguro. Sua
+rotacao operacional e procedimento controlado em `docs/operations-runbook.md`. Chave por tenant,
+envelope encryption por tenant e KMS/Vault sao evolucao futura e dependem de ADR propria.
+
 ## APIs externas e cache planejado
 
 As variaveis abaixo ja aparecem em `.env.example` como referencia de Fase 1, mas nem todas sao consumidas pelo bootstrap atual.
@@ -50,6 +55,25 @@ As variaveis abaixo ja aparecem em `.env.example` como referencia de Fase 1, mas
 | `HTTP_TIMEOUT_MS` | Nao | `30000` | Timeout padrao planejado para APIs de clientes. |
 | `HTTP_MAX_RETRIES` | Nao | `2` | Retentativas planejadas para chamadas externas seguras. |
 | `HTTP_RATE_LIMIT_PER_MINUTE` | Nao | `120` | Rate limit planejado por conexao/API de cliente. |
+
+## LLM / analytics_text_generation (futuras/conceituais)
+
+As variaveis abaixo sao **futuras/conceituais**: nao existem no codigo atual, nao sao consumidas
+pelo bootstrap e **nao devem** receber secrets reais agora. Documentadas para a capability
+assistiva `analytics_text_generation` (ver ADR-0025). A capability nasce **desligada por padrao**.
+
+| Variavel | Obrigatoria | Exemplo | Descricao |
+|---|---:|---|---|
+| `LLM_ANALYTICS_ENABLED` | Futuro | `false` | Liga/desliga a capability assistiva de geracao textual analitica. Default `false`. |
+| `LLM_ANALYTICS_PROVIDER` | Futuro | `openai` | Provider de LLM configuravel por ambiente, nunca hardcoded. |
+| `LLM_ANALYTICS_MODEL` | Futuro | `gpt-4o-mini` | Modelo inicial recomendado, configuravel por ambiente. |
+| `LLM_ANALYTICS_MAX_INPUT_TOKENS` | Futuro | `4000` | Limite planejado de tokens de entrada por chamada (controle de custo). |
+| `LLM_ANALYTICS_MAX_OUTPUT_TOKENS` | Futuro | `800` | Limite planejado de tokens de saida por chamada (controle de custo). |
+| `LLM_ANALYTICS_TIMEOUT_MS` | Futuro | `15000` | Timeout planejado por chamada ao provider de LLM. |
+
+A eventual chave de API do provider de LLM e um **secret futuro** e segue ADR-0019/ADR-0020:
+nunca hardcoded, nunca em log, nunca em documentacao. Integracao real nao autorizada por esta
+referencia — ver ADR-0025.
 
 ## Swagger/OpenAPI
 
