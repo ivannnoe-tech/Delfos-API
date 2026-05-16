@@ -74,3 +74,30 @@ Permanecem **bloqueados** e dependem de promocao humana explicita:
 Enquanto esses gates nao forem atravessados, o trabalho permitido e apenas
 maturidade de Fase 1: testes, documentacao, CI, qualidade — sem capacidade de
 execucao real.
+
+## 7. Roadmap de proximos passos
+
+Lista ordenada de proximos passos registrada como roadmap. Itens 1-5 sao
+maturidade de Fase 1 (permitidos); itens 6-7 sao Fase 2 e dependem do gate da
+secao 6.
+
+Maturidade de Fase 1 (permitido):
+
+1. Playwright integrado API+Web como job opcional no CI; promover a obrigatorio
+   se estabilizar.
+2. E2E cobrindo CRUD / formularios principais do `delfos-web`.
+3. Coverage formal no `delfos-connectors` (Vitest coverage — exige adicionar
+   `@vitest/coverage-v8` em tarefa dedicada).
+4. Coverage thresholds mais maduros nos tres repositorios (apertar em passos
+   deliberados, acima do piso atual).
+5. Branch protection configurado no GitHub conforme
+   `docs/branch-protection-checklist.md` (acao humana no painel).
+
+Fase 2 — **bloqueado** ate o gate da secao 6:
+
+6. Fase 2 formalmente aberta com ADR-0021 e ADR-0022 promovidas a `Accepted`
+   por decisao humana formal.
+7. Auth real / JWT — somente apos a abertura formal da Fase 2.
+
+Itens 6 e 7 nao sao tarefas de execucao do agente: exigem decisao humana
+explicita e processo de ADR. Nenhum deles e iniciado sem essa promocao.
