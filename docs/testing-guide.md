@@ -82,9 +82,10 @@ existirem implementacao, scripts e escopo aprovado:
 - dashboard runtime final;
 - dashboard builder e query builder;
 - reports/exportacoes;
-- E2E completo;
-- testes Flutter em `integration_test/`;
-- CI.
+- E2E completo (a camada de smoke E2E atual ja existe; ver secao 8a);
+- testes Flutter em `integration_test/`.
+
+CI basico do `delfos-api` ja existe - ver secao 8a.
 
 Quando essas capacidades forem aprovadas, atualizar este guia antes de exigir os testes.
 
@@ -141,6 +142,7 @@ npm run lint
 npm test
 npm run test:cov
 npm run build
+npm run test:e2e
 ```
 
 Frontend:
@@ -151,8 +153,43 @@ flutter test
 flutter build web
 ```
 
-`test:e2e`, `flutter test integration_test`, CI e outros scripts nao existentes sao
-planejados/futuros. Nao documentar nem exigir script inexistente como operacional.
+`flutter test integration_test` e outros scripts nao existentes sao planejados/futuros.
+Nao documentar nem exigir script inexistente como operacional.
+
+---
+
+## 8a. CI - delfos-api
+
+O GitHub Actions do `delfos-api` (`.github/workflows/ci.yml`) roda em `push` e
+`pull_request` para `main`.
+
+Jobs obrigatorios (devem passar para o merge):
+
+- `lint` - `npm run lint`;
+- `test` - `npm test`;
+- `build` - `npm run build`.
+
+Esses tres jobs falham o CI se quebrarem. Nao usam `continue-on-error` e nao
+mascaram falhas.
+
+Job opcional:
+
+- `e2e` - `npm run test:e2e`.
+
+Regras do job `e2e`:
+
+- e separado dos checks obrigatorios e ainda nao e exigido como status check
+  obrigatorio em branch protection;
+- mesmo opcional, falha o workflow se o E2E falhar (sem `continue-on-error`);
+- usa MongoDB em memoria via `mongodb-memory-server`, nunca producao;
+- nao usa secrets reais - chave admin e chave de criptografia sao valores
+  ficticios definidos no proprio harness de teste;
+- nao habilita execucao real de connectors, dispatch real nem descriptografia
+  real de credenciais;
+- cacheia os binarios do `mongodb-memory-server` (`MONGOMS_DOWNLOAD_DIR`) com
+  chave por sistema operacional e hash do `package-lock.json`.
+
+O E2E so se tornara status check obrigatorio quando o job estiver estavel.
 
 ---
 
