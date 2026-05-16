@@ -1,43 +1,17 @@
 # Prompt — Revisão de segurança
 
-Revise a alteração com foco em segurança, LGPD e multi-tenant.
+> **Este prompt foi substituído por uma skill canônica.**
+> Para revisar segurança, LGPD e multi-tenant, use a skill `security-lgpd-review`
+> (`delfos-api/.agents/skills/security-lgpd-review/SKILL.md`).
+> Consulte também `docs/security-checklist.md` e `docs/security-lgpd.md`.
+> A skill contém o fluxo, as regras obrigatórias, o checklist e a saída esperada — não duplique aqui.
 
 ---
 
-## Fontes obrigatórias
+## Notas específicas
 
-- `docs/security-checklist.md`
-- `docs/security-lgpd.md`
-- `docs/data-access-policy.md`
-- `docs/destructive-commands-policy.md`
-- `docs/api-connectors.md`
+Pontos a confirmar que complementam o checklist da skill:
 
----
-
-## Verificar
-
-- Autenticação correta.
-- Permissão validada no backend.
-- Tenant isolado.
-- Inputs validados.
-- Secrets fora de logs e respostas.
-- Credenciais criptografadas.
-- Erros sanitizados.
-- API externa com timeout/rate limit.
-- Cache isolado por tenant.
-- Exportações auditadas quando sensíveis.
-- Nenhum dado operacional persistido indevidamente.
-
----
-
-## Saída esperada
-
-Classifique achados por severidade:
-
-- crítico
-- alto
-- médio
-- baixo
-- melhoria
-
-Finalize com veredito: seguro / seguro com ajustes / bloquear.
+- API externa de cliente com timeout e rate limit configurados.
+- Cache (quando existir) isolado por tenant.
+- Exportações de dados sensíveis devidamente auditadas.

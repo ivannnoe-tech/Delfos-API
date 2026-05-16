@@ -74,7 +74,7 @@ Os itens abaixo sao planejados/futuros e nao devem ser tratados como operacionai
 existirem implementacao, scripts e escopo aprovado:
 
 - login/JWT/OAuth, refresh token, logout e recuperacao de senha;
-- `data-connectors`, conectores reais e teste real de conexao;
+- conectores reais e teste real de conexao;
 - cache service, Redis, fila, worker ou scheduler;
 - execucao real de dataset/query;
 - processamento real de execution requests;

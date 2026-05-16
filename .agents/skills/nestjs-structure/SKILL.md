@@ -1,6 +1,6 @@
 ---
 name: delfos-api-nestjs-structure
-description: "Crie ou reorganize estrutura NestJS do delfos-api: módulos, controllers, services, DTOs, config, healthcheck, Swagger e testes base."
+description: 'Crie ou reorganize estrutura NestJS do delfos-api: módulos, controllers, services, DTOs, config, healthcheck, Swagger e testes base.'
 ---
 
 # Skill — Estrutura NestJS do delfos-api
@@ -81,7 +81,7 @@ src/
 ## Regras de implementação
 
 - Não misturar controller, service, repository, schema e DTO no mesmo arquivo.
-- Não criar arquivos acima de 500 linhas.
+- Respeitar a regra oficial de tamanho de arquivo (fonte canônica: `docs/quality-checklist.md` §0.1): alvo ≤ 300 linhas; 301–450 avaliar split; 451–600 só com justificativa no relatório final; **acima de 600 linhas exige validação humana explícita** — parar e perguntar.
 - Não adicionar biblioteca fora da política sem revisão.
 - Nunca hardcodar secrets, URLs sensíveis ou credenciais.
 - Todo endpoint deve ter DTOs explícitos.

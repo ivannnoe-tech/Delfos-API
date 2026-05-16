@@ -1,41 +1,26 @@
-# Prompt — Revisão geral de código
+# Prompt — Revisão geral de código (dispatcher)
 
-Revise a alteração considerando as normas do Delfos Analytics.
-
----
-
-## Fontes obrigatórias
-
-- `AGENTS.md`
-- `DESIGN.md`
-- `docs/architecture.md`
-- `docs/development-guide.md`
-- `docs/quality-checklist.md`
-- `docs/security-checklist.md`
+Este prompt não contém regras de revisão. Ele apenas direciona o agente para a
+skill mais específica conforme o tipo de mudança. Use sempre a skill mais
+específica que se aplicar; combine quando a mudança cruzar domínios.
 
 ---
 
-## Verificar
+## Como escolher a skill
 
-1. A mudança respeita a Fase 1?
-2. Há separação de responsabilidade?
-3. Algum arquivo ficou grande demais?
-4. Há duplicação desnecessária?
-5. Contratos públicos foram quebrados?
-6. Segurança e tenant foram validados?
-7. Logs estão seguros?
-8. Testes cobrem sucesso e erro?
-9. Documentação foi atualizada quando necessário?
-10. Há biblioteca nova sem revisão?
+- Endpoints, DTOs ou contratos públicos → `api-contract-review`
+- Schemas e modelagem de dados → `mongo-modeling-review`
+- Autenticação, tenant, permissões ou secrets → `security-lgpd-review`
+- Estrutura/organização NestJS → `nestjs-structure`
+- Antes de finalizar qualquer alteração → `testing-quality-review`
+- Falhas de lint, teste ou build → `ci-fix-review`
+- Planejamento de tarefas multi-etapa → `execution-plan`
+
+As skills vivem em `delfos-api/.agents/skills/<nome>/SKILL.md`.
 
 ---
 
-## Saída esperada
+## Definition of Done
 
-Responda em PT-BR com:
-
-- problemas bloqueantes
-- melhorias recomendadas
-- riscos
-- pontos positivos
-- veredito: aprovar / aprovar com ajustes / bloquear
+`docs/quality-checklist.md` é a referência canônica de Definition of Done.
+Toda revisão deve confirmar a alteração contra esse checklist antes de aprovar.

@@ -81,7 +81,7 @@ Não antecipar na Fase 1:
 Mesmo sem implementar Fase 2, a Fase 1 deve deixar portas abertas:
 
 - contratos claros
-- `data-connectors` isolado
+- `delfos-connectors` isolado
 - `CacheService` com interface agnóstica
 - dashboards dependentes de contrato, não da origem concreta
 - field mappings versionáveis

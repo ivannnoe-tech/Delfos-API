@@ -1,6 +1,6 @@
 ---
 name: delfos-api-testing-quality-review
-description: "Revise qualidade final do delfos-api: testes, lint, build, CI, Definition of Done, contratos, segurança e critérios de aceite."
+description: 'Revise qualidade final do delfos-api: testes, lint, build, CI, Definition of Done, contratos, segurança e critérios de aceite.'
 ---
 
 # Skill — Testes e Qualidade do delfos-api
@@ -43,7 +43,7 @@ Garantir que a entrega seja pequena, testável, segura, legível e alinhada à f
 
 ## Regras de qualidade
 
-- Nada de arquivo monolítico.
+- Nada de arquivo monolítico — seguir a regra oficial de tamanho (`docs/quality-checklist.md` §0.1): alvo ≤ 300 linhas, limite máximo absoluto 600. O relatório final deve listar e justificar arquivos acima de 450 linhas.
 - Nada de duplicação óbvia.
 - Nada de `any` sem justificativa.
 - Nada de erro engolido silenciosamente.

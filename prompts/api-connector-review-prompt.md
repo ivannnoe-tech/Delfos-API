@@ -2,7 +2,7 @@
 
 > Aviso obrigatorio: prompt conceitual/futuro.
 >
-> Este prompt nao autoriza implementar conector real, `data-connectors`, `delfos-connectors`,
+> Este prompt nao autoriza implementar conector real, servico/runtime `delfos-connectors`,
 > local agent, cache, fila, scheduler ou execucao real. Conectores reais dependem de tarefa
 > explicita, escopo aprovado e alinhamento com ADR-0008 e ADR-0012. No estado atual, a API
 > principal nao deve conectar diretamente em fonte de cliente.

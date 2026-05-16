@@ -1,19 +1,19 @@
 # Backup e Restore — delfos-api
 
-Define política base para dados do Delfos em MongoDB.
+Na fase atual, o backup cobre **apenas** a configuração do Delfos e os metadados administrativos. Payload operacional ou dados brutos de clientes **não são armazenados** pelo Delfos nesta fase e estão fora de escopo (futuro). Este documento define a política base para esses dados de configuração em MongoDB.
 
 ## Escopo
 
-Backup cobre dados próprios do Delfos: tenants, usuários, permissões, conexões configuradas, De/Para, dashboards, widgets, relatórios, preferências, metadados e auditoria.
+Backup cobre exclusivamente dados próprios de configuração e metadados administrativos do Delfos: tenants, usuários, permissões, conexões configuradas, De/Para, dashboards, widgets, relatórios, preferências, metadados e auditoria.
 
-Na Fase 1, não cobre payload operacional bruto de clientes, pois esse dado não deve ser armazenado pelo Delfos.
+Na fase atual, não cobre payload operacional bruto de clientes, pois esse dado não é armazenado pelo Delfos. Backup/restore de payload operacional de clientes é tema futuro/fora de escopo.
 
 ## Frequência recomendada
 
-| Ambiente | Frequência | Retenção sugerida |
-|---|---|---|
-| Local | sob demanda | não obrigatória |
-| Staging | diária ou sob demanda | curta |
+| Ambiente   | Frequência                          | Retenção sugerida         |
+| ---------- | ----------------------------------- | ------------------------- |
+| Local      | sob demanda                         | não obrigatória           |
+| Staging    | diária ou sob demanda               | curta                     |
 | Production | diária e antes de mudanças críticas | conforme política interna |
 
 ## Regras

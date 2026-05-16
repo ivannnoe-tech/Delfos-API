@@ -18,7 +18,7 @@ Ver ADR-0004.
 
 ## 2. Estrutura do delfos-api
 
-Esta estrutura reflete o estado atual implementado. Pastas futuras como `data-connectors`, `dashboards`, `widgets`, `reports`, `exports`, `white-label`, `preferences`, `core/cache` e `permissions` nao devem ser criadas sem escopo aprovado.
+Esta estrutura reflete o estado atual implementado. Pastas futuras como `delfos-connectors`, `dashboards`, `widgets`, `reports`, `exports`, `white-label`, `preferences`, `core/cache` e `permissions` nao devem ser criadas sem escopo aprovado.
 
 ```text
 delfos-api/
@@ -47,12 +47,30 @@ delfos-api/
 │       ├── dashboard-definitions/
 │       ├── report-definitions/
 │       ├── runtime/
+│       │   └── bridge/
+│       │       └── adapters/
 │       └── execution-preview/
 ├── scripts/
 ├── docs/
 ├── prompts/
 └── docker-compose.yml
 ```
+
+### 2.1 src/modules/runtime/bridge/ (foundation-only)
+
+O diretorio `src/modules/runtime/bridge/` contem a foundation da ponte futura entre o runtime do
+`delfos-api` e o executor `delfos-connectors`. Estado atual: **foundation-only** — apenas types e
+testes, sem provider NestJS registrado e sem dispatch.
+
+- **bridge resolver**: prepara command em memoria a partir de um `ExecutionRequest`
+  (`prepareCommand`), sem transporte nem dispatch real.
+- **reference resolver**: resolve referencias declarativas e `credentialRef` de forma
+  conservadora e source-agnostic, sem decrypt e sem acesso externo.
+- **adapters/** (`runtime/bridge/adapters/`): adapters internos puros para os ports do reference
+  resolver, ainda sem services/repositories reais e sem wiring em `RuntimeModule`.
+
+Limite atual: nenhum componente do `bridge/` esta registrado como provider, exposto por endpoint
+ou habilitado a disparar execucao real.
 
 ---
 

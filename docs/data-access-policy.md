@@ -21,7 +21,6 @@ declarativos. O modulo `execution-preview` gera apenas dados ficticios em memori
 Nao existe atualmente:
 
 - conector real;
-- `data-connectors`;
 - servico/runtime `delfos-connectors` (o repositorio `delfos-connectors` existe apenas como
   foundation documental/governanca, autorizada via ADR-0013; o servico/runtime continua fora de
   escopo);

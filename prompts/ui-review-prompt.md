@@ -1,5 +1,10 @@
 # Prompt — Revisão de UI/UX
 
+> **DEPRECADO neste repositório (`delfos-api`).**
+> A revisão de UI/UX pertence ao repositório `delfos-web`, não ao backend.
+> A versão canônica deste prompt vive em `delfos-web/prompts/ui-review-prompt.md`.
+> Esta cópia é mantida apenas para não quebrar links existentes e **não deve ser usada para trabalho novo**.
+
 Revise a tela ou componente seguindo o Design System do Delfos.
 
 ---

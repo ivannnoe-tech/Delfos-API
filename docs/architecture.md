@@ -51,12 +51,12 @@ O backend é responsável por:
 - cadastro declarativo de query-definitions e dashboard-definitions
 - cadastro declarativo de report-definitions
 - `execution-preview` demo em memoria
-- execucao segura de chamadas HTTP externas *(planejado/futuro — `data-connectors` nao implementado; ver ADR-0008)*
-- validacao, normalizacao e paginacao de respostas reais *(planejado/futuro — dependente do executor futuro)*
-- cache, fila, worker e scheduler *(fora do escopo atual)*
+- execucao segura de chamadas HTTP externas _(planejado/futuro — `delfos-connectors` nao implementado; ver ADR-0008)_
+- validacao, normalizacao e paginacao de respostas reais _(planejado/futuro — dependente do executor futuro)_
+- cache, fila, worker e scheduler _(fora do escopo atual)_
 - logs e auditoria
 - contratos REST consumidos pelo front
-- exportacoes *(planejado/futuro)*
+- exportacoes _(planejado/futuro)_
 
 O backend não deve conter regra visual.
 
@@ -71,13 +71,13 @@ O frontend é responsável por:
 - experiência visual e responsividade
 - listagem de catalogos foundation
 - preview demo
-- montagem de dashboards e relatorios *(planejado/futuro)*
-- renderizacao de graficos via `ChartRenderer` *(parcial/futuro conforme feature)*
+- montagem de dashboards e relatorios _(planejado/futuro)_
+- renderizacao de graficos via `ChartRenderer` _(parcial/futuro conforme feature)_
 - composição de widgets reutilizáveis
 - aplicação do Design System
 - estados visuais obrigatórios
-- experiencia white label *(planejado/futuro)*
-- interacao com filtros e builders *(planejado/futuro)*
+- experiencia white label _(planejado/futuro)_
+- interacao com filtros e builders _(planejado/futuro)_
 
 O frontend não deve acessar APIs de clientes diretamente. Toda chamada passa pelo `delfos-api`, e execucao externa real dependera do futuro `delfos-connectors` ou mecanismo aprovado.
 
@@ -182,6 +182,32 @@ O motor de conectores deve ser genérico e seguro. Cada cliente pode ter contrat
 - `ResponseSchema`
 
 Ver `docs/api-connectors.md`.
+
+### 10.1 runtime/bridge (foundation-only)
+
+O diretorio `src/modules/runtime/bridge/` contem a foundation da ponte futura entre o runtime do
+`delfos-api` e o executor `delfos-connectors`. No estado atual ela e **foundation-only**: apenas
+types e testes, sem dispatch, sem provider NestJS e sem execucao real.
+
+Componentes da foundation:
+
+- **bridge resolver**: prepara, em memoria, um command a partir de um `ExecutionRequest`
+  (`prepareCommand`), sem transporte nem dispatch.
+- **reference resolver**: resolve referencias declarativas (connections, datasets, mappings,
+  `credentialRef`) de forma conservadora e source-agnostic, sem decrypt e sem acesso externo.
+- **adapters**: adapters internos puros que ligam os ports do reference resolver aos modulos
+  declarativos, ainda sem services/repositories reais, sem `RuntimeModule` e sem provider.
+
+Nenhum desses componentes esta registrado como provider, exposto por endpoint ou capaz de
+disparar execucao real. A integracao real depende de fase explicita futura.
+
+### 10.2 analytics_text_generation (assistiva, futura)
+
+Esta planejada uma capability assistiva `analytics_text_generation` (narrativa analitica assistida
+por LLM — ADR-0025). Ela e **futura e nao implementada**: monta texto analitico a partir de dados
+ja agregados/sanitizados/mascarados pela plataforma. Fica **fora do caminho de runtime/execucao**:
+nao acessa banco, nao executa SQL, nao aciona conectores e nao dispara `execution-requests`.
+Integracao real nao autorizada — ver ADR-0025.
 
 ---
 

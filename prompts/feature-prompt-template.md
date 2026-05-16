@@ -39,7 +39,7 @@ Fora de escopo:
 
 ## Regras obrigatórias
 
-- Não criar arquivo gigante.
+- Respeitar a regra oficial de tamanho de arquivo (`docs/quality-checklist.md` §0.1): alvo ≤ 300 linhas; 301–450 avaliar split; 451–600 só com justificativa; **acima de 600 linhas é o limite máximo absoluto** — parar e pedir validação humana. Preferir módulos/serviços/helpers menores.
 - Separar responsabilidades.
 - Não adicionar biblioteca sem revisar licença e necessidade.
 - Não persistir dados operacionais do cliente na Fase 1.
@@ -58,3 +58,4 @@ Fora de escopo:
 - Testes criados/atualizados.
 - Comandos para validar.
 - Riscos ou pendências assumidas.
+- Lista e justificativa de arquivos acima de 450 linhas criados/aumentados pela tarefa (regra de tamanho, `docs/quality-checklist.md` §0.1).

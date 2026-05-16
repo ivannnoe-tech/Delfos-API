@@ -66,11 +66,11 @@ Exemplos:
 feat(connections): add encrypted credentials storage
 fix(auth): refresh token rotation on logout
 docs(adr): add ADR-0007 for no-cache phase 1
-refactor(data-connectors): split fetcher into smaller services
+refactor(delfos-connectors): split fetcher into smaller services
 chore(deps): bump nestjs to 10.4.0
 ```
 
-Escopo recomendado é o nome do módulo afetado (`auth`, `connections`, `data-connectors`, `dashboards`, `reports`, `core`, `ci`, `docs`).
+Escopo recomendado é o nome do módulo afetado (`auth`, `connections`, `delfos-connectors`, `dashboards`, `reports`, `core`, `ci`, `docs`).
 
 ---
 

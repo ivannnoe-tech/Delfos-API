@@ -93,7 +93,7 @@ Nao implementadas atualmente:
 
 - login/JWT/OAuth real;
 - conexoes reais com APIs, bancos, arquivos ou sistemas de clientes;
-- conectores reais ou `data-connectors`;
+- conectores reais;
 - servico/runtime `delfos-connectors` (foundation documental existe via ADR-0013);
 - local agent;
 - teste real de conexao;
@@ -105,7 +105,10 @@ Nao implementadas atualmente:
 - report builder;
 - widgets com dados reais;
 - exportacoes finais;
-- white label completo.
+- white label completo;
+- `analytics_text_generation` — narrativa analitica assistida por LLM (resumos de KPI, explicacao
+  de dashboards, comparacao entre periodos), assistiva e nao implementada; integracao real nao
+  autorizada e dependente de tarefa dedicada com revisao de seguranca e privacidade. Ver ADR-0025.
 
 Essas capacidades dependem de tarefa explicita, ADR quando necessario e alinhamento com ADR-0008
 a ADR-0012.
