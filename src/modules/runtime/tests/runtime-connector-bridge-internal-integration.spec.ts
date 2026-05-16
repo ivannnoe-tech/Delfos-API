@@ -1,3 +1,10 @@
+/**
+ * Size note: this spec is above the 500-line guideline (see CLAUDE.md /
+ * AGENTS.md). It is kept as one file on purpose — a single end-to-end
+ * internal integration scenario for the runtime bridge resolver, whose
+ * shared fakes and fixtures would lose meaning if scattered. Splitting is
+ * deferred to a dedicated, test-driven refactor.
+ */
 import {
   BridgeReadinessResult,
   ExecutionRequestLike,

@@ -1,3 +1,9 @@
+/**
+ * Size note: this spec is above the 500-line guideline (see CLAUDE.md /
+ * AGENTS.md). It is kept as one file on purpose — it covers the reference
+ * reader adapters as a single cohesive suite sharing fakes and fixtures.
+ * Splitting is deferred to a dedicated, test-driven refactor.
+ */
 import {
   RuntimeConnectionReaderAdapter,
   RuntimeConnectionReaderAdapterSource,
