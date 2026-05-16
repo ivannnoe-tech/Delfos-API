@@ -71,7 +71,7 @@ O agente deve sempre seguir estes princípios:
 
 O agente **não deve**:
 
-- criar arquivos gigantes e difíceis de manter (regra dura: > 500 linhas exige refatoração)
+- criar arquivos gigantes e difíceis de manter — regra oficial de tamanho (fonte canônica: `docs/quality-checklist.md` §0.1): alvo ≤ 300 linhas; 301–450 avaliar divisão por responsabilidade; 451–600 só com justificativa objetiva no relatório final; **acima de 600 linhas é o limite máximo absoluto** e exige validação humana explícita (parar e perguntar). Arquivo já acima de 600 linhas: não adicionar lógica, propor extração/refatoração
 - misturar UI, regra de negócio, acesso a dados e transformação no mesmo arquivo
 - criar soluções temporárias sem registrar motivo (`TODO:` com contexto claro)
 - duplicar lógica já existente
@@ -165,6 +165,8 @@ Regras:
 | query-definitions | `src/modules/query-definitions/` | Implementado — declarativo |
 | dashboard-definitions | `src/modules/dashboard-definitions/` | Implementado — declarativo |
 | report-definitions | `src/modules/report-definitions/` | Implementado — declarativo |
+| runtime (execution-requests) | `src/modules/runtime/` | Implementado — execution-requests foundation: contratos, estados, eventos administrativos, runtime monitor, readiness dry-run e demo-execute fictício; sem execução real |
+| runtime/bridge | `src/modules/runtime/bridge/` | foundation-only — bridge resolver, reference resolver e adapters; apenas types e testes, sem provider NestJS, sem dispatch e sem execução real |
 | execution-preview | `src/modules/execution-preview/` | Implementado — demo em memória, sem execução real |
 
 ### O que NÃO existe ainda
@@ -172,13 +174,19 @@ Regras:
 **Não implementar sem autorização explícita e ADR quando necessário:**
 
 - JWT auth real (login, refresh, bcrypt, strategies) — planejado, não iniciado
-- Motor de consumo de APIs de clientes (`data-connectors`) — planejado, não iniciado
+- Motor de consumo de APIs de clientes (`delfos-connectors`) — planejado, não iniciado
 - Teste de conexão real — planejado, não iniciado
 - Execução real de query — Fase 2
 - Cache Redis / fila / worker / scheduler — Fase 2
 - Runtime de relatórios, exportações reais, white-label, preferências — não implementados
 - delfos-connectors — serviço futuro separado
 - Módulo `dashboards` ou `widgets` de runtime — não implementados
+- Capability `analytics_text_generation` / integração LLM — planejada (ADR-0025), não implementada, não autorizada
+
+> Documentos conceituais ou de visão futura (conectores, bridge, dispatch, cache, JWT, execução
+> real) descrevem planejamento e **não autorizam** implementação real. A execução real de
+> conectores permanece **proibida**; apenas planejamento documentável é permitido. Implementar
+> exige fase explícita e ADR quando necessário.
 
 ---
 
@@ -203,37 +211,96 @@ Regras:
 | Checklist de segurança | `docs/security-checklist.md` |
 | Comandos destrutivos | `docs/destructive-commands-policy.md` |
 | Política de skills/MCPs/plugins | `docs/agent-tooling-policy.md` |
+| Política de uso do Postman | `docs/postman-policy.md` |
 | Checklist de qualidade | `docs/quality-checklist.md` |
 | Decisões arquiteturais | `docs/adr/README.md` |
 | Glossário | `docs/glossary.md` |
 | PRD | `docs/delfos-prd.md` |
 | Roadmap | `docs/roadmap.md` |
+| Modelo operacional de agentes | `docs/agent-operating-model.md` |
+| Contrato de tarefa de agente | `docs/agent-task-contract.md` |
+| Regras de segurança para agentes | `docs/agent-safety-rules.md` |
+| Checklist de validação para agentes | `docs/agent-validation-checklist.md` |
+| Stop conditions para agentes | `docs/agent-stop-conditions.md` |
+
+> **Camada agent-ready**: os cinco documentos `docs/agent-*.md` formam a camada de governança
+> para execução por agentes (IA/CLI/automação). Leitura obrigatória antes de qualquer tarefa de
+> agente, junto com este `AGENTS.md` e `docs/quality-checklist.md`.
 
 ---
 
 ## 8. Definition of Done
 
-Uma entrega só é considerada pronta quando:
+Fonte canônica do DoD: `docs/quality-checklist.md`. Esta seção é apenas um resumo; em caso de
+divergência, vale o checklist canônico.
 
-- compila sem erros; quando houver CI configurado, passa no workflow
-- segue a arquitetura definida
-- não introduz gambiarra
-- não cria arquivo monolítico (> 500 linhas sem justificativa documentada)
-- não duplica regra existente
-- respeita o Design System (`DESIGN.md`)
-- respeita segurança e isolamento por empresa (multi-tenant)
-- possui tratamento de **loading**, **erro**, **vazio**, **sem permissão**
-- está coerente com a Fase atual do produto
-- respeita a política de bibliotecas (`docs/libraries-policy.md`)
-- respeita a política de skills, plugins e MCPs (`docs/agent-tooling-policy.md`)
-- não usa ferramenta externa com permissão além do necessário
-- documentação relevante foi atualizada
+Resumo — uma entrega só é considerada pronta quando:
 
-Checklist completo em `docs/quality-checklist.md`.
+- compila sem erros e passa no CI quando configurado;
+- segue a arquitetura definida, sem gambiarra e sem duplicação;
+- respeita a regra oficial de tamanho de arquivo (`docs/quality-checklist.md` §0.1): alvo ≤ 300; 451–600 só com justificativa no relatório final; > 600 exige validação humana;
+- o relatório final da tarefa lista e justifica arquivos acima de 450 linhas criados/aumentados;
+- respeita segurança, secrets e isolamento multi-tenant;
+- possui os estados de UI obrigatórios (**loading**, **vazio**, **erro**, **sem permissão**, **sucesso**) — aplicável ao `delfos-web`;
+- não executa conector real (proibido na fase atual);
+- está coerente com a Fase atual e tem documentação/testes atualizados.
+
+Checklist completo e canônico em `docs/quality-checklist.md`.
 
 ---
 
-## 9. Regra final
+## 9. Stop conditions — quando parar e pedir validação humana
+
+> Fonte canônica destas condições. Referenciada por `delfos-web/AGENTS.md` e por
+> `docs/quality-checklist.md`. A versão detalhada da camada agent-ready está em
+> `docs/agent-stop-conditions.md`.
+
+Um agente (IA, CLI ou automação) **deve interromper a tarefa e pedir validação humana
+explícita** antes de prosseguir quando precisar:
+
+- ultrapassar **600 linhas** em um arquivo (criar novo ou aumentar existente) — ver regra de
+  tamanho em `docs/quality-checklist.md` §0.1;
+- alterar **contratos públicos** de API (rotas, DTOs, payloads, status, headers);
+- mexer em **secrets, credenciais ou descriptografia** de qualquer forma;
+- implementar **dispatch real** para connectors;
+- **promover uma ADR `Proposed` para `Accepted`** (em especial ADR-0021 e ADR-0022);
+- encontrar **divergência entre ADR, `AGENTS.md` e código**;
+- não conseguir validar **build, teste ou lint**;
+- **remover arquivo** ou executar qualquer ação destrutiva;
+- alterar a **política de retenção LGPD / auditoria** definida na ADR-0018;
+- lidar com **operação fora da matriz papel→operações** (ver ADR-0017);
+- usar o **Postman** além de local/dev, com secret real, para publicar
+  collection/workspace ou para alterar contrato público (ver
+  `docs/postman-policy.md`).
+
+Nessas situações, o agente registra o ponto como **"precisa validação humana"** no relatório,
+não decide sozinho e não contorna o bloqueio.
+
+---
+
+## 10. Camada agent-ready
+
+A camada agent-ready **existe** e é composta por cinco documentos em `docs/`:
+
+- `docs/agent-operating-model.md` — modelo operacional, ordem de autoridade documental;
+- `docs/agent-task-contract.md` — formato mínimo de uma tarefa executável por agente;
+- `docs/agent-safety-rules.md` — regras de segurança obrigatórias;
+- `docs/agent-validation-checklist.md` — validações por tipo de mudança;
+- `docs/agent-stop-conditions.md` — quando parar e pedir validação humana.
+
+Critérios de entrada que foram atendidos para criar esta camada (e que devem permanecer
+verdadeiros): documentação sem contradição factual; **ADR-0021 e ADR-0022 permanecem
+`Proposed`**, bloqueando execução real; Definition of Done canônica em
+`docs/quality-checklist.md`; regra de tamanho de arquivo aplicada e propagada; stop conditions
+referenciadas na seção 9; pendências humanas registradas em `docs/agent-stop-conditions.md`;
+nenhum código de aplicação alterado pelo saneamento documental.
+
+Qualquer agente que trabalhe no Delfos deve ler estes cinco documentos antes de iniciar uma
+tarefa.
+
+---
+
+## 11. Regra final
 
 Sempre que houver dúvida, escolher na seguinte ordem:
 
