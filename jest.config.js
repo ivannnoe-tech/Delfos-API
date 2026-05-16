@@ -8,16 +8,16 @@ module.exports = {
   },
   collectCoverageFrom: ['src/**/*.ts', '!src/main.ts'],
   coverageDirectory: 'coverage',
-  // Progressive coverage floor. Set below the current measured coverage
-  // (statements ~87%, branches ~72%, functions ~76%, lines ~87%) with margin,
-  // so the threshold guards against regressions without failing on a metric
-  // that is artificially high. Tighten in later, deliberate steps.
+  // Progressive coverage floor. Set just below the current measured coverage
+  // (statements ~87%, branches ~72%, functions ~76%, lines ~87%) with a small
+  // margin, so the threshold guards against regressions. Matured one step
+  // from the initial 80/65/70/80 floor; tighten further in deliberate steps.
   coverageThreshold: {
     global: {
-      statements: 80,
-      branches: 65,
-      functions: 70,
-      lines: 80,
+      statements: 85,
+      branches: 70,
+      functions: 74,
+      lines: 85,
     },
   },
   testEnvironment: 'node',
