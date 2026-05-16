@@ -1,3 +1,12 @@
+/**
+ * Size note: this file is above the 500-line guideline (see CLAUDE.md /
+ * AGENTS.md). It is intentionally one cohesive unit — the runtime connector
+ * reference resolver together with the reader-port and `*Like` contract
+ * interfaces it consumes. A full decomposition is deferred to a dedicated,
+ * test-driven refactor that must not change public contracts; the
+ * runtime/bridge area stays foundation-only (ADR-0014/0015, gated by
+ * ADR-0021/0022).
+ */
 import { ExecutionRequestKind } from '../schemas/execution-request.schema';
 import { BridgeReadinessBlockerShape, ExecutionRequestLike } from './bridge-types';
 import { ConnectorCommandSafeMetadata } from './connector-command-shape';
