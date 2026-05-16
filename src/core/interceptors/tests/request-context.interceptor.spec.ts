@@ -56,6 +56,44 @@ describe('RequestContextInterceptor', () => {
       done();
     });
   });
+
+  it('rejects an oversized request id header and generates a safe id instead', (done) => {
+    const request = createRequest({
+      [REQUEST_ID_HEADER]: 'a'.repeat(129),
+    });
+    const response = createResponse();
+    const context = createExecutionContext(request, response);
+    const next: CallHandler = {
+      handle: jest.fn(() => of('ok')),
+    };
+
+    const result = new RequestContextInterceptor().intercept(context, next);
+
+    result.subscribe(() => {
+      expect(request.requestId).not.toContain('a'.repeat(129));
+      expect(request.requestId).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+      );
+      done();
+    });
+  });
+
+  it('uses only the first value when a request id header arrives as an array', (done) => {
+    const request = createRequest({});
+    request.headers[REQUEST_ID_HEADER] = ['request-array-1', 'request-array-2'];
+    const response = createResponse();
+    const context = createExecutionContext(request, response);
+    const next: CallHandler = {
+      handle: jest.fn(() => of('ok')),
+    };
+
+    const result = new RequestContextInterceptor().intercept(context, next);
+
+    result.subscribe(() => {
+      expect(request.requestId).toBe('request-array-1');
+      done();
+    });
+  });
 });
 
 function createRequest(headers: Record<string, string>): RequestWithIds {
