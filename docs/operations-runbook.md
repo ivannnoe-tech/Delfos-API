@@ -268,6 +268,11 @@ A `ENCRYPTION_KEY_BASE64` protege `secretValue` das credenciais armazenadas via 
 conforme `foundation-credentials-and-security.md` secao 1. Perda dessa chave torna as
 credenciais armazenadas irrecuperaveis.
 
+Na Fase 1, o Delfos usa **chave unica por ambiente** como mecanismo atual (decisao fechada,
+ADR-0019). A chave nunca e versionada e a rotacao abaixo e um **procedimento controlado**. Chave
+por tenant, envelope encryption por tenant e KMS/Vault sao evolucao futura e dependem de ADR
+propria; nao implementar sem essa ADR.
+
 Backup recomendado:
 
 1. Guardar a chave em cofre/secret manager fora do repositorio e fora de documentos versionados.
@@ -298,7 +303,7 @@ Os itens abaixo nao sao operacionais no estado atual:
 - JWT/login/refresh/OAuth;
 - teste real de connection;
 - falha em API de cliente;
-- conectores reais ou `data-connectors`;
+- conectores reais;
 - servico/runtime `delfos-connectors` e local agent (foundation documental existe via ADR-0013);
 - cache, fila, worker, scheduler, staging ou snapshot;
 - runtime real de execution requests ou seus eventos foundation;

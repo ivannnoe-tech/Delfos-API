@@ -21,6 +21,8 @@ Usar apenas ferramentas necessárias, com menor privilégio possível e sem expo
 - ferramentas de documentação
 - formatadores/lints
 - geradores locais
+- Postman (MCP/plugin) para validação de API em local/dev — regras específicas
+  em `docs/postman-policy.md`
 
 Desde que respeitem:
 
@@ -114,3 +116,25 @@ Agentes devem seguir `docs/destructive-commands-policy.md`.
 - [ ] A saída será revisada?
 - [ ] A mudança respeita `AGENTS.md`?
 - [ ] A ferramenta pode executar algo destrutivo?
+
+---
+
+## 10. Postman MCP / plugin
+
+O Postman é **permitido** para validar e testar a API em ambiente local/dev:
+validar endpoints, testar comunicação, manter collections de desenvolvimento,
+gerar exemplos de request/response e apoiar smoke tests manuais.
+
+Regras resumidas (a política canônica e completa é `docs/postman-policy.md`):
+
+- usar somente local/dev por padrão; produção exige aprovação humana explícita;
+- nunca versionar admin key real, API key, bearer/refresh token ou qualquer
+  secret; usar placeholders (`{{DELFOS_ADMIN_KEY}}`, `{{DELFOS_TENANT_ID}}`,
+  `{{DELFOS_ACTOR_ID}}`, `{{DELFOS_ACTOR_ROLE}}`, `{{API_URL}}`);
+- não publicar collection/environment/workspace com dados sensíveis;
+- não usar dados reais de cliente em collections;
+- não alterar contrato público de API a partir de uma collection — o contrato
+  canônico vive no código e no Swagger/OpenAPI;
+- não usar o Postman para contornar gates de runtime/dispatch/conectores reais.
+
+Stop conditions e checklist de exportação: ver `docs/postman-policy.md`.
