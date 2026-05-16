@@ -55,10 +55,13 @@ Para o fluxo local validado no Windows com MongoDB local, veja [`docs/local-deve
 | `npm run lint` | ESLint |
 | `npm run format` | Prettier write |
 | `npm run format:check` | Prettier check |
-| `npm test` | testes unitários |
+| `npm test` | testes unitários/integração (406 testes) |
 | `npm run test:cov` | cobertura |
+| `npm run test:e2e` | E2E smoke da foundation (12 testes, MongoDB em memória) |
 
-Testes end-to-end (`test:e2e`) são planejados/futuros; não há script operacional nesta etapa da foundation.
+O `npm run test:e2e` sobe o `AppModule` real contra um MongoDB em memória
+(`mongodb-memory-server`), sem banco de produção, sem secrets reais e sem execução real de
+conectores. No CI ele roda em job separado e opcional.
 
 ---
 
@@ -112,10 +115,10 @@ Contratos públicos (REST) entre os dois ficam em [`docs/api-contracts.md`](./do
 
 ## Convenções
 
-- **Conventional Commits** — politica atual; CI minimo ja existe via GitHub Actions e executa
-  lint/test. Antes de PR/entrega, continue rodando localmente `npm run format:check`,
-  `npm run lint`, `npm test` e `npm run build`. `commitlint` e ampliacao do CI com format/build
-  permanecem planejados.
+- **Conventional Commits** — politica atual; o CI via GitHub Actions executa lint, test e
+  build como jobs obrigatorios, mais um job separado e opcional de E2E (`test:e2e`). Antes de
+  PR/entrega, continue rodando localmente `npm run format:check`, `npm run lint`, `npm test` e
+  `npm run build`. `commitlint` e a ampliacao do CI com `format:check` permanecem planejados.
 - **Idioma**: código em EN, docs em PT-BR
 - **Branches**: `feat/`, `fix/`, `chore/`, `docs/` → `develop` → `main`
 - **PRs**: 1 aprovação humana mínima

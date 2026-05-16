@@ -9,6 +9,13 @@ deferida, nao implementacao atual.
 
 Cross-reference: ver tambem `delfos-connectors/docs/roadmap.md` para o roadmap do executor futuro.
 
+Marco de estabilizacao da foundation (2026-05-16): documentacao agent-ready, testes
+unit/integration reforcados, API E2E smoke com MongoDB em memoria, Web Playwright E2E smoke,
+connectors hardening e CI hardening. Numeros atuais - `delfos-api`: 406 testes + 12 E2E;
+`delfos-web`: 262 testes Flutter + 21 Playwright E2E; `delfos-connectors`: 106 testes. O E2E de
+API e o E2E de Web permanecem em jobs separados/opcionais. A execucao real de conectores
+permanece bloqueada e ADR-0021/ADR-0022 permanecem `Proposed`.
+
 ---
 
 ## Taxonomia de status
@@ -86,7 +93,10 @@ Implementado atualmente:
 - seed/dev local com dados ficticios;
 - `execution-preview` demo em memoria;
 - catalogos foundation no `delfos-web`;
-- CI minimo com lint/test no `delfos-api`.
+- CI no `delfos-api` com lint/test/build obrigatorios e job separado/opcional de E2E
+  (`test:e2e`) com MongoDB em memoria;
+- API E2E smoke (`test:e2e`, 12 testes) e Web Playwright E2E smoke (`delfos-web`, 21 testes),
+  ambos em jobs separados e opcionais, sem producao e sem secrets reais.
 
 Nao implementado atualmente:
 
@@ -104,7 +114,8 @@ Nao implementado atualmente:
 - dashboard builder/runtime final;
 - query builder;
 - report builder/runtime e exportacoes finais;
-- commitlint e ampliacao do pipeline com format/build.
+- commitlint e ampliacao do pipeline com `format:check` (o `build` ja roda no CI);
+- promocao do E2E de API e do E2E de Web a status check obrigatorio (hoje opcionais).
 
 ---
 
@@ -255,8 +266,8 @@ a prontidao agent-ready e nao devem ser implementados sem tarefa explicita:
   e validacao automatica de links e referencias relativas nos docs (delfos-api, delfos-web,
   delfos-connectors). Hoje a validacao de links e manual (ver `docs/agent-validation-checklist.md`).
   Melhoria recomendada de qualidade, nao bloqueante.
-- **commitlint e ampliacao do pipeline** com `format:check`/`build` — ja listado acima como
-  nao implementado.
+- **commitlint e ampliacao do pipeline** com `format:check` — ja listado acima como
+  nao implementado. O `build` ja integra o fluxo obrigatorio do CI.
 
 ---
 

@@ -6,13 +6,27 @@ O formato segue a ideia do Keep a Changelog e usa versionamento semântico quand
 
 ## [Unreleased]
 
+> **Marco de estabilização da foundation (2026-05-16).** Foundation estabilizada
+> com: documentação agent-ready, testes unit/integration reforçados, API E2E
+> smoke com MongoDB em memória, Web Playwright E2E smoke, connectors hardening e
+> CI hardening. Números atuais — `delfos-api`: 406 testes + 12 E2E;
+> `delfos-web`: 262 testes Flutter + 21 Playwright E2E; `delfos-connectors`:
+> 106 testes. O E2E de API e o E2E de Web permanecem em jobs **separados e
+> opcionais** (não obrigatórios em branch protection). A execução real de
+> conectores permanece **bloqueada**; ADR-0021 e ADR-0022 permanecem `Proposed`.
+
 ### Added
 
-- N/A
+- Camada de E2E smoke da foundation (`npm run test:e2e`): 12 testes que sobem o
+  `AppModule` real contra um MongoDB em memória (`mongodb-memory-server`), sem
+  banco de produção, sem secrets reais e sem execução real de conectores.
+- CI: job separado e opcional de E2E no GitHub Actions — não obrigatório em
+  branch protection ainda; falha o workflow se o E2E falhar.
 
 ### Changed
 
-- N/A
+- CI: `npm run build` passou a integrar o fluxo obrigatório (lint, test e
+  build); o job de E2E fica separado e opcional.
 
 ### Fixed
 
