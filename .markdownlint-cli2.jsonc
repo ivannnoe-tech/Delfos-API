@@ -1,0 +1,22 @@
+{
+  // Markdown lint config for delfos-api.
+  // Only the repository's own docs are linted; dependencies and build
+  // artifacts are excluded so third-party README files never fail CI.
+  //
+  // This is a lenient baseline: it catches gross structural breakage while
+  // tolerating the cosmetic style of the existing docs. Tightening these
+  // rules (and cleaning the docs to match) is a future, non-blocking task.
+  "config": {
+    "MD013": false, // line length — docs use long links and tables
+    "MD022": false, // blanks around headings — pre-existing doc style
+    "MD024": { "siblings_only": true }, // repeated changelog section headings
+    "MD029": false, // ordered-list prefix style — pre-existing doc style
+    "MD032": false, // blanks around lists — pre-existing doc style
+    "MD033": false, // inline HTML — occasionally used for layout
+    "MD034": false, // bare URLs — tolerated in operational docs
+    "MD040": false, // fenced-code language — not all blocks specify one
+    "MD060": false // table column style — compact tables are allowed
+  },
+  "globs": ["**/*.md"],
+  "ignores": ["node_modules/**", "dist/**", "coverage/**"]
+}
