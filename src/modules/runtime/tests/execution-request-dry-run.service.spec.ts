@@ -1,3 +1,9 @@
+/**
+ * Size note: this spec is above the 500-line guideline (see CLAUDE.md /
+ * AGENTS.md). It is kept as one file on purpose — a single cohesive suite for
+ * the execution-request dry-run service, sharing fakes and fixtures.
+ * Splitting is deferred to a dedicated, test-driven refactor.
+ */
 import { NotFoundException } from '@nestjs/common';
 import { Types } from 'mongoose';
 

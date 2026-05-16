@@ -74,6 +74,27 @@ jobs:
       - name: Run build
         run: npm run build
 
+  # Enforces the progressive coverage threshold (jest.config.js).
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm run test:cov
+
   # Optional job: runs the foundation E2E suite (in-memory MongoDB).
   # Kept separate from the required checks above. It is NOT marked as a
   # required status check in branch protection yet, but it still fails
