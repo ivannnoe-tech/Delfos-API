@@ -232,9 +232,8 @@ direção certa.
   [./semantic-layer-roadmap.md](./semantic-layer-roadmap.md) ·
   [./ai-assistant-roadmap.md](./ai-assistant-roadmap.md) ·
   [./connectors-roadmap.md](./connectors-roadmap.md) ·
-  [./dashboard-builder-roadmap.md](./dashboard-builder-roadmap.md) ·
+  [./builder-and-ux-roadmap.md](./builder-and-ux-roadmap.md) ·
   [./embedded-analytics-roadmap.md](./embedded-analytics-roadmap.md) ·
-  [./premium-ux-roadmap.md](./premium-ux-roadmap.md) ·
   [./enterprise-governance-roadmap.md](./enterprise-governance-roadmap.md)
 - Produtos estudados: [../metabase/ideas-for-delfos.md](../metabase/ideas-for-delfos.md) ·
   [../cube/ideas-for-delfos.md](../cube/ideas-for-delfos.md) ·

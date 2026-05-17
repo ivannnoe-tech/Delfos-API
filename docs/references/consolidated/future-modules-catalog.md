@@ -226,10 +226,9 @@ semântica é a fundação de quase tudo.
   [./semantic-layer-roadmap.md](./semantic-layer-roadmap.md) ·
   [./ai-assistant-roadmap.md](./ai-assistant-roadmap.md) ·
   [./connectors-roadmap.md](./connectors-roadmap.md) ·
-  [./dashboard-builder-roadmap.md](./dashboard-builder-roadmap.md) ·
+  [./builder-and-ux-roadmap.md](./builder-and-ux-roadmap.md) ·
   [./embedded-analytics-roadmap.md](./embedded-analytics-roadmap.md) ·
-  [./enterprise-governance-roadmap.md](./enterprise-governance-roadmap.md) ·
-  [./premium-ux-roadmap.md](./premium-ux-roadmap.md)
+  [./enterprise-governance-roadmap.md](./enterprise-governance-roadmap.md)
 - Produtos estudados: [../cube/ideas-for-delfos.md](../cube/ideas-for-delfos.md) ·
   [../wren-ai/ideas-for-delfos.md](../wren-ai/ideas-for-delfos.md) ·
   [../airbyte/ideas-for-delfos.md](../airbyte/ideas-for-delfos.md) ·

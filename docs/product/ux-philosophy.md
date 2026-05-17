@@ -84,7 +84,7 @@ botão "voltar", rotas que não correspondem a uma URL real.
 
 Como toda rota passa por `go_router` e tem URL própria, todo estado navegável é
 endereçável — pré-condition para permalinks de exploração (ver
-[`premium-ux-roadmap.md`](../references/consolidated/premium-ux-roadmap.md), Onda 2).
+[`builder-and-ux-roadmap.md`](../references/consolidated/builder-and-ux-roadmap.md), Onda 2).
 A previsibilidade da navegação não é conveniência; é o que torna o produto
 compartilhável e auditável.
 
@@ -153,7 +153,7 @@ Filosofia se prova no que se rejeita. O Delfos recusa, explicitamente:
 A maior parte da UX premium do Delfos é **viável já na foundation**, porque é
 interface sobre modelos declarativos: builders por seleção, catálogo de métricas
 navegável, filtros como configuração, os quatro estados, permalinks. O
-[`premium-ux-roadmap.md`](../references/consolidated/premium-ux-roadmap.md) organiza
+[`builder-and-ux-roadmap.md`](../references/consolidated/builder-and-ux-roadmap.md) organiza
 esses itens em ondas e separa com clareza o que é foundation do que é Fase 2.
 
 As regras invioláveis do `delfos-web` **não são itens de roadmap** — são
@@ -182,8 +182,7 @@ violá-las.
 - [`dashboard-philosophy.md`](./dashboard-philosophy.md) — composição visual e dashboards
 - [`runtime-philosophy.md`](./runtime-philosophy.md) — execução e runtime
 - [`embedded-analytics-philosophy.md`](./embedded-analytics-philosophy.md) — analytics embarcado
-- [`../references/consolidated/premium-ux-roadmap.md`](../references/consolidated/premium-ux-roadmap.md) — roadmap consolidado de UX premium
-- [`../references/consolidated/dashboard-builder-roadmap.md`](../references/consolidated/dashboard-builder-roadmap.md) — roadmap de dashboard/query builder
+- [`../references/consolidated/builder-and-ux-roadmap.md`](../references/consolidated/builder-and-ux-roadmap.md) — roadmap de dashboard/query builder e UX premium
 - [`../references/README.md`](../references/README.md) — biblioteca estratégica de referências
 - [`../adr/adr-0003-chart-renderer-abstraction.md`](../adr/adr-0003-chart-renderer-abstraction.md) — abstração do chart renderer
 - [`../adr/adr-0011-dashboard-builder-and-widget-model.md`](../adr/adr-0011-dashboard-builder-and-widget-model.md) — modelo de dashboard builder e widget

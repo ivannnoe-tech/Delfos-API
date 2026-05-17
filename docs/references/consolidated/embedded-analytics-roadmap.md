@@ -154,7 +154,7 @@ Define os contratos sem emitir tokens nem abrir endpoints.
 - [../superset/ideas-for-delfos.md](../superset/ideas-for-delfos.md)
 - [../chartbrew/ideas-for-delfos.md](../chartbrew/ideas-for-delfos.md)
 - [./connectors-roadmap.md](./connectors-roadmap.md)
-- [./premium-ux-roadmap.md](./premium-ux-roadmap.md)
+- [./builder-and-ux-roadmap.md](./builder-and-ux-roadmap.md)
 - [./enterprise-governance-roadmap.md](./enterprise-governance-roadmap.md)
 - [../../adr/adr-0003-chart-renderer-abstraction.md](../../adr/adr-0003-chart-renderer-abstraction.md)
 - [../../adr/adr-0006-jwt-self-managed-auth.md](../../adr/adr-0006-jwt-self-managed-auth.md)

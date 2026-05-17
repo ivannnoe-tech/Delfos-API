@@ -169,11 +169,11 @@ alterar a semântica do widget.
 
 ## Relação com o roadmap
 
-O [`dashboard-builder-roadmap.md`](../references/consolidated/dashboard-builder-roadmap.md)
-organiza a evolução em ondas: contrato de widget e filtro global e versionamento de
-definições são foundation declarativa (Onda 1); query builder visual e explainability
-são builder e preview (Onda 2); cross-filtering com estado real, drill-through
-executável e renderização real são Fase 2+ (Onda 3), *gated* por ADR-0024.
+O [`builder-and-ux-roadmap.md`](../references/consolidated/builder-and-ux-roadmap.md)
+organiza a evolução em ondas: contrato de widget, query builder e versionamento de
+definições são foundation declarativa (Onda 1); filtros globais, catálogo de métricas
+e explainability vêm na Onda 2; cross-filtering com estado real, drill-through
+executável e renderização real são Fase 2+ (Onda 4), *gated* por ADR-0024.
 
 A ADR-0011 é a regra canônica do modelo de dashboard e widget. Este documento explica
 *por que* o modelo é assim; a ADR define *o que* ele é. Nenhuma melhoria de
@@ -203,8 +203,7 @@ composição visual justifica romper o encadeamento
 - [`ux-philosophy.md`](./ux-philosophy.md) — experiência do usuário
 - [`runtime-philosophy.md`](./runtime-philosophy.md) — execução e runtime
 - [`semantic-layer-vision.md`](./semantic-layer-vision.md) — camada semântica que alimenta widgets
-- [`../references/consolidated/dashboard-builder-roadmap.md`](../references/consolidated/dashboard-builder-roadmap.md) — roadmap de dashboard/query builder
-- [`../references/consolidated/premium-ux-roadmap.md`](../references/consolidated/premium-ux-roadmap.md) — roadmap consolidado de UX premium
+- [`../references/consolidated/builder-and-ux-roadmap.md`](../references/consolidated/builder-and-ux-roadmap.md) — roadmap de dashboard/query builder e UX premium
 - [`../references/README.md`](../references/README.md) — biblioteca estratégica de referências
 - [`../adr/adr-0011-dashboard-builder-and-widget-model.md`](../adr/adr-0011-dashboard-builder-and-widget-model.md) — modelo de dashboard builder e widget
 - [`../adr/adr-0003-chart-renderer-abstraction.md`](../adr/adr-0003-chart-renderer-abstraction.md) — abstração do chart renderer

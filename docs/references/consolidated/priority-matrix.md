@@ -149,11 +149,10 @@ autorizada.
 
 - [`./semantic-layer-roadmap.md`](./semantic-layer-roadmap.md)
 - [`./ai-assistant-roadmap.md`](./ai-assistant-roadmap.md)
-- [`./dashboard-builder-roadmap.md`](./dashboard-builder-roadmap.md)
+- [`./builder-and-ux-roadmap.md`](./builder-and-ux-roadmap.md)
 - [`./connectors-roadmap.md`](./connectors-roadmap.md)
 - [`./embedded-analytics-roadmap.md`](./embedded-analytics-roadmap.md)
 - [`./enterprise-governance-roadmap.md`](./enterprise-governance-roadmap.md)
-- [`./premium-ux-roadmap.md`](./premium-ux-roadmap.md)
 - [`./future-modules-catalog.md`](./future-modules-catalog.md)
 - [`../maturity-taxonomy.md`](../maturity-taxonomy.md)
 - [`../README.md`](../README.md)

@@ -189,8 +189,7 @@ ativo competitivo.
   [./connectors-roadmap.md](./connectors-roadmap.md) ·
   [./enterprise-governance-roadmap.md](./enterprise-governance-roadmap.md) ·
   [./embedded-analytics-roadmap.md](./embedded-analytics-roadmap.md) ·
-  [./premium-ux-roadmap.md](./premium-ux-roadmap.md) ·
-  [./dashboard-builder-roadmap.md](./dashboard-builder-roadmap.md)
+  [./builder-and-ux-roadmap.md](./builder-and-ux-roadmap.md)
 - Produtos estudados: [../cube/ideas-for-delfos.md](../cube/ideas-for-delfos.md) ·
   [../wren-ai/ideas-for-delfos.md](../wren-ai/ideas-for-delfos.md) ·
   [../airbyte/ideas-for-delfos.md](../airbyte/ideas-for-delfos.md) ·

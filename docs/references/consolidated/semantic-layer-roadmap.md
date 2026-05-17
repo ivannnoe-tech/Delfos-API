@@ -184,7 +184,7 @@ A coluna `Maturidade` em cada tabela segue a escala de [`maturity-taxonomy.md`](
 - `../lightdash/ideas-for-delfos.md` · `../lightdash/architecture.md`
 - `../wren-ai/ideas-for-delfos.md` · `../wren-ai/architecture.md`
 - `../superset/ideas-for-delfos.md`
-- `./dashboard-builder-roadmap.md` — query builder consome a semantic layer
+- `./builder-and-ux-roadmap.md` — query builder consome a semantic layer
 - `./ai-assistant-roadmap.md` — grounding da IA na semantic layer
 - `../maturity-taxonomy.md` — escala de maturidade aplicada às tabelas acima
 - `../../adr/adr-0007-no-cache-redis-phase-1.md`

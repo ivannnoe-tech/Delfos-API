@@ -103,10 +103,9 @@ temáticos e visão de produto. É a leitura recomendada para decisão estratég
 | [`future-modules-catalog.md`](./consolidated/future-modules-catalog.md) | Catálogo de possíveis módulos futuros derivados do estudo |
 | [`semantic-layer-roadmap.md`](./consolidated/semantic-layer-roadmap.md) | Roadmap da camada semântica futura |
 | [`ai-assistant-roadmap.md`](./consolidated/ai-assistant-roadmap.md) | Roadmap de IA aplicada a analytics (gated por ADR-0025) |
-| [`dashboard-builder-roadmap.md`](./consolidated/dashboard-builder-roadmap.md) | Roadmap de dashboard e query builder |
+| [`builder-and-ux-roadmap.md`](./consolidated/builder-and-ux-roadmap.md) | Roadmap de dashboard/query builder e UX premium |
 | [`connectors-roadmap.md`](./consolidated/connectors-roadmap.md) | Roadmap de connectors e execução |
 | [`embedded-analytics-roadmap.md`](./consolidated/embedded-analytics-roadmap.md) | Roadmap de embedded analytics |
-| [`premium-ux-roadmap.md`](./consolidated/premium-ux-roadmap.md) | Roadmap de UX premium |
 | [`enterprise-governance-roadmap.md`](./consolidated/enterprise-governance-roadmap.md) | Roadmap de governança enterprise |
 
 ---

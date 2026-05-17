@@ -171,7 +171,7 @@ A coluna `Maturidade` em cada tabela segue a escala de [`maturity-taxonomy.md`](
 - `../superset/ideas-for-delfos.md`
 - `../cube/ideas-for-delfos.md`
 - `./semantic-layer-roadmap.md` — grounding da IA depende da camada semântica
-- `./dashboard-builder-roadmap.md` — copiloto de autoria de dashboards
+- `./builder-and-ux-roadmap.md` — copiloto de autoria de dashboards
 - `../maturity-taxonomy.md` — escala de maturidade aplicada às tabelas acima
 - `../../adr/adr-0017-roles-and-permissions-model.md`
 - `../../adr/adr-0018-secure-audit-strategy.md`

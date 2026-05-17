@@ -180,7 +180,7 @@ Modela o RBAC completo; aplicação a usuários finais depende de auth real.
 - [../airbyte/architecture.md](../airbyte/architecture.md)
 - [./connectors-roadmap.md](./connectors-roadmap.md)
 - [./embedded-analytics-roadmap.md](./embedded-analytics-roadmap.md)
-- [./premium-ux-roadmap.md](./premium-ux-roadmap.md)
+- [./builder-and-ux-roadmap.md](./builder-and-ux-roadmap.md)
 - [../../adr/adr-0006-jwt-self-managed-auth.md](../../adr/adr-0006-jwt-self-managed-auth.md)
 - [../../adr/adr-0016-temporary-admin-key-auth.md](../../adr/adr-0016-temporary-admin-key-auth.md)
 - [../../adr/adr-0017-roles-and-permissions-model.md](../../adr/adr-0017-roles-and-permissions-model.md)
