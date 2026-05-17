@@ -241,7 +241,7 @@ complexidade são estimativas para orientar discussão de roadmap.
 
 ---
 
-## Síntese de priorização
+## Priorização sugerida
 
 | Prioridade | Ideias |
 |---|---|
@@ -289,3 +289,4 @@ Além desses, todos os produtos alimentam os consolidados de visão e síntese:
 - [ADR-0025 — LLM-assisted analytics text generation](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
 - [ADR-0017 — Roles and permissions model](../../adr/adr-0017-roles-and-permissions-model.md)
 - [Taxonomia de maturidade](../maturity-taxonomy.md) — taxonomia de maturidade aplicada às ideias
+- [Índice da biblioteca de referências](../README.md)

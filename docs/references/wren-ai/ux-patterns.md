@@ -125,3 +125,4 @@ WrenAI tem estados naturais a um produto de IA:
 - ADRs: [adr-0003](../../adr/adr-0003-chart-renderer-abstraction.md) ·
   [adr-0011](../../adr/adr-0011-dashboard-builder-and-widget-model.md) ·
   [adr-0025](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- [Índice da biblioteca de referências](../README.md)

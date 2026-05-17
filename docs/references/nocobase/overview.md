@@ -152,3 +152,4 @@ Há sobreposição parcial com o Delfos no backend (Node.js + TypeScript), mas o
 - [`./anti-patterns.md`](./anti-patterns.md)
 - ADR: [`../../adr/adr-0011-dashboard-builder-and-widget-model.md`](../../adr/adr-0011-dashboard-builder-and-widget-model.md)
 - ADR: [`../../adr/adr-0024-phase-1-and-phase-2-definition.md`](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
+- [Índice da biblioteca de referências](../README.md)

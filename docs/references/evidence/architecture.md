@@ -148,3 +148,4 @@ Não há orquestrador interno. A orquestração é **externalizada**: pipelines 
 - [../../adr/adr-0009-deployment-isolation-and-tenant-model.md](../../adr/adr-0009-deployment-isolation-and-tenant-model.md)
 - [../../adr/adr-0012-local-connectors-agent-and-on-premise-sources.md](../../adr/adr-0012-local-connectors-agent-and-on-premise-sources.md)
 - [../../adr/adr-0015-runtime-connectors-command-envelope-bridge.md](../../adr/adr-0015-runtime-connectors-command-envelope-bridge.md)
+- [Índice da biblioteca de referências](../README.md)

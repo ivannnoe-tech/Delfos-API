@@ -116,3 +116,4 @@ Não há tempo real. Os dados refletem o **último run de sources**. *Freshness*
 - [../../adr/adr-0017-roles-and-permissions-model.md](../../adr/adr-0017-roles-and-permissions-model.md)
 - [../../adr/adr-0023-data-masking-policy.md](../../adr/adr-0023-data-masking-policy.md)
 - [../../adr/adr-0025-llm-assisted-analytics-text-generation.md](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- [Índice da biblioteca de referências](../README.md)

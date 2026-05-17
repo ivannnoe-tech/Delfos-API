@@ -175,7 +175,7 @@ Esta ADR não autoriza nem implementa:
 
 ## Relação com outros documentos
 
-- ADR-0001 — define a fonte de dados conceitual da Fase 1 (APIs custom de
+- ADR-0001 → supersedida pela ADR-0032 — define a fonte de dados conceitual da Fase 1 (APIs custom de
   clientes); esta ADR formaliza a fase em que essa decisão se enquadra.
 - ADR-0006 — define a auth real via JWT, uma capacidade de Fase 2.
 - ADR-0008 — define o `delfos-connectors` como executor futuro; sua execução

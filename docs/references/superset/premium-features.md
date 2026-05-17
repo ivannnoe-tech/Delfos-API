@@ -121,3 +121,4 @@ reproduzir essa expectativa sem ADR — no Delfos não há runtime real ainda.
 - [ADR-0018 — Secure audit strategy](../../adr/adr-0018-secure-audit-strategy.md)
 - [ADR-0025 — LLM-assisted analytics text generation](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
 - [ADR-0024 — Phase 1 and Phase 2 definition](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
+- [Índice da biblioteca de referências](../README.md)

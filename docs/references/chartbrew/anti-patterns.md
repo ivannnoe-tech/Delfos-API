@@ -200,3 +200,4 @@ problemas de autorização.
 - ADR: [../../adr/adr-0018-secure-audit-strategy.md](../../adr/adr-0018-secure-audit-strategy.md)
 - ADR: [../../adr/adr-0019-credential-encryption-and-rotation.md](../../adr/adr-0019-credential-encryption-and-rotation.md)
 - ADR: [../../adr/adr-0020-metadata-sanitization-and-forbidden-fields.md](../../adr/adr-0020-metadata-sanitization-and-forbidden-fields.md)
+- [Índice da biblioteca de referências](../README.md)

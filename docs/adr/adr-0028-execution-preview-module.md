@@ -86,7 +86,7 @@ de leitura/listagem da foundation; não exige role temporária.
 - O preview real substituirá/estenderá o preview demo apenas mediante runtime
   real aprovado; o contrato `mode` permanece o ponto de distinção.
 
-## Referências
+## Relação com outros documentos
 
 - `AGENTS.md`
 - `docs/architecture.md`

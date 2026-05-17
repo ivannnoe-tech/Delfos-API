@@ -230,8 +230,8 @@ Esta ADR nao autoriza nem implementa:
 - `docs/foundation-credentials-and-security.md`
 - `docs/foundation-tenancy-and-admin-resources.md`
 - `docs/operations-runbook.md`
-- ADR-0001
+- ADR-0001 → supersedida pela ADR-0032
 - ADR-0005
-- ADR-0007
+- ADR-0007 → supersedida pela ADR-0033
 - ADR-0008
 - ADR-0009

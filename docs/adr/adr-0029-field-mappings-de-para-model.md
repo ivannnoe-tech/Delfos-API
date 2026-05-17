@@ -85,7 +85,7 @@ tratar fallback — é **futura e não autorizada** nesta fase.
 - A transformação real de campos sobre respostas reais de fontes de cliente
   dependerá de runtime real aprovado e de ADR específico, alinhado a ADR-0024.
 
-## Referências
+## Relação com outros documentos
 
 - `AGENTS.md`
 - `docs/de-para.md`

@@ -116,3 +116,4 @@ Vanna 2.0 introduz um modelo **agent-based**: `User → Web Component → Server
 - [ADR-0025 — LLM-assisted analytics text generation](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
 - [ADR-0001 — Phase 1 API-based data source](../../adr/adr-0001-phase-1-api-based-data-source.md)
 - [ADR-0008 — Connectors and integration execution](../../adr/adr-0008-connectors-and-integration-execution.md)
+- [Índice da biblioteca de referências](../README.md)

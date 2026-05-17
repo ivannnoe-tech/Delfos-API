@@ -47,22 +47,24 @@ Campos principais:
 - `email`
 - `role` (`owner`, `admin`, `operator`, `viewer` na foundation atual)
 - `status`
-- `lastLoginAt`
+- `lastLoginAt` — **[futuro]** depende de auth real (ADR-0006); não existe na foundation atual
 - `createdAt`
 - `updatedAt`
 
-### tenant_users
+### tenant_users — **[futuro]**
 
-Vínculo entre usuário e tenant.
+> Coleção planejada para vínculo multi-tenant entre usuário e tenant. Depende de
+> auth real (ADR-0006) e RBAC granular. Não existe na foundation atual.
 
 - `tenantId`
 - `userId`
 - `roleIds`
 - `status`
 
-### roles
+### roles — **[futuro]**
 
-Perfis de acesso por tenant ou globais.
+> Coleção planejada para perfis de acesso por tenant ou globais. Depende de
+> auth real (ADR-0006) e RBAC granular. Não existe na foundation atual.
 
 - `tenantId`
 - `name`
@@ -325,9 +327,10 @@ Regras:
   valores sanitizados.
 - `DELETE` logico usa `status: archived`.
 
-### white_label_settings
+### white_label_settings — **[futuro]**
 
-Configuração visual por tenant/domínio.
+> Coleção planejada para configuração visual por tenant/domínio. Depende de
+> white-label real (Fase 2). Não existe na foundation atual.
 
 - `tenantId`
 - `logoUrl`
@@ -430,3 +433,25 @@ Auditar no mínimo:
 - alteração de De/Para
 - exportações sensíveis
 - alterações de white label
+
+---
+
+## 7. Definições de schema (source of truth)
+
+Arquivos Mongoose que definem as coleções. Toda alteração de campo deve
+atualizar tanto o schema quanto este documento.
+
+| Coleção | Schema |
+|---|---|
+| tenants | `src/modules/tenants/schemas/tenant.schema.ts` |
+| users | `src/modules/users/schemas/user.schema.ts` |
+| connections | `src/modules/connections/schemas/connection.schema.ts` |
+| credentials | `src/modules/credentials/schemas/credential.schema.ts` |
+| datasets | `src/modules/datasets/schemas/dataset.schema.ts` |
+| field_mappings | `src/modules/field-mappings/schemas/field-mapping.schema.ts` |
+| query_definitions | `src/modules/query-definitions/schemas/query-definition.schema.ts` |
+| dashboard_definitions | `src/modules/dashboard-definitions/schemas/dashboard-definition.schema.ts` |
+| report_definitions | `src/modules/report-definitions/schemas/report-definition.schema.ts` |
+| execution_requests | `src/modules/runtime/schemas/execution-request.schema.ts` |
+| execution_request_events | `src/modules/runtime/schemas/execution-request-event.schema.ts` |
+| audit_logs | `src/modules/audit/schemas/audit-log.schema.ts` |

@@ -83,7 +83,7 @@ Itens como cache em memória, rate limit de conectores, ETag e throttle dedicado
 
 ---
 
-## Referências
+## Relação com outros documentos
 
 - `docs/api-connectors.md` (conceitual/futuro)
 - ADR-0008

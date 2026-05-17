@@ -184,3 +184,4 @@ A coluna `Maturidade` segue a escala de [`maturity-taxonomy.md`](../maturity-tax
 - [../../adr/adr-0022-connector-dispatch-transport.md](../../adr/adr-0022-connector-dispatch-transport.md)
 - [../../adr/adr-0024-phase-1-and-phase-2-definition.md](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
 - [../maturity-taxonomy.md](../maturity-taxonomy.md) — escala de maturidade aplicada à tabela de roadmap
+- [Índice da biblioteca de referências](../README.md)

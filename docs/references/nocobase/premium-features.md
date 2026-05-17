@@ -164,3 +164,4 @@ Workflows e notificações cobrem a parte assíncrona; live data e live cursors 
 - ADR: [`../../adr/adr-0018-secure-audit-strategy.md`](../../adr/adr-0018-secure-audit-strategy.md)
 - ADR: [`../../adr/adr-0023-data-masking-policy.md`](../../adr/adr-0023-data-masking-policy.md)
 - ADR: [`../../adr/adr-0025-llm-assisted-analytics-text-generation.md`](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- [Índice da biblioteca de referências](../README.md)

@@ -145,3 +145,4 @@ semântica da interação, sem código.
 - [./anti-patterns.md](./anti-patterns.md)
 - [../../adr/adr-0003-chart-renderer-abstraction.md](../../adr/adr-0003-chart-renderer-abstraction.md)
 - [../../adr/adr-0011-dashboard-builder-and-widget-model.md](../../adr/adr-0011-dashboard-builder-and-widget-model.md)
+- [Índice da biblioteca de referências](../README.md)

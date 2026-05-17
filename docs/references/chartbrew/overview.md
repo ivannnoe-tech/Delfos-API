@@ -154,3 +154,4 @@ transformações, cacheia no Redis e devolve o resultado normalizado para o char
 - ADR: [../../adr/adr-0008-connectors-and-integration-execution.md](../../adr/adr-0008-connectors-and-integration-execution.md)
 - ADR: [../../adr/adr-0009-deployment-isolation-and-tenant-model.md](../../adr/adr-0009-deployment-isolation-and-tenant-model.md)
 - ADR: [../../adr/adr-0019-credential-encryption-and-rotation.md](../../adr/adr-0019-credential-encryption-and-rotation.md)
+- [Índice da biblioteca de referências](../README.md)

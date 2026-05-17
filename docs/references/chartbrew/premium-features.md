@@ -157,3 +157,4 @@ de alta frequência — é mais sobre reatividade da UI e da IA.
 - ADR: [../../adr/adr-0017-roles-and-permissions-model.md](../../adr/adr-0017-roles-and-permissions-model.md)
 - ADR: [../../adr/adr-0018-secure-audit-strategy.md](../../adr/adr-0018-secure-audit-strategy.md)
 - ADR: [../../adr/adr-0025-llm-assisted-analytics-text-generation.md](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- [Índice da biblioteca de referências](../README.md)

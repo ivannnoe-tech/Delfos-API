@@ -414,7 +414,12 @@ Regras:
 
 ## 7. Resposta de dataset query planejada/futura
 
-Não implementado no estado atual. Query real dependerá de decisão futura envolvendo `delfos-connectors`, armazenamento analítico/cache/snapshots ou mecanismo equivalente aprovado.
+> **Contrato futuro** — não implementado no estado atual. Está nesta seção como
+> referência de design; não faz parte dos contratos vigentes das seções 1–6.
+
+Query real dependerá de decisão futura envolvendo `delfos-connectors`,
+armazenamento analítico/cache/snapshots ou mecanismo equivalente aprovado
+(gated por ADR-0021/ADR-0022).
 
 ```json
 {

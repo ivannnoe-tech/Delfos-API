@@ -85,8 +85,8 @@ O banco principal do Delfos é **MongoDB**, acessado via **Mongoose** (`@nestjs/
 
 ---
 
-## Referências
+## Relação com outros documentos
 
 - `docs/database-model.md`
-- ADR-0001 (não armazenar dado operacional do cliente na Fase 1)
-- ADR-0007 (sem Redis na Fase 1)
+- ADR-0001 → supersedida pela ADR-0032 (não armazenar dado operacional do cliente na Fase 1)
+- ADR-0007 → supersedida pela ADR-0033 (sem Redis na Fase 1)

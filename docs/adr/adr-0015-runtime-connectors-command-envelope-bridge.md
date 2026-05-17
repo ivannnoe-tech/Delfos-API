@@ -5,8 +5,7 @@
 - **Autores**: Equipe Delfos Analytics
 - **Repositório**: delfos-api
 - **Fase impactada**: Planejamento de bridge entre runtime foundation e `delfos-connectors`
-- **Implementação**: não iniciada
-- **Implementacao atual**: somente documentacao e foundation tests-only sob `src/modules/runtime/bridge/`; nenhuma bridge real, sem provider, sem dispatch
+- **Implementação**: não iniciada — somente documentação e foundation tests-only sob `src/modules/runtime/bridge/`; nenhuma bridge real, sem provider, sem dispatch.
 
 ---
 

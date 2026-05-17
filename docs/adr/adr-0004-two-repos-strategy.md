@@ -85,7 +85,7 @@ A documentação compartilhada (AGENTS, DESIGN, /docs, /prompts, ADRs) vive no `
 
 ---
 
-## Referências
+## Relação com outros documentos
 
 - `delfos-api/AGENTS.md`
 - `delfos-api/docs/api-contracts.md`

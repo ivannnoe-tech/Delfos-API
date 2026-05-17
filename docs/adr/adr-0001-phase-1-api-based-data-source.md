@@ -100,13 +100,13 @@ No estado atual, o Delfos **nao** acessa banco de dados do cliente, **nao** cons
 
 ---
 
-## Referências
+## Relação com outros documentos
 
 - `docs/phase-1-scope.md`
 - `docs/phase-2-vision.md`
 - `docs/data-access-policy.md`
 - `docs/api-connectors.md`
 - `docs/de-para.md`
-- ADR-0007 (cache/Redis fora do escopo atual)
+- ADR-0007 → supersedida pela ADR-0033 (cache/Redis fora do escopo atual)
 - ADR-0008
 - ADR-0012

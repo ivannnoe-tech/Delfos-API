@@ -59,7 +59,7 @@ A coluna **Implementação** distingue decisão `Accepted` já construída de de
 | [0010](./adr-0010-analytics-storage-and-retention.md) | Analytics storage and retention | Accepted | parcial |
 | [0011](./adr-0011-dashboard-builder-and-widget-model.md) | Dashboard builder and widget model | Accepted | parcial |
 | [0012](./adr-0012-local-connectors-agent-and-on-premise-sources.md) | Local connectors agent and on-premise sources | Accepted | não iniciada |
-| 0013 | Connectors boundary and multitenant runtime contract (vive em `delfos-connectors/docs/adr/`) | Accepted | n/a (outro repo) |
+| 0013 | Connectors boundary and multitenant runtime contract — ADR mantida em `delfos-connectors/docs/adr/` | Accepted | parcial (documentação e skeleton) |
 | [0014](./adr-0014-runtime-execution-requests-foundation.md) | Runtime execution requests foundation | Accepted | parcial |
 | [0015](./adr-0015-runtime-connectors-command-envelope-bridge.md) | Runtime connectors command envelope bridge | Proposed | não iniciada |
 | [0016](./adr-0016-temporary-admin-key-auth.md) | Temporary admin-key authentication | Accepted | implementado |
@@ -95,3 +95,8 @@ A coluna **Implementação** distingue decisão `Accepted` já construída de de
 > **Supersedências**: a ADR-0032 supersede a ADR-0001 (fonte de dados da Fase 1);
 > a ADR-0033 supersede a ADR-0007 (sem cache/Redis na Fase 1). Os ADRs antigos
 > são mantidos como registro histórico, com `Status: Superseded`.
+>
+> **Lacunas conhecidas**: os módulos `tenants` e `users` não possuem ADR
+> dedicada. Ambos são foundation implementada e estável; uma ADR futura pode
+> formalizar decisões de modelo de tenant (single-org vs. multi-org) e de
+> gestão de usuários quando houver escopo explícito.

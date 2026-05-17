@@ -134,7 +134,7 @@ Backend TypeScript:
 - PascalCase para classes
 - camelCase para funções/variáveis
 
-Frontend Dart:
+Frontend Dart (conforme [Effective Dart: Style](https://dart.dev/guides/language/effective-dart/style)):
 
 - snake_case para arquivos
 - PascalCase para classes

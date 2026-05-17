@@ -137,3 +137,4 @@ Há ainda um **Agent SDK** (`wren-langchain`, `wren-pydantic`), *bindings* WebAs
 - ADRs: [adr-0008](../../adr/adr-0008-connectors-and-integration-execution.md) ·
   [adr-0024](../../adr/adr-0024-phase-1-and-phase-2-definition.md) ·
   [adr-0025](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- [Índice da biblioteca de referências](../README.md)

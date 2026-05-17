@@ -134,3 +134,4 @@ As fontes de dados são externas e acessadas via SQLAlchemy + drivers DBAPI.
 - [ADR-0001 — Phase 1 API-based data source](../../adr/adr-0001-phase-1-api-based-data-source.md)
 - [ADR-0024 — Phase 1 and Phase 2 definition](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
 - [ADR-0011 — Dashboard builder and widget model](../../adr/adr-0011-dashboard-builder-and-widget-model.md)
+- [Índice da biblioteca de referências](../README.md)

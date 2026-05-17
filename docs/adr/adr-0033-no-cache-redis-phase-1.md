@@ -80,7 +80,7 @@ específico.
   a dor aparecer (múltiplas instâncias, exportações pesadas, ingestão), conforme
   ADR-0024.
 
-## Referências
+## Relação com outros documentos
 
 - ADR-0007 — No Redis cache in Phase 1 (superseded por este ADR)
 - ADR-0008 — delfos-connectors e execução de integrações

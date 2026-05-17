@@ -129,3 +129,4 @@ O "realtime" do Vanna é o **streaming da resposta** (tabela/gráfico/resumo apa
 - [ADR-0025 — LLM-assisted analytics text generation](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
 - [ADR-0017 — Roles and permissions model](../../adr/adr-0017-roles-and-permissions-model.md)
 - [ADR-0018 — Secure audit strategy](../../adr/adr-0018-secure-audit-strategy.md)
+- [Índice da biblioteca de referências](../README.md)

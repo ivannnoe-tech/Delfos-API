@@ -126,3 +126,4 @@ Esta seção identifica decisões, limitações e padrões do Vanna AI que o Del
 - [ADR-0009 — Deployment isolation and tenant model](../../adr/adr-0009-deployment-isolation-and-tenant-model.md)
 - [ADR-0020 — Metadata sanitization and forbidden fields](../../adr/adr-0020-metadata-sanitization-and-forbidden-fields.md)
 - [ADR-0025 — LLM-assisted analytics text generation](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- [Índice da biblioteca de referências](../README.md)

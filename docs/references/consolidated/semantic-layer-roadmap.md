@@ -192,3 +192,4 @@ A coluna `Maturidade` em cada tabela segue a escala de [`maturity-taxonomy.md`](
 - `../../adr/adr-0017-roles-and-permissions-model.md`
 - `../../adr/adr-0023-data-masking-policy.md`
 - `../../adr/adr-0024-phase-1-and-phase-2-definition.md`
+- [Índice da biblioteca de referências](../README.md)

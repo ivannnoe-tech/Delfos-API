@@ -1,12 +1,11 @@
 # ADR-0006 — Self-managed JWT auth (no Auth0/Clerk)
 
-- **Status**: Accepted — decisão tomada, implementação não iniciada
+- **Status**: Accepted
 - **Data**: 2026-04-25
 - **Autores**: Equipe Delfos Analytics
 - **Repositório**: delfos-api
 - **Fase impactada**: Fase 1
-- **Implementação**: não iniciada
-- **Implementação atual**: auth temporária via `x-delfos-admin-key` (`AdminKeyGuard`). JWT real (login, refresh, bcrypt, strategies) está planejado nesta ADR mas **ainda não implementado**.
+- **Implementação**: não iniciada — auth temporária via `x-delfos-admin-key` (`AdminKeyGuard`). JWT real (login, refresh, bcrypt, strategies) está planejado nesta ADR mas **ainda não implementado**.
 
 ---
 
@@ -102,7 +101,7 @@ Implementaremos autenticação própria baseada em **JWT** com par **access toke
 
 ---
 
-## Referências
+## Relação com outros documentos
 
 - `docs/security-checklist.md`
 - `docs/security-lgpd.md`

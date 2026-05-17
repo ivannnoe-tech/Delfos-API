@@ -71,7 +71,7 @@ Implementar qualquer ideia da biblioteca exige, obrigatoriamente:
 1. escopo explícito aprovado;
 2. quando a mudança for arquitetural (ver `adr/README.md`, "Quando criar um ADR"), uma
    **ADR própria** aprovada;
-3. respeito às fases (ADR-0024) e às ADRs de bloqueio vigentes (ex.: ADR-0007,
+3. respeito às fases (ADR-0024) e às ADRs de bloqueio vigentes (ex.: ADR-0033,
    ADR-0021, ADR-0022).
 
 Uma ideia descrita em `ideas-for-delfos.md` ou em um roadmap consolidado **não** é uma
@@ -167,7 +167,7 @@ Atualizar uma referência existente segue as mesmas regras de formato e verifica
 - Esta ADR pode ser revista por uma ADR futura se o modelo de governança da camada
   precisar mudar.
 
-## Referências
+## Relação com outros documentos
 
 - [`../references/README.md`](../references/README.md) — índice da strategic reference library
 - [`../references/consolidated/strategic-product-vision.md`](../references/consolidated/strategic-product-vision.md)

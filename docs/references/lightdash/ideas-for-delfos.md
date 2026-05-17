@@ -240,7 +240,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 
 ---
 
-## Síntese de priorização
+## Priorização sugerida
 
 | Prioridade | Ideias |
 |---|---|
@@ -285,3 +285,4 @@ Além desses, todos os produtos alimentam os consolidados de visão e síntese:
 - ADR: [adr-0015-runtime-connectors-command-envelope-bridge.md](../../adr/adr-0015-runtime-connectors-command-envelope-bridge.md)
 - ADR: [adr-0018-secure-audit-strategy.md](../../adr/adr-0018-secure-audit-strategy.md)
 - ADR: [adr-0025-llm-assisted-analytics-text-generation.md](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- [Índice da biblioteca de referências](../README.md)

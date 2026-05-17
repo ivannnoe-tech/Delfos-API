@@ -109,3 +109,4 @@ Listar decisões observadas no Lightdash que, embora façam sentido para o conte
 - ADR: [adr-0005-mongodb-as-config-store.md](../../adr/adr-0005-mongodb-as-config-store.md)
 - ADR: [adr-0007-no-cache-redis-phase-1.md](../../adr/adr-0007-no-cache-redis-phase-1.md)
 - ADR: [adr-0008-connectors-and-integration-execution.md](../../adr/adr-0008-connectors-and-integration-execution.md)
+- [Índice da biblioteca de referências](../README.md)

@@ -188,3 +188,4 @@ onde começa um orquestrador externo, evitando reimplementar um motor de workflo
 - [../../adr/adr-0014-runtime-execution-requests-foundation.md](../../adr/adr-0014-runtime-execution-requests-foundation.md)
 - [../../adr/adr-0015-runtime-connectors-command-envelope-bridge.md](../../adr/adr-0015-runtime-connectors-command-envelope-bridge.md)
 - [../../adr/adr-0012-local-connectors-agent-and-on-premise-sources.md](../../adr/adr-0012-local-connectors-agent-and-on-premise-sources.md)
+- [Índice da biblioteca de referências](../README.md)

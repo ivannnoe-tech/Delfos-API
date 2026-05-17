@@ -164,3 +164,4 @@ Define os contratos sem emitir tokens nem abrir endpoints.
 - [../../adr/adr-0018-secure-audit-strategy.md](../../adr/adr-0018-secure-audit-strategy.md)
 - [../../adr/adr-0024-phase-1-and-phase-2-definition.md](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
 - [../maturity-taxonomy.md](../maturity-taxonomy.md)
+- [Índice da biblioteca de referências](../README.md)

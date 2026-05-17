@@ -1,12 +1,11 @@
 # ADR-0011 - Dashboard builder and widget model
 
-- **Status**: Accepted — decisão tomada, nada implementado além dos catálogos declarativos
+- **Status**: Accepted
 - **Data**: 2026-04-29
 - **Autores**: Equipe Delfos Analytics
 - **Repositório**: delfos-api
 - **Fase impactada**: Fase 1 e Fase 2, como decisao arquitetural e de produto
-- **Implementação**: parcial — `dashboard-definitions`/`query-definitions` declarativas existem; builder, widget runtime e renderização real não iniciados
-- **Implementação atual**: `dashboard-definitions` e `query-definitions` existem como catálogos declarativos (sem execução). O módulo `execution-preview` gera demonstração em memória. Dashboard builder, widget runtime, renderização real e query builder **não implementados**.
+- **Implementação**: parcial — `dashboard-definitions`/`query-definitions` declarativas existem; builder, widget runtime e renderização real não iniciados. O módulo `execution-preview` gera demonstração em memória. Dashboard builder, widget runtime, renderização real e query builder **não implementados**.
 
 ---
 
@@ -343,10 +342,10 @@ Esta ADR nao autoriza nem implementa:
 - `docs/foundation-credentials-and-security.md`
 - `docs/foundation-tenancy-and-admin-resources.md`
 - `docs/operations-runbook.md`
-- ADR-0001
+- ADR-0001 → supersedida pela ADR-0032
 - ADR-0003
 - ADR-0005
-- ADR-0007
+- ADR-0007 → supersedida pela ADR-0033
 - ADR-0008
 - ADR-0009
 - ADR-0010

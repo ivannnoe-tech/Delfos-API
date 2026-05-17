@@ -199,3 +199,4 @@ runtime↔connectors (ver ADR-0015). O modelo de grafo de nós é uma referênci
 - ADR: [`../../adr/adr-0014-runtime-execution-requests-foundation.md`](../../adr/adr-0014-runtime-execution-requests-foundation.md)
 - ADR: [`../../adr/adr-0015-runtime-connectors-command-envelope-bridge.md`](../../adr/adr-0015-runtime-connectors-command-envelope-bridge.md)
 - ADR: [`../../adr/adr-0017-roles-and-permissions-model.md`](../../adr/adr-0017-roles-and-permissions-model.md)
+- [Índice da biblioteca de referências](../README.md)

@@ -67,7 +67,7 @@ Bibliotecas com licença "gratuita até X usuários/desenvolvedores/faturamento"
 
 ---
 
-## Referências
+## Relação com outros documentos
 
 - `docs/libraries-policy.md`
 - `prompts/library-review-prompt.md`

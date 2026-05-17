@@ -120,3 +120,4 @@ O produto pressupõe que **já existe um projeto dbt maduro**. Sem dbt, o Lightd
 - [anti-patterns.md](./anti-patterns.md)
 - ADR: [adr-0001-phase-1-api-based-data-source.md](../../adr/adr-0001-phase-1-api-based-data-source.md)
 - ADR: [adr-0024-phase-1-and-phase-2-definition.md](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
+- [Índice da biblioteca de referências](../README.md)

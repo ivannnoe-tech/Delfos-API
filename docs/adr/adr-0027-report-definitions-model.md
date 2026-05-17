@@ -102,7 +102,7 @@ externa.
 - O runtime real de relatórios (geração de PDF/Excel/CSV, agendamento, envio)
   dependerá de decisão e ADR específicos de Fase 2, alinhados a ADR-0024.
 
-## Referências
+## Relação com outros documentos
 
 - `AGENTS.md`
 - `docs/architecture.md`

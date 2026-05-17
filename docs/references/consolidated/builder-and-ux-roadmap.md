@@ -141,13 +141,13 @@ componente desacoplado dos widgets:
 
 Padrão Metabase: cada widget declara o que acontece ao clicar.
 
-| Modo | Efeito | Fase |
+| Modo | Efeito | Onda (ver [crosswalk](../maturity-taxonomy.md#crosswalk-de-vocabulário-de-fase)) |
 |---|---|---|
-| `none` | Sem ação | Curto prazo (contrato) |
-| `cross-filter` | Emite valor como filtro global | Médio prazo |
-| `drill-down` | Troca dimension / abre granularidade | Médio prazo |
-| `navigate` | Vai para outro dashboard/rota parametrizada | Fase 2+ |
-| `url` | Abre URL externa validada | Fase 2+ |
+| `none` | Sem ação | Onda 1 (contrato declarativo) |
+| `cross-filter` | Emite valor como filtro global | Onda 2–3 |
+| `drill-down` | Troca dimension / abre granularidade | Onda 2–3 |
+| `navigate` | Vai para outro dashboard/rota parametrizada | Onda 4 (Fase 2) |
+| `url` | Abre URL externa validada | Onda 4 (Fase 2) |
 
 O click behavior é **declarativo** e versionado junto do widget.
 
@@ -328,3 +328,4 @@ A coluna `Maturidade` em cada tabela segue a escala de
 - [../../adr/adr-0015-runtime-connectors-command-envelope-bridge.md](../../adr/adr-0015-runtime-connectors-command-envelope-bridge.md)
 - [../../adr/adr-0024-phase-1-and-phase-2-definition.md](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
 - [../../adr/adr-0025-llm-assisted-analytics-text-generation.md](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- [Índice da biblioteca de referências](../README.md)

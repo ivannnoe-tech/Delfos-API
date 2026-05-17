@@ -144,3 +144,4 @@ Airbyte Protocol → o destino grava os dados → logs e estado são persistidos
 - [./anti-patterns.md](./anti-patterns.md)
 - [../../adr/adr-0008-connectors-and-integration-execution.md](../../adr/adr-0008-connectors-and-integration-execution.md)
 - [../../adr/adr-0001-phase-1-api-based-data-source.md](../../adr/adr-0001-phase-1-api-based-data-source.md)
+- [Índice da biblioteca de referências](../README.md)

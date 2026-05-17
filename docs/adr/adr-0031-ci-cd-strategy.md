@@ -90,7 +90,7 @@ Antes de abrir PR, o fluxo local recomendado continua sendo `format:check`,
 - O CD real e a promoção de jobs opcionais a obrigatórios podem ser tratados por
   ADRs futuros quando o produto avançar para produção.
 
-## Referências
+## Relação com outros documentos
 
 - `AGENTS.md`
 - `CONTRIBUTING.md`

@@ -110,3 +110,4 @@ Cube suporta refresh keys curtas e WebSockets para consultas próximas de tempo 
 - [./ideas-for-delfos.md](./ideas-for-delfos.md)
 - [./anti-patterns.md](./anti-patterns.md)
 - ADRs: [../../adr/adr-0023-data-masking-policy.md](../../adr/adr-0023-data-masking-policy.md), [../../adr/adr-0025-llm-assisted-analytics-text-generation.md](../../adr/adr-0025-llm-assisted-analytics-text-generation.md), [../../adr/adr-0018-secure-audit-strategy.md](../../adr/adr-0018-secure-audit-strategy.md)
+- [Índice da biblioteca de referências](../README.md)

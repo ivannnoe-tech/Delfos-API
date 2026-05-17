@@ -286,3 +286,4 @@ Além desses, todos os produtos alimentam os consolidados de visão e síntese:
 - [../../adr/adr-0018-secure-audit-strategy.md](../../adr/adr-0018-secure-audit-strategy.md)
 - [../../adr/adr-0025-llm-assisted-analytics-text-generation.md](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
 - [../maturity-taxonomy.md](../maturity-taxonomy.md) — taxonomia de maturidade aplicada às ideias
+- [Índice da biblioteca de referências](../README.md)

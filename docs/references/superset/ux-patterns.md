@@ -150,3 +150,4 @@ builder de dashboards do Delfos.
 - [anti-patterns.md](./anti-patterns.md)
 - [ADR-0011 — Dashboard builder and widget model](../../adr/adr-0011-dashboard-builder-and-widget-model.md)
 - [ADR-0003 — Chart renderer abstraction](../../adr/adr-0003-chart-renderer-abstraction.md)
+- [Índice da biblioteca de referências](../README.md)

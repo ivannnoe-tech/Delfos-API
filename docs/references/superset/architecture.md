@@ -176,3 +176,4 @@ ferramentas externas (Airflow, dbt).
 - [ADR-0007 — No cache/Redis Phase 1](../../adr/adr-0007-no-cache-redis-phase-1.md)
 - [ADR-0009 — Deployment isolation and tenant model](../../adr/adr-0009-deployment-isolation-and-tenant-model.md)
 - [ADR-0017 — Roles and permissions model](../../adr/adr-0017-roles-and-permissions-model.md)
+- [Índice da biblioteca de referências](../README.md)

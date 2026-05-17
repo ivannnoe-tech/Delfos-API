@@ -19,6 +19,20 @@ Priorizar:
 
 ---
 
+### Metas de cobertura
+
+| Repo | Framework | Meta statements | Piso lines |
+|---|---|---|---|
+| delfos-api | Jest | 80% | 65% |
+| delfos-web | Flutter test | — (ainda sem enforcement) | — |
+| delfos-connectors | Vitest | 80% | 65% |
+
+Diferenca de framework: delfos-api usa **Jest** (alinhado com NestJS); delfos-connectors
+usa **Vitest** (ESM puro, mais rapido para biblioteca TypeScript). Nao ha plano de
+unificar.
+
+---
+
 ## 2. Testes atuais obrigatorios - backend
 
 O estado atual do `delfos-api` e foundation administrativa/declarativa. A cobertura atual deve

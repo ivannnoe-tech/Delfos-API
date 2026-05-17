@@ -155,6 +155,11 @@ mapeia Horizonte ↔ Fase ↔ Onda ↔ Catálogo numa única tabela.
 
 ## 4. Princípios de produto
 
+> Os 8 princípios abaixo são um subconjunto focado em arquitetura/produto. O
+> conjunto completo de 12 princípios (keystone) está em
+> [`docs/product/principles.md`](../../product/principles.md), que é a
+> referência autoritativa.
+
 Os princípios abaixo são o filtro de toda decisão. Quando uma proposta os
 contraria, ela é recusada ou exige ADR.
 
@@ -258,3 +263,4 @@ direção certa.
   [../../adr/adr-0022-connector-dispatch-transport.md](../../adr/adr-0022-connector-dispatch-transport.md) ·
   [../../adr/adr-0024-phase-1-and-phase-2-definition.md](../../adr/adr-0024-phase-1-and-phase-2-definition.md) ·
   [../../adr/adr-0025-llm-assisted-analytics-text-generation.md](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- [Índice da biblioteca de referências](../README.md)

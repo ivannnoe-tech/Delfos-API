@@ -137,3 +137,4 @@ Em 2.0 o `Agent` é o orquestrador: decide quando recuperar contexto, quando cha
 - [ADR-0007 — No cache/Redis Phase 1](../../adr/adr-0007-no-cache-redis-phase-1.md)
 - [ADR-0008 — Connectors and integration execution](../../adr/adr-0008-connectors-and-integration-execution.md)
 - [ADR-0015 — Runtime connectors command envelope bridge](../../adr/adr-0015-runtime-connectors-command-envelope-bridge.md)
+- [Índice da biblioteca de referências](../README.md)

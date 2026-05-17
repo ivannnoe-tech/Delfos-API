@@ -242,7 +242,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 
 ---
 
-## Síntese
+## Priorização sugerida
 
 As ideias de maior valor imediato são **declarativas e alinhadas à foundation**: spec de
 conector dirigindo a UI (1), protocolo versionado (2) e builder com test embutido (5). As
@@ -282,3 +282,4 @@ Além desses, todos os produtos alimentam os consolidados de visão e síntese:
 - [../../adr/adr-0011-dashboard-builder-and-widget-model.md](../../adr/adr-0011-dashboard-builder-and-widget-model.md)
 - [../../adr/adr-0024-phase-1-and-phase-2-definition.md](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
 - [../maturity-taxonomy.md](../maturity-taxonomy.md)
+- [Índice da biblioteca de referências](../README.md)

@@ -92,7 +92,7 @@ Critérios que a ADR de transporte futura deverá considerar:
 - **Fila de mensagens (broker)** — assíncrona, durável, desacoplada, boa para
   jobs longos, retries e isolamento de falha. Porém exige infraestrutura de
   broker, que **conflita diretamente com o escopo atual sem fila/worker
-  definido pela ADR-0007**. Não escolhida agora; exigiria ADR de promoção de
+  definido pela ADR-0007 (supersedida pela ADR-0033)**. Não escolhida agora; exigiria ADR de promoção de
   fila além desta ADR de transporte.
 - **gRPC** — transporte tipado e eficiente, bom para contrato forte entre
   serviços. Porém adiciona infraestrutura, geração de stubs e complexidade
@@ -112,7 +112,7 @@ Critérios que a ADR de transporte futura deverá considerar:
 
 - Evita escolher um transporte antes de existir necessidade real e antes de
   conhecer o perfil de carga.
-- Mantém a foundation alinhada com ADR-0007 (sem fila/worker), ADR-0014 e
+- Mantém a foundation alinhada com ADR-0033 (sem fila/worker; supersede ADR-0007), ADR-0014 e
   ADR-0015 (runtime e bridge foundation-only).
 - Documenta requisitos de segurança e critérios de decisão com antecedência,
   reduzindo o risco de uma escolha apressada na Fase 2.
@@ -168,7 +168,7 @@ Esta ADR não autoriza nem implementa:
 - A ADR de transporte futura deverá escolher o mecanismo usando os critérios
   aqui registrados e respeitando os requisitos obrigatórios de segurança.
 - A escolha de fila como transporte exigirá, adicionalmente, uma ADR de
-  promoção de fila/worker (alinhada com ADR-0007), por adicionar
+  promoção de fila/worker (alinhada com ADR-0033, que supersede ADR-0007), por adicionar
   infraestrutura.
 - Após o transporte aprovado, a bridge real deverá iniciar como command
   preparation + validation, conforme o plano de fases do
@@ -176,7 +176,7 @@ Esta ADR não autoriza nem implementa:
 
 ## Relação com outros documentos
 
-- ADR-0007 — define que não há fila, cache ou scheduler no escopo atual; uma
+- ADR-0007 → supersedida pela ADR-0033 — define que não há fila, cache ou scheduler no escopo atual; uma
   fila como transporte exigiria ADR de promoção própria.
 - ADR-0008 — define o `delfos-connectors` como executor futuro de integrações
   pesadas; esta ADR trata de como o comando chegaria a esse executor.

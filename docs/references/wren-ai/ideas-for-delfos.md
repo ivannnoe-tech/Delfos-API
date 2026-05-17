@@ -241,7 +241,7 @@ implementação. Prioridade e complexidade são estimativas para *roadmap*.
 
 ---
 
-## Síntese de priorização
+## Priorização sugerida
 
 | Prioridade | Ideias |
 |---|---|
@@ -287,3 +287,4 @@ Além desses, todos os produtos alimentam os consolidados de visão e síntese:
   [adr-0024](../../adr/adr-0024-phase-1-and-phase-2-definition.md) ·
   [adr-0025](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
 - [Taxonomia de maturidade](../maturity-taxonomy.md)
+- [Índice da biblioteca de referências](../README.md)

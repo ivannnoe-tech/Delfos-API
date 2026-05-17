@@ -151,3 +151,4 @@ O query orchestrator coordena: roteamento de rollup, fallback para banco, invali
 - [./ideas-for-delfos.md](./ideas-for-delfos.md)
 - [./anti-patterns.md](./anti-patterns.md)
 - ADRs: [../../adr/adr-0008-connectors-and-integration-execution.md](../../adr/adr-0008-connectors-and-integration-execution.md), [../../adr/adr-0009-deployment-isolation-and-tenant-model.md](../../adr/adr-0009-deployment-isolation-and-tenant-model.md), [../../adr/adr-0015-runtime-connectors-command-envelope-bridge.md](../../adr/adr-0015-runtime-connectors-command-envelope-bridge.md), [../../adr/adr-0017-roles-and-permissions-model.md](../../adr/adr-0017-roles-and-permissions-model.md)
+- [Índice da biblioteca de referências](../README.md)

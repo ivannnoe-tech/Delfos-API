@@ -1,8 +1,10 @@
 # Foundation Stability Checkpoint — Delfos Analytics
 
 > Status: documento normativo (checkpoint vivo).
+> Versão: v1.0.
 > Data do checkpoint: 2026-05-16.
 > Escopo: estado consolidado da Fase 1 / foundation nos tres repositorios.
+> Responsável: Equipe Delfos Analytics.
 
 Este checkpoint registra, de forma honesta, ate onde a foundation
 administrativa/declarativa esta madura. Ele nao autoriza Fase 2.

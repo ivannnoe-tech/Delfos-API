@@ -148,7 +148,8 @@ Ver `docs/security-lgpd.md` e `docs/security-checklist.md`.
 
 ## 9. Dados e persistência
 
-MongoDB é usado como banco de configuração do Delfos.
+MongoDB é usado como banco de configuração do Delfos. Para o status canônico de
+cada módulo, ver `AGENTS.md` §6.
 
 **Armazena hoje** (coleções reais da foundation):
 
@@ -177,6 +178,11 @@ Ver `docs/database-model.md` e ADR-0005.
 ---
 
 ## 10. Conectores de API
+
+> **Conceitual/futuro** — esta seção descreve a visão arquitetural do motor de
+> conectores, **não o estado implementado**. Nenhum conector real, dispatch,
+> execução de query, cache, fila ou worker existe. Implementação real depende
+> de ADRs aprovadas (ADR-0021, ADR-0022) e escopo explícito.
 
 O motor de conectores deve ser genérico e seguro. Cada cliente pode ter contratos próprios, mas o Delfos deve abstrair isso por:
 

@@ -119,3 +119,4 @@ Componentes-chave: o **API Gateway** recebe consultas, o **query orchestrator** 
 - [./ideas-for-delfos.md](./ideas-for-delfos.md)
 - [./anti-patterns.md](./anti-patterns.md)
 - ADRs: [../../adr/adr-0001-phase-1-api-based-data-source.md](../../adr/adr-0001-phase-1-api-based-data-source.md), [../../adr/adr-0007-no-cache-redis-phase-1.md](../../adr/adr-0007-no-cache-redis-phase-1.md), [../../adr/adr-0024-phase-1-and-phase-2-definition.md](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
+- [Índice da biblioteca de referências](../README.md)

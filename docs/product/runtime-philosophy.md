@@ -11,8 +11,9 @@ Execução **real ainda não existe** no Delfos. Os módulos `runtime` e `execut
 são *foundation declarativa*: modelam execution requests, validam-nas e as auditam — sem
 jamais chamar uma fonte de dados, sem connector real, sem worker, sem fila. Este
 documento descreve a **postura** que governará o runtime quando ele for construído.
-Execução real é gated por escopo aprovado e pelas ADRs Proposed adr-0015, adr-0021 e
-adr-0022.
+Execução real é gated por escopo aprovado e pelas ADRs Proposed adr-0021 e
+adr-0022 (gates formais da Fase 2). A adr-0015 (command envelope bridge) é
+pré-requisito de foundation, não gate de fase.
 
 ---
 
@@ -179,8 +180,9 @@ governança da foundation:
   resultado existe fora de um `tenantId`.
 - **Pular a foundation.** Construir despacho real antes de envelope, preview e contrato
   de segredo estarem prontos e testados viola o Princípio 1 — e não será feito.
-- **Connector real sem ADR.** Connectors reais e despacho real são gated por adr-0015,
-  adr-0021 e adr-0022; enquanto *Proposed*, descrevem intenção, não autorização.
+- **Connector real sem ADR.** Connectors reais e despacho real são gated por adr-0021
+  e adr-0022 (gates formais de Fase 2); enquanto *Proposed*, descrevem intenção,
+  não autorização. A adr-0015 é pré-requisito de foundation (command envelope).
 
 ---
 

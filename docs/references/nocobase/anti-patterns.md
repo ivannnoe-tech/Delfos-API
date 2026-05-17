@@ -174,3 +174,4 @@ ao core; arquivos > 500 linhas exigem refatoração ou justificativa documentada
 - ADR: [`../../adr/adr-0009-deployment-isolation-and-tenant-model.md`](../../adr/adr-0009-deployment-isolation-and-tenant-model.md)
 - ADR: [`../../adr/adr-0024-phase-1-and-phase-2-definition.md`](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
 - ADR: [`../../adr/adr-0025-llm-assisted-analytics-text-generation.md`](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- [Índice da biblioteca de referências](../README.md)

@@ -242,7 +242,7 @@ quando indicado, para futuras ADRs.
 
 ---
 
-## Síntese de priorização
+## Priorização sugerida
 
 | Prioridade | Ideias |
 |---|---|
@@ -287,3 +287,4 @@ Além desses, todos os produtos alimentam os consolidados de visão e síntese:
 - ADR: [../../adr/adr-0024-phase-1-and-phase-2-definition.md](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
 - ADR: [../../adr/adr-0025-llm-assisted-analytics-text-generation.md](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
 - [Taxonomia de maturidade](../maturity-taxonomy.md) — taxonomia de maturidade aplicada às ideias
+- [Índice da biblioteca de referências](../README.md)

@@ -191,3 +191,4 @@ Modela o RBAC completo; aplicação a usuários finais depende de auth real.
 - [../../adr/adr-0024-phase-1-and-phase-2-definition.md](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
 - [../../adr/adr-0025-llm-assisted-analytics-text-generation.md](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
 - [../maturity-taxonomy.md](../maturity-taxonomy.md)
+- [Índice da biblioteca de referências](../README.md)

@@ -119,3 +119,4 @@ A UI é primariamente desktop-first (BI é tarefa de tela grande). Dashboards t�
 - [anti-patterns.md](./anti-patterns.md)
 - ADR: [adr-0003-chart-renderer-abstraction.md](../../adr/adr-0003-chart-renderer-abstraction.md)
 - ADR: [adr-0011-dashboard-builder-and-widget-model.md](../../adr/adr-0011-dashboard-builder-and-widget-model.md)
+- [Índice da biblioteca de referências](../README.md)

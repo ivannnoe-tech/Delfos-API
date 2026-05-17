@@ -109,3 +109,4 @@ que cada peça tenha ADR e autorização. Conceito sim; arquitetura prematura n�
   [adr-0009](../../adr/adr-0009-deployment-isolation-and-tenant-model.md) ·
   [adr-0024](../../adr/adr-0024-phase-1-and-phase-2-definition.md) ·
   [adr-0025](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- [Índice da biblioteca de referências](../README.md)

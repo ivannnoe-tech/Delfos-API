@@ -197,3 +197,4 @@ Complexidade de infraestrutura entra só com ADR e necessidade comprovada.
 - [ADR-0020 — Metadata sanitization and forbidden fields](../../adr/adr-0020-metadata-sanitization-and-forbidden-fields.md)
 - [ADR-0007 — No cache/Redis Phase 1](../../adr/adr-0007-no-cache-redis-phase-1.md)
 - [ADR-0024 — Phase 1 and Phase 2 definition](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
+- [Índice da biblioteca de referências](../README.md)

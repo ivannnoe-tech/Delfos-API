@@ -8,6 +8,8 @@ conectores reais, execucao real, cache, dashboard builder ou report builder sao 
 deferida, nao implementacao atual.
 
 Cross-reference: ver tambem `delfos-connectors/docs/roadmap.md` para o roadmap do executor futuro.
+Para traduzir termos de fase (Horizonte / Fase / Onda / Catálogo), ver o
+[crosswalk de vocabulário](./references/maturity-taxonomy.md#crosswalk-de-vocabulário-de-fase).
 
 Marco de estabilizacao da foundation (2026-05-16): documentacao agent-ready, testes
 unit/integration reforcados, API E2E smoke com MongoDB em memoria, Web Playwright E2E smoke,
@@ -56,6 +58,11 @@ Implementado atualmente:
   administrativos, readiness dry-run e demo-execute ficticio;
 - planejamento documental da futura bridge `ExecutionRequest -> ConnectorExecutionCommand`, sem
   implementacao real;
+
+> **Teto de escopo (bridge/runtime):** todo código de foundation de bridge/resolver/adapter
+> sob `src/modules/runtime/bridge/` é **tests-only e não operacional** — classes puras,
+> sem provider NestJS, sem `RuntimeModule`, sem endpoint, sem dispatch. Congelado nesse
+> estado até a **ADR-0015** estar `Accepted`.
 - Bridge Resolver Design documentado em
   [`docs/runtime-connectors-bridge-resolver-design.md`](./runtime-connectors-bridge-resolver-design.md),
   sem provider, endpoint, transporte ou dispatch real;
@@ -117,7 +124,7 @@ Nao implementado atualmente:
 - dashboard builder/runtime final;
 - query builder;
 - report builder/runtime e exportacoes finais;
-- commitlint e ampliacao do pipeline com `format:check` (o `build` ja roda no CI);
+- ampliacao do pipeline com `format:check` (o `build` e `commitlint` ja rodam no CI);
 - promocao do E2E de API e do E2E de Web a status check obrigatorio (hoje opcionais).
 
 ---
@@ -272,8 +279,8 @@ a prontidao agent-ready e nao devem ser implementados sem tarefa explicita:
   e validacao automatica de links e referencias relativas nos docs (delfos-api, delfos-web,
   delfos-connectors). Hoje a validacao de links e manual (ver `docs/agent-validation-checklist.md`).
   Melhoria recomendada de qualidade, nao bloqueante.
-- **commitlint e ampliacao do pipeline** com `format:check` — ja listado acima como
-  nao implementado. O `build` ja integra o fluxo obrigatorio do CI.
+- **ampliacao do pipeline** com `format:check` — ja listado acima como
+  nao implementado. O `build` e `commitlint` ja integram o fluxo obrigatorio do CI.
 
 ---
 

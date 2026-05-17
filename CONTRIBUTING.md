@@ -57,7 +57,7 @@ PRs sempre vão direto para `main`.
 
 Todo commit deve seguir [Conventional Commits](https://www.conventionalcommits.org/). O CI via GitHub Actions executa lint, test e build como jobs obrigatórios.
 
-`commitlint` permanece planejado.
+`commitlint` é validado no CI como job dedicado em PRs (ver `.github/workflows/ci.yml`).
 
 Tipos aceitos: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`.
 

@@ -240,7 +240,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 
 ---
 
-## Leitura de prioridade
+## Priorização sugerida
 
 | Prioridade | Ideias |
 |---|---|
@@ -282,3 +282,4 @@ Além desses, todos os produtos alimentam os consolidados de visão e síntese:
 - [ADR-0007 — No cache/Redis Phase 1](../../adr/adr-0007-no-cache-redis-phase-1.md)
 - [ADR-0014 — Runtime execution requests foundation](../../adr/adr-0014-runtime-execution-requests-foundation.md)
 - [Taxonomia de maturidade](../maturity-taxonomy.md)
+- [Índice da biblioteca de referências](../README.md)

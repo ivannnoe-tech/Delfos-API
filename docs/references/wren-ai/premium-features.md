@@ -114,3 +114,4 @@ de dashboard. *Realtime* não é diferencial do produto.
 - ADRs: [adr-0018](../../adr/adr-0018-secure-audit-strategy.md) ·
   [adr-0023](../../adr/adr-0023-data-masking-policy.md) ·
   [adr-0025](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- [Índice da biblioteca de referências](../README.md)

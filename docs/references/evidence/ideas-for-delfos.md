@@ -240,7 +240,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 
 ---
 
-## Síntese de priorização
+## Priorização sugerida
 
 | Prioridade | Ideias |
 |---|---|
@@ -282,3 +282,4 @@ Além desses, todos os produtos alimentam os consolidados de visão e síntese:
 - [../../adr/adr-0014-runtime-execution-requests-foundation.md](../../adr/adr-0014-runtime-execution-requests-foundation.md)
 - [../../adr/adr-0024-phase-1-and-phase-2-definition.md](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
 - [../../adr/adr-0025-llm-assisted-analytics-text-generation.md](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- [Índice da biblioteca de referências](../README.md)

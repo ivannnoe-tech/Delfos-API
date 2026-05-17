@@ -10,7 +10,8 @@ Backend do **Delfos Analytics** — API NestJS que atualmente fornece a foundati
 
 ---
 
-Contratos HTTP atuais da foundation MongoDB/configuracao: [`docs/api-foundation-contracts.md`](./docs/api-foundation-contracts.md).
+Contratos HTTP: referência completa em [`docs/api-contracts.md`](./docs/api-contracts.md);
+resumo rápido da foundation em [`docs/api-foundation-contracts.md`](./docs/api-foundation-contracts.md).
 
 Os endpoints administrativos da foundation exigem temporariamente `x-delfos-admin-key`
 configurado por `DELFOS_ADMIN_KEY`. Esse mecanismo existe apenas para desenvolvimento da

@@ -125,3 +125,4 @@ O Cube acerta na **camada semântica** e na **governança de métricas** — é 
 - [./premium-features.md](./premium-features.md)
 - [./ideas-for-delfos.md](./ideas-for-delfos.md)
 - ADRs: [../../adr/adr-0002-no-paid-components.md](../../adr/adr-0002-no-paid-components.md), [../../adr/adr-0007-no-cache-redis-phase-1.md](../../adr/adr-0007-no-cache-redis-phase-1.md), [../../adr/adr-0019-credential-encryption-and-rotation.md](../../adr/adr-0019-credential-encryption-and-rotation.md), [../../adr/adr-0020-metadata-sanitization-and-forbidden-fields.md](../../adr/adr-0020-metadata-sanitization-and-forbidden-fields.md)
+- [Índice da biblioteca de referências](../README.md)

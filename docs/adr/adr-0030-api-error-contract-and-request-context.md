@@ -95,7 +95,7 @@ alcançar a lógica do módulo.
 - O envelope de erro e o contexto de requisição permanecem válidos quando o auth
   real (JWT) e o runtime real forem introduzidos.
 
-## Referências
+## Relação com outros documentos
 
 - `AGENTS.md`
 - `docs/architecture.md`

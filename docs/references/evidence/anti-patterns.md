@@ -147,3 +147,4 @@ Vários desses "anti-padrões" são, no contexto do Evidence, **decisões corret
 - [../../adr/adr-0008-connectors-and-integration-execution.md](../../adr/adr-0008-connectors-and-integration-execution.md)
 - [../../adr/adr-0009-deployment-isolation-and-tenant-model.md](../../adr/adr-0009-deployment-isolation-and-tenant-model.md)
 - [../../adr/adr-0016-temporary-admin-key-auth.md](../../adr/adr-0016-temporary-admin-key-auth.md)
+- [Índice da biblioteca de referências](../README.md)

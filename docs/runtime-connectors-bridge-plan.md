@@ -18,6 +18,13 @@ O desenho tecnico das interfaces internas futuras do resolver esta em
 Esta ponte e documental. Nenhum codigo atual deve interpretar este documento como autorizacao para
 execucao real.
 
+> **Teto de escopo (scope ceiling):** nenhum codigo adicional de foundation de
+> bridge/runtime pode ser construido alem do estado atual tests-only enquanto a
+> **ADR-0015** nao estiver com status `Accepted`. Este documento nao autoriza:
+> provider NestJS, `RuntimeModule` wiring, endpoint, transporte, dispatch,
+> descriptografia de credenciais ou chamada ao `delfos-connectors`. Somente
+> design/foundation documental.
+
 ## Estado Atual
 
 ### delfos-api

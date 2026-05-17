@@ -160,3 +160,4 @@ O Wren AI Service orquestra o ciclo: recuperar contexto → gerar WrenSQL → va
   [adr-0014](../../adr/adr-0014-runtime-execution-requests-foundation.md) ·
   [adr-0015](../../adr/adr-0015-runtime-connectors-command-envelope-bridge.md) ·
   [adr-0017](../../adr/adr-0017-roles-and-permissions-model.md)
+- [Índice da biblioteca de referências](../README.md)

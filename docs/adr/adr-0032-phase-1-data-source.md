@@ -95,7 +95,7 @@ de Fase 2 e será executado pelo futuro `delfos-connectors`, sob ADRs próprios.
 - O consumo real das APIs de cliente dependerá do `delfos-connectors` e das ADRs
   bloqueantes de Fase 2 (ADR-0021, ADR-0022), conforme ADR-0024.
 
-## Referências
+## Relação com outros documentos
 
 - ADR-0001 — Phase 1 data source (superseded por este ADR)
 - ADR-0008 — delfos-connectors e execução de integrações

@@ -17,6 +17,11 @@ Delfos hoje tem apenas a foundation declarativa (`health`, `auth`, `audit`,
 `execution-preview`). Qualquer módulo abaixo exige ADR aprovada e autorização
 explícita antes de qualquer código.
 
+> **Relação com a matriz de prioridade:** os 12 módulos deste catálogo são
+> agrupamentos maiores; as 55 features de
+> [`priority-matrix.md`](./priority-matrix.md) são capacidades individuais que
+> podem cruzar módulos. Uma feature pode pertencer a mais de um módulo.
+
 Convenções de fase:
 
 - **Curto prazo declarativo** — extensível na foundation atual, sem execução
@@ -244,3 +249,4 @@ semântica é a fundação de quase tudo.
   [../../adr/adr-0024-phase-1-and-phase-2-definition.md](../../adr/adr-0024-phase-1-and-phase-2-definition.md) ·
   [../../adr/adr-0025-llm-assisted-analytics-text-generation.md](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
 - Taxonomia: [../maturity-taxonomy.md](../maturity-taxonomy.md)
+- [Índice da biblioteca de referências](../README.md)

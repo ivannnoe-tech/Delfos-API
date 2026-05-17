@@ -55,7 +55,7 @@ Declare a decisão de forma direta. Use voz ativa, presente. Ex.: "O Delfos cons
 - O que essa decisão habilita
 - O que essa decisão pode dificultar quando precisarmos rever
 
-## Referências
+## Relação com outros documentos
 
 - Links para documentos internos (`docs/...`)
 - Links para discussões, RFCs, papers, posts

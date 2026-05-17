@@ -7,7 +7,7 @@
 ## Propósito
 
 Este documento consolida, numa única visão navegável e priorizada, as ideias
-espalhadas pelos 10 catálogos `references/<produto>/ideas-for-delfos.md`, pelos 7
+espalhadas pelos 10 catálogos `references/<produto>/ideas-for-delfos.md`, pelos 6
 roadmaps temáticos de `references/consolidated/` e pelo
 [`future-modules-catalog.md`](./future-modules-catalog.md).
 
@@ -15,7 +15,7 @@ Muitas ideias se repetem entre produtos — camada semântica aparece em Cube,
 Lightdash, WrenAI e Superset; filtros globais em Metabase, Superset, Chartbrew,
 Lightdash e NocoBase; versionamento em Lightdash e Evidence. Cada **feature
 consolidada** abaixo agrupa todas as ideias equivalentes numa só linha. Não há
-uma linha por ideia crua: são 54 capacidades sintetizadas.
+uma linha por ideia crua: são 55 capacidades sintetizadas.
 
 Por força da [`ADR-0026`](../../adr/adr-0026-strategic-reference-library.md),
 **nenhuma ideia desta biblioteca está aprovada**. Esta matriz é orientadora —
@@ -116,25 +116,31 @@ indicado, uma ADR aprovada.
 
 ## Leitura da matriz
 
-São **54 features consolidadas** sintetizadas a partir de 10 estudos de produto
+São **55 features consolidadas** sintetizadas a partir de 10 estudos de produto
 (60 arquivos de análise, ~120 ideias), dos roadmaps temáticos de
 `references/consolidated/` e do catálogo de módulos futuros.
+
+> **Relação com o catálogo de módulos:** as 55 features são capacidades
+> individuais; os 12 módulos futuros de
+> [`future-modules-catalog.md`](./future-modules-catalog.md) são agrupamentos
+> maiores que podem conter múltiplas features. Uma feature pode cruzar
+> módulos diferentes.
 
 ### Distribuição por "Pode fazer agora?"
 
 | Valor | Contagem | Leitura |
 |---|---|---|
 | `Sim` | 9 | Extensões puramente declarativas de módulos de foundation; sem execução real, sem ADR arquitetural obrigatória. |
-| `Parcial` | 26 | Contrato/modelo viável na foundation, mas valor pleno depende de ADR nova e/ou de execução real futura. |
+| `Parcial` | 27 | Contrato/modelo viável na foundation, mas valor pleno depende de ADR nova e/ou de execução real futura. |
 | `Não` | 19 | Dependem de execução real, IA, auth real, cache/fila/worker ou de ADR em `Proposed`. |
 
 ### Distribuição por Fase
 
 | Fase | Contagem |
 |---|---|
-| `Fase 1` | 17 |
+| `Fase 1` | 22 |
 | `Ambas` | 14 |
-| `Fase 2` | 23 |
+| `Fase 2` | 19 |
 
 A camada semântica declarativa é a fundação conceitual de quase tudo: alimenta o
 catálogo de métricas, o query builder, a explainability e o grounding da IA. O
