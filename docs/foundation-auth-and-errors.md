@@ -41,7 +41,7 @@ x-delfos-actor-role: admin
 
 Regras:
 
-- `x-delfos-admin-key` e obrigatorio para `tenants`, `users`, `connections`, `credentials`, `datasets`, `query-definitions`, `dashboard-definitions` e `field-mappings`.
+- `x-delfos-admin-key` e obrigatorio para `tenants`, `users`, `connections`, `credentials`, `datasets`, `query-definitions`, `dashboard-definitions`, `report-definitions` e `field-mappings`.
 - `GET /health` continua publico e nao exige headers de auth.
 - `x-delfos-tenant-id` e opcional nesta foundation, mas quando enviado deve ser um ObjectId MongoDB valido.
 - `x-delfos-actor-id` e opcional e aceita apenas identificadores tecnicos simples.

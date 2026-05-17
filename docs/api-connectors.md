@@ -216,7 +216,7 @@ Quando a fase de conectores for aprovada, a prioridade deve ser configuração g
 
 ## 12. Referências cruzadas (delfos-connectors)
 
-A foundation documental do repositório `delfos-connectors` consolida contratos conceituais, fronteiras de segurança e isolamento multitenant do runtime futuro. Como o repositório vive separado, consultar localmente em `D:\Delfos_Analytics_Project\delfos-connectors\`:
+A foundation documental do repositório `delfos-connectors` consolida contratos conceituais, fronteiras de segurança e isolamento multitenant do runtime futuro. Como o repositório vive separado, consultar no repositório `delfos-connectors`:
 
 - `docs/runtime-contracts.md` — modelos conceituais (`ConnectorExecutionCommand`, `ConnectorSourceScope`, `ConnectorExecutionResult`, `ConnectorExecutionError`, etc.) e bridge conceitual `kind -> capability`;
 - `docs/security-boundaries.md` — campos proibidos, erro sanitizado e proibições de cache/fila;

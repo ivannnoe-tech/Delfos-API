@@ -406,25 +406,9 @@ Regras:
 - `PATCH /api/v1/field-mappings/:id`
 - `DELETE /api/v1/field-mappings/:id`
 
-### Dashboards e widgets planejados/futuros
-
-- `GET /api/v1/dashboards`
-- `POST /api/v1/dashboards`
-- `GET /api/v1/dashboards/:id`
-- `PATCH /api/v1/dashboards/:id`
-- `POST /api/v1/dashboards/:id/widgets`
-- `PATCH /api/v1/widgets/:id`
-- `DELETE /api/v1/widgets/:id`
-- `POST /api/v1/widgets/:id/data`
-
-### Reports runtime/export planejados/futuros
-
-- `GET /api/v1/reports`
-- `POST /api/v1/reports`
-- `GET /api/v1/reports/:id`
-- `PATCH /api/v1/reports/:id`
-- `POST /api/v1/reports/:id/query`
-- `POST /api/v1/reports/:id/export`
+> Contratos de endpoints de Fase 2 (dashboards/widgets runtime e reports
+> runtime/export) foram movidos para o **Apêndice — Contratos futuros (NÃO
+> IMPLEMENTAR)** no final deste documento.
 
 ---
 
@@ -457,3 +441,33 @@ Mudanças que quebram contrato exigem:
 - testes
 - changelog/nota de migração quando necessário
 - ADR se a mudança for arquitetural
+
+---
+
+## Apêndice — Contratos futuros (NÃO IMPLEMENTAR)
+
+> **Aviso:** os endpoints abaixo são conceitos de **Fase 2**, não um contrato a
+> implementar. Eles não existem no estado atual e **não autorizam implementação**.
+> Qualquer implementação está condicionada a decisão futura registrada em
+> **ADR-0024** (definição de Fase 1 e Fase 2) e ao ADR específico que vier a
+> aprovar o runtime real de dashboards/relatórios.
+
+### Dashboards e widgets planejados/futuros
+
+- `GET /api/v1/dashboards`
+- `POST /api/v1/dashboards`
+- `GET /api/v1/dashboards/:id`
+- `PATCH /api/v1/dashboards/:id`
+- `POST /api/v1/dashboards/:id/widgets`
+- `PATCH /api/v1/widgets/:id`
+- `DELETE /api/v1/widgets/:id`
+- `POST /api/v1/widgets/:id/data`
+
+### Reports runtime/export planejados/futuros
+
+- `GET /api/v1/reports`
+- `POST /api/v1/reports`
+- `GET /api/v1/reports/:id`
+- `PATCH /api/v1/reports/:id`
+- `POST /api/v1/reports/:id/query`
+- `POST /api/v1/reports/:id/export`

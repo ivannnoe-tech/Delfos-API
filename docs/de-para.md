@@ -3,6 +3,16 @@
 > Status: documento normativo  
 > Escopo: mapeamento de campos das APIs dos clientes para o modelo canônico do Delfos.
 
+## Aviso obrigatório
+
+Este documento descreve a **foundation declarativa** de field-mapping (De/Para). No
+estado atual, o `delfos-api` apenas **armazena** mappings como configuração. **A
+transformação real de campos em runtime não existe e não está autorizada**: não há
+execução real de dataset, consumo de API de cliente, aplicação de `transform`,
+validação de resposta real ou normalização. Tudo que este documento descreve sobre
+"executar dataset", "transformar", "fallback" e "validar retorno" é conceitual/futuro
+e depende de autorização explícita e ADR.
+
 O De/Para permite que o Delfos trabalhe com APIs diferentes sem exigir que todos os clientes tenham o mesmo contrato.
 
 ---

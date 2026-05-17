@@ -150,20 +150,25 @@ Ver `docs/security-lgpd.md` e `docs/security-checklist.md`.
 
 MongoDB é usado como banco de configuração do Delfos.
 
-Ele armazena:
+**Armazena hoje** (coleções reais da foundation):
 
 - tenants
-- usuários
-- permissões
-- conexões
+- usuários (com papéis/permissões)
+- conexões (`connections`)
+- credenciais (`credentials` — apenas `credentialRef` e metadados seguros)
 - datasets
 - field mappings
-- dashboards
-- widgets
-- relatórios
-- preferências
-- white label
-- logs/auditoria necessários
+- query definitions
+- dashboard definitions
+- report definitions
+- runtime execution-requests declarativos
+- logs/auditoria
+
+**Armazenará no futuro** (sem coleção hoje, Fase 2):
+
+- widgets como entidade própria de runtime
+- preferências de usuário
+- configuração de white label
 
 Ele não armazena dados operacionais dos clientes na Fase 1.
 

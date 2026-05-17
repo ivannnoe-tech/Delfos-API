@@ -82,7 +82,8 @@ Mesmo sem implementar Fase 2, a Fase 1 deve deixar portas abertas:
 
 - contratos claros
 - `delfos-connectors` isolado
-- `CacheService` com interface agnóstica
+- um futuro serviço de cache: **não existe `CacheService` hoje** — é apenas uma
+  interface a ser definida na Fase 2, com tecnologia agnóstica
 - dashboards dependentes de contrato, não da origem concreta
 - field mappings versionáveis
 - auditoria básica desde o início
