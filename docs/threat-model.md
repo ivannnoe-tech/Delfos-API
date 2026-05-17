@@ -23,7 +23,7 @@ Na Fase 1, o Delfos não acessa diretamente o banco do cliente.
 
 | Ameaça | Controle esperado |
 |---|---|
-| Usuário se passar por outro | autenticação robusta e tokens seguros |
+| Usuário se passar por outro | autenticação robusta — **no estado atual** é o header temporário `x-delfos-admin-key` (ADR-0016); autenticação real com tokens seguros (JWT) é de Fase 2 (ADR-0006) |
 | Alteração indevida de tenant/payload | DTOs, autorização e tenant server-side |
 | Ação sensível sem rastreio | auditoria |
 | Vazamento de secret/dado pessoal | logs sanitizados e minimização |

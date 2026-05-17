@@ -85,14 +85,14 @@ Evitar:
 
 Auditar:
 
-- login relevante
+- login relevante _(futuro — não há login no estado atual; auth é por `x-delfos-admin-key`)_
 - alteração de usuários
 - alteração de permissões
 - alteração de conexão
 - alteração de credenciais
 - alteração de De/Para
-- exportações sensíveis
-- alterações de white label
+- exportações sensíveis _(futuro)_
+- alterações de white label _(futuro)_
 
 Auditoria deve registrar ação e contexto sem expor segredo.
 

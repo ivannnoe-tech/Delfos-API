@@ -34,7 +34,7 @@ Na fase atual, não cobre payload operacional bruto de clientes, pois esse dado 
 ## Checklist pós-restore
 
 - [ ] Healthcheck OK.
-- [ ] Login OK.
+- [ ] [futuro] Login OK (não há login no estado atual; auth é por `x-delfos-admin-key`).
 - [ ] Tenants e permissões preservados.
 - [ ] Dashboards/widgets preservados.
 - [ ] Operação registrada.

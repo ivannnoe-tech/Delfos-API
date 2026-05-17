@@ -32,7 +32,7 @@
 
 - [ ] Queries incluem `tenantId` quando necessário.
 - [ ] IDs globais não bastam para buscar recurso tenant-scoped.
-- [ ] Cache inclui tenant na chave.
+- [ ] [futuro] Cache inclui tenant na chave (não há cache no estado atual).
 - [ ] Logs não misturam contexto de tenants.
 - [ ] Exportações respeitam tenant e permissões.
 
@@ -86,8 +86,8 @@
 
 ## 8. Frontend
 
-- [ ] Token é armazenado em storage adequado.
-- [ ] Rotas protegidas têm guard.
+- [ ] [futuro] Token é armazenado em storage adequado (não há JWT no estado atual).
+- [ ] [futuro] Rotas protegidas têm guard de auth (depende de auth real futura).
 - [ ] Estado sem permissão é tratado.
 - [ ] Erro técnico não mostra stack ao usuário.
 - [ ] Ações destrutivas têm confirmação.

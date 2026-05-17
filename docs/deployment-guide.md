@@ -1,5 +1,10 @@
 # Guia de Deploy — delfos-api
 
+> **Caveat — fase de foundation:** o `delfos-api` está em **fase de foundation**
+> (administrativa/declarativa) e **não é considerado pronto para produção**.
+> Este guia descreve o fluxo base de deploy de forma antecipada; a operação real
+> em produção depende de decisões e gates de Fase 2.
+
 Define o fluxo base de deploy do `delfos-api`.
 
 ## Pré-requisitos
