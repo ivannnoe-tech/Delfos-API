@@ -13,8 +13,8 @@ Para traduzir termos de fase (Horizonte / Fase / Onda / Catálogo), ver o
 
 Marco de estabilizacao da foundation (2026-05-16): documentacao agent-ready, testes
 unit/integration reforcados, API E2E smoke com MongoDB em memoria, Web Playwright E2E smoke,
-connectors hardening e CI hardening. Numeros atuais - `delfos-api`: 406 testes + 12 E2E;
-`delfos-web`: 262 testes Flutter + 21 Playwright E2E; `delfos-connectors`: 106 testes. O E2E de
+connectors hardening e CI hardening. Numeros atuais - `delfos-api`: 413 testes + 17 E2E;
+`delfos-web`: 349 testes Flutter + 36 Playwright E2E; `delfos-connectors`: 106 testes. O E2E de
 API e o E2E de Web permanecem em jobs separados/opcionais. A execucao real de conectores
 permanece bloqueada e ADR-0021/ADR-0022 permanecem `Proposed`.
 
@@ -105,8 +105,8 @@ Implementado atualmente:
 - catalogos foundation no `delfos-web`;
 - CI no `delfos-api` com lint/test/build obrigatorios e job separado/opcional de E2E
   (`test:e2e`) com MongoDB em memoria;
-- API E2E smoke (`test:e2e`, 12 testes) e Web Playwright E2E smoke (`delfos-web`, 21 testes),
-  ambos em jobs separados e opcionais, sem producao e sem secrets reais.
+- API E2E smoke (`test:e2e`, 17 testes) e Web Playwright E2E smoke (`delfos-web`, 24 estaticos
+  mais 12 integrados), ambos em jobs separados e opcionais, sem producao e sem secrets reais.
 
 Nao implementado atualmente:
 

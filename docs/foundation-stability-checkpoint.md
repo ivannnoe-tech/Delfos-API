@@ -15,7 +15,7 @@ administrativa/declarativa esta madura. Ele nao autoriza Fase 2.
   `connections`, `credentials`, `datasets`, `field-mappings`,
   `query-definitions`, `dashboard-definitions`, `report-definitions`,
   `runtime`, `execution-preview`.
-- Testes: **406 unit/integration** + **12 E2E smoke** (`test:e2e`, MongoDB em
+- Testes: **413 unit/integration** + **17 E2E smoke** (`test:e2e`, MongoDB em
   memoria via `mongodb-memory-server`).
 - Cobertura medida: ~87% statements / ~88% lines. `coverageThreshold` global
   progressivo configurado (80/65/70/80) — piso anti-regressao, abaixo do
