@@ -144,6 +144,13 @@ declarativo, multi-tenant e auditável.
 | 2 — Fase 2 | Conceitual | connectors reais, report-runtime, embed-gateway | adr-0007/21/22/24 |
 | 3 — Visão madura | Conceitual | ai-assistant, knowledge-base, observability, APIs públicas | Fase 2 consolidada |
 
+Outros documentos da biblioteca descrevem este mesmo eixo com vocabulários
+diferentes — "Fase 1/2/Ambas" na [`priority-matrix.md`](./priority-matrix.md),
+"Onda 0–4" nos roadmaps temáticos, "Curto prazo declarativo / Visão madura" no
+[`future-modules-catalog.md`](./future-modules-catalog.md). O
+[crosswalk de vocabulário de fase](../maturity-taxonomy.md#crosswalk-de-vocabulário-de-fase)
+mapeia Horizonte ↔ Fase ↔ Onda ↔ Catálogo numa única tabela.
+
 ---
 
 ## 4. Princípios de produto

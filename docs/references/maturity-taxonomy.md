@@ -68,6 +68,38 @@ informações distintas e todas úteis.
 
 ---
 
+## Crosswalk de vocabulário de fase
+
+A camada `docs/references/` usa **quatro vocabulários de faseamento diferentes**,
+cada um nascido em um documento distinto. Eles descrevem o **mesmo eixo de fase**
+(quando uma capacidade pode existir), apenas com granularidade e nomes diferentes.
+Esta tabela é a tradução canônica entre eles — use-a para converter qualquer
+termo de fase de um documento para o de outro.
+
+| Horizonte (`strategic-product-vision.md`) | Fase (`priority-matrix.md`, ADR-0024) | Onda (roadmaps temáticos) | Catálogo (`future-modules-catalog.md`) | Significado |
+|---|---|---|---|---|
+| Horizonte 0 — Foundation atual | — (já implementado) | Onda 0 | — (já entregue) | Foundation declarativa atual: 14 módulos, contratos e testes. Não é roadmap. |
+| Horizonte 1 — Curto prazo declarativo | Fase 1 | Onda 1 e Onda 2 | Curto prazo declarativo | Extensão puramente declarativa (schema/contrato), sem runtime/execução real. |
+| Horizonte 1 → 2 (transição) | Ambas | Onda 3 | Curto prazo declarativo (modelo) / Fase 2 (aplicação) | Contrato/modelo viável já na foundation; valor pleno depende de execução real futura. |
+| Horizonte 2 — Fase 2 com execução real | Fase 2 | Onda 4 | Fase 2 | Runtime real, ingestão, cache, fila/worker, scheduler, dispatch — gated por ADR. |
+| Horizonte 3 — Visão madura | Fase 2 (horizonte longo) | — (além das ondas dos roadmaps) | Visão madura | Plataforma madura sobre Fase 2 consolidada: IA fundamentada, observability, APIs públicas. |
+
+Notas de leitura:
+
+- Os roadmaps `semantic-layer-roadmap.md` e `ai-assistant-roadmap.md` usam apenas
+  **Onda 1–3** (sem Onda 0). Nesses dois, a **Onda 3** é rotulada "Fase 2+" e
+  corresponde a Fase 2 / Horizonte 2 — não à linha de transição acima.
+- Os roadmaps `connectors-roadmap.md`, `embedded-analytics-roadmap.md`,
+  `enterprise-governance-roadmap.md` e `builder-and-ux-roadmap.md` usam
+  **Onda 0–4**, e seguem o mapeamento da tabela linha a linha.
+- `Ambas` (na matriz de prioridade) e a linha de transição existem porque uma
+  mesma capacidade costuma ter o **modelo declarativo** na Fase 1 e a **aplicação
+  real** na Fase 2.
+- Este crosswalk cobre o **eixo de fase**. Maturidade (os 8 estágios acima) e
+  prioridade continuam sendo eixos independentes.
+
+---
+
 ## Estado atual da camada de referências
 
 Por força da [`ADR-0026`](../adr/adr-0026-strategic-reference-library.md), **nenhum item

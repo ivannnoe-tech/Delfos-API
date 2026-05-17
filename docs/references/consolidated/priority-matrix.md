@@ -31,6 +31,9 @@ indicado, uma ADR aprovada.
 - **Fase** — `Fase 1` (foundation declarativa), `Fase 2` (execução real,
   runtime, cache) ou `Ambas` (modelo na Fase 1, aplicação real na Fase 2);
   referência: [`ADR-0024`](../../adr/adr-0024-phase-1-and-phase-2-definition.md).
+  Para traduzir `Fase` para os termos "Horizonte" / "Onda" / "Curto prazo
+  declarativo" usados por outros documentos da biblioteca, ver o
+  [crosswalk de vocabulário de fase](../maturity-taxonomy.md#crosswalk-de-vocabulário-de-fase).
 - **Gate ADR** — ADR que precisa existir/ser aprovada antes da feature; `—`
   quando nenhuma ADR arquitetural é exigida.
 - **Pode fazer agora?** — `Sim` / `Parcial` / `Não`.
