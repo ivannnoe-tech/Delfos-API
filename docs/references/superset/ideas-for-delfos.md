@@ -23,6 +23,7 @@ complexidade são estimativas para orientar discussão de roadmap.
 | Impacto | Alto — fundação de toda exploração |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `datasets`, `field-mappings`, `query-definitions` |
 | Dependências | Modelo atual de `datasets` e `field-mappings` |
 | Viabilidade | Alta — é evolução declarativa, sem execução real |
@@ -41,6 +42,7 @@ complexidade são estimativas para orientar discussão de roadmap.
 | Impacto | Alto — UX central de dashboard |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `dashboard-definitions`, `query-definitions` |
 | Dependências | Modelo de widget (ADR-0011) |
 | Viabilidade | Alta — declarativo |
@@ -59,6 +61,7 @@ complexidade são estimativas para orientar discussão de roadmap.
 | Impacto | Médio-alto — qualidade de UX do builder |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Idea` |
 | Módulos impactados | `dashboard-definitions` (delfos-web: feature builder) |
 | Dependências | Catálogo de tipos de chart (ADR-0003) |
 | Viabilidade | Alta — UI declarativa sobre metadados existentes |
@@ -77,6 +80,7 @@ complexidade são estimativas para orientar discussão de roadmap.
 | Impacto | Médio |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Idea` |
 | Módulos impactados | `dashboard-definitions`; delfos-web `chart_renderer` |
 | Dependências | ADR-0003 (chart renderer abstraction) |
 | Viabilidade | Alta — já parcialmente alinhado |
@@ -95,6 +99,7 @@ complexidade são estimativas para orientar discussão de roadmap.
 | Impacto | Médio — alto valor percebido, baixo custo |
 | Prioridade | Alta |
 | Complexidade | Baixa |
+| Maturidade | `Research` |
 | Módulos impactados | `datasets`, `query-definitions`, `dashboard-definitions` |
 | Dependências | Modelo de roles (ADR-0017) para quem pode certificar |
 | Viabilidade | Alta — só metadados declarativos |
@@ -113,6 +118,7 @@ complexidade são estimativas para orientar discussão de roadmap.
 | Impacto | Alto — diferencial de UX |
 | Prioridade | Média |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `dashboard-definitions`, `query-definitions` |
 | Dependências | Filtros nativos (ideia 2), execução futura |
 | Viabilidade | Média — parte depende de runtime real (Fase 2) |
@@ -131,6 +137,7 @@ complexidade são estimativas para orientar discussão de roadmap.
 | Impacto | Médio |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `dashboard-definitions` |
 | Dependências | Filtros nativos (ideia 2) |
 | Viabilidade | Alta — declarativo |
@@ -149,6 +156,7 @@ complexidade são estimativas para orientar discussão de roadmap.
 | Impacto | Alto — quando houver execução real |
 | Prioridade | Baixa (Fase 2+) |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `runtime`, `execution-preview`, connectors |
 | Dependências | Execução real, ADR-0007 (hoje sem cache/fila) |
 | Viabilidade | Baixa na fase atual — só conceitual |
@@ -167,6 +175,7 @@ complexidade são estimativas para orientar discussão de roadmap.
 | Impacto | Alto — valor enterprise |
 | Prioridade | Baixa (Fase 2+) |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `report-definitions`, `runtime`, scheduler futuro |
 | Dependências | Scheduler/worker (não existe na fase foundation) |
 | Viabilidade | Baixa agora — `report-definitions` é declarativo apenas |
@@ -185,6 +194,7 @@ complexidade são estimativas para orientar discussão de roadmap.
 | Impacto | Alto — expansão de mercado |
 | Prioridade | Baixa (Fase 2+) |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `auth`, `dashboard-definitions`, `tenants` |
 | Dependências | Auth real (JWT — ADR-0006), isolamento de tenant (ADR-0009) |
 | Viabilidade | Baixa agora — auth atual é `x-delfos-admin-key` temporária |
@@ -203,6 +213,7 @@ complexidade são estimativas para orientar discussão de roadmap.
 | Impacto | Alto — diferencial estratégico |
 | Prioridade | Baixa (futuro) |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `datasets`, `query-definitions`, `dashboard-definitions` |
 | Dependências | Camada semântica (ideia 1), ADR-0025 |
 | Viabilidade | Baixa agora — conceitual, requer ADR |
@@ -221,6 +232,7 @@ complexidade são estimativas para orientar discussão de roadmap.
 | Impacto | Médio |
 | Prioridade | Média |
 | Complexidade | Baixa |
+| Maturidade | `Research` |
 | Módulos impactados | `datasets`, `field-mappings`, `query-definitions` |
 | Dependências | — |
 | Viabilidade | Alta — só metadados |
@@ -252,3 +264,4 @@ complexidade são estimativas para orientar discussão de roadmap.
 - [ADR-0024 — Phase 1 and Phase 2 definition](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
 - [ADR-0025 — LLM-assisted analytics text generation](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
 - [ADR-0017 — Roles and permissions model](../../adr/adr-0017-roles-and-permissions-model.md)
+- [Taxonomia de maturidade](../maturity-taxonomy.md) — taxonomia de maturidade aplicada às ideias

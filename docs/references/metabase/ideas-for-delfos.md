@@ -22,6 +22,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 | Impacto | Alto — base para semantic layer e para o bridge runtime/connectors |
 | Prioridade | Alta |
 | Complexidade | Alta |
+| Maturidade | `Research` |
 | Módulos impactados | `query-definitions`, `datasets`, `field-mappings`, `runtime` |
 | Dependências | Definição estável de catálogo de datasets e field-mappings |
 | Viabilidade | Alta como contrato declarativo; execução é futura |
@@ -40,6 +41,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 | Impacto | Alto na percepção de UX |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `dashboard-definitions`, `query-definitions`, web (`chart_renderer`) |
 | Dependências | Item 1 (Query IR declarativo) |
 | Viabilidade | Média — depende do IR existir primeiro |
@@ -58,6 +60,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 | Impacto | Alto |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `datasets`, `field-mappings`, `query-definitions` |
 | Dependências | Catálogo de datasets estável |
 | Viabilidade | Alta como camada declarativa |
@@ -76,6 +79,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 | Impacto | Médio |
 | Prioridade | Média |
 | Complexidade | Baixa |
+| Maturidade | `Research` |
 | Módulos impactados | `field-mappings`, `datasets` |
 | Dependências | Nenhuma relevante |
 | Viabilidade | Alta — extensão de schema declarativo |
@@ -94,6 +98,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 | Impacto | Alto na percepção de valor |
 | Prioridade | Média |
 | Complexidade | Alta (requer execução real) |
+| Maturidade | `Idea` |
 | Módulos impactados | `datasets`, `dashboard-definitions`, `execution-preview`, `runtime` |
 | Dependências | Execução real de queries; semantic types (item 4) |
 | Viabilidade | Baixa na fase atual; conceitual para Fase 2 |
@@ -112,6 +117,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 | Impacto | Médio-alto |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `dashboard-definitions`, web (presentation) |
 | Dependências | Modelo de filtros de dashboard |
 | Viabilidade | Alta como definição declarativa |
@@ -130,6 +136,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 | Impacto | Alto |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `dashboard-definitions`, `query-definitions` |
 | Dependências | Modelo de parâmetros de query |
 | Viabilidade | Alta como definição; execução é futura |
@@ -148,6 +155,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 | Impacto | Médio-alto |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `delfos-connectors` (contracts), `runtime` |
 | Dependências | Contratos em `src/contracts/` |
 | Viabilidade | Alta como contrato declarativo |
@@ -166,6 +174,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 | Impacto | Médio-alto na percepção de valor |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Idea` |
 | Módulos impactados | web (presentation), serviço de geração de texto futuro |
 | Dependências | ADR-0025; dados de resultado disponíveis |
 | Viabilidade | Média — alinhado ao ADR-0025 |
@@ -184,6 +193,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 | Impacto | Médio |
 | Prioridade | Média |
 | Complexidade | Baixa-média |
+| Maturidade | `Research` |
 | Módulos impactados | `audit`, `dashboard-definitions`, `query-definitions` |
 | Dependências | Trilha de auditoria já existente (ADR-0018) |
 | Viabilidade | Alta — dados já são coletados |
@@ -202,6 +212,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 | Impacto | Alto |
 | Prioridade | Baixa (depende de infraestrutura ausente) |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `runtime`, novo módulo de scheduling, `report-definitions` |
 | Dependências | Scheduler/fila/worker — inexistentes na fase atual (ver ADR-0007) |
 | Viabilidade | Baixa agora; conceitual para Fase 2 |
@@ -220,6 +231,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 | Impacto | Médio |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `datasets`, `query-definitions`, `dashboard-definitions`, `report-definitions` |
 | Dependências | Definições já são declarativas — fundação favorável |
 | Viabilidade | Alta — tudo já é configuração declarativa |
@@ -254,3 +266,4 @@ primeiro em ADRs antes de qualquer evolução de execução.
 - [../../adr/adr-0008-connectors-and-integration-execution.md](../../adr/adr-0008-connectors-and-integration-execution.md)
 - [../../adr/adr-0018-secure-audit-strategy.md](../../adr/adr-0018-secure-audit-strategy.md)
 - [../../adr/adr-0025-llm-assisted-analytics-text-generation.md](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- [../maturity-taxonomy.md](../maturity-taxonomy.md) — taxonomia de maturidade aplicada às ideias

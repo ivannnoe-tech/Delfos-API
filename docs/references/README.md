@@ -26,6 +26,10 @@ A governança desta camada — objetivo, proibição de copiar código, uso conc
 como usar/evoluir os docs e como novas referências entram — é definida por
 [`ADR-0026`](../adr/adr-0026-strategic-reference-library.md).
 
+Cada ideia, módulo futuro e item de roadmap é rotulado com um estágio da
+[`taxonomia de maturidade`](./maturity-taxonomy.md) (`Idea` → `Research` → … →
+`Production`) — eixo independente de prioridade e de fase.
+
 ---
 
 ## Como navegar
@@ -132,5 +136,6 @@ dos documentos consolidados:
 - [`../phase-2-vision.md`](../phase-2-vision.md) — visão da Fase 2
 - [`../delfos-prd.md`](../delfos-prd.md) — PRD do produto
 - [`../architecture.md`](../architecture.md) — arquitetura atual do `delfos-api`
+- [`maturity-taxonomy.md`](./maturity-taxonomy.md) — taxonomia de maturidade aplicada na camada
 - [`../adr/`](../adr/) — Architecture Decision Records
 - [`../adr/adr-0026-strategic-reference-library.md`](../adr/adr-0026-strategic-reference-library.md) — governança desta camada

@@ -108,23 +108,23 @@ Define os contratos sem emitir tokens nem abrir endpoints.
 
 ## Tabela de roadmap
 
-| Item | Onda | Prioridade | Complexidade | Módulos | Foundation vs futuro | ADRs |
-|---|---|---|---|---|---|---|
-| Flag/metadados de embeddable | 1 | Alta | Baixa | `dashboard-definitions` | Foundation declarativa | adr-0011 (extensão) |
-| Contrato de parâmetros de embed | 1 | Alta | Média | `dashboard-definitions`, `query-definitions` | Foundation declarativa | nova (embed params) |
-| Catálogo de widgets embedáveis | 1 | Média | Baixa | `dashboard-definitions` | Foundation declarativa | adr-0011 (extensão) |
-| Contrato do token de embed | 2 | Alta | Média | `auth`, `tenants` | Contrato agora · emissão Onda 4 | adr-0006 (depende) |
-| Contrato da API de consumo | 2 | Alta | Média | `dashboard-definitions`, `runtime` | Foundation de contrato | nova (consumption API) |
-| Security context para embed | 2 | Alta | Média | `auth`, `query-definitions` | Foundation de contrato | adr-0017, adr-0009 |
-| Tema/branding por tenant | 3 | Média | Média | `delfos-web`, `tenants` | Foundation declarativa + UI | adr-0003 (ref.) |
-| Modos de embed | 3 | Média | Baixa | `dashboard-definitions`, `delfos-web` | Foundation declarativa | adr-0011 (extensão) |
-| Estados no embed | 3 | Alta | Baixa | `delfos-web` | Foundation (UI) | — |
-| Emissão de guest tokens | 4 | Alta | Alta | `auth`, `tenants` | Futuro gated | **adr-0006** |
-| Endpoints públicos de consumo | 4 | Alta | Alta | `dashboard-definitions`, `runtime` | Futuro gated | adr-0006, adr-0009 |
-| Signed URLs com expiração | 4 | Alta | Média | `auth`, `audit` | Futuro gated | adr-0006, adr-0018 |
-| Embedded SDK / iframe helper | 4 | Média | Alta | novo pacote cliente | Futuro gated | nova (embedded SDK) |
-| Cross-filtering no embed | 4 | Média | Alta | `dashboard-definitions`, `runtime` | Futuro gated | nova (interaction model) |
-| X-rays como onboarding de embed | 4 | Baixa | Alta | `datasets`, `dashboard-definitions` | Futuro gated | nova (auto-exploration) |
+| Item | Onda | Prioridade | Complexidade | Maturidade | Módulos | Foundation vs futuro | ADRs |
+|---|---|---|---|---|---|---|---|
+| Flag/metadados de embeddable | 1 | Alta | Baixa | `Research` | `dashboard-definitions` | Foundation declarativa | adr-0011 (extensão) |
+| Contrato de parâmetros de embed | 1 | Alta | Média | `Research` | `dashboard-definitions`, `query-definitions` | Foundation declarativa | nova (embed params) |
+| Catálogo de widgets embedáveis | 1 | Média | Baixa | `Research` | `dashboard-definitions` | Foundation declarativa | adr-0011 (extensão) |
+| Contrato do token de embed | 2 | Alta | Média | `Research` | `auth`, `tenants` | Contrato agora · emissão Onda 4 | adr-0006 (depende) |
+| Contrato da API de consumo | 2 | Alta | Média | `Research` | `dashboard-definitions`, `runtime` | Foundation de contrato | nova (consumption API) |
+| Security context para embed | 2 | Alta | Média | `Research` | `auth`, `query-definitions` | Foundation de contrato | adr-0017, adr-0009 |
+| Tema/branding por tenant | 3 | Média | Média | `Research` | `delfos-web`, `tenants` | Foundation declarativa + UI | adr-0003 (ref.) |
+| Modos de embed | 3 | Média | Baixa | `Research` | `dashboard-definitions`, `delfos-web` | Foundation declarativa | adr-0011 (extensão) |
+| Estados no embed | 3 | Alta | Baixa | `Research` | `delfos-web` | Foundation (UI) | — |
+| Emissão de guest tokens | 4 | Alta | Alta | `Idea` | `auth`, `tenants` | Futuro gated | **adr-0006** |
+| Endpoints públicos de consumo | 4 | Alta | Alta | `Idea` | `dashboard-definitions`, `runtime` | Futuro gated | adr-0006, adr-0009 |
+| Signed URLs com expiração | 4 | Alta | Média | `Idea` | `auth`, `audit` | Futuro gated | adr-0006, adr-0018 |
+| Embedded SDK / iframe helper | 4 | Média | Alta | `Idea` | novo pacote cliente | Futuro gated | nova (embedded SDK) |
+| Cross-filtering no embed | 4 | Média | Alta | `Idea` | `dashboard-definitions`, `runtime` | Futuro gated | nova (interaction model) |
+| X-rays como onboarding de embed | 4 | Baixa | Alta | `Idea` | `datasets`, `dashboard-definitions` | Futuro gated | nova (auto-exploration) |
 
 ---
 
@@ -163,3 +163,4 @@ Define os contratos sem emitir tokens nem abrir endpoints.
 - [../../adr/adr-0017-roles-and-permissions-model.md](../../adr/adr-0017-roles-and-permissions-model.md)
 - [../../adr/adr-0018-secure-audit-strategy.md](../../adr/adr-0018-secure-audit-strategy.md)
 - [../../adr/adr-0024-phase-1-and-phase-2-definition.md](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
+- [../maturity-taxonomy.md](../maturity-taxonomy.md)

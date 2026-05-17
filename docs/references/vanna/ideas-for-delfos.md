@@ -22,6 +22,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 | Impacto | Alto — base de toda funcionalidade de IA e de descoberta de dados |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Idea` |
 | Módulos impactados | `datasets`, `field-mappings`, `query-definitions`, novo módulo de knowledge/glossary |
 | Dependências | Modelo de dados de glossário; decisão de armazenamento (Mongo vs. vector store futuro) |
 | Viabilidade | Alta como dado declarativo; recuperação semântica é fase posterior |
@@ -40,6 +41,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 | Impacto | Alto — diferencial de produto |
 | Prioridade | Média |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `query-definitions`, `execution-preview`, integração LLM |
 | Dependências | Ideia 1 (knowledge base); ADR-0025 aprovado; provedor LLM definido |
 | Viabilidade | Média — depende de gate de Fase 2 e governança de IA |
@@ -58,6 +60,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 | Impacto | Alto — pré-requisito de confiança em IA |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `audit`, `query-definitions`, integração LLM |
 | Dependências | Ideia 2; modelo de payload de proveniência |
 | Viabilidade | Alta — é metadado, não execução |
@@ -76,6 +79,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 | Impacto | Médio-Alto — composto ao longo do tempo |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Idea` |
 | Módulos impactados | `query-definitions`, knowledge base (Ideia 1), `audit` |
 | Dependências | Ideias 1 e 2; fluxo de aprovação |
 | Viabilidade | Média |
@@ -94,6 +98,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 | Impacto | Alto — corrige uma fraqueza estrutural do Vanna |
 | Prioridade | Média |
 | Complexidade | Alta |
+| Maturidade | `Research` |
 | Módulos impactados | `field-mappings`, `query-definitions`, `dashboard-definitions` |
 | Dependências | Modelagem de métricas; governança de versionamento |
 | Viabilidade | Média — esforço de modelagem relevante |
@@ -112,6 +117,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 | Impacto | Médio |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Idea` |
 | Módulos impactados | `execution-preview`, `runtime`; `delfos-web` (`chart_renderer`) |
 | Dependências | ADR-0025 (resumo NL); `chart_renderer` |
 | Viabilidade | Alta para tabela/gráfico; resumo NL depende de gate de IA |
@@ -130,6 +136,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 | Impacto | Médio |
 | Prioridade | Baixa |
 | Complexidade | Média |
+| Maturidade | `Idea` |
 | Módulos impactados | `runtime`, `execution-preview`; `delfos-web` |
 | Dependências | Modelo de transporte de execução (ADR-0015) |
 | Viabilidade | Média — depende de runtime real (Fase 2) |
@@ -148,6 +155,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 | Impacto | Alto — pré-requisito operacional de qualquer feature de IA |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Idea` |
 | Módulos impactados | `audit`, integração LLM, novo módulo de telemetria |
 | Dependências | Provedor LLM definido; ADR-0025 |
 | Viabilidade | Alta |
@@ -166,6 +174,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 | Impacto | Médio |
 | Prioridade | Baixa |
 | Complexidade | Média |
+| Maturidade | `Idea` |
 | Módulos impactados | `core` (interceptors), integração LLM, `tenants` |
 | Dependências | Ideia 8; modelo de planos/limites |
 | Viabilidade | Média |
@@ -184,6 +193,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 | Impacto | Médio |
 | Prioridade | Baixa |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `query-definitions`, integração LLM; `delfos-web` |
 | Dependências | Ideias 2 e 3; armazenamento de contexto de sessão |
 | Viabilidade | Baixa-Média — depende de IA madura |
@@ -202,6 +212,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 | Impacto | Médio |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Idea` |
 | Módulos impactados | `datasets`, `field-mappings`, integração LLM |
 | Dependências | Ideia 1; ADR-0025 |
 | Viabilidade | Média |
@@ -220,6 +231,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 | Impacto | Médio |
 | Prioridade | Média |
 | Complexidade | Baixa |
+| Maturidade | `Research` |
 | Módulos impactados | `query-definitions`, `dashboard-definitions` |
 | Dependências | Modelo de versionamento e visibilidade |
 | Viabilidade | Alta — é dado declarativo |
@@ -251,3 +263,4 @@ As ideias de prioridade alta são **fundações declarativas** — viáveis sem 
 - [ADR-0024 — Phase 1 and Phase 2 definition](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
 - [ADR-0007 — No cache/Redis Phase 1](../../adr/adr-0007-no-cache-redis-phase-1.md)
 - [ADR-0014 — Runtime execution requests foundation](../../adr/adr-0014-runtime-execution-requests-foundation.md)
+- [Taxonomia de maturidade](../maturity-taxonomy.md)

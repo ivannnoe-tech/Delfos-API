@@ -125,29 +125,31 @@ Modela o ciclo de vida da execução; o runtime real só liga sob autorização.
 
 ## Tabela de roadmap
 
-| Item | Onda | Prioridade | Complexidade | Módulos | Foundation vs futuro | ADRs |
-|---|---|---|---|---|---|---|
-| Connector spec format | 1 | Alta | Média | `connections`, `credentials`, `delfos-connectors` | Foundation declarativa | nova (spec format) |
-| Schema-driven config UI | 1 | Alta | Média | `connections`, `delfos-web` | Foundation declarativa | nova (spec format) |
-| Data Source Manager unificado | 1 | Alta | Média | `connections`, `datasets`, `field-mappings` | Foundation declarativa | adr-0001 (ref.) |
-| Datasets reutilizáveis | 1 | Alta | Baixa | `datasets`, `field-mappings` | Foundation declarativa | — |
-| Catálogo de tipos de connector | 1 | Média | Média | `connections`, `delfos-connectors` | Foundation declarativa | adr-0008, adr-0022 |
-| Protocolo versionado | 2 | Alta | Média | `runtime`, `delfos-connectors` | Foundation de contrato | adr-0015 (extensão) |
-| Contrato `check`/`discover` | 2 | Alta | Média | `connections`, `datasets`, `field-mappings` | Contrato agora · execução Onda 4 | nova (check/discover) |
-| Catálogo curado + certificação | 2 | Média | Baixa | `connections`, `delfos-connectors` | Foundation declarativa (governança) | nova (curadoria) |
-| Variáveis nomeadas de query | 2 | Alta | Média | `query-definitions`, `runtime` | Foundation declarativa | nova (variable contract) |
-| Modelo de job/execução + erro | 3 | Alta | Alta | `runtime`, `execution-preview`, `audit` | Desenho agora · runtime gated | adr-0014 (extensão) |
-| Timeline imutável | 3 | Média | Média | `audit`, `runtime` | Foundation declarativa | adr-0018 (extensão) |
-| Pipeline de execução por etapas | 3 | Média | Alta | `runtime`, `delfos-connectors` | Desenho agora · execução gated | adr-0014, adr-0015 |
-| Builder com test embutido | 3 | Alta | Média | `execution-preview`, `delfos-web` | Foundation (Fake adapter) | adr-0011 (extensão) |
-| Connector dispatch real | 4 | Alta | Alta | `runtime`, `delfos-connectors` | Futuro gated | **adr-0022** |
-| Decifração de credencial | 4 | Alta | Alta | `credentials`, `runtime` | Futuro gated | **adr-0021**, adr-0019 |
-| `check`/`discover` reais | 4 | Alta | Média | `connections`, `datasets` | Futuro gated | adr-0021, adr-0022 |
-| Sync incremental por cursor | 4 | Média | Alta | `query-definitions`, `runtime` | Futuro gated | nova (incremental) |
-| Control plane / data plane | 4 | Baixa | Alta | `credentials`, `runtime`, deployment | Futuro gated | adr-0009, adr-0019, adr-0021 |
-| On-premise connectors agent | 4 | Média | Alta | `runtime`, `connections` | Futuro gated | **adr-0012** |
-| Métricas e alertas de execução | 4 | Média | Média | `runtime`, `health`, `audit` | Futuro gated | nova (observability) |
-| Extensibilidade em camadas | 4 | Média | Alta | `delfos-connectors`, `runtime` | Futuro gated | nova (layered model) |
+A coluna `Maturidade` segue a escala de [`maturity-taxonomy.md`](../maturity-taxonomy.md).
+
+| Item | Onda | Prioridade | Complexidade | Maturidade | Módulos | Foundation vs futuro | ADRs |
+|---|---|---|---|---|---|---|---|
+| Connector spec format | 1 | Alta | Média | `Research` | `connections`, `credentials`, `delfos-connectors` | Foundation declarativa | nova (spec format) |
+| Schema-driven config UI | 1 | Alta | Média | `Research` | `connections`, `delfos-web` | Foundation declarativa | nova (spec format) |
+| Data Source Manager unificado | 1 | Alta | Média | `Research` | `connections`, `datasets`, `field-mappings` | Foundation declarativa | adr-0001 (ref.) |
+| Datasets reutilizáveis | 1 | Alta | Baixa | `Research` | `datasets`, `field-mappings` | Foundation declarativa | — |
+| Catálogo de tipos de connector | 1 | Média | Média | `Research` | `connections`, `delfos-connectors` | Foundation declarativa | adr-0008, adr-0022 |
+| Protocolo versionado | 2 | Alta | Média | `Research` | `runtime`, `delfos-connectors` | Foundation de contrato | adr-0015 (extensão) |
+| Contrato `check`/`discover` | 2 | Alta | Média | `Research` | `connections`, `datasets`, `field-mappings` | Contrato agora · execução Onda 4 | nova (check/discover) |
+| Catálogo curado + certificação | 2 | Média | Baixa | `Research` | `connections`, `delfos-connectors` | Foundation declarativa (governança) | nova (curadoria) |
+| Variáveis nomeadas de query | 2 | Alta | Média | `Research` | `query-definitions`, `runtime` | Foundation declarativa | nova (variable contract) |
+| Modelo de job/execução + erro | 3 | Alta | Alta | `Research` | `runtime`, `execution-preview`, `audit` | Desenho agora · runtime gated | adr-0014 (extensão) |
+| Timeline imutável | 3 | Média | Média | `Research` | `audit`, `runtime` | Foundation declarativa | adr-0018 (extensão) |
+| Pipeline de execução por etapas | 3 | Média | Alta | `Research` | `runtime`, `delfos-connectors` | Desenho agora · execução gated | adr-0014, adr-0015 |
+| Builder com test embutido | 3 | Alta | Média | `Research` | `execution-preview`, `delfos-web` | Foundation (Fake adapter) | adr-0011 (extensão) |
+| Connector dispatch real | 4 | Alta | Alta | `Research` | `runtime`, `delfos-connectors` | Futuro gated | **adr-0022** |
+| Decifração de credencial | 4 | Alta | Alta | `Research` | `credentials`, `runtime` | Futuro gated | **adr-0021**, adr-0019 |
+| `check`/`discover` reais | 4 | Alta | Média | `Research` | `connections`, `datasets` | Futuro gated | adr-0021, adr-0022 |
+| Sync incremental por cursor | 4 | Média | Alta | `Idea` | `query-definitions`, `runtime` | Futuro gated | nova (incremental) |
+| Control plane / data plane | 4 | Baixa | Alta | `Research` | `credentials`, `runtime`, deployment | Futuro gated | adr-0009, adr-0019, adr-0021 |
+| On-premise connectors agent | 4 | Média | Alta | `Idea` | `runtime`, `connections` | Futuro gated | **adr-0012** |
+| Métricas e alertas de execução | 4 | Média | Média | `Idea` | `runtime`, `health`, `audit` | Futuro gated | nova (observability) |
+| Extensibilidade em camadas | 4 | Média | Alta | `Idea` | `delfos-connectors`, `runtime` | Futuro gated | nova (layered model) |
 
 ---
 
@@ -181,3 +183,4 @@ Modela o ciclo de vida da execução; o runtime real só liga sob autorização.
 - [../../adr/adr-0021-credential-decryption-in-future-execution.md](../../adr/adr-0021-credential-decryption-in-future-execution.md)
 - [../../adr/adr-0022-connector-dispatch-transport.md](../../adr/adr-0022-connector-dispatch-transport.md)
 - [../../adr/adr-0024-phase-1-and-phase-2-definition.md](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
+- [../maturity-taxonomy.md](../maturity-taxonomy.md) — escala de maturidade aplicada à tabela de roadmap
