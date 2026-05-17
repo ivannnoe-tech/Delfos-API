@@ -16,7 +16,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 
 ### 1. Connector Spec declarativo dirige a UI
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Airbyte `spec` + Connector Builder (UI gerada a partir do schema) |
 | Descrição | Cada conector publica um `spec` declarativo (schema de configuração e credenciais); a UI de configuração é renderizada a partir dele, não codificada por fonte |
@@ -35,7 +35,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 
 ### 2. Protocolo estável e versionado plataforma↔connector
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Airbyte Protocol (contrato de mensagens entre platform e connectors) |
 | Descrição | Formalizar um contrato versionado entre `delfos-api`/`runtime` e `delfos-connectors`, com mensagens tipadas (spec, check, discover, execute) |
@@ -54,7 +54,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 
 ### 3. Operações `check` e `discover` para fontes
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Airbyte `check` (valida credenciais) e `discover` (descobre streams/schema) |
 | Descrição | Conector expõe `check` para validar uma `connection`/`credentialRef` e `discover` para catalogar datasets/campos disponíveis na fonte |
@@ -73,7 +73,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 
 ### 4. Execução como entidade de primeira classe (jobs/workloads)
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Modelo job/workload do Airbyte (execução com estado, logs, ciclo de vida) |
 | Descrição | Toda execução de query/relatório é uma entidade observável com status, timestamps, logs e resultado — não uma chamada síncrona opaca |
@@ -92,7 +92,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 
 ### 5. Connector/Query Builder no-code com test embutido
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Connector Builder UI + stream tester ("Test" lado a lado) |
 | Descrição | Builder visual de `query-definitions`/`dashboard-definitions` com preview/teste imediato do resultado ao lado da configuração |
@@ -111,7 +111,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 
 ### 6. Modelo de erro estruturado e classificado
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Error handlers do Connector Builder (classifica por status/corpo/headers; decide continuar/repetir/falhar) |
 | Descrição | Erros de execução classificados (transitório vs permanente, fonte vs config) com política explícita de retry |
@@ -130,7 +130,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 
 ### 7. Sync incremental por cursor / estado por definição
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Sync modes incremental + state por stream do Airbyte |
 | Descrição | Execuções podem persistir um cursor/estado para reprocessar só o que mudou desde a última execução |
@@ -149,7 +149,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 
 ### 8. Timeline imutável de execuções
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Connection timeline + logging imutável append-only do Airbyte |
 | Descrição | Histórico auditável e imutável de cada execução por definição/tenant, navegável da visão agregada ao log detalhado |
@@ -168,7 +168,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 
 ### 9. Extensibilidade em camadas (declarativo → código)
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | CDK em camadas: YAML low-code → custom components → CDK completo |
 | Descrição | Conectores Delfos cobrem o caso comum por configuração declarativa e abrem pontos de extensão por código só quando necessário |
@@ -187,7 +187,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 
 ### 10. Métricas e alertas de execução desde o desenho
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Métricas Prometheus + alertas de falha/latência do Airbyte |
 | Descrição | O `runtime` emite métricas de execução (duração, sucesso, latência) e dispara alertas operacionais por regra |
@@ -206,7 +206,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 
 ### 11. Catálogo curado de conectores (vs. comunidade aberta)
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Catálogo de 600+ conectores do Airbyte — e os problemas de qualidade desigual |
 | Descrição | Delfos mantém um catálogo de conectores **curado e versionado**, com níveis de certificação, em vez de aceitar contribuições não revisadas |
@@ -225,7 +225,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 
 ### 12. Separação control plane / data plane para credenciais
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Data planes regionais do Airbyte (credenciais e logs ficam locais) |
 | Descrição | Futuro: a execução que toca credenciais reais roda num plano isolado por tenant/região; o control plane só vê referências |

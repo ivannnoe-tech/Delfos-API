@@ -14,7 +14,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 
 ### 1. Query IR declarativo inspirado em MBQL
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | MBQL — query como estrutura de dados, não string SQL |
 | Descrição | Definir um formato declarativo e versionado para `query-definitions`, independente de dialeto e validável |
@@ -33,7 +33,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 
 ### 2. Drill-through automático derivado da definição de query
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Drill-through "de graça" do Metabase em charts do query builder |
 | Descrição | Como a query é estruturada (item 1), o sistema conhece dimensões e métricas e oferece drill sem configuração manual |
@@ -52,7 +52,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 
 ### 3. Camada semântica: "Datasets curados" + "Métricas reutilizáveis"
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Models e Metrics do Metabase |
 | Descrição | Promover `datasets` a definições curadas e introduzir "metrics" reutilizáveis (revenue, churn) sobre eles |
@@ -71,7 +71,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 
 ### 4. Semantic types em field-mappings
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Semantic types do Metabase (e-mail, moeda, latitude) |
 | Descrição | Enriquecer `field-mappings` com tipo semântico além do tipo de dado bruto |
@@ -90,7 +90,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 
 ### 5. Exploração automática (X-rays) como onboarding de dataset
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | X-rays do Metabase |
 | Descrição | Gerar automaticamente um dashboard exploratório a partir de um dataset/field-mappings |
@@ -109,7 +109,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 
 ### 6. Click behavior configurável em widgets
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Click behavior do Metabase (drill / destino custom / atualizar filtro) |
 | Descrição | Permitir que a `dashboard-definition` declare a semântica do clique por widget |
@@ -128,7 +128,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 
 ### 7. Filtros globais de dashboard com cross-filtering
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Filtros de dashboard e cross-filtering do Metabase |
 | Descrição | Definir filtros declarativos no dashboard, mapeados a múltiplos widgets, com propagação por clique |
@@ -147,7 +147,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 
 ### 8. Contrato de connector com declaração de capacidades
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Drivers do Metabase que declaram features suportadas |
 | Descrição | `delfos-connectors` declarar capacidades (agregações, joins, paginação) que o runtime consulta antes de despachar |
@@ -166,7 +166,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 
 ### 9. Resumo de gráfico em linguagem natural ("one-click summary")
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | One-click summaries do Metabot |
 | Descrição | Gerar um texto explicativo do que um widget/dashboard mostra, via LLM, sob demanda |
@@ -185,7 +185,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 
 ### 10. Auditoria de uso transformada em insight de produto
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Auditing tools do Metabase Enterprise |
 | Descrição | Usar o módulo `audit` para expor dashboards/queries mais usados, abandonados e lentos |
@@ -204,7 +204,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 
 ### 11. Subscriptions e alerts orientados a condição
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Subscriptions (agendado) e Alerts (por condição) do Metabase |
 | Descrição | Distribuição agendada de dashboards e disparo por cruzamento de meta |
@@ -223,7 +223,7 @@ implementação; cada uma indica ADRs futuras necessárias.
 
 ### 12. Serialization — BI como código (export/import de definições)
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Serialization do Metabase Enterprise |
 | Descrição | Export/import versionável de definições (datasets, queries, dashboards) entre ambientes |

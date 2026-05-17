@@ -241,13 +241,16 @@ complexidade são estimativas para orientar discussão de roadmap.
 
 ---
 
-## Priorização sugerida
+## Síntese de priorização
 
-| Onda | Ideias | Característica |
-|---|---|---|
-| Curto prazo (declarativo) | 1, 2, 5, 12 | Sem execução real, alto valor, baixa/média complexidade |
-| Médio prazo (builder/UX) | 3, 4, 7 | Melhoram o produto sem runtime real |
-| Fase 2+ (requer ADR/execução) | 6, 8, 9, 10, 11 | Dependem de runtime, scheduler, auth real ou IA |
+| Prioridade | Ideias |
+|---|---|
+| Alta | 1 (dataset como contrato), 2 (filtros nativos), 5 (certificação e ownership) |
+| Média | 3 (painel contextual), 4 (catálogo de viz), 6 (cross-filtering/drill-down), 7 (permalink), 12 (pastas e tagging) |
+| Baixa | 8 (plano assíncrono), 9 (alertas agendados), 10 (embedded com tenant), 11 (copiloto MCP) |
+
+As ideias de prioridade baixa dependem majoritariamente de runtime, scheduler,
+auth real ou IA — itens de Fase 2 que exigem ADR e autorização explícita.
 
 ---
 

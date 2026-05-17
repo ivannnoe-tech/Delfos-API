@@ -12,7 +12,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 
 ### 1. Camada semântica declarativa do Delfos
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Semantic layer do Cube (cubes, views, measures, dimensions) |
 | Descrição | Formalizar uma camada semântica como entidade de primeira classe: definições reutilizáveis de measures e dimensions sobre `datasets` e `field-mappings`, separadas das `query-definitions` que as consomem |
@@ -31,7 +31,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 
 ### 2. Distinção dataset (cube) vs. view de consumo
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Separação cube vs. view no Cube |
 | Descrição | Introduzir `views` como fachada de consumo sobre `datasets`: o dataset modela a realidade do dado; a view expõe apenas o subconjunto relevante para um caso de uso, já com joins resolvidos |
@@ -50,7 +50,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 
 ### 3. Segments — filtros nomeados reutilizáveis
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Segments do Cube |
 | Descrição | Permitir definir filtros nomeados ("clientes ativos", "região sul") no modelo, reutilizáveis em múltiplas `query-definitions` sem reescrever condições |
@@ -69,7 +69,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 
 ### 4. Pre-aggregation contract como metadado declarativo
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Pre-aggregations do Cube |
 | Descrição | Declarar, junto da `query-definition`, um "perfil de materialização" (granularidade, dimensões, refresh esperado) como **contrato** — sem implementar cache/worker. Documenta a intenção de performance para o runtime futuro |
@@ -88,7 +88,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 
 ### 5. Security context unificado para isolamento e RLS
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Security context + `queryRewrite` do Cube |
 | Descrição | Formalizar um "security context" como objeto verificado (tenant, actor, role) que toda definição de query reconhece, e do qual filtros obrigatórios de tenant são derivados automaticamente |
@@ -107,7 +107,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 
 ### 6. Catálogo de métricas navegável
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Semantic catalog do Cube Cloud |
 | Descrição | Tela em `delfos-web` que apresenta measures e dimensions definidas como catálogo navegável, com descrições de negócio, origem e onde são usadas |
@@ -126,7 +126,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 
 ### 7. Query builder por seleção (não por digitação)
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Playground / query builder do Cube |
 | Descrição | Builder em `delfos-web` onde o usuário monta `query-definitions` escolhendo measures/dimensions de uma lista do modelo — nunca SQL livre — com preview da definição estruturada |
@@ -145,7 +145,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 
 ### 8. Hierarchies e drill-down governado
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Hierarchies e `drillMembers` do Cube |
 | Descrição | Permitir declarar hierarquias de dimensões (ex: país → estado → cidade) no modelo, definindo caminhos de drill-down consistentes e reutilizáveis |
@@ -164,7 +164,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 
 ### 9. AI assistant ancorado na camada semântica
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Cube D3 / Copilot / Semantic SQL |
 | Descrição | Assistente futuro que traduz intenção em linguagem natural para `query-definitions` válidas, restrito ao vocabulário da camada semântica — nunca gera SQL cru |
@@ -183,7 +183,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 
 ### 10. Explainability — "como esse número foi calculado"
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Explainability implícita do Cube (definição = documento) |
 | Descrição | Cada measure carrega definição explícita e rastreável; a UI permite ver fórmula, origem (dataset/field-mapping) e dependências de qualquer número exibido |
@@ -200,20 +200,16 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 
 ---
 
-## Resumo de priorização
+## Síntese de priorização
 
-| # | Ideia | Prioridade | Complexidade |
-|---|---|---|---|
-| 1 | Camada semântica declarativa | Alta | Alta |
-| 5 | Security context unificado | Alta | Média |
-| 2 | Dataset vs. view de consumo | Média | Média |
-| 3 | Segments reutilizáveis | Média | Baixa |
-| 6 | Catálogo de métricas | Média | Média |
-| 7 | Query builder por seleção | Média | Média-alta |
-| 10 | Explainability | Média | Média |
-| 4 | Pre-aggregation contract | Baixa | Baixa |
-| 8 | Hierarchies / drill-down | Baixa | Média |
-| 9 | AI assistant semântico | Baixa | Alta |
+| Prioridade | Ideias |
+|---|---|
+| Alta | 1 (camada semântica declarativa), 5 (security context unificado) |
+| Média | 2 (dataset vs. view de consumo), 3 (segments reutilizáveis), 6 (catálogo de métricas), 7 (query builder por seleção), 10 (explainability) |
+| Baixa | 4 (pre-aggregation contract), 8 (hierarchies / drill-down), 9 (AI assistant semântico) |
+
+As ideias de prioridade baixa dependem de runtime real, cache ou IA — itens de
+Fase 2 que exigem ADR e autorização explícita.
 
 ---
 

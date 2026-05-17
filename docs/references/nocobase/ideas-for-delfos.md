@@ -17,7 +17,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 
 ### 1. Contrato de extensão para tipos de widget
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Block model e plugins de block de NocoBase |
 | Descrição | Definir um contrato declarativo estável para tipos de widget de dashboard (chart, table, KPI, texto) que novos tipos possam implementar sem alterar o core |
@@ -36,7 +36,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 
 ### 2. Data Source Manager unificado como catálogo
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Data Source Manager de NocoBase (catálogo separado do acesso) |
 | Descrição | Consolidar a visão de `connections` + `datasets` + `field-mappings` em uma camada de catálogo navegável, mantendo catálogo e execução separados |
@@ -55,7 +55,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 
 ### 3. Permissões granulares a nível de campo
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | ACL field-level de NocoBase (read/write por campo, por papel) |
 | Descrição | Permitir que papéis tenham visibilidade/uso restrito por campo de dataset, integrando com a política de mascaramento |
@@ -74,7 +74,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 
 ### 4. Modo configuração vs. modo uso no dashboard
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Alternância one-click de NocoBase entre operar e editar a app |
 | Descrição | No `delfos-web`, alternar entre visualizar um dashboard e editá-lo (arrastar widgets, ajustar filtros) sem trocar de tela |
@@ -93,7 +93,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 
 ### 5. Filtros globais como componente desacoplado
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Filter blocks de NocoBase (filtro publica, blocks consomem) |
 | Descrição | Modelar filtros de dashboard como entidade própria que publica critérios consumidos por múltiplos widgets |
@@ -112,7 +112,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 
 ### 6. Templates de dashboard reutilizáveis
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Collection templates de NocoBase |
 | Descrição | Permitir salvar uma `dashboard-definition` como template, instanciável por outro tenant ou segmento |
@@ -131,7 +131,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 
 ### 7. Pipeline de execução por hooks/middlewares
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Ciclo de middlewares/hooks do runtime de NocoBase |
 | Descrição | Quando houver execução real, modelar o runtime como pipeline de etapas isoláveis (validação → resolução de fonte → dispatch → coleta) |
@@ -150,7 +150,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 
 ### 8. Orquestração de execução como grafo de nós
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Workflow/BPM de NocoBase (gatilhos + nós extensíveis) |
 | Descrição | Representar fluxos de execução de analytics (ex.: encadear queries, condicionar passos) como grafo declarativo de nós |
@@ -169,7 +169,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 
 ### 9. Agente de IA como sujeito de ACL auditado
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | AI Employees de NocoBase (cada agente tem papel próprio, é auditado) |
 | Descrição | Modelar o futuro AI assistant do Delfos como um ator com papel próprio, permissões e trilha de auditoria — não um bypass de governança |
@@ -188,7 +188,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 
 ### 10. Copilot de analytics especializado
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Agentes de Q&A/análise de NocoBase — generalizados; oportunidade de especializar |
 | Descrição | Copilot focado em analytics: interpretar resultados de query, sugerir visualizações, narrar tendências sobre dados já carregados |
@@ -207,7 +207,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 
 ### 11. Semantic layer própria de BI
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Ausência de semantic layer dedicada em NocoBase — lacuna a explorar |
 | Descrição | Camada de métricas/dimensões/medidas governadas, reutilizáveis entre queries e dashboards |
@@ -226,7 +226,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 
 ### 12. Catálogo de tipos de connector com contrato estável
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Separação data source plugin ↔ Data Source Manager em NocoBase |
 | Descrição | Definir um contrato de tipo de connector (capabilities, parâmetros, modos suportados) catalogado declarativamente, distinto do executor |

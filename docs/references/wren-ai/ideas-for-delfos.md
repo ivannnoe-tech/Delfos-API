@@ -241,6 +241,20 @@ implementação. Prioridade e complexidade são estimativas para *roadmap*.
 
 ---
 
+## Síntese de priorização
+
+| Prioridade | Ideias |
+|---|---|
+| Alta | 1 (camada semântica), 2 (métricas reutilizáveis), 3 (explainability), 4 (validação dry-plan) |
+| Média | 5 (seleção de gráfico), 6 (dashboard com intenção), 7 (RLAC/CLAC), 8 (templates), 9 (filtros versionados), 12 (erros com hints) |
+| Baixa | 10 (AI assistant fundamentado), 11 (memória de exemplos / RAG) |
+
+As ideias 1, 2, 3 e 4 formam um bloco de camada semântica e governança
+declarativa — viável já na foundation, sem execução real. As de prioridade baixa
+dependem do gate de Fase 2 e de ADRs de IA (`adr-0025`) aprovados.
+
+---
+
 ## Relacionado
 
 - [overview.md](./overview.md)

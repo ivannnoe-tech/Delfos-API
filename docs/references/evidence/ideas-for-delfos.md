@@ -14,7 +14,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 
 ### 1. Definições analíticas como artefatos versionáveis
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | BI-as-code do Evidence — relatório é texto versionável |
 | Descrição | Tratar `query-definitions`, `dashboard-definitions` e `report-definitions` como documentos com histórico de versões, diff entre versões e rollback |
@@ -33,7 +33,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 
 ### 2. Templated definitions — uma definição, muitas instâncias
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Templated pages do Evidence (`[customer].md` gera N páginas) |
 | Descrição | Permitir que uma `dashboard-definition` ou `report-definition` seja um molde parametrizado, instanciado por valor (por cliente, região, período) sem duplicar a definição |
@@ -52,7 +52,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 
 ### 3. Relatórios narrativos (texto + dados intercalados)
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Markdown narrativo do Evidence — prosa, números inline e gráficos juntos |
 | Descrição | Estender `report-definitions` para suportar blocos de narrativa com valores dinâmicos embutidos no texto, não só grades de widgets |
@@ -71,7 +71,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 
 ### 4. Diff e code review de definições analíticas
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Fluxo Git do Evidence (pull request, review, blame) |
 | Descrição | UI de comparação entre versões de uma definição e fluxo opcional de aprovação antes de publicar mudanças sensíveis |
@@ -90,7 +90,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 
 ### 5. Camada de materialização opcional (cache de resultado)
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Cache Parquet do Evidence — separa extração de consulta |
 | Descrição | Conceito futuro de materializar resultados de `query-definitions` para leitura rápida e estável, desacoplando o relatório da fonte ao vivo |
@@ -109,7 +109,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 
 ### 6. Transparência da definição (explainability estrutural)
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Evidence: toda métrica é SQL aberto e rastreável até o commit |
 | Descrição | Em cada widget/número, oferecer "ver definição": a `query-definition`, os `field-mappings` e a versão que produziram aquele resultado |
@@ -128,7 +128,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 
 ### 7. Semantic layer própria — a lacuna do Evidence como oportunidade
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Ausência de semantic layer no Evidence (métricas espalhadas no SQL) |
 | Descrição | Catálogo central de métricas e dimensões reutilizáveis, construído sobre `datasets` e `field-mappings`, evitando a dispersão de regras que o Evidence sofre |
@@ -147,7 +147,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 
 ### 8. Drill-down por rota parametrizada
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Drill-down via templated pages do Evidence (`/customers/[customer]`) |
 | Descrição | Definir, na `dashboard-definition`, navegação de detalhe onde clicar em um valor leva a uma visão parametrizada compartilhável por URL |
@@ -166,7 +166,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 
 ### 9. IA copiloto de autoria de definições
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Evidence Studio — sugestões de SQL, componentes e visualizações |
 | Descrição | Assistente que sugere `query-definitions`, escolhe visualização adequada ao dado e valida sintaxe enquanto o usuário monta um dashboard |
@@ -185,7 +185,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 
 ### 10. Validação de definições em "build-time"
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Evidence valida SQL/Markdown/componentes antes de publicar |
 | Descrição | Validar `query-definitions` e `dashboard-definitions` (campos existentes, referências de `field-mappings` válidas, parâmetros resolvíveis) no momento de salvar, antes de qualquer execução |
@@ -204,7 +204,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 
 ### 11. Embedding de relatórios com contexto de tenant
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Embedding de primeira classe do Evidence — mas o Delfos resolve o que falta lá |
 | Descrição | Permitir embutir um dashboard/relatório em aplicação externa preservando `tenantId`, papéis e masking — o oposto do embed sem contexto do Evidence open-source |
@@ -223,7 +223,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 
 ### 12. Catálogo de templates iniciais (galeria de partida)
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Evidence oferece projetos/exemplos de partida e geração de scaffolds |
 | Descrição | Galeria de `dashboard-definitions`/`report-definitions` modelo que um tenant clona e adapta, acelerando o onboarding |

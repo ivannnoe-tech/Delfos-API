@@ -14,7 +14,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 
 ### 1. Camada semântica como contrato de negócio explícito
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Semantic layer do Lightdash (métricas/dimensões declaradas) |
 | Descrição | Formalizar uma camada semântica do Delfos que unifica `datasets`, `field-mappings` e `query-definitions` num modelo de métricas e dimensões nomeadas, reutilizáveis e descritas em linguagem de negócio |
@@ -33,7 +33,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 
 ### 2. Definições versionadas com histórico e rollback
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Governança git-based / Dashboards as Code do Lightdash |
 | Descrição | Cada definição (`query-definition`, `dashboard-definition`) ganha versionamento interno: histórico de mudanças, autor, diff e rollback — sem exigir que o usuário use git |
@@ -52,7 +52,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 
 ### 3. Preview de definição antes de promover (foundation declarativa)
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | `lightdash preview` — ambientes efêmeros por branch |
 | Descrição | Estender `execution-preview` para validar uma `query-definition`/`dashboard-definition` em estado de rascunho e mostrar como ficaria, antes de marcá-la como publicada |
@@ -71,7 +71,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 
 ### 4. Validação de conteúdo (detectar definições quebradas)
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | `lightdash validate` — validação de charts/dashboards em CI |
 | Descrição | Job declarativo que verifica se `dashboard-definitions` ainda referenciam `query-definitions` e `field-mappings` válidos; reporta artefatos órfãos/quebrados |
@@ -90,7 +90,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 
 ### 5. Catálogo navegável de métricas (estilo Spotlight)
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Spotlight do Lightdash — catálogo de métricas |
 | Descrição | Tela/endpoint que lista todas as métricas e dimensões disponíveis por tenant, com descrição, owner e status — descoberta sem abrir cada definição |
@@ -109,7 +109,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 
 ### 6. Builder no-code de query sobre a camada semântica
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Explore builder do Lightdash (seleção de campos, sem SQL) |
 | Descrição | UI no `delfos-web` onde o usuário monta uma `query-definition` escolhendo dimensões e métricas da camada semântica, sem digitar query |
@@ -128,7 +128,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 
 ### 7. Filtros globais de dashboard
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Filtros de dashboard do Lightdash que propagam para tiles |
 | Descrição | Modelo declarativo de filtros de nível dashboard que se aplicam a múltiplos widgets que compartilham uma dimensão |
@@ -147,7 +147,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 
 ### 8. Assistente de IA ancorado na camada semântica
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | AI Agents / Agentic BI do Lightdash |
 | Descrição | Assistente que responde perguntas escolhendo métricas/dimensões da camada semântica governada — nunca gerando query livre |
@@ -166,7 +166,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 
 ### 9. Explainability: rastrear toda métrica até sua definição
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Visibilidade de SQL + lineage do Lightdash |
 | Descrição | Todo número exibido pode ser aberto para mostrar a `query-definition`, os `field-mappings` e o `dataset` que o originaram, com autor e versão |
@@ -185,7 +185,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 
 ### 10. Estado de verificação de conteúdo (selo "verificado")
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Verification workflows do Lightdash |
 | Descrição | Campo de status em definições/dashboards: `draft` / `review` / `verified`, com quem verificou e quando |
@@ -204,7 +204,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 
 ### 11. Embedded analytics governado
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Embedded analytics do Lightdash |
 | Descrição | Permitir embarcar um `dashboard-definition` em app externo, com token de escopo limitado e isolamento por `tenantId` |
@@ -223,7 +223,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 
 ### 12. Connector de fonte como contrato plural (não só SQL)
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Reação ao modelo único push-down SQL do Lightdash |
 | Descrição | Manter o modelo de connectors do Delfos explicitamente plural — API, warehouse, on-premise — via `command envelope`, sem assumir um único transporte |

@@ -14,7 +14,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 
 ### 1. Knowledge base tripartite por tenant (DDL + documentação + exemplos)
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Modelo de treino do Vanna: schema + documentação + pares pergunta→SQL |
 | Descrição | Catálogo de conhecimento por tenant que reúne metadados de datasets, glossário de negócio e exemplos de `query-definitions` validadas |
@@ -33,7 +33,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 
 ### 2. Assistente NL→query-definition (não NL→SQL)
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | `vn.ask()` — pergunta em linguagem natural vira consulta |
 | Descrição | Copiloto que recebe pergunta em PT-BR e propõe uma `query-definition` declarativa preenchida, jamais SQL executado direto |
@@ -52,7 +52,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 
 ### 3. Explainability de proveniência em sugestões de IA
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | RAG do Vanna expõe quais contextos sustentaram a resposta |
 | Descrição | Toda sugestão de IA acompanha "por que" — quais datasets, field-mappings e exemplos foram usados como base |
@@ -71,7 +71,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 
 ### 4. Loop de validação humana que realimenta o conhecimento
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Auto-training do Vanna: respostas validadas viram material de recuperação |
 | Descrição | Quando um humano aprova/corrige uma `query-definition` sugerida, ela é marcada como exemplo confiável da knowledge base |
@@ -90,7 +90,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 
 ### 5. Semantic layer estruturado de métricas
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Lacuna do Vanna — significado de métricas vive em prosa solta |
 | Descrição | Definições de métricas/dimensões versionadas e validáveis, sobre `field-mappings`, em vez de documentação textual livre |
@@ -109,7 +109,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 
 ### 6. Resposta multimodal: tabela + gráfico + resumo
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Vanna entrega resultado como tabela, gráfico Plotly e resumo NL |
 | Descrição | Resultado de uma `query-definition` apresentado em três formas, com resumo NL gerado por IA |
@@ -128,7 +128,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 
 ### 7. Streaming incremental de resultados
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Vanna 2.0 streama tabela/gráfico/resumo progressivamente |
 | Descrição | Resultados de execução entregues em partes, melhorando percepção de velocidade no `DelfosLoadingState` |
@@ -147,7 +147,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 
 ### 8. Observability e cost tracking de IA
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | LLM middlewares e observability do Vanna 2.0 |
 | Descrição | Camada que registra latência, custo e uso de chamadas LLM por tenant/ator antes de qualquer IA em produção |
@@ -166,7 +166,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 
 ### 9. Quota e rate limiting para IA via hooks
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Lifecycle hooks do Vanna 2.0 (quota checking) |
 | Descrição | Pontos de interceptação que aplicam limites de uso de IA por tenant/role |
@@ -185,7 +185,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 
 ### 10. Drill-down conversacional com contexto
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Perguntas de acompanhamento do Vanna herdam contexto da conversa |
 | Descrição | Sobre um resultado, o usuário pede refinamentos em PT-BR e o assistente ajusta a `query-definition` mantendo o contexto |
@@ -204,7 +204,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 
 ### 11. Sugestão de field-mappings assistida por IA
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Vanna infere semântica de schema a partir de DDL + documentação |
 | Descrição | Ao registrar um `dataset`, a IA propõe `field-mappings` iniciais (nomes amigáveis, tipos, possíveis dimensões/métricas) para revisão humana |
@@ -223,7 +223,7 @@ Prioridade e complexidade são estimativas estratégicas, não compromissos de r
 
 ### 12. Galeria de query-definitions validadas (templates)
 
-| Campo | Conteúdo |
+| Campo | Valor |
 |---|---|
 | Origem/inspiração | Pares pergunta→SQL do Vanna como templates implícitos — mas curados |
 | Descrição | Catálogo curado e versionado de `query-definitions` validadas, reutilizáveis como ponto de partida por tenant |
