@@ -22,6 +22,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 | Impacto | Alto — base para consistência de todo o produto |
 | Prioridade | Alta |
 | Complexidade | Alta |
+| Maturidade | `Research` |
 | Módulos impactados | `datasets`, `field-mappings`, `query-definitions`, `dashboard-definitions` |
 | Dependências | Modelo de dados maduro dos módulos declarativos atuais |
 | Viabilidade | Alta — é evolução natural da fundação declarativa |
@@ -40,6 +41,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 | Impacto | Alto — confiança e governança |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `query-definitions`, `dashboard-definitions`, `report-definitions`, `audit` |
 | Dependências | `audit` (já existe), schemas com campo de versão |
 | Viabilidade | Alta — Mongo suporta documentos de versão; alinhado a `adr-0018` |
@@ -58,6 +60,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 | Impacto | Médio-alto |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `execution-preview`, `query-definitions`, `dashboard-definitions` |
 | Dependências | Estado de ciclo de vida (draft/published) nos schemas |
 | Viabilidade | Alta — `execution-preview` já existe como módulo |
@@ -76,6 +79,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 | Impacto | Médio-alto |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `dashboard-definitions`, `query-definitions`, `field-mappings`, `datasets` |
 | Dependências | Integridade referencial entre módulos |
 | Viabilidade | Alta — é checagem declarativa, sem execução real |
@@ -94,6 +98,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 | Impacto | Médio |
 | Prioridade | Média |
 | Complexidade | Baixa-média |
+| Maturidade | `Research` |
 | Módulos impactados | `datasets`, `field-mappings`, `query-definitions` |
 | Dependências | Metadados descritivos nas definições (descrição, owner) |
 | Viabilidade | Alta — leitura agregada sobre dados já existentes |
@@ -112,6 +117,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 | Impacto | Alto |
 | Prioridade | Média |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `query-definitions` (API) · `delfos-web` (UI) |
 | Dependências | Ideia 1 (camada semântica), regras de UI do `delfos-web` |
 | Viabilidade | Média — depende da camada semântica estar madura |
@@ -130,6 +136,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 | Impacto | Médio |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `dashboard-definitions` |
 | Dependências | `adr-0011` (widget model), camada semântica para validar dimensões |
 | Viabilidade | Alta na modelagem declarativa; execução é Fase futura |
@@ -148,6 +155,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 | Impacto | Alto |
 | Prioridade | Baixa (depende de fundação) |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `query-definitions`, `dashboard-definitions`, futuro módulo de IA |
 | Dependências | Ideia 1, `adr-0025` |
 | Viabilidade | Média — só após camada semântica e runtime maduros |
@@ -166,6 +174,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 | Impacto | Médio-alto |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `query-definitions`, `field-mappings`, `datasets`, `audit` |
 | Dependências | Ideia 2 (versionamento), `audit` |
 | Viabilidade | Alta — dados de origem já são declarativos |
@@ -184,6 +193,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 | Impacto | Médio |
 | Prioridade | Baixa |
 | Complexidade | Baixa |
+| Maturidade | `Research` |
 | Módulos impactados | `query-definitions`, `dashboard-definitions`, `report-definitions`, `audit` |
 | Dependências | `adr-0017` (roles — quem pode verificar) |
 | Viabilidade | Alta — é campo de estado + checagem de papel |
@@ -202,6 +212,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 | Impacto | Médio |
 | Prioridade | Baixa |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `dashboard-definitions`, `auth`, `tenants` |
 | Dependências | Auth real (`adr-0006`), runtime de execução |
 | Viabilidade | Baixa no curto prazo — exige auth real e runtime |
@@ -220,6 +231,7 @@ O fio condutor extraído do Lightdash: **camada semântica governada como contra
 | Impacto | Alto (estratégico) |
 | Prioridade | Alta |
 | Complexidade | Alta |
+| Maturidade | `Research` |
 | Módulos impactados | `connections`, `connectors`, `runtime` |
 | Dependências | `adr-0008`, `adr-0015`, `adr-0012` |
 | Viabilidade | Já é a direção do Delfos — esta ideia é reforço de princípio |
@@ -247,6 +259,7 @@ As ideias 1, 2 e 4 formam um bloco coerente de governança declarativa — boa c
 - [ux-patterns.md](./ux-patterns.md)
 - [premium-features.md](./premium-features.md)
 - [anti-patterns.md](./anti-patterns.md)
+- [Taxonomia de maturidade](../maturity-taxonomy.md)
 - ADR: [adr-0008-connectors-and-integration-execution.md](../../adr/adr-0008-connectors-and-integration-execution.md)
 - ADR: [adr-0011-dashboard-builder-and-widget-model.md](../../adr/adr-0011-dashboard-builder-and-widget-model.md)
 - ADR: [adr-0014-runtime-execution-requests-foundation.md](../../adr/adr-0014-runtime-execution-requests-foundation.md)

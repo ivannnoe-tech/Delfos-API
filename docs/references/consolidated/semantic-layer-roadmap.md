@@ -132,35 +132,37 @@ Padrão Cube (pre-aggregations) — respeitando **ADR-0007 (no cache/Redis Fase 
 
 ## Ondas de roadmap
 
+A coluna `Maturidade` em cada tabela segue a escala de [`maturity-taxonomy.md`](../maturity-taxonomy.md).
+
 ### Onda 1 — Curto prazo (contrato semântico declarativo)
 
-| Item | Prioridade | Complexidade | Módulos | ADR |
-|---|---|---|---|---|
-| Esquema declarativo de `measures` | Alta | Média | novo módulo `semantic-layer`, datasets | nova ADR (semantic layer) |
-| Esquema declarativo de `dimensions` | Alta | Média | novo módulo `semantic-layer`, field-mappings | nova ADR (semantic layer) |
-| query-definitions referenciam measures/dimensions | Alta | Média | query-definitions, semantic-layer | nova ADR (semantic layer) |
-| Segments nomeados como entidade | Média | Baixa | semantic-layer | nova ADR (semantic layer) |
-| Security context (derivação de tenantId) | Alta | Média | core, semantic-layer | ADR-0009, nova ADR |
+| Item | Prioridade | Complexidade | Maturidade | Módulos | ADR |
+|---|---|---|---|---|---|
+| Esquema declarativo de `measures` | Alta | Média | `Idea` | novo módulo `semantic-layer`, datasets | nova ADR (semantic layer) |
+| Esquema declarativo de `dimensions` | Alta | Média | `Idea` | novo módulo `semantic-layer`, field-mappings | nova ADR (semantic layer) |
+| query-definitions referenciam measures/dimensions | Alta | Média | `Idea` | query-definitions, semantic-layer | nova ADR (semantic layer) |
+| Segments nomeados como entidade | Média | Baixa | `Idea` | semantic-layer | nova ADR (semantic layer) |
+| Security context (derivação de tenantId) | Alta | Média | `Idea` | core, semantic-layer | ADR-0009, nova ADR |
 
 ### Onda 2 — Médio prazo (governança e descoberta)
 
-| Item | Prioridade | Complexidade | Módulos | ADR |
-|---|---|---|---|---|
-| Versionamento de measures/dimensions | Alta | Média | semantic-layer, audit | nova ADR (versionamento) |
-| Certificação/ownership de métricas | Média | Baixa | semantic-layer, users | ADR-0017 |
-| Catálogo de métricas navegável (Spotlight) | Alta | Média | semantic-layer (web) | nova ADR (semantic layer) |
-| Explainability número→measure | Média | Média | semantic-layer, query-definitions | nova ADR (explainability) |
-| Contrato declarativo de pre-aggregation | Média | Média | semantic-layer | ADR-0007, nova ADR |
-| View de consumo (recorte navegável) | Média | Média | semantic-layer | nova ADR (semantic layer) |
+| Item | Prioridade | Complexidade | Maturidade | Módulos | ADR |
+|---|---|---|---|---|---|
+| Versionamento de measures/dimensions | Alta | Média | `Idea` | semantic-layer, audit | nova ADR (versionamento) |
+| Certificação/ownership de métricas | Média | Baixa | `Idea` | semantic-layer, users | ADR-0017 |
+| Catálogo de métricas navegável (Spotlight) | Alta | Média | `Idea` | semantic-layer (web) | nova ADR (semantic layer) |
+| Explainability número→measure | Média | Média | `Idea` | semantic-layer, query-definitions | nova ADR (explainability) |
+| Contrato declarativo de pre-aggregation | Média | Média | `Idea` | semantic-layer | ADR-0007, nova ADR |
+| View de consumo (recorte navegável) | Média | Média | `Idea` | semantic-layer | nova ADR (semantic layer) |
 
 ### Onda 3 — Fase 2+ (runtime e segurança fina)
 
-| Item | Prioridade | Complexidade | Módulos | ADR |
-|---|---|---|---|---|
-| Materialização real de pre-aggregations | Média | Alta | runtime, semantic-layer | ADR-0007 (substituir), ADR-0024 |
-| Controle de acesso linha/coluna no tenant | Alta | Alta | semantic-layer, datasets | ADR-0023, nova ADR |
-| Resolução de measures no runtime de execução | Alta | Alta | runtime, connectors, semantic-layer | ADR-0008, ADR-0024 |
-| Diff/rollback executável de definições | Média | Média | semantic-layer, audit | nova ADR (versionamento) |
+| Item | Prioridade | Complexidade | Maturidade | Módulos | ADR |
+|---|---|---|---|---|---|
+| Materialização real de pre-aggregations | Média | Alta | `Idea` | runtime, semantic-layer | ADR-0007 (substituir), ADR-0024 |
+| Controle de acesso linha/coluna no tenant | Alta | Alta | `Idea` | semantic-layer, datasets | ADR-0023, nova ADR |
+| Resolução de measures no runtime de execução | Alta | Alta | `Idea` | runtime, connectors, semantic-layer | ADR-0008, ADR-0024 |
+| Diff/rollback executável de definições | Média | Média | `Idea` | semantic-layer, audit | nova ADR (versionamento) |
 
 ---
 
@@ -184,6 +186,7 @@ Padrão Cube (pre-aggregations) — respeitando **ADR-0007 (no cache/Redis Fase 
 - `../superset/ideas-for-delfos.md`
 - `./dashboard-builder-roadmap.md` — query builder consome a semantic layer
 - `./ai-assistant-roadmap.md` — grounding da IA na semantic layer
+- `../maturity-taxonomy.md` — escala de maturidade aplicada às tabelas acima
 - `../../adr/adr-0007-no-cache-redis-phase-1.md`
 - `../../adr/adr-0009-deployment-isolation-and-tenant-model.md`
 - `../../adr/adr-0017-roles-and-permissions-model.md`

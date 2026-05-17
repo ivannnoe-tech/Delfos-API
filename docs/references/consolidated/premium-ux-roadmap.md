@@ -116,28 +116,28 @@ Interface sobre modelos declarativos existentes.
 
 ## Tabela de roadmap
 
-| Item | Onda | Prioridade | Complexidade | Módulos | Foundation vs futuro | ADRs |
-|---|---|---|---|---|---|---|
-| Query builder por seleção | 1 | Alta | Média-alta | `query-definitions`, `delfos-web` | Foundation declarativa | adr-0011 |
-| Painel de controles contextual | 1 | Média | Média | `dashboard-definitions`, `delfos-web` | Foundation (UI) | adr-0003 |
-| Builder com test embutido | 1 | Alta | Média | `execution-preview`, `delfos-web` | Foundation (Fake adapter) | adr-0011 |
-| Quatro estados em telas de dados | 1 | Alta | Baixa | `delfos-web` | Foundation (UI) | — |
-| Modo configuração vs. uso | 1 | Média | Média | `dashboard-definitions`, `delfos-web` | Foundation (UI) | adr-0011 |
-| Filtros globais desacoplados | 2 | Alta | Média | `dashboard-definitions`, `query-definitions` | Foundation declarativa | nova (global filters) |
-| Variáveis auto-vinculadas | 2 | Média | Média | `dashboard-definitions`, `query-definitions` | Foundation declarativa | nova (filter binding) |
-| Catálogo de métricas navegável | 2 | Média | Média | `datasets`, `field-mappings`, `delfos-web` | Foundation declarativa | nova (metric catalog) |
-| Permalink de exploração | 2 | Média | Média | `dashboard-definitions` | Foundation declarativa | — |
-| Explainability na UI | 2 | Média | Média | `query-definitions`, `field-mappings`, `audit` | Foundation declarativa | adr-0018 (ref.) |
-| Drill-down por hierarquia | 3 | Média | Média | `field-mappings`, `dashboard-definitions` | Foundation declarativa | nova (hierarchies) |
-| Click behavior configurável | 3 | Média | Média | `dashboard-definitions`, `delfos-web` | Foundation declarativa | adr-0011 (extensão) |
-| Contextual actions | 3 | Média | Baixa | `delfos-web` | Foundation (UI) | — |
-| Templates de dashboard | 3 | Média | Média | `dashboard-definitions`, `tenants` | Foundation declarativa | nova (def templates) |
-| Responsividade | 3 | Média | Média | `delfos-web` | Foundation (UI) | — |
-| Cross-filtering interativo | 4 | Média | Alta | `dashboard-definitions`, `runtime` | Futuro gated | adr-0014 |
-| X-rays / exploração automática | 4 | Baixa | Alta | `datasets`, `dashboard-definitions` | Futuro gated | nova (auto-exploration) |
-| Relatórios narrativos | 4 | Média | Alta | `report-definitions`, `runtime` | Futuro gated | nova (report runtime) |
-| Resumo automático de gráfico | 4 | Baixa | Alta | `dashboard-definitions`, IA futura | Futuro gated | **adr-0025** |
-| Copiloto de autoria | 4 | Média | Alta | `query-definitions`, `dashboard-definitions`, IA | Futuro gated | **adr-0025** |
+| Item | Onda | Prioridade | Complexidade | Maturidade | Módulos | Foundation vs futuro | ADRs |
+|---|---|---|---|---|---|---|---|
+| Query builder por seleção | 1 | Alta | Média-alta | `Research` | `query-definitions`, `delfos-web` | Foundation declarativa | adr-0011 |
+| Painel de controles contextual | 1 | Média | Média | `Research` | `dashboard-definitions`, `delfos-web` | Foundation (UI) | adr-0003 |
+| Builder com test embutido | 1 | Alta | Média | `Research` | `execution-preview`, `delfos-web` | Foundation (Fake adapter) | adr-0011 |
+| Quatro estados em telas de dados | 1 | Alta | Baixa | `Research` | `delfos-web` | Foundation (UI) | — |
+| Modo configuração vs. uso | 1 | Média | Média | `Research` | `dashboard-definitions`, `delfos-web` | Foundation (UI) | adr-0011 |
+| Filtros globais desacoplados | 2 | Alta | Média | `Research` | `dashboard-definitions`, `query-definitions` | Foundation declarativa | nova (global filters) |
+| Variáveis auto-vinculadas | 2 | Média | Média | `Research` | `dashboard-definitions`, `query-definitions` | Foundation declarativa | nova (filter binding) |
+| Catálogo de métricas navegável | 2 | Média | Média | `Research` | `datasets`, `field-mappings`, `delfos-web` | Foundation declarativa | nova (metric catalog) |
+| Permalink de exploração | 2 | Média | Média | `Research` | `dashboard-definitions` | Foundation declarativa | — |
+| Explainability na UI | 2 | Média | Média | `Research` | `query-definitions`, `field-mappings`, `audit` | Foundation declarativa | adr-0018 (ref.) |
+| Drill-down por hierarquia | 3 | Média | Média | `Research` | `field-mappings`, `dashboard-definitions` | Foundation declarativa | nova (hierarchies) |
+| Click behavior configurável | 3 | Média | Média | `Research` | `dashboard-definitions`, `delfos-web` | Foundation declarativa | adr-0011 (extensão) |
+| Contextual actions | 3 | Média | Baixa | `Research` | `delfos-web` | Foundation (UI) | — |
+| Templates de dashboard | 3 | Média | Média | `Research` | `dashboard-definitions`, `tenants` | Foundation declarativa | nova (def templates) |
+| Responsividade | 3 | Média | Média | `Research` | `delfos-web` | Foundation (UI) | — |
+| Cross-filtering interativo | 4 | Média | Alta | `Idea` | `dashboard-definitions`, `runtime` | Futuro gated | adr-0014 |
+| X-rays / exploração automática | 4 | Baixa | Alta | `Idea` | `datasets`, `dashboard-definitions` | Futuro gated | nova (auto-exploration) |
+| Relatórios narrativos | 4 | Média | Alta | `Idea` | `report-definitions`, `runtime` | Futuro gated | nova (report runtime) |
+| Resumo automático de gráfico | 4 | Baixa | Alta | `Idea` | `dashboard-definitions`, IA futura | Futuro gated | **adr-0025** |
+| Copiloto de autoria | 4 | Média | Alta | `Idea` | `query-definitions`, `dashboard-definitions`, IA | Futuro gated | **adr-0025** |
 
 ---
 
@@ -178,3 +178,4 @@ Interface sobre modelos declarativos existentes.
 - [../../adr/adr-0014-runtime-execution-requests-foundation.md](../../adr/adr-0014-runtime-execution-requests-foundation.md)
 - [../../adr/adr-0024-phase-1-and-phase-2-definition.md](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
 - [../../adr/adr-0025-llm-assisted-analytics-text-generation.md](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- [../maturity-taxonomy.md](../maturity-taxonomy.md)

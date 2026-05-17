@@ -20,6 +20,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 | Impacto | Alto — muda a forma como métricas são modeladas e governadas |
 | Prioridade | Alta |
 | Complexidade | Alta |
+| Maturidade | `Research` |
 | Módulos impactados | `datasets`, `field-mappings`, `query-definitions`, `dashboard-definitions` |
 | Dependências | Modelo de `datasets` e `field-mappings` estável |
 | Viabilidade | Boa como modelo declarativo; nenhuma execução envolvida nesta fase |
@@ -38,6 +39,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 | Impacto | Médio-alto |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `datasets`, `dashboard-definitions`, `query-definitions` |
 | Dependências | Ideia 1 (camada semântica) |
 | Viabilidade | Alta — é modelagem declarativa pura |
@@ -56,6 +58,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 | Impacto | Médio |
 | Prioridade | Média |
 | Complexidade | Baixa |
+| Maturidade | `Research` |
 | Módulos impactados | `query-definitions`, `field-mappings` |
 | Dependências | Validação de entrada de filtros (invariante anti-concatenação) |
 | Viabilidade | Alta — apenas metadados declarativos |
@@ -74,6 +77,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 | Impacto | Médio (estratégico, baixo no curto prazo) |
 | Prioridade | Baixa |
 | Complexidade | Baixa (como contrato); alta (se implementado) |
+| Maturidade | `Research` |
 | Módulos impactados | `query-definitions`, `runtime` |
 | Dependências | Definição de runtime real (Fase 2) |
 | Viabilidade | Alta como contrato declarativo; implementação real é fora de escopo |
@@ -92,6 +96,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 | Impacto | Alto — reforça invariante de segurança central |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `auth`, `query-definitions`, `runtime`, `users` |
 | Dependências | `request-context.interceptor`, modelo de roles |
 | Viabilidade | Alta — alinhado com invariantes já existentes |
@@ -110,6 +115,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 | Impacto | Médio |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Idea` |
 | Módulos impactados | `datasets`, `field-mappings`, `query-definitions` (API); `delfos-web` (UI) |
 | Dependências | Ideia 1 |
 | Viabilidade | Alta — leitura de metadados existentes |
@@ -128,6 +134,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 | Impacto | Alto para UX de produto |
 | Prioridade | Média |
 | Complexidade | Média-alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `query-definitions`, `dashboard-definitions` (API); `delfos-web` (UI) |
 | Dependências | Ideias 1 e 2 |
 | Viabilidade | Boa — gera apenas definições declarativas |
@@ -146,6 +153,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 | Impacto | Médio |
 | Prioridade | Baixa |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `field-mappings`, `query-definitions`, `dashboard-definitions` |
 | Dependências | Ideia 1 |
 | Viabilidade | Alta como metadado declarativo |
@@ -164,6 +172,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 | Impacto | Alto (estratégico) |
 | Prioridade | Baixa (depende de fundação) |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `query-definitions`, `datasets`, novo módulo de IA |
 | Dependências | Ideias 1, 5, 7; política de geração assistida |
 | Viabilidade | Média — só após camada semântica madura |
@@ -182,6 +191,7 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 | Impacto | Médio-alto |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `query-definitions`, `field-mappings`, `audit` |
 | Dependências | Ideia 1 |
 | Viabilidade | Alta — leitura de metadados; alinhado com estratégia de auditoria |
@@ -215,3 +225,4 @@ Cada ideia abaixo é inspirada no Cube e adaptada ao Delfos. **Nenhuma autoriza 
 - [./premium-features.md](./premium-features.md)
 - [./anti-patterns.md](./anti-patterns.md)
 - ADRs: [../../adr/adr-0007-no-cache-redis-phase-1.md](../../adr/adr-0007-no-cache-redis-phase-1.md), [../../adr/adr-0011-dashboard-builder-and-widget-model.md](../../adr/adr-0011-dashboard-builder-and-widget-model.md), [../../adr/adr-0017-roles-and-permissions-model.md](../../adr/adr-0017-roles-and-permissions-model.md), [../../adr/adr-0024-phase-1-and-phase-2-definition.md](../../adr/adr-0024-phase-1-and-phase-2-definition.md), [../../adr/adr-0025-llm-assisted-analytics-text-generation.md](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- [Taxonomia de maturidade](../maturity-taxonomy.md) — taxonomia de maturidade aplicada às ideias

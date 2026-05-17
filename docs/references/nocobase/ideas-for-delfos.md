@@ -25,6 +25,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 | Impacto | Alto — destrava evolução de visualizações |
 | Prioridade | média |
 | Complexidade | média |
+| Maturidade | `Research` |
 | Módulos impactados | `dashboard-definitions`, `delfos-web` shared/charts |
 | Dependências | `chart_renderer` (ADR-0003) já abstraído |
 | Viabilidade | Alta — é evolução de contrato declarativo, sem execução real |
@@ -43,6 +44,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 | Impacto | Alto — base para self-service de analytics |
 | Prioridade | alta |
 | Complexidade | média |
+| Maturidade | `Research` |
 | Módulos impactados | `connections`, `datasets`, `field-mappings` |
 | Dependências | Modelos declarativos já existentes |
 | Viabilidade | Alta — é organização declarativa, sem chamadas externas |
@@ -61,6 +63,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 | Impacto | Alto — requisito de compliance |
 | Prioridade | alta |
 | Complexidade | alta |
+| Maturidade | `Research` |
 | Módulos impactados | `users`, `datasets`, `field-mappings`, `audit` |
 | Dependências | Modelo de papéis (ADR-0017), mascaramento (ADR-0023) |
 | Viabilidade | Média — exige extensão cuidadosa do ACL atual |
@@ -79,6 +82,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 | Impacto | Médio — qualidade de UX percebida |
 | Prioridade | média |
 | Complexidade | média |
+| Maturidade | `Idea` |
 | Módulos impactados | `delfos-web` features/dashboard, `dashboard-definitions` |
 | Dependências | Builder de dashboard declarativo (ADR-0011) |
 | Viabilidade | Alta — é UX sobre definição declarativa |
@@ -97,6 +101,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 | Impacto | Alto — coerência de exploração |
 | Prioridade | alta |
 | Complexidade | média |
+| Maturidade | `Research` |
 | Módulos impactados | `dashboard-definitions`, `query-definitions`, `delfos-web` |
 | Dependências | `query-definitions` declarativo |
 | Viabilidade | Alta — extensão de modelo declarativo |
@@ -115,6 +120,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 | Impacto | Médio-alto — time-to-value para novos tenants |
 | Prioridade | média |
 | Complexidade | média |
+| Maturidade | `Research` |
 | Módulos impactados | `dashboard-definitions`, `tenants` |
 | Dependências | Definições declarativas estáveis; isolamento por `tenantId` |
 | Viabilidade | Alta — é clonagem de definição declarativa |
@@ -133,6 +139,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 | Impacto | Alto — base de toda a Fase 2 |
 | Prioridade | média (futuro) |
 | Complexidade | alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `runtime`, `execution-preview`, `delfos-connectors` |
 | Dependências | Command envelope (ADR-0015), definição Fase 2 (ADR-0024) |
 | Viabilidade | Baixa agora — exige autorização de execução real |
@@ -151,6 +158,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 | Impacto | Alto — capacidade enterprise |
 | Prioridade | baixa (futuro distante) |
 | Complexidade | alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `runtime`, novo módulo de orquestração |
 | Dependências | Execução real, scheduler (fora de escopo hoje, ADR-0007) |
 | Viabilidade | Baixa agora — múltiplas pré-condições não atendidas |
@@ -169,6 +177,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 | Impacto | Alto — confiança e compliance |
 | Prioridade | média (futuro) |
 | Complexidade | média |
+| Maturidade | `Idea` |
 | Módulos impactados | `users`, `auth`, `audit`, AI assistant futuro |
 | Dependências | Modelo de papéis (ADR-0017), auditoria (ADR-0018), ADR-0025 |
 | Viabilidade | Média — princípio aplicável quando IA for autorizada |
@@ -187,6 +196,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 | Impacto | Alto — valor percebido premium |
 | Prioridade | média (futuro) |
 | Complexidade | alta |
+| Maturidade | `Idea` |
 | Módulos impactados | AI assistant futuro, `query-definitions`, `dashboard-definitions` |
 | Dependências | LLM text-generation (ADR-0025), explainability |
 | Viabilidade | Baixa agora — depende de IA autorizada |
@@ -205,6 +215,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 | Impacto | Alto — pilar de produto de BI |
 | Prioridade | média (futuro) |
 | Complexidade | alta |
+| Maturidade | `Research` |
 | Módulos impactados | `field-mappings`, `query-definitions`, `datasets` |
 | Dependências | Catálogo unificado (ideia 2) maduro |
 | Viabilidade | Média — começa declarativa, evolui na Fase 2 |
@@ -223,6 +234,7 @@ Legenda: Prioridade e Complexidade em {alta · média · baixa}.
 | Impacto | Alto — base de integração |
 | Prioridade | média (futuro) |
 | Complexidade | média |
+| Maturidade | `Research` |
 | Módulos impactados | `connections`, `delfos-connectors` |
 | Dependências | ADR-0008, ADR-0015 (command envelope) |
 | Viabilidade | Média — contrato pode ser declarado antes da execução real |
@@ -251,6 +263,7 @@ declarativos sem tocar execução real, IA ou infraestrutura assíncrona.
 - [`./ux-patterns.md`](./ux-patterns.md)
 - [`./premium-features.md`](./premium-features.md)
 - [`./anti-patterns.md`](./anti-patterns.md)
+- [Taxonomia de maturidade](../maturity-taxonomy.md)
 - ADR: [`../../adr/adr-0001-phase-1-api-based-data-source.md`](../../adr/adr-0001-phase-1-api-based-data-source.md)
 - ADR: [`../../adr/adr-0011-dashboard-builder-and-widget-model.md`](../../adr/adr-0011-dashboard-builder-and-widget-model.md)
 - ADR: [`../../adr/adr-0017-roles-and-permissions-model.md`](../../adr/adr-0017-roles-and-permissions-model.md)

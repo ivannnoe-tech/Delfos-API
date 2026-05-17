@@ -126,26 +126,26 @@ Modela o RBAC completo; aplicação a usuários finais depende de auth real.
 
 ## Tabela de roadmap
 
-| Item | Onda | Prioridade | Complexidade | Módulos | Foundation vs futuro | ADRs |
-|---|---|---|---|---|---|---|
-| Certificação e ownership de ativos | 1 | Alta | Baixa | `datasets`, `query-definitions`, `dashboard-definitions` | Foundation declarativa | nova (asset governance), adr-0017 |
-| Catálogo com pastas e tagging | 1 | Média | Baixa | `datasets`, `field-mappings` | Foundation declarativa | — |
-| Sanitização de metadados consolidada | 1 | Alta | Baixa | `core/utils`, `audit` | Foundation declarativa | **adr-0020** |
-| Security context unificado | 1 | Alta | Média | `auth`, `users`, `query-definitions` | Foundation declarativa | adr-0017 |
-| Modelo de roles completo | 2 | Alta | Média | `users`, `auth` | Modelo agora · enforcement gated | **adr-0017**, adr-0006 |
-| Permissões field-level | 2 | Alta | Alta | `users`, `datasets`, `field-mappings`, `audit` | Foundation de modelo | adr-0017, adr-0023 |
-| Contrato de RLS/CLS | 2 | Alta | Alta | `query-definitions`, `users` | Contrato agora · aplicação Onda 4 | nova (RLS/CLS), adr-0017 |
-| Política de field-level masking | 2 | Alta | Média | `field-mappings`, `datasets` | Foundation declarativa | **adr-0023** |
-| Versionamento de definições | 3 | Alta | Média | `query-definitions`, `dashboard-definitions`, `report-definitions` | Foundation declarativa | nova (definition versioning) |
-| Validação de integridade | 3 | Média | Média | `query-definitions`, `datasets`, `field-mappings` | Foundation declarativa | nova (definition validation) |
-| Explainability / linhagem | 3 | Média | Média | `query-definitions`, `field-mappings`, `audit` | Foundation declarativa | adr-0018 (extensão) |
-| Timeline imutável de mudanças | 3 | Média | Média | `audit` | Foundation declarativa | adr-0018 (extensão) |
-| RBAC aplicado a usuários finais | 4 | Alta | Alta | `auth`, `users` | Futuro gated | **adr-0006**, adr-0017 |
-| RLS/CLS aplicada a dados | 4 | Alta | Alta | `runtime`, `query-definitions` | Futuro gated | adr-0014, adr-0017 |
-| Mascaramento em resultados | 4 | Alta | Alta | `runtime`, `field-mappings` | Futuro gated | **adr-0023**, adr-0014 |
-| Observability e cost tracking | 4 | Média | Média | `runtime`, `audit`, `health` | Futuro gated | nova (observability) |
-| IA como sujeito de ACL auditado | 4 | Média | Média | `users`, `auth`, `audit`, IA futura | Futuro gated | **adr-0025**, adr-0017, adr-0018 |
-| Auditoria de uso como insight | 4 | Baixa | Média | `audit` | Futuro gated | adr-0018 (extensão) |
+| Item | Onda | Prioridade | Complexidade | Maturidade | Módulos | Foundation vs futuro | ADRs |
+|---|---|---|---|---|---|---|---|
+| Certificação e ownership de ativos | 1 | Alta | Baixa | `Research` | `datasets`, `query-definitions`, `dashboard-definitions` | Foundation declarativa | nova (asset governance), adr-0017 |
+| Catálogo com pastas e tagging | 1 | Média | Baixa | `Research` | `datasets`, `field-mappings` | Foundation declarativa | — |
+| Sanitização de metadados consolidada | 1 | Alta | Baixa | `Research` | `core/utils`, `audit` | Foundation declarativa | **adr-0020** |
+| Security context unificado | 1 | Alta | Média | `Research` | `auth`, `users`, `query-definitions` | Foundation declarativa | adr-0017 |
+| Modelo de roles completo | 2 | Alta | Média | `Research` | `users`, `auth` | Modelo agora · enforcement gated | **adr-0017**, adr-0006 |
+| Permissões field-level | 2 | Alta | Alta | `Research` | `users`, `datasets`, `field-mappings`, `audit` | Foundation de modelo | adr-0017, adr-0023 |
+| Contrato de RLS/CLS | 2 | Alta | Alta | `Research` | `query-definitions`, `users` | Contrato agora · aplicação Onda 4 | nova (RLS/CLS), adr-0017 |
+| Política de field-level masking | 2 | Alta | Média | `Research` | `field-mappings`, `datasets` | Foundation declarativa | **adr-0023** |
+| Versionamento de definições | 3 | Alta | Média | `Research` | `query-definitions`, `dashboard-definitions`, `report-definitions` | Foundation declarativa | nova (definition versioning) |
+| Validação de integridade | 3 | Média | Média | `Research` | `query-definitions`, `datasets`, `field-mappings` | Foundation declarativa | nova (definition validation) |
+| Explainability / linhagem | 3 | Média | Média | `Research` | `query-definitions`, `field-mappings`, `audit` | Foundation declarativa | adr-0018 (extensão) |
+| Timeline imutável de mudanças | 3 | Média | Média | `Research` | `audit` | Foundation declarativa | adr-0018 (extensão) |
+| RBAC aplicado a usuários finais | 4 | Alta | Alta | `Idea` | `auth`, `users` | Futuro gated | **adr-0006**, adr-0017 |
+| RLS/CLS aplicada a dados | 4 | Alta | Alta | `Idea` | `runtime`, `query-definitions` | Futuro gated | adr-0014, adr-0017 |
+| Mascaramento em resultados | 4 | Alta | Alta | `Idea` | `runtime`, `field-mappings` | Futuro gated | **adr-0023**, adr-0014 |
+| Observability e cost tracking | 4 | Média | Média | `Idea` | `runtime`, `audit`, `health` | Futuro gated | nova (observability) |
+| IA como sujeito de ACL auditado | 4 | Média | Média | `Idea` | `users`, `auth`, `audit`, IA futura | Futuro gated | **adr-0025**, adr-0017, adr-0018 |
+| Auditoria de uso como insight | 4 | Baixa | Média | `Idea` | `audit` | Futuro gated | adr-0018 (extensão) |
 
 ---
 
@@ -190,3 +190,4 @@ Modela o RBAC completo; aplicação a usuários finais depende de auth real.
 - [../../adr/adr-0023-data-masking-policy.md](../../adr/adr-0023-data-masking-policy.md)
 - [../../adr/adr-0024-phase-1-and-phase-2-definition.md](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
 - [../../adr/adr-0025-llm-assisted-analytics-text-generation.md](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- [../maturity-taxonomy.md](../maturity-taxonomy.md)

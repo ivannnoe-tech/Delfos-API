@@ -36,6 +36,7 @@ Convenções de fase:
 | Módulos atuais relacionados | `datasets`, `field-mappings`, `query-definitions`, `dashboard-definitions`. |
 | Dependências | Modelo de `datasets`/`field-mappings` estável; modelo de versionamento de definições. |
 | Fase estimada | Curto prazo declarativo (modelo); maturidade plena na Fase 2. |
+| Maturidade | `Research` |
 | ADRs futuras | "Semantic layer declarativa", "Measure/dimension catalog"; revisão de `adr-0024`. |
 | Status | Conceitual. |
 
@@ -48,6 +49,7 @@ Convenções de fase:
 | Módulos atuais relacionados | `query-definitions`, `field-mappings`, `datasets`, `audit`. |
 | Dependências | `semantic-layer` maduro; provedor de LLM definido; `definition-versioning`. |
 | Fase estimada | Fase 2+ (gated). |
+| Maturidade | `Idea` |
 | ADRs futuras | `adr-0025` (base) + "AI assistant grounding and isolation". |
 | Status | Conceitual — gated por `adr-0025`. |
 
@@ -60,6 +62,7 @@ Convenções de fase:
 | Módulos atuais relacionados | `connections`, `credentials`, `runtime`, `execution-preview`. |
 | Dependências | `delfos-connectors` skeleton; decisão de transporte de dispatch. |
 | Fase estimada | Fase 2 (gated). |
+| Maturidade | `Research` |
 | ADRs futuras | Extensão de `adr-0008`, `adr-0021`, `adr-0022`; "Connector spec registry". |
 | Status | Conceitual — gated por `adr-0021`/`adr-0022`. |
 
@@ -72,6 +75,7 @@ Convenções de fase:
 | Módulos atuais relacionados | `query-definitions`, `dashboard-definitions`, `report-definitions`, `audit`. |
 | Dependências | Modelo de identidade estável das definições. |
 | Fase estimada | Curto prazo declarativo. |
+| Maturidade | `Research` |
 | ADRs futuras | "Definition versioning and rollback". |
 | Status | Conceitual. |
 
@@ -84,6 +88,7 @@ Convenções de fase:
 | Módulos atuais relacionados | `query-definitions`, `dashboard-definitions`, `report-definitions`, `tenants`. |
 | Dependências | Modelo de parametrização de definições; `definition-versioning`. |
 | Fase estimada | Curto prazo declarativo. |
+| Maturidade | `Research` |
 | ADRs futuras | "Definition templates and instantiation". |
 | Status | Conceitual. |
 
@@ -96,6 +101,7 @@ Convenções de fase:
 | Módulos atuais relacionados | `auth`, `tenants`, `users`, `dashboard-definitions`, `report-definitions`. |
 | Dependências | Auth real (`adr-0006` JWT, futuro); security context; `report-runtime`. |
 | Fase estimada | Fase 2+. |
+| Maturidade | `Idea` |
 | ADRs futuras | "Embedded analytics gateway"; depende de `adr-0006`. |
 | Status | Conceitual. |
 
@@ -108,6 +114,7 @@ Convenções de fase:
 | Módulos atuais relacionados | `audit`, `query-definitions`, `dashboard-definitions`, `users`. |
 | Dependências | `audit` consolidado; volume de eventos relevante. |
 | Fase estimada | Curto prazo declarativo (leitura de `audit`); aprofundamento na Fase 2. |
+| Maturidade | `Research` |
 | ADRs futuras | Extensão de `adr-0018`; "Usage analytics from audit". |
 | Status | Conceitual. |
 
@@ -120,6 +127,7 @@ Convenções de fase:
 | Módulos atuais relacionados | `audit`, `runtime`, `execution-preview`, futuro `ai-assistant`. |
 | Dependências | `ai-assistant` (para observabilidade de IA); runtime real (para métricas de execução). |
 | Fase estimada | Fase 2+. |
+| Maturidade | `Idea` |
 | ADRs futuras | "Platform and AI observability". |
 | Status | Conceitual. |
 
@@ -132,6 +140,7 @@ Convenções de fase:
 | Módulos atuais relacionados | `datasets`, `query-definitions`, `dashboard-definitions`. |
 | Dependências | `semantic-layer`. |
 | Fase estimada | Curto prazo declarativo. |
+| Maturidade | `Research` |
 | ADRs futuras | "Consumption views sobre datasets". |
 | Status | Conceitual. |
 
@@ -144,6 +153,7 @@ Convenções de fase:
 | Módulos atuais relacionados | `field-mappings`, `datasets`, `users`, `tenants`, `auth`. |
 | Dependências | Modelo de roles (`adr-0017`); mascaramento (`adr-0023`). |
 | Fase estimada | Curto prazo declarativo (modelo); aplicação real na Fase 2. |
+| Maturidade | `Research` |
 | ADRs futuras | "Row/column level access control"; extensão de `adr-0017`/`adr-0023`. |
 | Status | Conceitual. |
 
@@ -156,6 +166,7 @@ Convenções de fase:
 | Módulos atuais relacionados | `report-definitions`, `runtime`, `dashboard-definitions`. |
 | Dependências | Runtime real; fila/scheduler (Fase 2); `embed-gateway` para distribuição. |
 | Fase estimada | Fase 2+. |
+| Maturidade | `Idea` |
 | ADRs futuras | "Report runtime and exports"; depende de `adr-0024`. |
 | Status | Conceitual. |
 
@@ -168,6 +179,7 @@ Convenções de fase:
 | Módulos atuais relacionados | `query-definitions`, `audit`, futuro `ai-assistant`. |
 | Dependências | `ai-assistant`; decisão sobre banco vetorial (hoje vetado por `adr-0007`). |
 | Fase estimada | Visão madura. |
+| Maturidade | `Idea` |
 | ADRs futuras | "Curated examples store for AI assistance". |
 | Status | Conceitual. |
 
@@ -175,20 +187,20 @@ Convenções de fase:
 
 ## Tabela-resumo
 
-| Módulo | Fase estimada | Depende de | Status |
-|---|---|---|---|
-| semantic-layer | Curto prazo declarativo | datasets/field-mappings estáveis | Conceitual |
-| definition-versioning | Curto prazo declarativo | identidade de definições | Conceitual |
-| template-catalog | Curto prazo declarativo | parametrização + versioning | Conceitual |
-| consumption-views | Curto prazo declarativo | semantic-layer | Conceitual |
-| usage-analytics | Curto prazo declarativo | audit consolidado | Conceitual |
-| access-policy | Curto prazo (modelo) / Fase 2 (aplicação) | adr-0017, adr-0023 | Conceitual |
-| connector-registry | Fase 2 | delfos-connectors, dispatch | Conceitual (gated) |
-| ai-assistant | Fase 2+ | semantic-layer, LLM, versioning | Conceitual (gated) |
-| embed-gateway | Fase 2+ | auth real, report-runtime | Conceitual |
-| report-runtime | Fase 2+ | runtime real, scheduler | Conceitual |
-| observability | Fase 2+ | ai-assistant, runtime real | Conceitual |
-| knowledge-base | Visão madura | ai-assistant, banco vetorial | Conceitual |
+| Módulo | Fase estimada | Maturidade | Depende de | Status |
+|---|---|---|---|---|
+| semantic-layer | Curto prazo declarativo | `Research` | datasets/field-mappings estáveis | Conceitual |
+| definition-versioning | Curto prazo declarativo | `Research` | identidade de definições | Conceitual |
+| template-catalog | Curto prazo declarativo | `Research` | parametrização + versioning | Conceitual |
+| consumption-views | Curto prazo declarativo | `Research` | semantic-layer | Conceitual |
+| usage-analytics | Curto prazo declarativo | `Research` | audit consolidado | Conceitual |
+| access-policy | Curto prazo (modelo) / Fase 2 (aplicação) | `Research` | adr-0017, adr-0023 | Conceitual |
+| connector-registry | Fase 2 | `Research` | delfos-connectors, dispatch | Conceitual (gated) |
+| ai-assistant | Fase 2+ | `Idea` | semantic-layer, LLM, versioning | Conceitual (gated) |
+| embed-gateway | Fase 2+ | `Idea` | auth real, report-runtime | Conceitual |
+| report-runtime | Fase 2+ | `Idea` | runtime real, scheduler | Conceitual |
+| observability | Fase 2+ | `Idea` | ai-assistant, runtime real | Conceitual |
+| knowledge-base | Visão madura | `Idea` | ai-assistant, banco vetorial | Conceitual |
 
 ---
 
@@ -232,3 +244,4 @@ semântica é a fundação de quase tudo.
   [../../adr/adr-0022-connector-dispatch-transport.md](../../adr/adr-0022-connector-dispatch-transport.md) ·
   [../../adr/adr-0024-phase-1-and-phase-2-definition.md](../../adr/adr-0024-phase-1-and-phase-2-definition.md) ·
   [../../adr/adr-0025-llm-assisted-analytics-text-generation.md](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- Taxonomia: [../maturity-taxonomy.md](../maturity-taxonomy.md)

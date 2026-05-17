@@ -24,6 +24,7 @@ quando indicado, para futuras ADRs.
 | Impacto | Alto — base para filtros globais e parametrização |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `query-definitions`, `dashboard-definitions`, `runtime`, `execution-preview` |
 | Dependências | Validação estrita de input (invariante de segurança) |
 | Viabilidade | Alta na foundation — é metadado declarativo |
@@ -42,6 +43,7 @@ quando indicado, para futuras ADRs.
 | Impacto | Alto — UX de exploração |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `dashboard-definitions`, `query-definitions` |
 | Dependências | Ideia 1 (variáveis) |
 | Viabilidade | Alta — resolução declarativa de vínculo |
@@ -60,6 +62,7 @@ quando indicado, para futuras ADRs.
 | Impacto | Alto |
 | Prioridade | Alta |
 | Complexidade | Baixa (conceito já existe) |
+| Maturidade | `Research` |
 | Módulos impactados | `datasets`, `field-mappings`, `query-definitions` |
 | Dependências | Nenhuma — consolidação do que já existe |
 | Viabilidade | Alta |
@@ -78,6 +81,7 @@ quando indicado, para futuras ADRs.
 | Impacto | Alto — produtividade de onboarding de tenant |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `dashboard-definitions`, `tenants`, `datasets` |
 | Dependências | Ideia 3; respeito a `tenantId` na instanciação |
 | Viabilidade | Alta — metadado declarativo |
@@ -96,6 +100,7 @@ quando indicado, para futuras ADRs.
 | Impacto | Médio-alto — percepção de valor |
 | Prioridade | Baixa (depende de runtime real) |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `dashboard-definitions`, `runtime`, futura camada de scheduler |
 | Dependências | Runtime de execução real, scheduler (ambos futuros — `adr-0014`) |
 | Viabilidade | Baixa na foundation; planejável para Fase 2 |
@@ -114,6 +119,7 @@ quando indicado, para futuras ADRs.
 | Impacto | Médio-alto |
 | Prioridade | Baixa |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `query-definitions`, `runtime`, scheduler futuro |
 | Dependências | Runtime real, execução periódica |
 | Viabilidade | Baixa na foundation; Fase 2 |
@@ -132,6 +138,7 @@ quando indicado, para futuras ADRs.
 | Impacto | Alto — diferencial competitivo |
 | Prioridade | Média |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `query-definitions`, `dashboard-definitions`, `datasets`, módulo de IA futuro |
 | Dependências | `adr-0025`; guardas de validação; respeito a `tenantId` |
 | Viabilidade | Média — pode começar gerando rascunhos declarativos sem execução |
@@ -150,6 +157,7 @@ quando indicado, para futuras ADRs.
 | Impacto | Médio |
 | Prioridade | Baixa |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `query-definitions`, `connections`, módulo de IA futuro |
 | Dependências | Ideia 7; catálogo de connectors |
 | Viabilidade | Média |
@@ -168,6 +176,7 @@ quando indicado, para futuras ADRs.
 | Impacto | Médio |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Idea` |
 | Módulos impactados | `execution-preview`, `delfos-web`, módulo de IA futuro |
 | Dependências | `execution-preview` já existe; Ideia 7 |
 | Viabilidade | Média — `execution-preview` é um ponto de encaixe natural |
@@ -186,6 +195,7 @@ quando indicado, para futuras ADRs.
 | Impacto | Médio |
 | Prioridade | Média |
 | Complexidade | Baixa (decisão já tomada em `adr-0003`) |
+| Maturidade | `Idea` |
 | Módulos impactados | `dashboard-definitions`, `delfos-web` shared/charts |
 | Dependências | `adr-0003` (chart renderer abstraction) |
 | Viabilidade | Alta |
@@ -204,6 +214,7 @@ quando indicado, para futuras ADRs.
 | Impacto | Alto — abre caso de uso *embedded analytics* |
 | Prioridade | Baixa |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `dashboard-definitions`, `auth`, `tenants` |
 | Dependências | Auth real (futuro — `adr-0006`); `tenantId` no token |
 | Viabilidade | Baixa na foundation; Fase 2 |
@@ -222,6 +233,7 @@ quando indicado, para futuras ADRs.
 | Impacto | Alto — diferencial enterprise sobre o Chartbrew |
 | Prioridade | Média |
 | Complexidade | Alta |
+| Maturidade | `Research` |
 | Módulos impactados | `field-mappings`, `query-definitions`, `datasets` |
 | Dependências | Consolidação de `field-mappings`; decisão arquitetural ampla |
 | Viabilidade | Média — começa declarativo, cresce por fase |
@@ -255,3 +267,4 @@ auth real — todos itens de Fase 2 que exigem ADR e autorização explícita.
 - ADR: [../../adr/adr-0014-runtime-execution-requests-foundation.md](../../adr/adr-0014-runtime-execution-requests-foundation.md)
 - ADR: [../../adr/adr-0024-phase-1-and-phase-2-definition.md](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
 - ADR: [../../adr/adr-0025-llm-assisted-analytics-text-generation.md](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- [Taxonomia de maturidade](../maturity-taxonomy.md) — taxonomia de maturidade aplicada às ideias

@@ -23,6 +23,7 @@ implementação. Prioridade e complexidade são estimativas para *roadmap*.
 | Impacto | Alto — base para text-to-SQL futuro, consistência de métricas e governança. |
 | Prioridade | Alta |
 | Complexidade | Alta |
+| Maturidade | `Research` |
 | Módulos impactados | `field-mappings`, `datasets`, `query-definitions` |
 | Dependências | Modelo de versionamento de definições; decisão de formato (JSON declarativo). |
 | Viabilidade | Alta na fase foundation — é declarativo, não exige execução. |
@@ -41,6 +42,7 @@ implementação. Prioridade e complexidade são estimativas para *roadmap*.
 | Impacto | Alto — elimina divergência de números entre dashboards. |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `query-definitions`, `dashboard-definitions`, `field-mappings` |
 | Dependências | Camada semântica (ideia 1) como base preferencial. |
 | Viabilidade | Alta — puramente declarativo. |
@@ -59,6 +61,7 @@ implementação. Prioridade e complexidade são estimativas para *roadmap*.
 | Impacto | Alto — diferencial de confiança; reforça auditoria. |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `query-definitions`, `runtime`, `execution-preview`, `audit` |
 | Dependências | Modelo de versionamento; integração com `audit`. |
 | Viabilidade | Alta — metadados declarativos, sem execução real. |
@@ -77,6 +80,7 @@ implementação. Prioridade e complexidade são estimativas para *roadmap*.
 | Impacto | Médio-alto — qualidade e segurança das definições. |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `execution-preview`, `query-definitions`, `datasets` |
 | Dependências | Catálogo de datasets/field-mappings consistente. |
 | Viabilidade | Alta — alinhado ao escopo declarativo atual de `execution-preview`. |
@@ -95,6 +99,7 @@ implementação. Prioridade e complexidade são estimativas para *roadmap*.
 | Impacto | Médio — melhora UX de criação. |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `dashboard-definitions`, `query-definitions`, `delfos-web` charts |
 | Dependências | `chart_renderer` (`adr-0003`); metadados de shape nas definições. |
 | Viabilidade | Média — heurística pode ser declarativa, sem IA. |
@@ -113,6 +118,7 @@ implementação. Prioridade e complexidade são estimativas para *roadmap*.
 | Impacto | Médio — clareza e manutenção. |
 | Prioridade | Média |
 | Complexidade | Baixa |
+| Maturidade | `Research` |
 | Módulos impactados | `dashboard-definitions`, `query-definitions` |
 | Dependências | Nenhuma crítica. |
 | Viabilidade | Alta — extensão declarativa de schema. |
@@ -131,6 +137,7 @@ implementação. Prioridade e complexidade são estimativas para *roadmap*.
 | Impacto | Alto — requisito enterprise. |
 | Prioridade | Média |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `field-mappings`, `datasets`, `users`, `tenants` |
 | Dependências | `adr-0017` (papéis); `adr-0023` (mascaramento). |
 | Viabilidade | Média — declarável agora; aplicação real é futura. |
@@ -149,6 +156,7 @@ implementação. Prioridade e complexidade são estimativas para *roadmap*.
 | Impacto | Médio — *time-to-value*. |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `query-definitions`, `dashboard-definitions`, `tenants` |
 | Dependências | Modelo de parametrização de definições. |
 | Viabilidade | Alta — declarativo. |
@@ -167,6 +175,7 @@ implementação. Prioridade e complexidade são estimativas para *roadmap*.
 | Impacto | Médio. |
 | Prioridade | Média |
 | Complexidade | Baixa |
+| Maturidade | `Research` |
 | Módulos impactados | `query-definitions`, `dashboard-definitions` |
 | Dependências | Camada semântica (ideia 1) para vocabulário de campos. |
 | Viabilidade | Alta — declarativo. |
@@ -185,6 +194,7 @@ implementação. Prioridade e complexidade são estimativas para *roadmap*.
 | Impacto | Alto — diferencial estratégico. |
 | Prioridade | Baixa (somente após foundation + semantic layer) |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | novo módulo de IA, `query-definitions`, `field-mappings`, `audit` |
 | Dependências | Ideias 1 e 2; `adr-0025`; provedor de LLM definido. |
 | Viabilidade | Baixa no curto prazo — exige semantic layer madura e ADR dedicada. |
@@ -203,6 +213,7 @@ implementação. Prioridade e complexidade são estimativas para *roadmap*.
 | Impacto | Médio. |
 | Prioridade | Baixa |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `query-definitions`, novo módulo de IA, `audit` |
 | Dependências | Ideia 10; decisão sobre banco vetorial (hoje vetado por `adr-0007`). |
 | Viabilidade | Baixa — depende de infraestrutura futura. |
@@ -221,6 +232,7 @@ implementação. Prioridade e complexidade são estimativas para *roadmap*.
 | Impacto | Médio — UX e produtividade. |
 | Prioridade | Média |
 | Complexidade | Baixa |
+| Maturidade | `Research` |
 | Módulos impactados | `core/filters`, `execution-preview`, `query-definitions` |
 | Dependências | Contrato de erro uniforme já existente em `core/filters`. |
 | Viabilidade | Alta — extensão do contrato de erro atual. |
@@ -241,3 +253,4 @@ implementação. Prioridade e complexidade são estimativas para *roadmap*.
   [adr-0017](../../adr/adr-0017-roles-and-permissions-model.md) ·
   [adr-0024](../../adr/adr-0024-phase-1-and-phase-2-definition.md) ·
   [adr-0025](../../adr/adr-0025-llm-assisted-analytics-text-generation.md)
+- [Taxonomia de maturidade](../maturity-taxonomy.md)

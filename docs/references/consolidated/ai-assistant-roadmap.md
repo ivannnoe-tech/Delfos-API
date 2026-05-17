@@ -116,36 +116,38 @@ Padrão Vanna (observability de custo):
 
 ## Ondas de roadmap
 
+A coluna `Maturidade` em cada tabela segue a escala de [`maturity-taxonomy.md`](../maturity-taxonomy.md).
+
 ### Onda 1 — Curto prazo (fundações de contexto, sem LLM)
 
-| Item | Prioridade | Complexidade | Módulos | ADR |
-|---|---|---|---|---|
-| Esquema da knowledge base por tenant | Alta | Média | datasets, field-mappings, novo módulo `ai-knowledge` | ADR-0025, nova ADR |
-| Glossário de negócio por tenant | Alta | Baixa | novo módulo `ai-knowledge` | nova ADR (knowledge base) |
-| Estado `draft` para query-definitions | Alta | Baixa | query-definitions | ADR-0025 |
-| Contrato de proveniência em definições | Alta | Média | query-definitions, audit | ADR-0025, ADR-0018 |
-| Schema de observability/cost de LLM | Média | Baixa | audit, novo módulo `ai-observability` | nova ADR (observability) |
+| Item | Prioridade | Complexidade | Maturidade | Módulos | ADR |
+|---|---|---|---|---|---|
+| Esquema da knowledge base por tenant | Alta | Média | `Idea` | datasets, field-mappings, novo módulo `ai-knowledge` | ADR-0025, nova ADR |
+| Glossário de negócio por tenant | Alta | Baixa | `Idea` | novo módulo `ai-knowledge` | nova ADR (knowledge base) |
+| Estado `draft` para query-definitions | Alta | Baixa | `Research` | query-definitions | ADR-0025 |
+| Contrato de proveniência em definições | Alta | Média | `Research` | query-definitions, audit | ADR-0025, ADR-0018 |
+| Schema de observability/cost de LLM | Média | Baixa | `Idea` | audit, novo módulo `ai-observability` | nova ADR (observability) |
 
 ### Onda 2 — Médio prazo (assistente sugestivo, gated ADR-0025)
 
-| Item | Prioridade | Complexidade | Módulos | ADR |
-|---|---|---|---|---|
-| Resumo de gráfico/resultado via LLM | Alta | Média | runtime, report-definitions | ADR-0025 |
-| NL → query-definition draft sugerida | Alta | Alta | query-definitions, ai-knowledge, execution-preview | ADR-0025, nova ADR |
-| Grounding na semantic layer | Alta | Alta | ai-knowledge, datasets, field-mappings | ADR-0025 |
-| Loop de validação humana realimenta KB | Média | Média | ai-knowledge, audit | nova ADR (knowledge base) |
-| Cost tracking ativo por tenant | Média | Média | ai-observability, audit | nova ADR (observability) |
-| IA como sujeito de ACL auditado | Alta | Média | auth, audit | ADR-0017, ADR-0018 |
+| Item | Prioridade | Complexidade | Maturidade | Módulos | ADR |
+|---|---|---|---|---|---|
+| Resumo de gráfico/resultado via LLM | Alta | Média | `Idea` | runtime, report-definitions | ADR-0025 |
+| NL → query-definition draft sugerida | Alta | Alta | `Idea` | query-definitions, ai-knowledge, execution-preview | ADR-0025, nova ADR |
+| Grounding na semantic layer | Alta | Alta | `Idea` | ai-knowledge, datasets, field-mappings | ADR-0025 |
+| Loop de validação humana realimenta KB | Média | Média | `Idea` | ai-knowledge, audit | nova ADR (knowledge base) |
+| Cost tracking ativo por tenant | Média | Média | `Idea` | ai-observability, audit | nova ADR (observability) |
+| IA como sujeito de ACL auditado | Alta | Média | `Idea` | auth, audit | ADR-0017, ADR-0018 |
 
 ### Onda 3 — Fase 2+ (copiloto integrado, exige Fase 2)
 
-| Item | Prioridade | Complexidade | Módulos | ADR |
-|---|---|---|---|---|
-| Copiloto de autoria de dashboards | Média | Alta | dashboard-definitions, ai-knowledge | ADR-0024, ADR-0025 |
-| Resposta multimodal (tabela+gráfico+resumo) | Média | Alta | runtime, report-definitions | ADR-0024, ADR-0025 |
-| Relatórios narrativos gerados | Média | Alta | report-definitions | ADR-0024, ADR-0025 |
-| Controle de acesso linha/coluna na sugestão | Alta | Alta | ai-knowledge, datasets | ADR-0023, nova ADR |
-| Padrão MCP para copiloto (interop) | Baixa | Alta | novo módulo `ai-gateway` | nova ADR (MCP) |
+| Item | Prioridade | Complexidade | Maturidade | Módulos | ADR |
+|---|---|---|---|---|---|
+| Copiloto de autoria de dashboards | Média | Alta | `Idea` | dashboard-definitions, ai-knowledge | ADR-0024, ADR-0025 |
+| Resposta multimodal (tabela+gráfico+resumo) | Média | Alta | `Idea` | runtime, report-definitions | ADR-0024, ADR-0025 |
+| Relatórios narrativos gerados | Média | Alta | `Idea` | report-definitions | ADR-0024, ADR-0025 |
+| Controle de acesso linha/coluna na sugestão | Alta | Alta | `Idea` | ai-knowledge, datasets | ADR-0023, nova ADR |
+| Padrão MCP para copiloto (interop) | Baixa | Alta | `Idea` | novo módulo `ai-gateway` | nova ADR (MCP) |
 
 ---
 
@@ -170,6 +172,7 @@ Padrão Vanna (observability de custo):
 - `../cube/ideas-for-delfos.md`
 - `./semantic-layer-roadmap.md` — grounding da IA depende da camada semântica
 - `./dashboard-builder-roadmap.md` — copiloto de autoria de dashboards
+- `../maturity-taxonomy.md` — escala de maturidade aplicada às tabelas acima
 - `../../adr/adr-0017-roles-and-permissions-model.md`
 - `../../adr/adr-0018-secure-audit-strategy.md`
 - `../../adr/adr-0023-data-masking-policy.md`

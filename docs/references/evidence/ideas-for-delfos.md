@@ -22,6 +22,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 | Impacto | Alto — confiança e rastreabilidade de toda a camada declarativa |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | query-definitions, dashboard-definitions, report-definitions, audit |
 | Dependências | Modelo de versionamento de documentos no MongoDB; integração com audit |
 | Viabilidade | Alta — o Delfos já é declarativo; falta a camada de histórico |
@@ -40,6 +41,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 | Impacto | Alto — reduz drasticamente esforço de manutenção em catálogos grandes |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Idea` |
 | Módulos impactados | dashboard-definitions, report-definitions, query-definitions |
 | Dependências | Modelo de parâmetros em definições; resolução de parâmetros no runtime |
 | Viabilidade | Alta — encaixa no modelo declarativo atual |
@@ -58,6 +60,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 | Impacto | Alto — diferencial de percepção de valor para usuários de negócio |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | report-definitions, dashboard-definitions |
 | Dependências | Modelo de bloco de conteúdo misto (texto + binding de dado) |
 | Viabilidade | Alta — declarativo, sem runtime real necessário na foundation |
@@ -76,6 +79,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 | Impacto | Médio — relevante para tenants com requisitos de compliance |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Idea` |
 | Módulos impactados | query-definitions, dashboard-definitions, report-definitions, audit, users |
 | Dependências | Ideia 1 (versionamento); modelo de papéis (ADR-0017) |
 | Viabilidade | Média — depende de versionamento estar pronto |
@@ -94,6 +98,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 | Impacto | Médio — ganho de performance, mas adiciona complexidade |
 | Prioridade | Baixa (Fase 1 decidiu não ter cache — ADR-0007) |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | runtime, query-definitions, connections |
 | Dependências | Runtime real e connectors reais (Fase 2+); revisão do ADR-0007 |
 | Viabilidade | Baixa no curto prazo — explicitamente fora da Fase 1 |
@@ -112,6 +117,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 | Impacto | Médio — forte ganho de confiança com baixo custo |
 | Prioridade | Média |
 | Complexidade | Baixa |
+| Maturidade | `Research` |
 | Módulos impactados | dashboard-definitions, query-definitions, field-mappings, execution-preview |
 | Dependências | Ideia 1 (versionamento) para mostrar a versão exata |
 | Viabilidade | Alta — dados já existem na camada declarativa |
@@ -130,6 +136,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 | Impacto | Alto — fundamento de governança de dados de longo prazo |
 | Prioridade | Média |
 | Complexidade | Alta |
+| Maturidade | `Research` |
 | Módulos impactados | datasets, field-mappings, query-definitions, dashboard-definitions |
 | Dependências | Modelo de métrica/dimensão; possível revisão de datasets |
 | Viabilidade | Média — grande valor, mas escopo amplo |
@@ -148,6 +155,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 | Impacto | Médio — melhora UX de exploração |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Idea` |
 | Módulos impactados | dashboard-definitions, query-definitions |
 | Dependências | Ideia 2 (templating de definições); roteamento no delfos-web |
 | Viabilidade | Média |
@@ -166,6 +174,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 | Impacto | Alto — acelera adoção e diferencia o produto |
 | Prioridade | Média |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | query-definitions, dashboard-definitions, datasets, field-mappings |
 | Dependências | Integração LLM (ADR-0025 cobre geração de texto); semantic layer ajuda |
 | Viabilidade | Média — exige base de IA e cuidado de governança |
@@ -184,6 +193,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 | Impacto | Médio — qualidade e confiabilidade da camada declarativa |
 | Prioridade | Alta |
 | Complexidade | Baixa |
+| Maturidade | `Research` |
 | Módulos impactados | query-definitions, dashboard-definitions, field-mappings, execution-preview |
 | Dependências | Nenhuma crítica — alavanca o modelo declarativo já existente |
 | Viabilidade | Alta — encaixa direto na foundation atual |
@@ -202,6 +212,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 | Impacto | Alto — habilita caso de uso comercial relevante |
 | Prioridade | Baixa (depende de auth e runtime maduros) |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | dashboard-definitions, report-definitions, auth, users, runtime |
 | Dependências | Auth real (ADR-0006), modelo de tenancy (ADR-0009), masking (ADR-0023) |
 | Viabilidade | Baixa no curto prazo — Fase 2+ |
@@ -220,6 +231,7 @@ Princípio de tradução: o Evidence é "BI-as-code" com saída estática. O Del
 | Impacto | Médio — melhora adoção e percepção inicial de valor |
 | Prioridade | Média |
 | Complexidade | Baixa |
+| Maturidade | `Research` |
 | Módulos impactados | dashboard-definitions, report-definitions, datasets |
 | Dependências | Ideia 2 (templating) potencializa, mas não é obrigatória |
 | Viabilidade | Alta — pode ser feita com o modelo declarativo atual |
@@ -247,6 +259,7 @@ As ideias 1, 2, 3 e 10 são as de **maior retorno e menor risco** na fase founda
 - [./ux-patterns.md](./ux-patterns.md)
 - [./premium-features.md](./premium-features.md)
 - [./anti-patterns.md](./anti-patterns.md)
+- [Taxonomia de maturidade](../maturity-taxonomy.md)
 - [../../adr/adr-0007-no-cache-redis-phase-1.md](../../adr/adr-0007-no-cache-redis-phase-1.md)
 - [../../adr/adr-0011-dashboard-builder-and-widget-model.md](../../adr/adr-0011-dashboard-builder-and-widget-model.md)
 - [../../adr/adr-0014-runtime-execution-requests-foundation.md](../../adr/adr-0014-runtime-execution-requests-foundation.md)

@@ -24,6 +24,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 | Impacto | Reduz custo marginal de cada fonte; consistência de UX |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `connections`, `credentials`, `delfos-connectors`, `delfos-web` |
 | Dependências | Formato de spec versionado; renderizador de formulário schema-driven no web |
 | Viabilidade | Alta — é declarativo, alinhado à fase foundation |
@@ -42,6 +43,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 | Impacto | Estabilidade arquitetural de longo prazo |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `runtime`, `delfos-connectors` (contracts), `execution-preview` |
 | Dependências | Versionamento de contrato; testes de compatibilidade |
 | Viabilidade | Alta — `delfos-connectors` já é "contratos + skeleton" |
@@ -60,6 +62,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 | Impacto | Menos erro de configuração; datasets/field-mappings semiautomáticos |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Idea` |
 | Módulos impactados | `connections`, `credentials`, `datasets`, `field-mappings` |
 | Dependências | Conectores reais (futuro — exige autorização); na foundation, só contrato |
 | Viabilidade | Média — contrato agora, execução real depois de ADR |
@@ -78,6 +81,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 | Impacto | Confiabilidade operacional; base para alertas |
 | Prioridade | Alta |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `runtime`, `execution-preview`, `audit` |
 | Dependências | Modelo de estado de execução; futura fila/worker (fora da foundation) |
 | Viabilidade | Média — desenho agora, runtime real exige `adr-0014`/autorização |
@@ -96,6 +100,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 | Impacto | Produtividade e confiança do usuário configurador |
 | Prioridade | Alta |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `query-definitions`, `dashboard-definitions`, `execution-preview`, `delfos-web` |
 | Dependências | `execution-preview`; Design System de builders |
 | Viabilidade | Alta — `execution-preview` já existe na foundation |
@@ -114,6 +119,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 | Impacto | Menos falhas opacas; melhor `DelfosErrorState` |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `runtime`, `core/filters`, `delfos-web` (error states) |
 | Dependências | Taxonomia de erros; contrato de erro já existente em `core` |
 | Viabilidade | Alta |
@@ -132,6 +138,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 | Impacto | Custo de execução menor em fases futuras com runtime real |
 | Prioridade | Média |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `query-definitions`, `runtime` |
 | Dependências | Execução real (fora da foundation); modelo de estado por definição |
 | Viabilidade | Baixa na foundation — conceito de longo prazo |
@@ -150,6 +157,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 | Impacto | Transparência; suporte a compliance LGPD |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Research` |
 | Módulos impactados | `audit`, `runtime`, `delfos-web` |
 | Dependências | Estratégia de auditoria já existente (`adr-0018`) |
 | Viabilidade | Alta — alinhado a `adr-0018` |
@@ -168,6 +176,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 | Impacto | Catálogo de conectores cresce sem inchar a plataforma |
 | Prioridade | Média |
 | Complexidade | Alta |
+| Maturidade | `Idea` |
 | Módulos impactados | `delfos-connectors`, `runtime` |
 | Dependências | Modelo declarativo de conector (ideia 1) maduro primeiro |
 | Viabilidade | Média — direção de design para `delfos-connectors` |
@@ -186,6 +195,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 | Impacto | Operação confiável de fases futuras |
 | Prioridade | Média |
 | Complexidade | Média |
+| Maturidade | `Idea` |
 | Módulos impactados | `runtime`, `health`, `audit` |
 | Dependências | Modelo de execução como entidade (ideia 4) |
 | Viabilidade | Média |
@@ -204,6 +214,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 | Impacto | Confiabilidade; reduz superfície de risco |
 | Prioridade | Média |
 | Complexidade | Baixa (processo) / Média (tooling) |
+| Maturidade | `Idea` |
 | Módulos impactados | `connections`, `delfos-connectors`, governança |
 | Dependências | Modelo de spec (ideia 1) |
 | Viabilidade | Alta — é decisão de governança |
@@ -222,6 +233,7 @@ projeto. As ideias estão ordenadas aproximadamente por relevância para os pila
 | Impacto | Conformidade LGPD; reforço do invariante `credentialRef` |
 | Prioridade | Baixa (longo prazo) |
 | Complexidade | Alta |
+| Maturidade | `Research` |
 | Módulos impactados | `credentials`, `runtime`, deployment |
 | Dependências | Execução real; `adr-0021` (decryption futura) |
 | Viabilidade | Baixa na foundation — visão de arquitetura futura |
@@ -251,3 +263,4 @@ explícita.
 - [../../adr/adr-0015-runtime-connectors-command-envelope-bridge.md](../../adr/adr-0015-runtime-connectors-command-envelope-bridge.md)
 - [../../adr/adr-0011-dashboard-builder-and-widget-model.md](../../adr/adr-0011-dashboard-builder-and-widget-model.md)
 - [../../adr/adr-0024-phase-1-and-phase-2-definition.md](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
+- [../maturity-taxonomy.md](../maturity-taxonomy.md)

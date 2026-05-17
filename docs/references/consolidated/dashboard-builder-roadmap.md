@@ -131,38 +131,40 @@ Padrão Lightdash (versionamento sem git) + Evidence (diff/rollback de artefatos
 
 ## Ondas de roadmap
 
+A coluna `Maturidade` em cada tabela segue a escala de [`maturity-taxonomy.md`](../maturity-taxonomy.md).
+
 ### Onda 1 — Curto prazo (foundation declarativa, sem runtime)
 
-| Item | Prioridade | Complexidade | Módulos | ADR |
-|---|---|---|---|---|
-| Contrato de widget declarativo completo | Alta | Média | dashboard-definitions | ADR-0011 (estender) |
-| Filtro global como entidade de config | Alta | Média | dashboard-definitions | ADR-0011 (estender) |
-| Variáveis nomeadas em query-definitions | Alta | Baixa | query-definitions | ADR-0011 |
-| Convenção de auto-vínculo filtro↔variável | Média | Baixa | dashboard/query-definitions | ADR-0011 |
-| Contrato declarativo de click behavior | Média | Baixa | dashboard-definitions | ADR-0011 (estender) |
-| Histórico/versionamento de definições | Alta | Média | dashboard/query/report-definitions, audit | nova ADR (versionamento) |
-| Validação de integridade de definições | Média | Média | dashboard-definitions, datasets, field-mappings | nova ADR (versionamento) |
+| Item | Prioridade | Complexidade | Maturidade | Módulos | ADR |
+|---|---|---|---|---|---|
+| Contrato de widget declarativo completo | Alta | Média | `Research` | dashboard-definitions | ADR-0011 (estender) |
+| Filtro global como entidade de config | Alta | Média | `Research` | dashboard-definitions | ADR-0011 (estender) |
+| Variáveis nomeadas em query-definitions | Alta | Baixa | `Research` | query-definitions | ADR-0011 |
+| Convenção de auto-vínculo filtro↔variável | Média | Baixa | `Research` | dashboard/query-definitions | ADR-0011 |
+| Contrato declarativo de click behavior | Média | Baixa | `Research` | dashboard-definitions | ADR-0011 (estender) |
+| Histórico/versionamento de definições | Alta | Média | `Research` | dashboard/query/report-definitions, audit | nova ADR (versionamento) |
+| Validação de integridade de definições | Média | Média | `Research` | dashboard-definitions, datasets, field-mappings | nova ADR (versionamento) |
 
 ### Onda 2 — Médio prazo (builder e preview)
 
-| Item | Prioridade | Complexidade | Módulos | ADR |
-|---|---|---|---|---|
-| Query builder visual → query-definition | Alta | Alta | query-definitions, execution-preview | ADR-0014 |
-| Dry-plan de dashboard no execution-preview | Alta | Média | execution-preview, runtime | ADR-0014 |
-| Explainability número→definição | Média | Média | dashboard-definitions, datasets | nova ADR (explainability) |
-| Templates de dashboard parametrizados | Média | Média | dashboard-definitions, tenants | nova ADR (templating) |
-| Diff/rollback de definições | Média | Média | dashboard/query/report-definitions | nova ADR (versionamento) |
-| X-ray de dataset (dashboard sugerido) | Baixa | Média | datasets, dashboard-definitions | nova ADR (templating) |
+| Item | Prioridade | Complexidade | Maturidade | Módulos | ADR |
+|---|---|---|---|---|---|
+| Query builder visual → query-definition | Alta | Alta | `Research` | query-definitions, execution-preview | ADR-0014 |
+| Dry-plan de dashboard no execution-preview | Alta | Média | `Research` | execution-preview, runtime | ADR-0014 |
+| Explainability número→definição | Média | Média | `Research` | dashboard-definitions, datasets | nova ADR (explainability) |
+| Templates de dashboard parametrizados | Média | Média | `Research` | dashboard-definitions, tenants | nova ADR (templating) |
+| Diff/rollback de definições | Média | Média | `Research` | dashboard/query/report-definitions | nova ADR (versionamento) |
+| X-ray de dataset (dashboard sugerido) | Baixa | Média | `Research` | datasets, dashboard-definitions | nova ADR (templating) |
 
 ### Onda 3 — Fase 2+ (runtime real, exige Fase 2 ativada)
 
-| Item | Prioridade | Complexidade | Módulos | ADR |
-|---|---|---|---|---|
-| Cross-filtering com propagação real de estado | Alta | Alta | runtime, dashboard-definitions | ADR-0024, nova ADR |
-| Drill-down/drill-through executável | Alta | Alta | runtime, query-definitions | ADR-0024, ADR-0008 |
-| Renderização real via chart_renderer | Alta | Alta | runtime (web) | ADR-0003, ADR-0024 |
-| Click behavior `navigate`/`url` | Média | Média | dashboard-definitions, runtime | ADR-0024 |
-| Pipeline de execução por hooks (widget→query→conector) | Alta | Alta | runtime, connectors | ADR-0015, ADR-0008 |
+| Item | Prioridade | Complexidade | Maturidade | Módulos | ADR |
+|---|---|---|---|---|---|
+| Cross-filtering com propagação real de estado | Alta | Alta | `Idea` | runtime, dashboard-definitions | ADR-0024, nova ADR |
+| Drill-down/drill-through executável | Alta | Alta | `Idea` | runtime, query-definitions | ADR-0024, ADR-0008 |
+| Renderização real via chart_renderer | Alta | Alta | `Idea` | runtime (web) | ADR-0003, ADR-0024 |
+| Click behavior `navigate`/`url` | Média | Média | `Idea` | dashboard-definitions, runtime | ADR-0024 |
+| Pipeline de execução por hooks (widget→query→conector) | Alta | Alta | `Research` | runtime, connectors | ADR-0015, ADR-0008 |
 
 ---
 
@@ -187,6 +189,7 @@ Padrão Lightdash (versionamento sem git) + Evidence (diff/rollback de artefatos
 - `../cube/ideas-for-delfos.md` · `../cube/architecture.md`
 - `./semantic-layer-roadmap.md` — camada semântica que alimenta o builder
 - `./ai-assistant-roadmap.md` — copiloto de autoria de dashboards
+- `../maturity-taxonomy.md` — escala de maturidade aplicada às tabelas acima
 - `../../adr/adr-0003-chart-renderer-abstraction.md`
 - `../../adr/adr-0011-dashboard-builder-and-widget-model.md`
 - `../../adr/adr-0014-runtime-execution-requests-foundation.md`
