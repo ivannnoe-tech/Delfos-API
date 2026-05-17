@@ -255,6 +255,25 @@ auth real — todos itens de Fase 2 que exigem ADR e autorização explícita.
 
 ---
 
+## Ver também — roadmaps consolidados
+
+Esta análise de Chartbrew é sintetizada, junto com a dos demais produtos,
+nos documentos consolidados de `references/consolidated/`. Os roadmaps
+temáticos abaixo agregam diretamente as ideias deste produto:
+
+- [`../consolidated/connectors-roadmap.md`](../consolidated/connectors-roadmap.md) — roadmap de connectors e execução
+- [`../consolidated/builder-and-ux-roadmap.md`](../consolidated/builder-and-ux-roadmap.md) — roadmap de dashboard/query builder e UX premium
+- [`../consolidated/embedded-analytics-roadmap.md`](../consolidated/embedded-analytics-roadmap.md) — roadmap de embedded analytics
+
+Além desses, todos os produtos alimentam os consolidados de visão e síntese:
+
+- [`../consolidated/strategic-product-vision.md`](../consolidated/strategic-product-vision.md) — visão estratégica de produto
+- [`../consolidated/product-differentiators.md`](../consolidated/product-differentiators.md) — diferenciais competitivos
+- [`../consolidated/future-modules-catalog.md`](../consolidated/future-modules-catalog.md) — catálogo de módulos futuros
+- [`../consolidated/priority-matrix.md`](../consolidated/priority-matrix.md) — matriz de prioridade consolidada
+
+---
+
 ## Relacionado
 
 - [./overview.md](./overview.md)

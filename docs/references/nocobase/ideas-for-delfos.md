@@ -256,6 +256,25 @@ declarativos sem tocar execução real, IA ou infraestrutura assíncrona.
 
 ---
 
+## Ver também — roadmaps consolidados
+
+Esta análise de NocoBase é sintetizada, junto com a dos demais produtos,
+nos documentos consolidados de `references/consolidated/`. Os roadmaps
+temáticos abaixo agregam diretamente as ideias deste produto:
+
+- [`../consolidated/connectors-roadmap.md`](../consolidated/connectors-roadmap.md) — roadmap de connectors e execução
+- [`../consolidated/builder-and-ux-roadmap.md`](../consolidated/builder-and-ux-roadmap.md) — roadmap de dashboard/query builder e UX premium
+- [`../consolidated/enterprise-governance-roadmap.md`](../consolidated/enterprise-governance-roadmap.md) — roadmap de governança enterprise
+
+Além desses, todos os produtos alimentam os consolidados de visão e síntese:
+
+- [`../consolidated/strategic-product-vision.md`](../consolidated/strategic-product-vision.md) — visão estratégica de produto
+- [`../consolidated/product-differentiators.md`](../consolidated/product-differentiators.md) — diferenciais competitivos
+- [`../consolidated/future-modules-catalog.md`](../consolidated/future-modules-catalog.md) — catálogo de módulos futuros
+- [`../consolidated/priority-matrix.md`](../consolidated/priority-matrix.md) — matriz de prioridade consolidada
+
+---
+
 ## Relacionado
 
 - [`./overview.md`](./overview.md)
