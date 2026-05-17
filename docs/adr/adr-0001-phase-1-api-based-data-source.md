@@ -10,7 +10,7 @@
 > **Superseded:** esta decisão foi substituída pela **ADR-0032 — Fonte de dados
 > da Fase 1**, que carrega a decisão vigente. Este arquivo é mantido apenas como
 > registro histórico; consulte a ADR-0032 para a decisão atual.
-
+>
 > Substitui a versão anterior deste ADR, que previa **acesso direto ao banco de dados dos clientes**. A direção mudou após avaliação de risco, escopo e custo de manutenção.
 >
 > Nota de status atual: esta ADR e uma decisao historica/conceitual. ADR-0008 e ADR-0012 deferiram a execucao real de integracoes para componentes futuros, como `delfos-connectors` e local agent. No estado atual nao ha `data-connectors`, conector real, cache, fila, scheduler, teste real de conexao, chamada externa ou execucao real de query. O `delfos-api` implementa apenas foundation administrativa/declarativa e `execution-preview` demo em memoria.

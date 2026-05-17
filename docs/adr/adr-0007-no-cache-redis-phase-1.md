@@ -10,7 +10,7 @@
 > **Superseded:** esta decisão foi substituída pela **ADR-0033 — Sem cache/Redis
 > na Fase 1**, que carrega a decisão vigente. Este arquivo é mantido apenas como
 > registro histórico; consulte a ADR-0033 para a decisão atual.
-
+>
 > Nota de status atual: decisão histórica/parcialmente deferida. Cache em memória, `core/cache/` e `CacheService` não estão implementados atualmente. Redis, cache real, fila e scheduler continuam fora do escopo atual. O módulo `execution-preview` gera demo em memória e não usa cache real.
 
 ---

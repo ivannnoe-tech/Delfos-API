@@ -82,7 +82,7 @@ A coluna **Implementação** distingue decisão `Accepted` já construída de de
 | [0033](./adr-0033-no-cache-redis-phase-1.md) | No cache/Redis in Phase 1 (supersedes ADR-0007) | Accepted | não iniciada |
 
 > **Nota sobre ADR-0013**: vive no repositório `delfos-connectors`, no caminho `docs/adr/ADR-0013-connectors-boundary-and-multitenant-runtime-contract.md`. Ela complementa ADR-0008 no eixo de governança documental do `delfos-connectors` (foundation documental, contratos conceituais, fronteiras multitenant). Não supersede ADR-0008 no ponto de execução real — serviço/runtime, conectores reais, workers, filas, cache, scheduler, local agent e execução de SQL/API externa continuam fora de escopo.
-
+>
 > **Eixo de runtime — ADR-0013 → ADR-0014/0015/0021/0022**: a ADR-0013 estabelece
 > o contrato conceitual de fronteira e runtime multitenant dos connectors. As ADRs
 > **0014** (runtime execution-requests foundation), **0015** (command envelope
@@ -91,7 +91,7 @@ A coluna **Implementação** distingue decisão `Accepted` já construída de de
 > ADR-0013, cada uma cobrindo uma etapa do caminho até a execução real. Nenhuma
 > delas autoriza execução real: 0015/0021/0022 permanecem `Proposed` e 0014 é
 > apenas foundation declarativa.
-
+>
 > **Supersedências**: a ADR-0032 supersede a ADR-0001 (fonte de dados da Fase 1);
 > a ADR-0033 supersede a ADR-0007 (sem cache/Redis na Fase 1). Os ADRs antigos
 > são mantidos como registro histórico, com `Status: Superseded`.

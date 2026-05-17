@@ -3,7 +3,7 @@
 > **Nota:** este documento é **voltado ao `delfos-web`**. Ele é a fonte canônica
 > compartilhada de regras, mas o conteúdo trata de componentes/Design System do
 > frontend Flutter Web.
-
+>
 > Status: documento normativo  
 > Escopo: componentes reutilizáveis, Design System e fronteira entre API e Web.
 

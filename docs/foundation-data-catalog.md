@@ -5,7 +5,7 @@
 > de referência longa** — um catálogo de contratos de API único e coeso que
 > cobre cinco recursos relacionados; dividi-lo fragmentaria a referência. Não
 > dividir; manter coeso.
-
+>
 > Escopo: contratos administrativos temporarios de datasets, query definitions, dashboard definitions, report definitions e field mappings.
 
 Todos os endpoints deste documento seguem as regras transversais de
