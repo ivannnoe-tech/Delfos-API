@@ -24,11 +24,10 @@ Sempre:
 
 ## 2. Tamanho de arquivos
 
-Regra geral:
-
-- até 300 linhas: aceitável
-- 300–500 linhas: avaliar extração
-- acima de 500 linhas: refatorar ou justificar documentalmente
+A regra oficial e canônica de tamanho de arquivo é a de
+**`docs/quality-checklist.md` §0.1**. Consulte aquele documento para as faixas
+exatas (alvo até 300, permitido 301–450, justificado 451–600, proibido acima de
+600) e siga-o como fonte única.
 
 Arquivos grandes costumam indicar mistura de responsabilidades.
 

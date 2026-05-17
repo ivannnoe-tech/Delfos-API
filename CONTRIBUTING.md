@@ -2,7 +2,9 @@
 
 Este documento define como contribuir com o repositório `delfos-api`.
 
-A leitura de `AGENTS.md`, `DESIGN.md` e da `docs/` é obrigatória **antes** de qualquer mudança.
+A leitura é obrigatória **antes** de qualquer mudança. A lista canônica de
+documentos de leitura obrigatória está em `AGENTS.md` (seção inicial "Antes de
+qualquer implementação, ler") — siga aquela lista como fonte única.
 
 ---
 

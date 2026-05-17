@@ -67,15 +67,9 @@ conectores. No CI ele roda em job separado e opcional.
 
 ## Antes de codar — leitura obrigatória
 
-1. [`AGENTS.md`](./AGENTS.md)
-2. [`DESIGN.md`](./DESIGN.md)
-3. [`docs/architecture.md`](./docs/architecture.md)
-4. [`docs/phase-1-scope.md`](./docs/phase-1-scope.md)
-5. [`docs/data-access-policy.md`](./docs/data-access-policy.md)
-6. [`docs/api-connectors.md`](./docs/api-connectors.md) — conceitual/futuro; não autoriza implementação atual
-7. [`docs/security-checklist.md`](./docs/security-checklist.md)
-8. [`docs/libraries-policy.md`](./docs/libraries-policy.md)
-9. [`docs/development-guide.md`](./docs/development-guide.md)
+A lista canônica de leitura obrigatória antes de qualquer implementação está em
+[`AGENTS.md`](./AGENTS.md) (seção inicial "Antes de qualquer implementação,
+ler"). Consulte-a como fonte única — comece sempre pelo próprio `AGENTS.md`.
 
 ---
 

@@ -179,10 +179,8 @@ integração real com qualquer provider de LLM **não é autorizada** — ver **
 
 ## 16. Retenção de logs e auditoria
 
-- A **política de retenção inicial** é canônica na **ADR-0018**. Padrões:
-  logs de auditoria/segurança seguros **365 dias**; eventos de
-  runtime/execution-requests **180 dias**; logs técnicos/debug/diagnóstico
-  **30 dias**.
+- A **política de retenção inicial** (prazos por tipo de log) é canônica na
+  **ADR-0018**. Os números exatos não são repetidos aqui — consulte a ADR-0018.
 - Raw payloads, secrets, request/response bodies completos, connection strings
   e credenciais reais **nunca** são persistidos — em nenhum prazo.
 - `safeMetadata` é o **padrão obrigatório** para logs, auditoria e eventos.

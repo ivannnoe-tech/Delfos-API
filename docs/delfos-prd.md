@@ -71,6 +71,9 @@ Valor futuro:
 
 ## 5. Funcionalidades atuais
 
+> A tabela canônica de status de módulos do `delfos-api` é a do `AGENTS.md` §6.
+> Consulte-a como fonte única; a lista abaixo é apenas um resumo de produto.
+
 - auth temporaria por `x-delfos-admin-key`;
 - gestao administrativa de tenants;
 - gestao administrativa de users, sem login/senha;
@@ -81,6 +84,7 @@ Valor futuro:
 - query-definitions declarativas;
 - dashboard-definitions declarativas;
 - report-definitions declarativas;
+- runtime/execution-requests foundation (contratos/estados, sem execucao real);
 - audit interno;
 - seed/dev com dados ficticios;
 - `execution-preview` demo em memoria.

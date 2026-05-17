@@ -119,9 +119,8 @@ Lei Geral de Protecao de Dados. Lei brasileira que regula tratamento de dados pe
 ### Retencao (auditoria e logs)
 
 Prazo padrao pelo qual registros sao mantidos antes de eliminacao, anonimizacao ou compactacao.
-Politica inicial: logs de auditoria/seguranca seguros 365 dias; eventos de
-runtime/execution-requests 180 dias; logs tecnicos/debug/diagnostico 30 dias. Raw payloads,
-secrets e credenciais reais nunca sao persistidos. Ver ADR-0018.
+A politica inicial de retencao (prazos por tipo de log) e canonica na **ADR-0018** — os numeros
+exatos nao sao repetidos aqui. Raw payloads, secrets e credenciais reais nunca sao persistidos.
 
 ### Fase 1
 
@@ -139,10 +138,18 @@ analitico, snapshots, cache/staging, filas e recursos avancados conforme ADRs e 
 
 ## Termos da foundation e execucao
 
+### semantic layer / camada semantica
+
+Camada declarativa que descreve, de forma independente da fonte concreta, metricas, dimensoes,
+filtros e limites consultaveis pelo Delfos. No estado atual, a camada semantica e materializada
+pelo modulo `query-definitions` como configuracao declarativa: ela define o que podera ser
+consultado no futuro, sem executar query, SQL, aggregation ou chamada externa.
+
 ### queryDefinition
 
 Configuracao declarativa de uma consulta: dataset, metricas, dimensoes, filtros, ordenacao e
 limites. Define o que podera ser consultado no futuro; nao executa query real no estado atual.
+E a unidade concreta da camada semantica (semantic layer).
 
 ### dashboardDefinition
 
@@ -167,11 +174,12 @@ Modulo que gera dados de demonstracao em memoria para simular previews de queryD
 dashboardDefinitions. Nao executa chamadas externas reais, nao persiste resultados e sempre deve
 ficar identificado como demo.
 
-### executionRequest
+### executionRequest / execution request
 
-Registro administrativo foundation de uma solicitacao futura de runtime, com `kind`, references,
-status e metadados seguros. Na foundation atual, nao executa query, conector, worker, fila,
-scheduler, cache, exportacao, e-mail ou acesso a fonte de cliente.
+Registro administrativo (`foundation implementada`) de uma solicitacao futura de runtime, com
+`kind`, references, status e metadados seguros. Na foundation atual, nao executa query, conector,
+worker, fila, scheduler, cache, exportacao, e-mail ou acesso a fonte de cliente. `executionRequest`
+e `execution request` sao o mesmo termo.
 
 ### delfos-connectors
 
@@ -233,12 +241,6 @@ Componente `foundation-only` do `runtime/bridge` que resolve referencias declara
 datasets, field-mappings, `credentialRef`) de forma conservadora e source-agnostic. Nao faz decrypt
 e nao acessa fontes externas.
 
-### credentialRef
-
-Referencia opaca a uma credencial armazenada de forma protegida. Formato atual: `cred_<ObjectId>`.
-O segredo real nunca trafega pelo frontend nem aparece em logs ou respostas de API. Ver tambem a
-entrada `credentialRef` na secao de foundation.
-
 ### safeMetadata
 
 Conjunto de metadados seguros expostos por contratos de runtime/bridge sem revelar segredos,
@@ -254,13 +256,6 @@ conector ou acesso a fonte real. Faz parte da foundation atual de runtime.
 
 Operacao de demonstracao do runtime/`execution-preview` que produz resultado ficticio em memoria,
 sempre identificado como demo. Nao executa chamada externa nem persiste resultado.
-
-### execution request
-
-Registro administrativo `foundation implementada` de uma solicitacao futura de runtime, com `kind`,
-references, status e metadados seguros. Na foundation atual nao executa query, conector, worker,
-fila, scheduler, cache, exportacao, e-mail ou acesso a fonte de cliente. Equivale a
-`executionRequest`.
 
 ### runtime event
 

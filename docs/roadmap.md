@@ -34,6 +34,9 @@ Para evitar inflar o progresso, cada item usa um destes rotulos:
 
 ## Estado atual aprovado - foundation administrativa/declarativa
 
+> O status canônico por módulo do `delfos-api` é a tabela do `AGENTS.md` §6.
+> A lista abaixo é um resumo de roadmap e não substitui aquela tabela.
+
 Implementado atualmente:
 
 - setup NestJS no `delfos-api`;

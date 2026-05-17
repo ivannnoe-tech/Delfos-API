@@ -69,8 +69,8 @@ O agente não tem autoridade para resolver nenhuma das condições a seguir.
   registrar "precisa validação humana" e aguardar autorização explícita.
 
 ### 9. Alterar a política de retenção LGPD / auditoria
-- **Por que**: a política de retenção inicial (365/180/30 dias) já está
-  **definida** na ADR-0018; alterá-la é decisão regulatória/jurídica.
+- **Por que**: a política de retenção inicial já está **definida** na ADR-0018
+  (prazos por tipo de log lá); alterá-la é decisão regulatória/jurídica.
 - **O agente deve**: parar; não alterar prazos nem definir retenção divergente;
   registrar "precisa validação humana". Ver **ADR-0018**.
 
@@ -147,9 +147,9 @@ O agente não tem autoridade para resolver nenhuma das condições a seguir.
 As decisões abaixo foram **tomadas formalmente** e registradas na documentação.
 O agente **não pode alterá-las**; deve apenas segui-las e referenciá-las:
 
-1. **Retenção LGPD / auditoria** — política inicial definida (365/180/30 dias)
-   na **ADR-0018**. Pendência residual: validação jurídica antes de produção
-   regulada e implementação automatizada de expurgo.
+1. **Retenção LGPD / auditoria** — política inicial (prazos por tipo de log)
+   definida na **ADR-0018**. Pendência residual: validação jurídica antes de
+   produção regulada e implementação automatizada de expurgo.
 2. **Matriz papel→operações** — matriz oficial inicial definida na **ADR-0017**.
    Operação que não se encaixa nela é stop condition (§10).
 3. **Template de ADR** — `adr-template.md` é o template canônico único; o

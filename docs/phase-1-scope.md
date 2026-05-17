@@ -13,23 +13,8 @@ O consumo real de APIs custom, conectores, cache, fila, scheduler, dashboard run
 
 **Implementado (foundation):**
 
-| Modulo | Status |
-|---|---|
-| health | Implementado |
-| auth (admin-key temporario) | Implementado - sem JWT real |
-| audit | Implementado |
-| tenants | Implementado |
-| users | Implementado |
-| connections | Implementado - declarativo, sem chamada externa |
-| credentials | Implementado - protecao local, `credentialRef` |
-| datasets | Implementado - declarativo |
-| field-mappings | Implementado - declarativo |
-| query-definitions | Implementado - declarativo |
-| dashboard-definitions | Implementado - declarativo |
-| report-definitions | Implementado - declarativo |
-| runtime/execution-requests | Implementado - foundation de contratos/estados, sem execucao real |
-| execution-preview | Implementado - demo em memoria, sem execucao real |
-| seed/dev local | Implementado - dados ficticios |
+> A tabela canônica de status de módulos do `delfos-api` é a do `AGENTS.md` §6.
+> Consulte-a como fonte única; este documento não mantém cópia própria.
 
 **Nao implementado e nao autorizado sem decisao explicita:**
 

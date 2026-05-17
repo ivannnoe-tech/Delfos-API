@@ -149,25 +149,32 @@ Regras:
 
 > Leia esta seção antes de qualquer tarefa. Implementar algo fora do estado atual requer autorização explícita.
 
-### O que já existe (foundation)
+### O que já existe (foundation) — tabela canônica de status de módulos
+
+> **Esta é a tabela canônica de status de módulos do `delfos-api`.** Outros
+> documentos (`docs/phase-1-scope.md`, `docs/delfos-prd.md` §5, `docs/roadmap.md`)
+> devem referenciar esta tabela em vez de manter cópias próprias. A taxonomia de
+> status segue `docs/roadmap.md` ("Taxonomia de status"): `foundation
+> implementada`, `parcialmente implementado`, `foundation-only`, `pendente`,
+> `futuro`.
 
 | Módulo | Caminho | Status |
 |---|---|---|
-| health | `src/modules/health/` | Implementado |
-| auth (foundation) | `src/modules/auth/` | Implementado — admin-key temporário, sem JWT real |
-| audit | `src/modules/audit/` | Implementado |
-| tenants | `src/modules/tenants/` | Implementado |
-| users | `src/modules/users/` | Implementado |
-| connections | `src/modules/connections/` | Implementado — declarativo, sem chamada externa |
-| credentials | `src/modules/credentials/` | Implementado — criptografia local, credentialRef |
-| datasets | `src/modules/datasets/` | Implementado — declarativo |
-| field-mappings | `src/modules/field-mappings/` | Implementado — declarativo |
-| query-definitions | `src/modules/query-definitions/` | Implementado — declarativo |
-| dashboard-definitions | `src/modules/dashboard-definitions/` | Implementado — declarativo |
-| report-definitions | `src/modules/report-definitions/` | Implementado — declarativo |
-| runtime (execution-requests) | `src/modules/runtime/` | Implementado — execution-requests foundation: contratos, estados, eventos administrativos, runtime monitor, readiness dry-run e demo-execute fictício; sem execução real |
-| runtime/bridge | `src/modules/runtime/bridge/` | foundation-only — bridge resolver, reference resolver e adapters; apenas types e testes, sem provider NestJS, sem dispatch e sem execução real |
-| execution-preview | `src/modules/execution-preview/` | Implementado — demo em memória, sem execução real |
+| health | `src/modules/health/` | `foundation implementada` |
+| auth (foundation) | `src/modules/auth/` | `foundation implementada` — admin-key temporário, sem JWT real |
+| audit | `src/modules/audit/` | `foundation implementada` |
+| tenants | `src/modules/tenants/` | `foundation implementada` |
+| users | `src/modules/users/` | `foundation implementada` |
+| connections | `src/modules/connections/` | `foundation implementada` — declarativo, sem chamada externa |
+| credentials | `src/modules/credentials/` | `foundation implementada` — criptografia local, credentialRef |
+| datasets | `src/modules/datasets/` | `foundation implementada` — declarativo |
+| field-mappings | `src/modules/field-mappings/` | `foundation implementada` — declarativo |
+| query-definitions | `src/modules/query-definitions/` | `foundation implementada` — declarativo |
+| dashboard-definitions | `src/modules/dashboard-definitions/` | `foundation implementada` — declarativo |
+| report-definitions | `src/modules/report-definitions/` | `foundation implementada` — declarativo |
+| runtime (execution-requests) | `src/modules/runtime/` | `foundation implementada` — execution-requests foundation: contratos, estados, eventos administrativos, runtime monitor, readiness dry-run e demo-execute fictício; sem execução real |
+| runtime/bridge | `src/modules/runtime/bridge/` | `foundation-only` — bridge resolver, reference resolver e adapters; apenas types e testes, sem provider NestJS, sem dispatch e sem execução real |
+| execution-preview | `src/modules/execution-preview/` | `foundation implementada` — demo em memória, sem execução real |
 
 ### O que NÃO existe ainda
 
