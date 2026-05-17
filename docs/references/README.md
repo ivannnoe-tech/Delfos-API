@@ -22,6 +22,10 @@ Este material é **documentação estratégica**, não especificação de implem
 
 Consistente com `CLAUDE.md`, `AGENTS.md`, `docs/` e as ADRs em `docs/adr/`.
 
+A governança desta camada — objetivo, proibição de copiar código, uso conceitual,
+como usar/evoluir os docs e como novas referências entram — é definida por
+[`ADR-0026`](../adr/adr-0026-strategic-reference-library.md).
+
 ---
 
 ## Como navegar
@@ -129,3 +133,4 @@ dos documentos consolidados:
 - [`../delfos-prd.md`](../delfos-prd.md) — PRD do produto
 - [`../architecture.md`](../architecture.md) — arquitetura atual do `delfos-api`
 - [`../adr/`](../adr/) — Architecture Decision Records
+- [`../adr/adr-0026-strategic-reference-library.md`](../adr/adr-0026-strategic-reference-library.md) — governança desta camada
