@@ -124,15 +124,17 @@ exatos nao sao repetidos aqui. Raw payloads, secrets e credenciais reais nunca s
 
 ### Fase 1
 
-Estado atual: foundation administrativa/declarativa. Inclui catalogos, contratos, auth temporaria,
-credenciais protegidas, auditoria e `execution-preview` demo em memoria. Nao inclui dado real de
-cliente, conector real, cache, fila, scheduler, JWT/login/OAuth real, dashboard runtime final ou
-query builder.
+Estado atual: **a Fase 1 e a foundation administrativa/declarativa** (Fase 1 ≈ foundation, nao uma
+sub-etapa dela — ver ADR-0024, fonte canonica do modelo de fases). Inclui catalogos, contratos,
+auth temporaria, credenciais protegidas, auditoria e `execution-preview` demo em memoria. Nao
+inclui dado real de cliente, conector real, cache, fila, scheduler, JWT/login/OAuth real,
+dashboard runtime final ou query builder.
 
 ### Fase 2
 
-Fase futura possivel: integracoes reais, `delfos-connectors`, local agent, ingestao, storage
-analitico, snapshots, cache/staging, filas e recursos avancados conforme ADRs e autorizacao.
+Fase futura: integracoes reais, `delfos-connectors`, local agent, ingestao, storage analitico,
+snapshots, cache/staging, filas, JWT real e recursos avancados conforme ADRs e autorizacao. O
+modelo de fases e seus criterios de transicao sao canonicos na ADR-0024.
 
 ---
 

@@ -1,9 +1,14 @@
 # Escopo da Fase 1 - Delfos Analytics
 
 > Status: documento normativo.
-> Objetivo: delimitar o estado atual da foundation e o que fica planejado para etapas futuras.
+> Objetivo: delimitar o escopo da Fase 1 e o que fica planejado para a Fase 2.
+> Fonte canônica do modelo de fases: **ADR-0024**.
 
-A etapa atual da Fase 1 valida a foundation administrativa/declarativa do Delfos Analytics. O foco agora e consolidar contratos, seguranca, catalogos, governanca e preview demo, sem execucao real e sem conexao com banco/API de cliente.
+A **Fase 1 é a foundation administrativa/declarativa** do Delfos Analytics (ver
+ADR-0024, fonte canônica do modelo de fases — Fase 1 ≈ foundation, não uma
+sub-etapa dela). O foco da Fase 1 é consolidar contratos, segurança, catálogos,
+governança e preview demo, sem execução real e sem conexão com banco/API de
+cliente.
 
 O consumo real de APIs custom, conectores, cache, fila, scheduler, dashboard runtime, query builder e execucao real permanecem visao futura e dependem de autorizacao explicita, ADR quando necessario e alinhamento com ADR-0008 e ADR-0012.
 
@@ -132,9 +137,9 @@ Detalhes em `docs/out-of-scope.md`.
 
 ---
 
-## 5. Criterio de sucesso da etapa atual
+## 5. Criterio de sucesso da Fase 1
 
-Esta etapa da Fase 1 e considerada bem-sucedida quando:
+A Fase 1 (foundation) e considerada bem-sucedida quando:
 
 - tenants, usuarios administrativos, connections e credentials podem ser cadastrados com seguranca;
 - datasets podem ser cadastrados como catalogo declarativo;

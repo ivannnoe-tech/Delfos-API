@@ -1,5 +1,11 @@
 # Runtime Connectors Bridge Resolver Design
 
+> **Justificativa de tamanho:** este arquivo excede o limite de 600 linhas de
+> `docs/quality-checklist.md` §0.1. A exceção se aplica por ser **documentação
+> de referência longa** — um design técnico único, coeso e linear (interfaces,
+> mappers, policies, builder, ports, exemplos) cuja divisão prejudicaria a
+> leitura sequencial. Não dividir; manter coeso.
+
 ## Status
 
 Design tecnico futuro. Foundation de interfaces/types, mappers, policies, builder seguro,

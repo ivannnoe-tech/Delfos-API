@@ -141,6 +141,9 @@ Entregas:
 
 ## Fase 1 - Foundation administrativa/declarativa
 
+A **Fase 1 e a foundation administrativa/declarativa** (Fase 1 ≈ foundation, nao
+uma sub-etapa dela). O modelo de fases e canonico na **ADR-0024**.
+
 Objetivo: consolidar contratos, seguranca, catalogos e governanca sem acessar dado real de
 cliente.
 

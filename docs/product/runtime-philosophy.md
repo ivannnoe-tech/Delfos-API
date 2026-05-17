@@ -192,6 +192,12 @@ declarativa; `connections`, `credentials`, `datasets`, `field-mappings` e
 `query-definitions` fornecem as referências que uma execução consumiria. Tudo isso
 existe, é testado e é estável — e nada disso chama uma fonte de dados real.
 
+> **Nota honesta:** além dos módulos acima, já existe código de foundation de
+> bridge/resolver/adapter sob `src/modules/runtime/bridge/`. Esse código é
+> **tests-only e não operacional**: classes puras, sem provider NestJS, sem
+> registro no `RuntimeModule`, sem endpoint, sem dispatch e sem chamada externa.
+> Ele está congelado nesse estado até a **ADR-0015** estar `Accepted`.
+
 O que **ainda não existe** e é gated por escopo aprovado e ADR: command envelope real
 (adr-0015), decifragem de credencial em execução (adr-0021), transporte de despacho de
 connector (adr-0022), connectors reais e obtenção de resultado real. O caminho de

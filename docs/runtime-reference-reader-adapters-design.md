@@ -1,5 +1,10 @@
 # Runtime Reference Reader Adapters Design
 
+> **Justificativa de tamanho:** este arquivo excede o limite de 600 linhas de
+> `docs/quality-checklist.md` §0.1. A exceção se aplica por ser **documentação
+> de referência longa** — um design técnico único e coeso cuja divisão
+> prejudicaria a leitura sequencial. Não dividir; manter coeso.
+
 ## Status
 
 Foundation tests-only implementada. Os adapters internos existem como classes puras, isoladas e
