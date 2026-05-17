@@ -195,6 +195,8 @@ ativo competitivo.
   [../airbyte/ideas-for-delfos.md](../airbyte/ideas-for-delfos.md) ·
   [../lightdash/ideas-for-delfos.md](../lightdash/ideas-for-delfos.md) ·
   [../metabase/anti-patterns.md](../metabase/anti-patterns.md)
+- Governança da camada: [../maturity-taxonomy.md](../maturity-taxonomy.md) —
+  taxonomia de maturidade e [crosswalk de fase](../maturity-taxonomy.md#crosswalk-de-vocabulário-de-fase)
 - Visão e roadmap: [../../phase-2-vision.md](../../phase-2-vision.md) ·
   [../../roadmap.md](../../roadmap.md)
 - ADRs: [../../adr/adr-0002-no-paid-components.md](../../adr/adr-0002-no-paid-components.md) ·

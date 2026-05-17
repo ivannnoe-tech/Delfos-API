@@ -245,6 +245,9 @@ direção certa.
   [../chartbrew/ideas-for-delfos.md](../chartbrew/ideas-for-delfos.md) ·
   [../vanna/ideas-for-delfos.md](../vanna/ideas-for-delfos.md) ·
   [../nocobase/ideas-for-delfos.md](../nocobase/ideas-for-delfos.md)
+- Governança da camada: [../maturity-taxonomy.md](../maturity-taxonomy.md) —
+  taxonomia de maturidade e [crosswalk de fase](../maturity-taxonomy.md#crosswalk-de-vocabulário-de-fase) ·
+  [../source-register.md](../source-register.md) — registro de fontes e licenças
 - Planejamento oficial: [../../phase-2-vision.md](../../phase-2-vision.md) ·
   [../../roadmap.md](../../roadmap.md)
 - ADRs: [../../adr/adr-0002-no-paid-components.md](../../adr/adr-0002-no-paid-components.md) ·
