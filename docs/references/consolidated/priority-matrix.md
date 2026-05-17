@@ -15,7 +15,7 @@ Muitas ideias se repetem entre produtos — camada semântica aparece em Cube,
 Lightdash, WrenAI e Superset; filtros globais em Metabase, Superset, Chartbrew,
 Lightdash e NocoBase; versionamento em Lightdash e Evidence. Cada **feature
 consolidada** abaixo agrupa todas as ideias equivalentes numa só linha. Não há
-uma linha por ideia crua: são ~38 capacidades sintetizadas.
+uma linha por ideia crua: são 54 capacidades sintetizadas.
 
 Por força da [`ADR-0026`](../../adr/adr-0026-strategic-reference-library.md),
 **nenhuma ideia desta biblioteca está aprovada**. Esta matriz é orientadora —
@@ -156,5 +156,3 @@ autorizada.
 - [`../README.md`](../README.md)
 - [`../../adr/adr-0024-phase-1-and-phase-2-definition.md`](../../adr/adr-0024-phase-1-and-phase-2-definition.md)
 - [`../../adr/adr-0026-strategic-reference-library.md`](../../adr/adr-0026-strategic-reference-library.md)
-</content>
-</invoke>
