@@ -18,6 +18,24 @@ e governança.
 | Desenvolvimento | `development-guide.md`, `local-development.md`, `testing-guide.md`, `quality-checklist.md` |
 | Agentes | `agent-operating-model.md`, `agent-safety-rules.md`, `agent-task-contract.md`, `agent-*.md` |
 | Decisões | `adr/` — Architecture Decision Records |
+| Filosofia de produto | `product/` — princípios e visão ("como o Delfos pensa") |
+| Referências estratégicas | `references/` — estudo de produtos de BI/AI |
+
+---
+
+## Product Philosophy
+
+Camada que declara **como o Delfos pensa** — princípios orientadores e visão de produto,
+destilados do estudo de referências, das ADRs e da arquitetura atual.
+
+Local:
+
+- `docs/product/`
+
+Conteúdo: `principles.md` (keystone — 12 princípios) e documentos de filosofia/visão por
+tema (UX, IA, dashboards, embedded analytics, runtime, semantic layer, enterprise
+governance). Material orientador — não autoriza implementação. Ponto de entrada:
+[`product/README.md`](./product/README.md).
 
 ---
 
