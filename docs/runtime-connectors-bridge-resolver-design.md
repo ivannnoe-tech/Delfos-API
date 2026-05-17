@@ -23,6 +23,13 @@ dispatch, worker, fila, cache, scheduler, local agent, conector real, SQL/API ex
 descriptografia de credenciais ou alteracao de schema/DTO. Ele descreve como uma fase futura
 podera transformar uma `ExecutionRequest` em um `ConnectorExecutionCommandShape` seguro.
 
+> **Teto de escopo (scope ceiling):** nenhum codigo adicional de foundation de
+> bridge/runtime pode ser construido alem do estado atual tests-only (classes
+> puras, sem provider NestJS, sem `RuntimeModule`, sem endpoint, sem dispatch)
+> enquanto a **ADR-0015** nao estiver com status `Accepted`. Ate la, este
+> documento e os arquivos sob `src/modules/runtime/bridge/` permanecem
+> congelados no estado tests-only.
+
 ## Foundation Atual
 
 A fase **BridgeResolver Foundation - Tests & Interfaces Only** criou arquivos internos e puros em

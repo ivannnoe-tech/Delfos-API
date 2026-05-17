@@ -130,6 +130,16 @@ O agente não tem autoridade para resolver nenhuma das condições a seguir.
   divergência entre API real, Swagger/docs e ADRs. Registrar "precisa validação
   humana". Ver `docs/postman-policy.md` §10.
 
+### 18. Estender a foundation tests-only do runtime bridge
+- **Por que**: a foundation de bridge/resolver/adapters sob
+  `src/modules/runtime/bridge/` existe apenas como código tests-only (classes
+  puras, sem provider NestJS, sem `RuntimeModule`, sem endpoint, sem dispatch).
+  Qualquer extensão além desse estado depende de **ADR-0015** estar `Accepted`.
+- **O agente deve**: parar; não criar provider/wiring/endpoint/dispatch nem
+  expandir a foundation do bridge além do estado tests-only enquanto a
+  **ADR-0015** estiver `Proposed`; registrar "precisa validação humana". Ver
+  **ADR-0015** e `docs/runtime-connectors-bridge-resolver-design.md`.
+
 ---
 
 ## Decisões humanas fechadas (2026-05-15) — o agente NÃO altera

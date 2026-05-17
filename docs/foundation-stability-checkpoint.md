@@ -20,6 +20,12 @@ administrativa/declarativa esta madura. Ele nao autoriza Fase 2.
   medido, para apertar em passos futuros.
 - CI: `lint`, `test`, `build` obrigatorios; `E2E`, `Commitlint`,
   `Markdown Lint` como jobs separados.
+- **Nota honesta — runtime bridge tests-only:** ja existe codigo de foundation
+  de bridge/resolver/adapter sob `src/modules/runtime/bridge/`. Esse codigo e
+  **nao operacional**: classes puras, sem provider NestJS, sem registro no
+  `RuntimeModule`, sem endpoint, sem dispatch e sem chamada externa. Ele existe
+  apenas como tests-only e esta congelado nesse estado ate a **ADR-0015** estar
+  `Accepted` (ver `docs/runtime-connectors-bridge-resolver-design.md`).
 
 ## 2. delfos-web
 

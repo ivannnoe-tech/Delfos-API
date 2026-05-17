@@ -17,6 +17,13 @@ O desenho futuro de wiring dos adapters foundation com services/repositories rea
 Esse wiring tambem e apenas design: ainda nao ha provider, `RuntimeModule`, endpoint, dispatch,
 decrypt ou chamada externa.
 
+> **Teto de escopo (scope ceiling):** nenhum codigo adicional de foundation de
+> bridge/runtime pode ser construido alem do estado atual tests-only enquanto a
+> **ADR-0015** nao estiver com status `Accepted`. Ate la, os adapters sob
+> `src/modules/runtime/bridge/adapters/` permanecem congelados no estado
+> tests-only (classes puras, sem provider NestJS, sem registro no
+> `RuntimeModule`).
+
 ## Objetivo
 
 Desenhar e registrar a foundation tests-only de como os ports/readers do

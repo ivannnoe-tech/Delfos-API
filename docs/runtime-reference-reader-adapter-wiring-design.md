@@ -9,6 +9,12 @@ Este documento nao cria provider NestJS, nao altera `RuntimeModule`, nao cria en
 dispatch, nao chama ou importa `delfos-connectors`, nao descriptografa credenciais e nao acessa
 fonte externa.
 
+> **Teto de escopo (scope ceiling):** nenhum codigo adicional de foundation de
+> bridge/runtime pode ser construido alem do estado atual tests-only enquanto a
+> **ADR-0015** nao estiver com status `Accepted`. Ate la, o wiring descrito aqui
+> permanece apenas design e os arquivos sob `src/modules/runtime/bridge/`
+> permanecem congelados no estado tests-only.
+
 ## Objetivo
 
 Desenhar como os adapters foundation serao conectados futuramente aos services/repositories reais

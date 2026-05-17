@@ -24,6 +24,12 @@ execucao real.
 
 O runtime atual da API e foundation administrativa/declarativa.
 
+> **Nota honesta:** ja existe codigo de foundation de bridge/resolver/adapter
+> sob `src/modules/runtime/bridge/`. Esse codigo e **tests-only e nao
+> operacional**: classes puras, sem provider NestJS, sem registro no
+> `RuntimeModule`, sem endpoint, sem dispatch e sem chamada externa. Ele esta
+> congelado nesse estado ate a **ADR-0015** estar `Accepted`.
+
 Enums atuais:
 
 | Contrato | Valores atuais |
