@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
+import { resolveCorsOptions } from '../../../src/config/cors.config';
 import { HttpExceptionFilter } from '../../../src/core/filters/http-exception.filter';
 import { RequestContextInterceptor } from '../../../src/core/interceptors/request-context.interceptor';
 import { createApiValidationPipe } from '../../../src/core/pipes/api-validation.pipe';
@@ -21,7 +22,16 @@ export interface E2EApp {
   close(): Promise<void>;
 }
 
-export async function startE2EApp(): Promise<E2EApp> {
+export interface StartE2EAppOptions {
+  /**
+   * Allowed CORS origins (CSV), mirroring the `CORS_ORIGIN` env var. When
+   * provided, the harness applies `enableCors` exactly as `src/main.ts` does
+   * so CORS behaviour can be asserted end-to-end. Defaults to disabled CORS.
+   */
+  readonly corsOrigin?: string;
+}
+
+export async function startE2EApp(options: StartE2EAppOptions = {}): Promise<E2EApp> {
   const mongo = await MongoMemoryServer.create();
 
   // Env must be set BEFORE AppModule is imported: ConfigModule.forRoot reads
@@ -31,12 +41,17 @@ export async function startE2EApp(): Promise<E2EApp> {
   process.env.DELFOS_ADMIN_KEY = E2E_ADMIN_KEY;
   process.env.ENCRYPTION_KEY_BASE64 = E2E_ENCRYPTION_KEY;
   process.env.SWAGGER_ENABLED = 'false';
-  process.env.CORS_ORIGIN = '';
+  process.env.CORS_ORIGIN = options.corsOrigin ?? '';
 
   const { AppModule } = await import('../../../src/app.module');
 
   const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
   const app: INestApplication = moduleRef.createNestApplication();
+  const corsOrigins = (options.corsOrigin ?? '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter((origin) => origin.length > 0);
+  app.enableCors(resolveCorsOptions(corsOrigins, 'test'));
   app.useGlobalPipes(createApiValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new RequestContextInterceptor());

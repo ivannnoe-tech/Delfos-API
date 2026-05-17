@@ -4,6 +4,7 @@ import 'reflect-metadata';
 
 import { AppModule } from './app.module';
 import { AppConfigService } from './config/app-config.service';
+import { resolveCorsOptions } from './config/cors.config';
 import { HttpExceptionFilter } from './core/filters/http-exception.filter';
 import { RequestContextInterceptor } from './core/interceptors/request-context.interceptor';
 import { createApiValidationPipe } from './core/pipes/api-validation.pipe';
@@ -15,9 +16,7 @@ async function bootstrap(): Promise<void> {
   });
   const config = app.get(AppConfigService);
 
-  app.enableCors({
-    origin: config.corsOrigin.length > 0 ? config.corsOrigin : false,
-  });
+  app.enableCors(resolveCorsOptions(config.corsOrigin, config.nodeEnv));
   app.useGlobalPipes(createApiValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new RequestContextInterceptor());

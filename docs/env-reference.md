@@ -16,7 +16,7 @@ Este documento descreve variaveis esperadas para local, homologacao e producao.
 |---|---:|---|---|
 | `NODE_ENV` | Sim | `development` | Ambiente de execucao. |
 | `PORT` | Sim | `3000` | Porta HTTP da API. |
-| `CORS_ORIGIN` | Nao | `http://localhost:5173,http://localhost:8080,http://localhost:3000` | Origens permitidas separadas por virgula. Quando omitida, CORS fica desabilitado. |
+| `CORS_ORIGIN` | Nao | `http://localhost:5173,http://localhost:8080,http://localhost:3000,http://127.0.0.1:4174,http://localhost:4174` | Origens permitidas separadas por virgula (whitelist exata, sem coringa). Quando omitida, CORS fica desabilitado. Cada origem e exata: protocolo + host + porta, e `localhost` **nao** equivale a `127.0.0.1`. A porta `4174` cobre o servidor estatico do E2E integrado do `delfos-web`. |
 | `LOG_LEVEL` | Sim | `info` | Nivel de log. |
 
 ## MongoDB

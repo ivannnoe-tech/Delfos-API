@@ -20,8 +20,13 @@ PORT=3000
 DELFOS_DATABASE_URL=mongodb://127.0.0.1:27017/delfos_analytics
 DELFOS_ADMIN_KEY=change-me-local-admin-key-at-least-32-chars
 ENCRYPTION_KEY_BASE64=MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
-CORS_ORIGIN=http://localhost:5173,http://localhost:8080,http://localhost:3000
+CORS_ORIGIN=http://localhost:5173,http://localhost:8080,http://localhost:3000,http://127.0.0.1:4174,http://localhost:4174
 ```
+
+`CORS_ORIGIN` e uma whitelist exata separada por virgula, sem coringa. Cada origem
+e comparada por protocolo + host + porta, e `localhost` nao equivale a `127.0.0.1`.
+As origens `http://127.0.0.1:4174` e `http://localhost:4174` permitem o E2E integrado
+do `delfos-web` (servidor estatico do build em `127.0.0.1:4174`) consumir a API local.
 
 `DELFOS_ADMIN_KEY` protege temporariamente os endpoints administrativos da foundation.
 Use um valor local forte, nao commite `.env` real e nunca reutilize esse mecanismo como
