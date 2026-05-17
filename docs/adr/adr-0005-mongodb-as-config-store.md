@@ -2,7 +2,10 @@
 
 - **Status**: Accepted
 - **Data**: 2026-04-25
+- **Autores**: Equipe Delfos Analytics
+- **Repositório**: delfos-api
 - **Fase impactada**: Fase 1
+- **Implementação**: implementado
 
 ---
 

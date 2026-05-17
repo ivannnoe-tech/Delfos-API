@@ -5,6 +5,7 @@
 - **Autores**: Equipe Delfos Analytics
 - **Repositório**: delfos-api
 - **Fase impactada**: ambas
+- **Implementação**: planejamento apenas
 
 ---
 

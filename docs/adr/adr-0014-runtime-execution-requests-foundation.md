@@ -2,8 +2,10 @@
 
 - **Status**: Accepted
 - **Data**: 2026-05-03
-- **Autores**: Delfos Analytics
+- **Autores**: Equipe Delfos Analytics
+- **Repositório**: delfos-api
 - **Fase impactada**: Foundation administrativa/declarativa e fases futuras de runtime
+- **Implementação**: parcial — foundation declarativa de execution-requests implementada (contratos, estados, eventos, dry-run, demo-execute); runtime real não iniciado
 
 ---
 

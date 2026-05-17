@@ -1,9 +1,15 @@
 # ADR-NNNN — [Título curto da decisão]
 
+> **Este é um template, não um ADR.** Copie este arquivo para
+> `adr-NNNN-<slug>.md`, preencha todos os campos e remova este aviso. Não edite
+> o template como se fosse uma decisão.
+
 - **Status**: Proposed | Accepted | Deprecated | Superseded by ADR-XXXX
 - **Data**: YYYY-MM-DD
-- **Autores**: [nome]
+- **Autores**: [nome — ex.: Equipe Delfos Analytics]
+- **Repositório**: delfos-api | delfos-web | delfos-connectors
 - **Fase impactada**: Fase 1 | Fase 2 | Ambas
+- **Implementação**: implementado | parcial | não iniciada | planejamento apenas | n/a
 
 ---
 

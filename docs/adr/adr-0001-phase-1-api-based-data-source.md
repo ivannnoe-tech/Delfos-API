@@ -1,8 +1,15 @@
 # ADR-0001 — Phase 1 data source: client-exposed APIs
 
-- **Status**: Accepted
+- **Status**: Superseded by ADR-0032
 - **Data**: 2026-04-25
+- **Autores**: Equipe Delfos Analytics
+- **Repositório**: delfos-api
 - **Fase impactada**: Fase 1
+- **Implementação**: não iniciada
+
+> **Superseded:** esta decisão foi substituída pela **ADR-0032 — Fonte de dados
+> da Fase 1**, que carrega a decisão vigente. Este arquivo é mantido apenas como
+> registro histórico; consulte a ADR-0032 para a decisão atual.
 
 > Substitui a versão anterior deste ADR, que previa **acesso direto ao banco de dados dos clientes**. A direção mudou após avaliação de risco, escopo e custo de manutenção.
 >

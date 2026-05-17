@@ -2,7 +2,10 @@
 
 - **Status**: Accepted
 - **Data**: 2026-04-29
+- **Autores**: Equipe Delfos Analytics
+- **Repositório**: delfos-api
 - **Fase impactada**: Fase 2 e evolucao posterior, sem implementacao nesta ADR
+- **Implementação**: parcial — política de retenção em vigor (ADR-0018); storage analítico/staging/snapshots não iniciados
 - **Atualizacao 2026-05-03**: a ADR-0013 detalhou o isolamento futuro de cache/eventos/resultados
   no eixo documental do `delfos-connectors`. Cache, staging, snapshots e storage analitico
   operacional continuam fora de escopo nesta fase.

@@ -2,7 +2,10 @@
 
 - **Status**: Accepted
 - **Data**: 2026-04-29
+- **Autores**: Equipe Delfos Analytics
+- **Repositório**: delfos-api
 - **Fase impactada**: Fase 1 e Fase 2
+- **Implementação**: implementado
 - **Atualizacao 2026-05-03**: a ADR-0013, mantida no repositorio `delfos-connectors`, reforcou
   a fronteira multitenant documental do futuro connectors. O modelo tenant-aware desta ADR
   continua valido e nao foi supersedido.
