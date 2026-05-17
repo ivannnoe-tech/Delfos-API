@@ -98,6 +98,7 @@ temáticos e visão de produto. É a leitura recomendada para decisão estratég
 | Documento | Conteúdo |
 |---|---|
 | [`strategic-product-vision.md`](./consolidated/strategic-product-vision.md) | **Topo da pirâmide** — posicionamento, temas transversais, horizontes de evolução |
+| [`priority-matrix.md`](./consolidated/priority-matrix.md) | **Matriz de prioridade consolidada** — features × impacto/fase/gate/viabilidade |
 | [`product-differentiators.md`](./consolidated/product-differentiators.md) | Diferenciais competitivos do Delfos × lacunas dos concorrentes |
 | [`future-modules-catalog.md`](./consolidated/future-modules-catalog.md) | Catálogo de possíveis módulos futuros derivados do estudo |
 | [`semantic-layer-roadmap.md`](./consolidated/semantic-layer-roadmap.md) | Roadmap da camada semântica futura |
@@ -137,5 +138,7 @@ dos documentos consolidados:
 - [`../delfos-prd.md`](../delfos-prd.md) — PRD do produto
 - [`../architecture.md`](../architecture.md) — arquitetura atual do `delfos-api`
 - [`maturity-taxonomy.md`](./maturity-taxonomy.md) — taxonomia de maturidade aplicada na camada
+- [`source-register.md`](./source-register.md) — registro de fontes e licenças (auditoria)
+- [`consolidated/priority-matrix.md`](./consolidated/priority-matrix.md) — matriz de prioridade consolidada
 - [`../adr/`](../adr/) — Architecture Decision Records
 - [`../adr/adr-0026-strategic-reference-library.md`](../adr/adr-0026-strategic-reference-library.md) — governança desta camada

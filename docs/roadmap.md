@@ -276,3 +276,21 @@ a prontidao agent-ready e nao devem ser implementados sem tarefa explicita:
 Listas antigas que colocavam JWT, execucao de dataset, cache, dashboard builder ou report builder
 dentro da Fase 1 devem ser interpretadas como historicas/deferidas. O estado atual aceito e a
 foundation administrativa/declarativa descrita em `docs/phase-1-scope.md`.
+
+---
+
+## Camada estrategica - referencias e filosofia de produto
+
+Alem deste roadmap, o repositorio mantem duas camadas de documentacao estrategica que
+orientam a evolucao futura do produto sem alterar escopo nem autorizar implementacao:
+
+- `docs/references/` - biblioteca de referencias estrategicas: estudo de 10 produtos
+  open-source de BI/Analytics/AI, com roadmaps tematicos em `consolidated/`, uma
+  `priority-matrix.md`, a `maturity-taxonomy.md` e o `source-register.md`. Governada
+  pela ADR-0026. Material **conceitual/futuro** - nada ali autoriza implementacao.
+- `docs/product/` - filosofia de produto ("como o Delfos pensa"): `principles.md` e os
+  documentos de filosofia/visao por tema.
+
+Itens dessas camadas so entram neste roadmap apos virarem escopo aprovado e, quando
+arquiteturais, ADR. Ponto de entrada: `docs/references/README.md` e
+`docs/product/README.md`.
