@@ -120,7 +120,7 @@ Contratos públicos (REST) entre os dois ficam em [`docs/api-contracts.md`](./do
   PR/entrega, continue rodando localmente `npm run format:check`, `npm run lint`, `npm test` e
   `npm run build`. `commitlint` e a ampliacao do CI com `format:check` permanecem planejados.
 - **Idioma**: código em EN, docs em PT-BR
-- **Branches**: `feat/`, `fix/`, `chore/`, `docs/` → `develop` → `main`
+- **Branches**: `feat/`, `fix/`, `chore/`, `docs/` → `main` (não existe branch `develop`)
 - **PRs**: 1 aprovação humana mínima
 
 Ver [`CONTRIBUTING.md`](./CONTRIBUTING.md).

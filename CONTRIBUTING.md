@@ -9,7 +9,7 @@ A leitura de `AGENTS.md`, `DESIGN.md` e da `docs/` é obrigatória **antes** de 
 ## 1. Pré-requisitos
 
 - **Node.js 24 LTS** (use `nvm use` ou `fnm use` — o repo tem `.nvmrc`)
-- **npm** 10+ (vem com Node 22)
+- **npm** 10+ (vem com Node 24)
 - **MongoDB 8.0+** rodando localmente, ou Docker (`docker compose up -d mongo`)
 - **Git** e acesso ao repositório privado no GitHub
 
@@ -41,20 +41,19 @@ A API sobe em `http://localhost:3000`. Documentação Swagger em `http://localho
 
 ## 4. Branches
 
-- `main`: produção. Protegida.
-- `develop`: integração. Protegida.
+- `main`: produção. Protegida. Não existe branch `develop`.
 - `feat/<scope>-<short-description>`: nova feature
 - `fix/<scope>-<short-description>`: correção de bug
 - `chore/<scope>-<short-description>`: manutenção
 - `docs/<scope>-<short-description>`: alteração só de documentação
 
-PRs sempre vão para `develop`. Releases sobem `develop → main`.
+PRs sempre vão direto para `main`.
 
 ---
 
 ## 5. Conventional Commits
 
-Todo commit deve seguir [Conventional Commits](https://www.conventionalcommits.org/). CI minimo ja existe via GitHub Actions e executa lint/test.
+Todo commit deve seguir [Conventional Commits](https://www.conventionalcommits.org/). O CI via GitHub Actions executa lint, test e build como jobs obrigatórios.
 
 `commitlint` permanece planejado.
 
@@ -63,14 +62,14 @@ Tipos aceitos: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `buil
 Exemplos:
 
 ```
-feat(connections): add encrypted credentials storage
-fix(auth): refresh token rotation on logout
+feat(credentials): add credentialRef encryption metadata
+fix(auth): reject missing x-delfos-admin-key header
 docs(adr): add ADR-0007 for no-cache phase 1
-refactor(delfos-connectors): split fetcher into smaller services
-chore(deps): bump nestjs to 10.4.0
+refactor(datasets): split repository into smaller services
+chore(deps): bump nestjs to 11.x
 ```
 
-Escopo recomendado é o nome do módulo afetado (`auth`, `connections`, `delfos-connectors`, `dashboards`, `reports`, `core`, `ci`, `docs`).
+Escopo recomendado é o nome de um módulo existente afetado: `health`, `auth`, `audit`, `tenants`, `users`, `connections`, `credentials`, `datasets`, `field-mappings`, `query-definitions`, `dashboard-definitions`, `report-definitions`, `runtime`, `execution-preview`, ou `core`, `ci`, `docs`.
 
 ---
 
@@ -83,7 +82,7 @@ npm test
 npm run build
 ```
 
-O CI minimo ja executa lint/test. Antes de PR/entrega, continue rodando localmente `format:check`, lint, test e build enquanto format/build nao entrarem no CI completo.
+O CI executa lint, test e build como jobs obrigatórios. Antes de PR/entrega, continue rodando localmente `format:check`, lint, test e build.
 
 ---
 

@@ -60,7 +60,7 @@ Agentes devem:
 Evitar:
 
 - reescrever histórico compartilhado
-- `push --force` em `main` ou `develop`
+- `push --force` em `main`
 - remover arquivos não rastreados sem listar antes
 
 Antes de limpeza:
