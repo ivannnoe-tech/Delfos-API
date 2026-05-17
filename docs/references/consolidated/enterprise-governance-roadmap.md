@@ -9,7 +9,7 @@
 Este roadmap consolida os padrões de **governança, permissões, segurança e
 auditoria** observados nos dez produtos estudados — com peso para NocoBase (ACL
 field-level), Superset (certificação/ownership de ativos), Cube (security context),
-Wren AI e Lightdash (versionamento, explainability, row/column-level security),
+WrenAI e Lightdash (versionamento, explainability, row/column-level security),
 Vanna (observability de IA) e Airbyte (timeline imutável) — e os traduz para o
 contexto multi-tenant do Delfos.
 

@@ -144,12 +144,12 @@ Convenções de fase:
 | ADRs futuras | "Consumption views sobre datasets". |
 | Status | Conceitual. |
 
-## 10. access-policy (RLAC/CLAC)
+## 10. access-policy (RLS/CLS)
 
 | Campo | Conteúdo |
 |---|---|
 | Propósito | Controle de acesso por linha e por coluna declarado na definição (dataset/field-mapping), avaliado em execução futura — governança fina dentro da fronteira de `tenantId`. |
-| Inspiração | wren-ai (RLAC/CLAC), nocobase (ACL field-level), cube (queryRewrite). |
+| Inspiração | wren-ai (RLS/CLS, na origem chamado RLAC/CLAC), nocobase (ACL field-level), cube (queryRewrite). |
 | Módulos atuais relacionados | `field-mappings`, `datasets`, `users`, `tenants`, `auth`. |
 | Dependências | Modelo de roles (`adr-0017`); mascaramento (`adr-0023`). |
 | Fase estimada | Curto prazo declarativo (modelo); aplicação real na Fase 2. |
