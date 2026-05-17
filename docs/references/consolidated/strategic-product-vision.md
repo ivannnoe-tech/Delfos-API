@@ -194,10 +194,10 @@ sobre uma foundation declarativa estável.
 
 Este documento é o ápice de uma pirâmide de síntese:
 
-- na base, os 10 estudos de produto em `docs/references/<produto>/`;
+- na base, 10 estudos de produto (60 arquivos de análise, ~120 ideias) em
+  `docs/references/<produto>/`;
 - no meio, os roadmaps temáticos consolidados (semantic-layer, ai-assistant,
-  connectors, dashboard-builder, embedded-analytics, premium-ux,
-  enterprise-governance);
+  connectors, builder-and-ux, embedded-analytics, enterprise-governance);
 - ainda no meio, `./product-differentiators.md` (tese competitiva) e
   `./future-modules-catalog.md` (módulos candidatos);
 - no topo, este documento.

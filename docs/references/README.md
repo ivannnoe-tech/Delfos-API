@@ -92,8 +92,9 @@ produtos, para leitura comparável e navegável por agentes.
 
 ## Documentos consolidados
 
-A pasta [`consolidated/`](./consolidated/) sintetiza as 60 análises de produto em roadmaps
-temáticos e visão de produto. É a leitura recomendada para decisão estratégica.
+A pasta [`consolidated/`](./consolidated/) sintetiza 10 estudos de produto
+(60 arquivos de análise, ~120 ideias) em roadmaps temáticos e visão de produto.
+É a leitura recomendada para decisão estratégica.
 
 | Documento | Conteúdo |
 |---|---|

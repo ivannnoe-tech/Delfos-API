@@ -116,9 +116,9 @@ indicado, uma ADR aprovada.
 
 ## Leitura da matriz
 
-São **54 features consolidadas** sintetizadas a partir de mais de 120 ideias
-cruas dos 10 catálogos de produto, dos 7 roadmaps e do catálogo de módulos
-futuros.
+São **54 features consolidadas** sintetizadas a partir de 10 estudos de produto
+(60 arquivos de análise, ~120 ideias), dos roadmaps temáticos de
+`references/consolidated/` e do catálogo de módulos futuros.
 
 ### Distribuição por "Pode fazer agora?"
 
