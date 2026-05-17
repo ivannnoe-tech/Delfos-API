@@ -83,7 +83,8 @@ describe('sanitizeMetadata — sensitive value detection', () => {
   });
 
   it('keeps long values that are not token-like (contain spaces)', () => {
-    const longSentence = 'This is a long but perfectly safe descriptive sentence about the dataset.';
+    const longSentence =
+      'This is a long but perfectly safe descriptive sentence about the dataset.';
     const result = sanitizeMetadata({ description: longSentence });
 
     expect(result).toEqual({ description: longSentence });
