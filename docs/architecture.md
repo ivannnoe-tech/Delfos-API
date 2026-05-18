@@ -14,7 +14,7 @@ O Delfos Analytics é composto por dois repositórios principais:
 - `delfos-api`: backend NestJS, responsavel por contratos foundation, auth temporaria, configuracao declarativa, catalogos, credenciais protegidas, auditoria e contratos REST.
 - `delfos-web`: frontend Flutter Web, responsavel pela interface, status da API, catalogos foundation e preview demo.
 
-No estado atual, o Delfos **nao armazena dados operacionais dos clientes** e tambem **nao consome APIs, bancos, arquivos ou sistemas de clientes**. Connections, datasets, field-mappings, query-definitions e dashboard-definitions sao declarativos. `execution-preview` gera apenas dados ficticios em memoria.
+No estado atual, o Delfos **nao armazena dados operacionais dos clientes** e tambem **nao consome APIs, bancos, arquivos ou sistemas de clientes**. Connections, datasets, field-mappings, query-definitions, dashboard-definitions, report-definitions e semantic-models sao declarativos. `execution-preview` gera apenas dados ficticios em memoria.
 
 Conectores reais, execucao real, cache, fila, scheduler, dashboard runtime e `delfos-connectors` sao futuros.
 
@@ -50,6 +50,7 @@ O backend é responsável por:
 - cadastro de De/Para declarativo por dataset
 - cadastro declarativo de query-definitions e dashboard-definitions
 - cadastro declarativo de report-definitions
+- cadastro declarativo da camada semantica (`semantic-models`: measures, dimensions, glossario, governanca) — metadata-only, sem semantic engine (ADR-0034)
 - `execution-preview` demo em memoria
 - execucao segura de chamadas HTTP externas _(planejado/futuro — `delfos-connectors` nao implementado; ver ADR-0008)_
 - validacao, normalizacao e paginacao de respostas reais _(planejado/futuro — dependente do executor futuro)_
@@ -162,6 +163,7 @@ cada módulo, ver `AGENTS.md` §6.
 - query definitions
 - dashboard definitions
 - report definitions
+- semantic models (`semantic-models` — measures, dimensions, glossario declarativos)
 - runtime execution-requests declarativos
 - logs/auditoria
 

@@ -14,7 +14,7 @@ administrativa/declarativa esta madura. Ele nao autoriza Fase 2.
 - Modulos declarativos: `health`, `auth`, `audit`, `tenants`, `users`,
   `connections`, `credentials`, `datasets`, `field-mappings`,
   `query-definitions`, `dashboard-definitions`, `report-definitions`,
-  `runtime`, `execution-preview`.
+  `semantic-models`, `runtime`, `execution-preview`.
 - Testes: **423 unit/integration** + **17 E2E smoke** (`test:e2e`, MongoDB em
   memoria via `mongodb-memory-server`).
 - Cobertura medida: ~87% statements / ~88% lines. `coverageThreshold` global
@@ -33,8 +33,9 @@ administrativa/declarativa esta madura. Ele nao autoriza Fase 2.
 
 - Flutter Web consumindo a foundation; catalogos, builders declarativos,
   Runtime Monitor Foundation, previews demo.
-- Testes: **262 testes Flutter** (unit/widget) + **21 Playwright E2E smoke**
-  (build estatico, Chromium).
+- Testes: **353 testes Flutter** (unit/widget) + **24 Playwright E2E smoke**
+  (build estatico, Chromium) + **12 E2E integrados** API+Web. Contagem
+  canonica: `delfos-web/CHANGELOG.md`.
 - Smoke E2E integrado API+Web: tarefa local/opcional documentada em
   `delfos-web/docs/e2e-web-testing.md` — nao obrigatoria no CI.
 - CI: `Flutter Analyze`, `Flutter Test`; `Web E2E`, `Commitlint`,

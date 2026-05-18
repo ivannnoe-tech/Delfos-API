@@ -14,7 +14,7 @@ Para traduzir termos de fase (Horizonte / Fase / Onda / Catálogo), ver o
 Marco de estabilizacao da foundation (2026-05-16): documentacao agent-ready, testes
 unit/integration reforcados, API E2E smoke com MongoDB em memoria, Web Playwright E2E smoke,
 connectors hardening e CI hardening. Numeros atuais - `delfos-api`: 423 testes + 17 E2E;
-`delfos-web`: 349 testes Flutter + 36 Playwright E2E; `delfos-connectors`: 106 testes. O E2E de
+`delfos-web`: 353 testes Flutter + 36 Playwright E2E; `delfos-connectors`: 106 testes. O E2E de
 API e o E2E de Web permanecem em jobs separados/opcionais. A execucao real de conectores
 permanece bloqueada e ADR-0021/ADR-0022 permanecem `Proposed`.
 
@@ -54,6 +54,8 @@ Implementado atualmente:
 - query-definitions declarativas;
 - dashboard-definitions declarativas;
 - report-definitions declarativas;
+- semantic-models declarativos — Semantic Layer Foundation (measures, dimensions,
+  glossário, governança), metadata-only, sem semantic engine/SQL/execução (ADR-0034);
 - runtime execution requests `foundation implementada`, apenas contratos/estados/eventos
   administrativos, readiness dry-run e demo-execute ficticio;
 - planejamento documental da futura bridge `ExecutionRequest -> ConnectorExecutionCommand`, sem

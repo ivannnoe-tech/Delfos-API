@@ -80,6 +80,7 @@ A coluna **Implementação** distingue decisão `Accepted` já construída de de
 | [0031](./adr-0031-ci-cd-strategy.md) | CI/CD strategy | Accepted | implementado |
 | [0032](./adr-0032-phase-1-data-source.md) | Phase 1 data source (supersedes ADR-0001) | Accepted | parcial |
 | [0033](./adr-0033-no-cache-redis-phase-1.md) | No cache/Redis in Phase 1 (supersedes ADR-0007) | Accepted | não iniciada |
+| [0034](./adr-0034-semantic-layer-foundation-declarative-model.md) | Semantic Layer Foundation (declarative model only) | Accepted | implementado |
 
 > **Nota sobre ADR-0013**: vive no repositório `delfos-connectors`, no caminho `docs/adr/ADR-0013-connectors-boundary-and-multitenant-runtime-contract.md`. Ela complementa ADR-0008 no eixo de governança documental do `delfos-connectors` (foundation documental, contratos conceituais, fronteiras multitenant). Não supersede ADR-0008 no ponto de execução real — serviço/runtime, conectores reais, workers, filas, cache, scheduler, local agent e execução de SQL/API externa continuam fora de escopo.
 >

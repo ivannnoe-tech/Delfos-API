@@ -53,6 +53,7 @@ proteger:
 - query-definitions declarativas;
 - dashboard-definitions declarativas;
 - report-definitions declarativas;
+- semantic-models declarativos (Semantic Layer Foundation: measures, dimensions, glossario, governanca), metadata-only;
 - `execution-preview` demo em memoria;
 - runtime execution requests foundation sem execucao real;
 - auditoria interna sem secrets ou payload operacional;
