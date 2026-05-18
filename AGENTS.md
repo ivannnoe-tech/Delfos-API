@@ -11,7 +11,7 @@ Este arquivo é o ponto de entrada. Ele intencionalmente é curto. Cada bloco ap
 Leia esta seção antes de qualquer tarefa. O estado atual do `delfos-api` é foundation administrativa/declarativa:
 
 - auth temporária por `x-delfos-admin-key`;
-- `tenants`, `users`, `connections`, `credentials`, `datasets`, `field-mappings`, `query-definitions`, `dashboard-definitions`, `report-definitions`, `runtime/execution-requests` foundation e `execution-preview` demo;
+- `tenants`, `users`, `connections`, `credentials`, `datasets`, `field-mappings`, `query-definitions`, `dashboard-definitions`, `report-definitions`, `semantic-models`, `runtime/execution-requests` foundation e `execution-preview` demo;
 - seed/dev local com dados fictícios;
 - sem JWT real, login ou OAuth;
 - sem conectores reais;
@@ -172,6 +172,7 @@ Regras:
 | query-definitions | `src/modules/query-definitions/` | `foundation implementada` — declarativo |
 | dashboard-definitions | `src/modules/dashboard-definitions/` | `foundation implementada` — declarativo |
 | report-definitions | `src/modules/report-definitions/` | `foundation implementada` — declarativo |
+| semantic-models | `src/modules/semantic-models/` | `foundation implementada` — modelo semântico declarativo (measures, dimensions, glossário, governança); metadata-only, sem semantic engine, SQL ou execução; ADR-0034 |
 | runtime (execution-requests) | `src/modules/runtime/` | `foundation implementada` — execution-requests foundation: contratos, estados, eventos administrativos, runtime monitor, readiness dry-run e demo-execute fictício; sem execução real |
 | runtime/bridge | `src/modules/runtime/bridge/` | `foundation-only` — bridge resolver, reference resolver e adapters; apenas types e testes, sem provider NestJS, sem dispatch e sem execução real |
 | execution-preview | `src/modules/execution-preview/` | `foundation implementada` — demo em memória, sem execução real |

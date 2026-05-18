@@ -175,7 +175,7 @@ Nao documentar nem exigir script inexistente como operacional.
 ## 8a. CI - delfos-api
 
 Marco de estabilizacao da foundation (2026-05-16). Numeros atuais de teste:
-`delfos-api` 413 testes unit/integration + 17 E2E; `delfos-web` 349 testes
+`delfos-api` 423 testes unit/integration + 17 E2E; `delfos-web` 353 testes
 Flutter + 36 Playwright E2E; `delfos-connectors` 106 testes. O E2E de API e o
 E2E de Web rodam em jobs separados e opcionais. A execucao real de conectores
 permanece bloqueada e ADR-0021/ADR-0022 permanecem `Proposed`.
