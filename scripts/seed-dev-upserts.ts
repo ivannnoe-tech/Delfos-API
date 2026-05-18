@@ -43,6 +43,10 @@ import {
   ReportDefinitionStatus,
   ReportDefinitionVisibility,
 } from '../src/modules/report-definitions/schemas/report-definition.schema';
+import {
+  SemanticModel,
+  SemanticModelDocument,
+} from '../src/modules/semantic-models/schemas/semantic-model.schema';
 import { Tenant, TenantDocument, TenantStatus } from '../src/modules/tenants/schemas/tenant.schema';
 import { User, UserDocument, UserRole, UserStatus } from '../src/modules/users/schemas/user.schema';
 import {
@@ -53,6 +57,7 @@ import {
   buildQueryInputs,
   buildReportInput,
   buildQuerySorts,
+  buildSemanticModelInputs,
   demoActorId,
   demoAllowedGranularities,
   demoSeedKeys,
@@ -66,6 +71,7 @@ export {
   FieldMapping,
   QueryDefinition,
   ReportDefinition,
+  SemanticModel,
   Tenant,
   User,
 };
@@ -349,6 +355,35 @@ export async function upsertReportDefinitions(
     .exec();
 
   return [report];
+}
+
+export async function upsertSemanticModels(
+  model: Model<SemanticModelDocument>,
+  tenantId: Types.ObjectId,
+): Promise<SemanticModelDocument[]> {
+  const models: SemanticModelDocument[] = [];
+
+  for (const input of buildSemanticModelInputs()) {
+    const semanticModel = await model
+      .findOneAndUpdate(
+        { tenantId, modelKey: input.modelKey },
+        {
+          $set: {
+            ...input,
+            tenantId,
+            metadata: { domain: 'demo', devSeed: true },
+            settings: { visibleInBuilder: true, devSeed: true },
+            updatedBy: demoActorId,
+          },
+          $setOnInsert: { createdBy: demoActorId },
+        },
+        upsertOptions(),
+      )
+      .exec();
+    models.push(semanticModel);
+  }
+
+  return models;
 }
 
 export function toCredentialRef(id: Types.ObjectId): string {

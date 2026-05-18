@@ -12,6 +12,7 @@ import { DatasetDocument } from '../src/modules/datasets/schemas/dataset.schema'
 import { FieldMappingDocument } from '../src/modules/field-mappings/schemas/field-mapping.schema';
 import { QueryDefinitionDocument } from '../src/modules/query-definitions/schemas/query-definition.schema';
 import { ReportDefinitionDocument } from '../src/modules/report-definitions/schemas/report-definition.schema';
+import { SemanticModelDocument } from '../src/modules/semantic-models/schemas/semantic-model.schema';
 import { TenantDocument } from '../src/modules/tenants/schemas/tenant.schema';
 import { UserDocument } from '../src/modules/users/schemas/user.schema';
 import {
@@ -30,6 +31,7 @@ import {
   FieldMapping,
   QueryDefinition,
   ReportDefinition,
+  SemanticModel,
   Tenant,
   User,
   attachCredentialRef,
@@ -42,6 +44,7 @@ import {
   upsertOwnerUser,
   upsertQueryDefinitions,
   upsertReportDefinitions,
+  upsertSemanticModels,
   upsertTenant,
 } from './seed-dev-upserts';
 
@@ -55,6 +58,7 @@ interface SeedModels {
   queryDefinitions: Model<QueryDefinitionDocument>;
   dashboardDefinitions: Model<DashboardDefinitionDocument>;
   reportDefinitions: Model<ReportDefinitionDocument>;
+  semanticModels: Model<SemanticModelDocument>;
 }
 
 interface SeedCatalogItem {
@@ -79,6 +83,7 @@ interface SeedResult {
   queryDefinitions: SeedCatalogItem[];
   dashboardDefinitions: SeedCatalogItem[];
   reportDefinitions: SeedCatalogItem[];
+  semanticModels: SeedCatalogItem[];
   webCommand: string;
   previewCommands: SeedPreviewCommands;
 }
@@ -130,6 +135,7 @@ export async function seedDevFoundation(app: INestApplicationContext): Promise<S
     queries,
     dashboards,
   );
+  const semanticModels = await upsertSemanticModels(models.semanticModels, tenant._id);
 
   const tenantId = tenant._id.toString();
   const actorId = user._id.toString();
@@ -139,6 +145,9 @@ export async function seedDevFoundation(app: INestApplicationContext): Promise<S
   );
   const reportItems = reports.map((report) =>
     toCatalogItem(report._id, report.reportKey, report.name),
+  );
+  const semanticModelItems = semanticModels.map((semanticModel) =>
+    toCatalogItem(semanticModel._id, semanticModel.modelKey, semanticModel.name),
   );
   const previewQuery = requireCatalogItem(queryItems, 'sales_overview_demo');
   const previewDashboard = requireCatalogItem(dashboardItems, 'commercial_dashboard_demo');
@@ -154,6 +163,7 @@ export async function seedDevFoundation(app: INestApplicationContext): Promise<S
     queryDefinitions: queryItems,
     dashboardDefinitions: dashboardItems,
     reportDefinitions: reportItems,
+    semanticModels: semanticModelItems,
     webCommand: buildDelfosWebCommand(tenantId, actorId),
     previewCommands: {
       listQueryDefinitions: buildListQueryDefinitionsCommand(tenantId, actorId),
@@ -189,6 +199,7 @@ function getSeedModels(app: INestApplicationContext): SeedModels {
     reportDefinitions: app.get<Model<ReportDefinitionDocument>>(
       getModelToken(ReportDefinition.name),
     ),
+    semanticModels: app.get<Model<SemanticModelDocument>>(getModelToken(SemanticModel.name)),
   };
 }
 
@@ -220,6 +231,8 @@ function printSeedResult(result: SeedResult): void {
   printCatalog('Dashboard definitions:', result.dashboardDefinitions);
   console.log('');
   printCatalog('Report definitions:', result.reportDefinitions);
+  console.log('');
+  printCatalog('Semantic models:', result.semanticModels);
   console.log('');
   console.log('Comando sugerido no delfos-web (PowerShell):');
   console.log(result.webCommand);
