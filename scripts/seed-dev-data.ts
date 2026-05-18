@@ -44,6 +44,7 @@ export const demoSeedKeys = {
   queryKeys: ['sales_overview_demo', 'sales_by_day_demo', 'customers_summary_demo'],
   dashboardKeys: ['commercial_dashboard_demo'],
   reportKeys: ['monthly_sales_report_demo'],
+  semanticModelKeys: ['commercial_demo'],
 } as const;
 
 export interface SeedDatasetInput {
@@ -577,6 +578,7 @@ export function buildSeedIdentityKeys(): string[] {
     ...demoSeedKeys.queryKeys,
     ...demoSeedKeys.dashboardKeys,
     ...demoSeedKeys.reportKeys,
+    ...demoSeedKeys.semanticModelKeys,
   ];
 }
 

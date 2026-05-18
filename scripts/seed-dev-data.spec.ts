@@ -95,6 +95,15 @@ describe('seed-dev data', () => {
     expect(command).not.toContain('change-me-local-admin-key');
   });
 
+  it('declares a unique semantic model demo key', () => {
+    expect(demoSeedKeys.semanticModelKeys).toEqual(['commercial_demo']);
+    const keys = buildSeedIdentityKeys();
+    expect(new Set(keys).size).toBe(keys.length);
+    expect(keys).toEqual(
+      expect.arrayContaining([...demoSeedKeys.semanticModelKeys]),
+    );
+  });
+
   it('prints preview test commands without expanding the admin key value', () => {
     const tenantId = '662d4f6e7a1c2b00124f0001';
     const actorId = '662d4f6e7a1c2b00124f0101';
