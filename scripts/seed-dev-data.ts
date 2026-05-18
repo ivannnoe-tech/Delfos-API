@@ -1,6 +1,14 @@
 import { Types } from 'mongoose';
 
 import {
+  SemanticMeasureAggregation,
+  SemanticDimensionDomain,
+  SemanticCardinalityHint,
+  SemanticType,
+  SemanticModelStatus,
+  SemanticQualityLevel,
+} from '../src/modules/semantic-models/schemas/semantic-model.schema';
+import {
   DashboardDefinitionChartType,
   DashboardDefinitionFilterOperator,
   DashboardDefinitionLayoutDensity,
@@ -613,3 +621,179 @@ export const demoAllowedGranularities = [
   QueryDefinitionTimeGranularity.Day,
   QueryDefinitionTimeGranularity.Month,
 ];
+
+export interface SemanticModelSeedInput {
+  modelKey: string;
+  name: string;
+  description: string;
+  status: SemanticModelStatus;
+  datasetKeys: string[];
+  tags: string[];
+  quality: { score: number; level: SemanticQualityLevel; warnings: string[] };
+  measures: Array<{ key: string } & Record<string, unknown>>;
+  dimensions: Array<{ key: string } & Record<string, unknown>>;
+  glossaryTerms: Array<{ key: string } & Record<string, unknown>>;
+}
+
+/**
+ * Declarative demo semantic model. Metadata-only: no measure is evaluated,
+ * no dimension is queried, no glossary term activates AI. Mirrors ADR-0034.
+ */
+export function buildSemanticModelInputs(): SemanticModelSeedInput[] {
+  return [
+    {
+      modelKey: 'commercial_demo',
+      name: 'Comercial Demo',
+      description:
+        'Modelo semantico declarativo para analises comerciais demonstrativas.',
+      status: SemanticModelStatus.Review,
+      datasetKeys: ['sales_orders_demo', 'customers_demo', 'payments_demo'],
+      tags: ['demo', 'comercial'],
+      quality: {
+        score: 72,
+        level: SemanticQualityLevel.Good,
+        warnings: ['Modelo demonstrativo — revisar antes de uso real.'],
+      },
+      measures: [
+        {
+          key: 'faturamento',
+          name: 'Faturamento',
+          description: 'Soma declarativa do valor faturado. Nada e calculado.',
+          aggregation: SemanticMeasureAggregation.Sum,
+          semanticType: SemanticType.Currency,
+          datasetKey: 'sales_orders_demo',
+          fieldKey: 'totalAmount',
+          unit: 'BRL',
+          formatHint: 'currency',
+          status: SemanticModelStatus.Review,
+          tags: ['comercial'],
+          isReusable: true,
+          warnings: [],
+          metadata: { domain: 'sales-demo', devSeed: true },
+        },
+        {
+          key: 'ticket_medio',
+          name: 'Ticket medio',
+          description: 'Media declarativa do valor por pedido. Nada e calculado.',
+          aggregation: SemanticMeasureAggregation.Avg,
+          semanticType: SemanticType.Currency,
+          datasetKey: 'sales_orders_demo',
+          fieldKey: 'totalAmount',
+          unit: 'BRL',
+          formatHint: 'currency',
+          status: SemanticModelStatus.Review,
+          tags: ['comercial'],
+          isReusable: true,
+          warnings: [],
+          metadata: { domain: 'sales-demo', devSeed: true },
+        },
+        {
+          key: 'pedidos',
+          name: 'Pedidos',
+          description: 'Contagem declarativa de pedidos. Nada e calculado.',
+          aggregation: SemanticMeasureAggregation.Count,
+          semanticType: SemanticType.Quantity,
+          datasetKey: 'sales_orders_demo',
+          fieldKey: 'orderId',
+          status: SemanticModelStatus.Review,
+          tags: ['comercial'],
+          isReusable: true,
+          warnings: [],
+          metadata: { domain: 'sales-demo', devSeed: true },
+        },
+      ],
+      dimensions: [
+        {
+          key: 'cidade',
+          name: 'Cidade',
+          description: 'Recorte declarativo por cidade.',
+          semanticType: SemanticType.City,
+          domain: SemanticDimensionDomain.Geography,
+          datasetKey: 'customers_demo',
+          cardinalityHint: SemanticCardinalityHint.Medium,
+          status: SemanticModelStatus.Review,
+          tags: ['geografia'],
+          warnings: [],
+          metadata: { domain: 'geography-demo', devSeed: true },
+        },
+        {
+          key: 'categoria',
+          name: 'Categoria',
+          description: 'Recorte declarativo por categoria de produto.',
+          semanticType: SemanticType.Category,
+          domain: SemanticDimensionDomain.Product,
+          datasetKey: 'sales_orders_demo',
+          cardinalityHint: SemanticCardinalityHint.Medium,
+          status: SemanticModelStatus.Review,
+          tags: ['produto'],
+          warnings: [],
+          metadata: { domain: 'product-demo', devSeed: true },
+        },
+        {
+          key: 'periodo',
+          name: 'Periodo',
+          description: 'Recorte declarativo temporal.',
+          semanticType: SemanticType.Date,
+          domain: SemanticDimensionDomain.Time,
+          datasetKey: 'sales_orders_demo',
+          cardinalityHint: SemanticCardinalityHint.High,
+          status: SemanticModelStatus.Review,
+          tags: ['tempo'],
+          warnings: [],
+          metadata: { domain: 'time-demo', devSeed: true },
+        },
+      ],
+      glossaryTerms: [
+        {
+          key: 'faturamento',
+          name: 'Faturamento',
+          description:
+            'Termo de negocio declarativo. Sem regra executavel ou IA.',
+          aliases: ['receita'],
+          domain: SemanticDimensionDomain.Financial,
+          relatedMeasureKeys: ['faturamento'],
+          relatedDimensionKeys: [],
+          status: SemanticModelStatus.Review,
+          tags: ['glossario'],
+          metadata: { domain: 'sales-demo', devSeed: true },
+        },
+        {
+          key: 'ticket_medio',
+          name: 'Ticket medio',
+          description: 'Termo de negocio declarativo. Sem calculo real.',
+          aliases: ['valor medio do pedido'],
+          domain: SemanticDimensionDomain.Financial,
+          relatedMeasureKeys: ['ticket_medio'],
+          relatedDimensionKeys: [],
+          status: SemanticModelStatus.Review,
+          tags: ['glossario'],
+          metadata: { domain: 'sales-demo', devSeed: true },
+        },
+        {
+          key: 'cliente_ativo',
+          name: 'Cliente ativo',
+          description: 'Termo de negocio declarativo. Sem regra executavel.',
+          aliases: ['conta ativa'],
+          domain: SemanticDimensionDomain.Customer,
+          relatedMeasureKeys: [],
+          relatedDimensionKeys: ['cidade'],
+          status: SemanticModelStatus.Review,
+          tags: ['glossario'],
+          metadata: { domain: 'customer-demo', devSeed: true },
+        },
+        {
+          key: 'pedido_cancelado',
+          name: 'Pedido cancelado',
+          description: 'Termo de negocio declarativo. Sem regra executavel.',
+          aliases: [],
+          domain: SemanticDimensionDomain.Operational,
+          relatedMeasureKeys: ['pedidos'],
+          relatedDimensionKeys: [],
+          status: SemanticModelStatus.Review,
+          tags: ['glossario'],
+          metadata: { domain: 'sales-demo', devSeed: true },
+        },
+      ],
+    },
+  ];
+}

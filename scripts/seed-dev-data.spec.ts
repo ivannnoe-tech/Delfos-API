@@ -11,6 +11,7 @@ import {
   buildPreviewQueryDefinitionCommand,
   buildQueryInputs,
   buildReportInput,
+  buildSemanticModelInputs,
   buildSeedIdentityKeys,
   demoSeedKeys,
 } from './seed-dev-data';
@@ -142,5 +143,33 @@ describe('seed-dev data', () => {
     expect(output).toContain('-Body \'{"rowLimitPerWidget":5}\'');
     expect(output).not.toContain('change-me-local-admin-key');
     expect(output).not.toContain('not-a-real-secret-value');
+  });
+
+  it('builds a declarative commercial demo semantic model', () => {
+    const models = buildSemanticModelInputs();
+    expect(models).toHaveLength(1);
+    const model = models[0];
+    expect(model.modelKey).toBe('commercial_demo');
+    expect(model.measures.map((m) => m.key)).toEqual([
+      'faturamento',
+      'ticket_medio',
+      'pedidos',
+    ]);
+    expect(model.dimensions.map((d) => d.key)).toEqual([
+      'cidade',
+      'categoria',
+      'periodo',
+    ]);
+    expect(model.glossaryTerms.map((g) => g.key)).toEqual([
+      'faturamento',
+      'ticket_medio',
+      'cliente_ativo',
+      'pedido_cancelado',
+    ]);
+    for (const coll of [model.measures, model.dimensions, model.glossaryTerms]) {
+      const keys = coll.map((i: { key: string }) => i.key);
+      expect(new Set(keys).size).toBe(keys.length);
+    }
+    expect(JSON.stringify(model)).not.toMatch(/token|secret|password|bearer/i);
   });
 });
