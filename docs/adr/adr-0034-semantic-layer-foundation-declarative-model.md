@@ -99,3 +99,24 @@ Autenticação permanece a temporária `x-delfos-admin-key` (Fase 1), com
 - `docs/phase-1-scope.md`
 - `docs/references/consolidated/semantic-layer-roadmap.md` (conceitual/futuro)
 - `delfos-web/docs/web-execution-phase-checkpoint.md`
+
+---
+
+## Nota de atualização — 2026-05-17
+
+O editor aninhado declarativo de measures/dimensions/glossário foi entregue no
+`delfos-web` (Semantic Models Builder): formulário em drawer com 5 abas
+(Identidade, Measures, Dimensões, Glossário, Governança), cards de item
+editáveis, validação de chave/unicidade e estados vazios por seção.
+
+O seed de desenvolvimento (`npm run seed:dev`) passou a incluir o modelo demo
+`commercial_demo` (tenant fictício), com measures, dimensions e glossary terms
+de exemplo — exclusivamente para desenvolvimento local, sem dado real de cliente.
+
+Confirmações Phase 1 (inalteradas):
+
+- **Sem semantic engine, sem query execution, sem SQL, sem IA, sem runtime.**
+- Nenhum conector real acionado; nenhuma credencial descriptografada.
+- ADR-0021 (credential decryption) e ADR-0022 (connector dispatch) permanecem
+  `Proposed` — esta nota não os altera.
+- O modelo continua puramente declarativo e metadata-only.
