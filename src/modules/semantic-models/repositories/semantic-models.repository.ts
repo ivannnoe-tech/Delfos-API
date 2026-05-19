@@ -72,10 +72,7 @@ export class SemanticModelsRepository {
     return this.semanticModelModel.countDocuments(this.toMongoFilters(filters)).exec();
   }
 
-  findByTenantAndId(
-    tenantId: Types.ObjectId,
-    id: string,
-  ): Promise<SemanticModelDocument | null> {
+  findByTenantAndId(tenantId: Types.ObjectId, id: string): Promise<SemanticModelDocument | null> {
     return this.semanticModelModel.findOne({ _id: id, tenantId }).exec();
   }
 
@@ -100,9 +97,7 @@ export class SemanticModelsRepository {
     });
   }
 
-  private toMongoFilters(
-    filters: SemanticModelFilters,
-  ): FilterQuery<SemanticModelDocument> {
+  private toMongoFilters(filters: SemanticModelFilters): FilterQuery<SemanticModelDocument> {
     return {
       tenantId: filters.tenantId,
       ...(filters.modelKey ? { modelKey: filters.modelKey } : {}),

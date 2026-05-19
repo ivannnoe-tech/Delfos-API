@@ -288,9 +288,7 @@ export class SemanticModelsService {
       tags: semanticModel.tags,
       quality: this.toQualityResponse(semanticModel.quality),
       measures: semanticModel.measures.map((measure) => this.toMeasureResponse(measure)),
-      dimensions: semanticModel.dimensions.map((dimension) =>
-        this.toDimensionResponse(dimension),
-      ),
+      dimensions: semanticModel.dimensions.map((dimension) => this.toDimensionResponse(dimension)),
       glossaryTerms: semanticModel.glossaryTerms.map((term) => this.toGlossaryTermResponse(term)),
       metadata: semanticModel.metadata,
       settings: semanticModel.settings,
@@ -347,9 +345,7 @@ export class SemanticModelsService {
     };
   }
 
-  private toGlossaryTermResponse(
-    term: SemanticGlossaryTerm,
-  ): SemanticGlossaryTermResponseDto {
+  private toGlossaryTermResponse(term: SemanticGlossaryTerm): SemanticGlossaryTermResponseDto {
     return {
       key: term.key,
       name: term.name,

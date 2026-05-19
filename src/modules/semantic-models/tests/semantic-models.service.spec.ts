@@ -207,10 +207,7 @@ describe('SemanticModelsService', () => {
     await expect(
       service.findOne(tenantId.toString(), semanticModelId.toString()),
     ).rejects.toBeInstanceOf(NotFoundException);
-    expect(repository.findByTenantAndId).toHaveBeenCalledWith(
-      tenantId,
-      semanticModelId.toString(),
-    );
+    expect(repository.findByTenantAndId).toHaveBeenCalledWith(tenantId, semanticModelId.toString());
   });
 
   it('archives a semantic model using soft delete', async () => {
@@ -241,11 +238,9 @@ describe('SemanticModelsService', () => {
     const auditService = createAuditService();
     const service = createService(repository, auditService);
 
-    const result = await service.archive(
-      tenantId.toString(),
-      semanticModelId.toString(),
-      { actorId: 'dev-actor-003' },
-    );
+    const result = await service.archive(tenantId.toString(), semanticModelId.toString(), {
+      actorId: 'dev-actor-003',
+    });
 
     expect(repository.archiveByTenantAndId).toHaveBeenCalledWith(
       tenantId,

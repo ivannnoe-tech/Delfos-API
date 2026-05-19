@@ -644,8 +644,7 @@ export function buildSemanticModelInputs(): SemanticModelSeedInput[] {
     {
       modelKey: 'commercial_demo',
       name: 'Comercial Demo',
-      description:
-        'Modelo semantico declarativo para analises comerciais demonstrativas.',
+      description: 'Modelo semantico declarativo para analises comerciais demonstrativas.',
       status: SemanticModelStatus.Review,
       datasetKeys: ['sales_orders_demo', 'customers_demo', 'payments_demo'],
       tags: ['demo', 'comercial'],
@@ -747,8 +746,7 @@ export function buildSemanticModelInputs(): SemanticModelSeedInput[] {
         {
           key: 'faturamento',
           name: 'Faturamento',
-          description:
-            'Termo de negocio declarativo. Sem regra executavel ou IA.',
+          description: 'Termo de negocio declarativo. Sem regra executavel ou IA.',
           aliases: ['receita'],
           domain: SemanticDimensionDomain.Financial,
           relatedMeasureKeys: ['faturamento'],

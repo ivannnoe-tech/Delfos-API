@@ -100,9 +100,7 @@ describe('seed-dev data', () => {
     expect(demoSeedKeys.semanticModelKeys).toEqual(['commercial_demo']);
     const keys = buildSeedIdentityKeys();
     expect(new Set(keys).size).toBe(keys.length);
-    expect(keys).toEqual(
-      expect.arrayContaining([...demoSeedKeys.semanticModelKeys]),
-    );
+    expect(keys).toEqual(expect.arrayContaining([...demoSeedKeys.semanticModelKeys]));
   });
 
   it('prints preview test commands without expanding the admin key value', () => {
@@ -150,16 +148,8 @@ describe('seed-dev data', () => {
     expect(models).toHaveLength(1);
     const model = models[0];
     expect(model.modelKey).toBe('commercial_demo');
-    expect(model.measures.map((m) => m.key)).toEqual([
-      'faturamento',
-      'ticket_medio',
-      'pedidos',
-    ]);
-    expect(model.dimensions.map((d) => d.key)).toEqual([
-      'cidade',
-      'categoria',
-      'periodo',
-    ]);
+    expect(model.measures.map((m) => m.key)).toEqual(['faturamento', 'ticket_medio', 'pedidos']);
+    expect(model.dimensions.map((d) => d.key)).toEqual(['cidade', 'categoria', 'periodo']);
     expect(model.glossaryTerms.map((g) => g.key)).toEqual([
       'faturamento',
       'ticket_medio',

@@ -10,17 +10,11 @@ import { SemanticModelsService } from './services/semantic-models.service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: SemanticModel.name, schema: SemanticModelSchema },
-    ]),
+    MongooseModule.forFeature([{ name: SemanticModel.name, schema: SemanticModelSchema }]),
     AuditModule,
   ],
   controllers: [SemanticModelsController],
-  providers: [
-    SemanticModelsRepository,
-    SemanticModelsService,
-    SemanticModelSanitizerService,
-  ],
+  providers: [SemanticModelsRepository, SemanticModelsService, SemanticModelSanitizerService],
   exports: [SemanticModelsService],
 })
 export class SemanticModelsModule {}

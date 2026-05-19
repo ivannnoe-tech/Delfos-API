@@ -74,9 +74,7 @@ export class SemanticModelsController {
       'until final authorization exists. Declarative metadata only.',
   })
   @ApiOkResponse({ type: SemanticModelListResponseDto })
-  findByFilters(
-    @Query() query: ListSemanticModelsQueryDto,
-  ): Promise<SemanticModelListResponseDto> {
+  findByFilters(@Query() query: ListSemanticModelsQueryDto): Promise<SemanticModelListResponseDto> {
     return this.semanticModelsService.findByFilters(query);
   }
 
