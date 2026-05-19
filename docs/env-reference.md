@@ -27,6 +27,13 @@ Este documento descreve variaveis esperadas para local, homologacao e producao.
 
 Na Fase 1, MongoDB armazena configuracao e metadados do Delfos, nao payload operacional bruto de cliente.
 
+> **Direcao futura (ADR-0035)**: o banco primario sera migrado para PostgreSQL e
+> o cache futuro sera Valkey. Variaveis como `DELFOS_POSTGRES_URL` e a config do
+> Valkey serao adicionadas nas fases P1 e P6 do plano de migracao
+> (`docs/postgresql-migration-plan.md`). Elas **nao existem hoje** e nao devem
+> receber valores agora. `DELFOS_DATABASE_URL` continua sendo a unica URL de
+> banco em uso ate a migracao.
+
 ## Seguranca
 
 | Variavel | Obrigatoria | Exemplo | Descricao |

@@ -6,6 +6,14 @@
 
 O MongoDB armazena configuração e metadados do Delfos, não dados operacionais permanentes dos clientes.
 
+> **Direção futura (ADR-0035)**: foi aprovada a migração do banco primário para
+> **PostgreSQL** (com Valkey como cache layer futuro). Este documento descreve o
+> **modelo MongoDB vigente**, que continua sendo o banco em uso até a migração
+> faseada. O modelo relacional candidato está em
+> `docs/postgresql-data-model-draft.md` e o plano de migração em
+> `docs/postgresql-migration-plan.md`. Enquanto a fase de remoção do MongoDB
+> (P5) não concluir, este documento permanece a referência do banco real.
+
 ---
 
 ## 1. Princípios

@@ -13,7 +13,7 @@ Para traduzir termos de fase (Horizonte / Fase / Onda / Catálogo), ver o
 
 Marco de estabilizacao da foundation (2026-05-16): documentacao agent-ready, testes
 unit/integration reforcados, API E2E smoke com MongoDB em memoria, Web Playwright E2E smoke,
-connectors hardening e CI hardening. Numeros atuais - `delfos-api`: 423 testes + 17 E2E;
+connectors hardening e CI hardening. Numeros atuais - `delfos-api`: 425 testes + 17 E2E;
 `delfos-web`: 353 testes Flutter + 36 Playwright E2E; `delfos-connectors`: 106 testes. O E2E de
 API e o E2E de Web permanecem em jobs separados/opcionais. A execucao real de conectores
 permanece bloqueada e ADR-0021/ADR-0022 permanecem `Proposed`.
@@ -227,12 +227,15 @@ Planejado/futuro, nao implementado atualmente:
 - ingestion batches;
 - sync runs;
 - cache ou staging;
-- Redis quando justificado;
+- cache Valkey quando justificado (tecnologia decidida pela ADR-0035; promocao do cache exige fase/ADR propria);
 - filas/workers;
 - scheduler;
-- politica de retencao operacional.
+- politica de retencao operacional;
+- migracao do banco primario de MongoDB/Mongoose para PostgreSQL (ADR-0035),
+  faseada em P0-P7 conforme `docs/postgresql-migration-plan.md`; a fase P0
+  (ADR/docs) esta concluida, as demais sao futuras.
 
-Essa fase depende de ADR-0010 e nova decisao quando houver implementacao.
+Essa fase depende de ADR-0010, da ADR-0035 e de nova decisao quando houver implementacao.
 
 ---
 
@@ -285,6 +288,30 @@ a prontidao agent-ready e nao devem ser implementados sem tarefa explicita:
   nao implementado. O `build` e `commitlint` ja integram o fluxo obrigatorio do CI.
 
 ---
+
+## Planos e decisoes documentados (planejamento)
+
+Documentos de planejamento que fecham gaps documentais sem autorizar
+implementacao. Sao planejamento/futuro; nenhum altera os gates de runtime real
+(ADR-0021/ADR-0022 permanecem `Proposed`).
+
+- **Migracao de banco PostgreSQL + Valkey** — `documentado, implementacao
+  futura faseada`. ADR-0035 + `docs/postgresql-migration-plan.md`,
+  `docs/postgresql-data-model-draft.md`, `docs/valkey-cache-plan.md`. Fase P0
+  (ADR/docs) concluida; P1-P7 futuras.
+- **Plano de Auth/JWT** — `documentado, implementacao futura`. Plano faseado
+  A-G de migracao admin-key -> JWT em `docs/auth-jwt-migration-plan.md`.
+  Referencia ADR-0006/0016/0017. Sem implementacao; admin-key temporario
+  permanece.
+- **Plano de Observability** — `documentado, implementacao futura/foundation`.
+  Logs, metricas, tracing, alertas, runbooks e ferramentas candidatas em
+  `docs/observability-plan.md`. Sem stack implementada.
+- **Divisao de trabalho (4 devs/trilhas)** — `documentada`. Referencia canonica
+  em `docs/team-work-split.md`: trilhas, matriz de dependencias, handoff e
+  stop conditions.
+- **ORM / query layer** — `pendente documentado`. Nenhuma escolha entre Prisma,
+  Kysely, Drizzle ou TypeORM; ver `docs/runtime-query-layer-decision.md`. A
+  escolha base pertence a fase P1 da migracao (ADR-0035).
 
 ## Observacao sobre fases antigas
 

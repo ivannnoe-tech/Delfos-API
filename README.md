@@ -27,6 +27,12 @@ foundation e nao substitui a autenticacao final de producao.
 
 Planejado/futuro, mas não implementado no estado atual: JWT/login/OAuth, conectores reais, chamadas externas para clientes, cache/fila/scheduler e serviço `delfos-connectors`.
 
+> **Decisão arquitetural (ADR-0035)**: o banco primário futuro do Delfos será
+> **PostgreSQL** e a camada de cache futura será **Valkey**; o MongoDB/Mongoose
+> será descontinuado gradualmente. A decisão está `Accepted`, mas a
+> implementação é **faseada e ainda não iniciada** — o estado atual continua em
+> **MongoDB/Mongoose**. Plano em [`docs/postgresql-migration-plan.md`](./docs/postgresql-migration-plan.md).
+
 ---
 
 ## Quick start

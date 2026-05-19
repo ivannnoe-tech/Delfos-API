@@ -98,6 +98,11 @@ sync runs e ingestion batches. Ela nao autoriza criar esses componentes agora.
 Qualquer proposta de cache real, snapshot, staging, retencao analitica ou armazenamento de dado
 operacional exige decisao futura explicita, revisao de seguranca/LGPD e ADR quando necessario.
 
+A ADR-0035 ja registra que, quando o cache for promovido, a tecnologia sera
+**Valkey**, usado **apenas como cache** — nunca como source of truth, fila,
+worker, dispatch ou store de secrets/auditoria. Isso nao cria cache agora; o
+estado atual permanece sem cache (ADR-0033). Ver `docs/valkey-cache-plan.md`.
+
 ---
 
 ## 6. Acesso futuro a fontes externas

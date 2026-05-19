@@ -81,6 +81,7 @@ A coluna **Implementação** distingue decisão `Accepted` já construída de de
 | [0032](./adr-0032-phase-1-data-source.md) | Phase 1 data source (supersedes ADR-0001) | Accepted | parcial |
 | [0033](./adr-0033-no-cache-redis-phase-1.md) | No cache/Redis in Phase 1 (supersedes ADR-0007) | Accepted | não iniciada |
 | [0034](./adr-0034-semantic-layer-foundation-declarative-model.md) | Semantic Layer Foundation (declarative model only) | Accepted | implementado |
+| [0035](./adr-0035-postgresql-primary-database-and-valkey-cache.md) | PostgreSQL primary database + Valkey cache layer | Accepted | não iniciada |
 
 > **Nota sobre ADR-0013**: vive no repositório `delfos-connectors`, no caminho `docs/adr/ADR-0013-connectors-boundary-and-multitenant-runtime-contract.md`. Ela complementa ADR-0008 no eixo de governança documental do `delfos-connectors` (foundation documental, contratos conceituais, fronteiras multitenant). Não supersede ADR-0008 no ponto de execução real — serviço/runtime, conectores reais, workers, filas, cache, scheduler, local agent e execução de SQL/API externa continuam fora de escopo.
 >
@@ -96,6 +97,32 @@ A coluna **Implementação** distingue decisão `Accepted` já construída de de
 > **Supersedências**: a ADR-0032 supersede a ADR-0001 (fonte de dados da Fase 1);
 > a ADR-0033 supersede a ADR-0007 (sem cache/Redis na Fase 1). Os ADRs antigos
 > são mantidos como registro histórico, com `Status: Superseded`.
+>
+> **ADR-0035 — banco PostgreSQL + cache Valkey**: a **ADR-0035** registra a
+> decisão arquitetural de adotar **PostgreSQL** como primary database futuro e
+> **Valkey** como cache layer futuro, com a deprecação gradual do
+> MongoDB/Mongoose. É uma decisão `Accepted` mas com implementação `não
+> iniciada` — é **docs-only** e não autoriza migração, instalação de
+> dependências, schema PostgreSQL, runtime Valkey nem remoção do MongoDB. A
+> ADR-0035 **não supersede a ADR-0005 de imediato**: a ADR-0005 (MongoDB como
+> config store) permanece `Accepted`/`implementado` enquanto o MongoDB for o
+> banco em uso e só passará a `Superseded by ADR-0035` quando a fase de remoção
+> do MongoDB (P5 do plano de migração) for concluída. A ADR-0035 **não altera o
+> status da ADR-0021 nem da ADR-0022**: descriptografia real e dispatch real
+> continuam bloqueados, e Valkey não autoriza fila/worker/dispatch/runtime real.
+> Em relação ao modelo de fases (ADR-0024): a migração ocorre na transição para
+> a **Fase 2** e respeita os gates; a **Fase 1** permanece declarativa e em
+> MongoDB até a migração. Plano faseado em
+> `docs/postgresql-migration-plan.md`; modelo relacional em
+> `docs/postgresql-data-model-draft.md`; uso futuro do cache em
+> `docs/valkey-cache-plan.md`.
+>
+> **Decisão pendente (não-ADR)**: a escolha de **ORM / query layer** (Prisma,
+> Kysely, Drizzle ou TypeORM) **não foi tomada**. É uma subdecisão registrada
+> pela ADR-0035 e detalhada em `docs/runtime-query-layer-decision.md` — status
+> `pendente`, sem biblioteca escolhida. Não é uma ADR e não deve virar uma até
+> a fase P1 da migração resolver a escolha; nenhuma ADR `Proposed` foi promovida
+> para registrá-la.
 >
 > **Lacunas conhecidas**: os módulos `tenants` e `users` não possuem ADR
 > dedicada. Ambos são foundation implementada e estável; uma ADR futura pode

@@ -177,6 +177,16 @@ Ele não armazena dados operacionais dos clientes na Fase 1.
 
 Ver `docs/database-model.md` e ADR-0005.
 
+> **Direção arquitetural aprovada (ADR-0035)**: o banco primário futuro será
+> **PostgreSQL** (relacional + JSONB para metadata/config declarativa) e a
+> camada de cache futura será **Valkey** (cache, nunca source of truth). O
+> MongoDB/Mongoose será descontinuado gradualmente. A migração é **faseada e
+> ainda não iniciada**; até a migração, o banco em uso continua sendo o
+> MongoDB. Valkey não autoriza fila, worker, dispatch ou runtime real, e
+> ADR-0021/ADR-0022 continuam bloqueando descriptografia e dispatch reais. Ver
+> `docs/postgresql-migration-plan.md`, `docs/postgresql-data-model-draft.md` e
+> `docs/valkey-cache-plan.md`.
+
 ---
 
 ## 10. Conectores de API

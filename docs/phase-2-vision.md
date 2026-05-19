@@ -18,8 +18,8 @@ A Fase 2 pode transformar o Delfos de consumidor de APIs em uma plataforma anal�
 - ingestão recorrente de dados
 - banco analítico próprio
 - snapshots históricos
-- cache persistente
-- Redis
+- cache persistente — tecnologia decidida: Valkey (ADR-0035)
+- banco primário PostgreSQL — decidido na ADR-0035, migração faseada
 - filas e workers
 - alertas e notificações
 - agendamento de relatórios
@@ -52,12 +52,16 @@ Antes da Fase 2, criar ADR para:
 - tipo de banco analítico
 - estratégia de ingestão
 - estratégia de fila
-- uso de Redis
 - retenção de dados operacionais
 - modelo LGPD de armazenamento
 - política de exclusão
 - conectores dedicados
 - custos de infraestrutura
+
+Já decididos pela **ADR-0035** (não precisam de nova ADR de tecnologia):
+banco primário **PostgreSQL** e camada de cache **Valkey**. A promoção do
+cache, de fila/worker e a migração em si seguem o plano faseado de
+`docs/postgresql-migration-plan.md` e ainda exigem fase/escopo explícito.
 
 ---
 
@@ -71,7 +75,7 @@ Não antecipar na Fase 1:
 - scheduler distribuído
 - histórico persistente
 - processamento assíncrono pesado
-- Redis obrigatório
+- Valkey/cache obrigatório como dependência de base
 - contratos de ingestão definitivos
 
 ---
@@ -83,7 +87,8 @@ Mesmo sem implementar Fase 2, a Fase 1 deve deixar portas abertas:
 - contratos claros
 - `delfos-connectors` isolado
 - um futuro serviço de cache: **não existe `CacheService` hoje** — é apenas uma
-  interface a ser definida na Fase 2, com tecnologia agnóstica
+  interface a ser definida na Fase 2; a tecnologia de cache já foi decidida na
+  ADR-0035 (**Valkey**), mas o serviço em si permanece não implementado
 - dashboards dependentes de contrato, não da origem concreta
 - field mappings versionáveis
 - auditoria básica desde o início

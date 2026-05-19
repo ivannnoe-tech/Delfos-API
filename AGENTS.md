@@ -185,7 +185,7 @@ Regras:
 - Motor de consumo de APIs de clientes (`delfos-connectors`) — planejado, não iniciado
 - Teste de conexão real — planejado, não iniciado
 - Execução real de query — Fase 2
-- Cache Redis / fila / worker / scheduler — Fase 2
+- Cache / fila / worker / scheduler — Fase 2 (tecnologia de cache decidida = Valkey, ADR-0035; promoção exige fase/ADR própria)
 - Runtime de relatórios, exportações reais, white-label, preferências — não implementados
 - delfos-connectors — serviço futuro separado
 - Módulo `dashboards` ou `widgets` de runtime — não implementados
@@ -195,6 +195,22 @@ Regras:
 > real) descrevem planejamento e **não autorizam** implementação real. A execução real de
 > conectores permanece **proibida**; apenas planejamento documentável é permitido. Implementar
 > exige fase explícita e ADR quando necessário.
+
+### Planos documentados (planejamento, não implementação)
+
+Existem planos documentais que **não autorizam** implementação — descrevem
+direção futura:
+
+- **Auth/JWT** — tem plano documental (`docs/auth-jwt-migration-plan.md`), mas
+  **não está implementado**; o `x-delfos-admin-key` temporário permanece.
+- **Observability** — tem plano documental (`docs/observability-plan.md`), mas
+  **não há stack implementada**.
+- **ORM/query layer** — segue **pendente** (`docs/runtime-query-layer-decision.md`);
+  nenhuma biblioteca escolhida.
+- **Divisão de trabalho (4 devs/trilhas)** — documentada em
+  `docs/team-work-split.md`.
+
+Detalhe e status no `docs/roadmap.md` (seção "Planos e decisões documentados").
 
 ---
 
