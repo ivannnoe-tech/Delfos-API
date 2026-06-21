@@ -121,7 +121,8 @@ export type RuntimeConnectorBridgeEventType =
   | 'command_prepared'
   | 'command_blocked'
   | 'command_not_supported'
-  | 'command_validation_failed';
+  | 'command_validation_failed'
+  | 'command_dispatch_not_supported';
 
 export type RuntimeConnectorBridgeEventStatus =
   | ExecutionRequestStatus.Accepted

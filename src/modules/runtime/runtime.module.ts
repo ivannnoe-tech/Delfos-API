@@ -16,6 +16,7 @@ import { QueryDefinitionsService } from '../query-definitions/services/query-def
 import { ReportDefinitionsModule } from '../report-definitions/report-definitions.module';
 import { ReportDefinitionsService } from '../report-definitions/services/report-definitions.service';
 import { createRuntimeConnectorBridgeResolver } from './bridge/runtime-connector-bridge-resolver.factory';
+import { NoOpConnectorDispatchAdapter } from './bridge/runtime-connector-dispatch.port';
 import { ExecutionRequestsController } from './controllers/execution-requests.controller';
 import { PostgresExecutionRequestEventsRepository } from './repositories/postgres-execution-request-events.repository';
 import { PostgresExecutionRequestsRepository } from './repositories/postgres-execution-requests.repository';
@@ -24,6 +25,7 @@ import { ExecutionRequestsRepository } from './repositories/execution-requests.r
 import { ConnectorBridgeEventRecorder } from './services/connector-bridge-event-recorder';
 import {
   CONNECTOR_BRIDGE_EVENT_RECORDER,
+  CONNECTOR_DISPATCH_PORT,
   ConnectorCommandPreparationService,
   RUNTIME_CONNECTOR_BRIDGE_RESOLVER,
 } from './services/connector-command-preparation.service';
@@ -72,6 +74,12 @@ import { RuntimeReadinessEvaluatorAdapter } from './services/runtime-readiness-e
     {
       provide: CONNECTOR_BRIDGE_EVENT_RECORDER,
       useClass: ConnectorBridgeEventRecorder,
+    },
+    {
+      // Phase 2 dispatch seam: no transport wired (ADR-0038). Returns
+      // not_supported so the bridge flow stays closed and audited end-to-end.
+      provide: CONNECTOR_DISPATCH_PORT,
+      useFactory: () => new NoOpConnectorDispatchAdapter(),
     },
     {
       provide: RUNTIME_CONNECTOR_BRIDGE_RESOLVER,
