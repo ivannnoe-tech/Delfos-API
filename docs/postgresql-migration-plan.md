@@ -122,7 +122,7 @@ explícito e, quando indicado, ADR própria. A fase atual concluída é a **P0**
 - ~~Criar o schema inicial PostgreSQL conforme `postgresql-data-model-draft.md`~~
   — **CONCLUÍDO** (13 tabelas, fiel ao modelo Mongoose atual).
 - ~~Mecanismo de **migrations versionadas**~~ — **CONCLUÍDO**: Kysely `Migrator`
-  + `FileMigrationProvider` (`migrator.ts`), CLI `scripts/migrate.ts`
+  com `FileMigrationProvider` (`migrator.ts`), CLI `scripts/migrate.ts`
   (`migrate:latest`/`down`/`status`).
 - ~~`tenant_id NOT NULL` + FK → tenants em toda tabela tenant-scoped~~ — **OK**
   (17 FKs reais; refs declarativas opcionais ficam lógicas, ver §4 do draft).
@@ -240,6 +240,36 @@ Ordem sugerida (de menor para maior acoplamento):
 ---
 
 ## P4 — Seed and E2E Migration
+
+> **Concluída.** Três entregas:
+> 1. **E2E em PostgreSQL** — `startE2EApp` provisiona um banco efêmero
+>    (`provisionEphemeralDb`, helper compartilhado com o `pg-test-db.ts` das
+>    specs de paridade), migra para latest, semeia o tenant de isolamento e
+>    define `DELFOS_POSTGRES_URL` **antes** do `import('app.module')` para que os
+>    factories escolham os repos PostgreSQL. As **mesmas 5 specs** passam nos dois
+>    backends (Mongo via `npm run test:e2e`; Postgres via
+>    `npm run test:e2e:postgres`), provando paridade do contrato REST. O AppModule
+>    ainda sobe o Mongo em memória (MongooseModule fica até a P5).
+> 2. **Seed em PostgreSQL** — `seed:dev` ramifica por backend: com
+>    `DELFOS_POSTGRES_URL` configurado, semeia o PostgreSQL via `KYSELY_DB`
+>    (`scripts/seed-dev-postgres.ts`) com upserts `onConflict(...).doUpdateSet(...)`
+>    nas **mesmas chaves estáveis** do seed Mongo; reuso das shapes de
+>    `seed-dev-data.ts`. Mesmo conjunto fictício, idempotente e re-executável.
+>    Sem `DELFOS_POSTGRES_URL`, o caminho Mongo segue inalterado.
+> - **Encoding de id no E2E:** `tenantId`/`actorId` são ObjectId (Mongo) ou UUID
+>   (Postgres) conforme o backend — o formato muda, o contrato REST não. No
+>   caminho Postgres o harness semeia a linha `tenants` com o UUID fixo do
+>   `E2E_TENANT_ID` para satisfazer a FK `tenant_id → tenants(id)`.
+> - **CI:** `test` e `coverage` ganharam um serviço `postgres:16-alpine`
+>   health-checked + `TEST_POSTGRES_URL`, então as specs de paridade e o
+>   round-trip de migrations passam a **rodar** no CI (antes pulavam). Novo job
+>   opcional `e2e-postgres` (espelha o `e2e`) roda `npm run test:e2e:postgres`.
+>
+> Verificação: `format:check`/`lint`/`build` verdes; `npm test` (sem env) 439
+> testes (15 suites de paridade puladas); suíte completa contra PostgreSQL real
+> **76 suites / 550 testes verdes**; E2E Mongo e E2E Postgres **5 suites / 17
+> testes** cada; seed Postgres idempotente (contagens estáveis na 2ª execução).
+> Cobertura 87.9/71.6/83.1/88.1 acima do piso.
 
 ### Escopo
 - `npm run seed:dev` passa a popular PostgreSQL com dados fictícios.
@@ -379,10 +409,10 @@ Ordem sugerida (de menor para maior acoplamento):
 | Fase | Tema | Estado |
 |---|---|---|
 | P0 | ADR / docs only | concluída |
-| P1 | PostgreSQL Infrastructure Foundation | concluída (resta serviço PG no CI, fecha com P4) |
+| P1 | PostgreSQL Infrastructure Foundation | concluída (serviço PG no CI fechado na P4) |
 | P2 | Schema / Migrations Foundation | concluída |
 | P3 | Repository Port Migration | concluída (12 módulos, dual-backend) |
-| P4 | Seed and E2E Migration | futura |
+| P4 | Seed and E2E Migration | concluída (seed + E2E em PostgreSQL; CI com serviço PG) |
 | P5 | Mongo / Mongoose Removal | futura |
 | P6 | Valkey Cache Foundation | futura |
 | P7 | Hardening | futura |

@@ -38,6 +38,27 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
 
+    # Real PostgreSQL so the guarded parity specs and the migrations round-trip
+    # spec (skipped without TEST_POSTGRES_URL) actually run. They provision and
+    # drop their own ephemeral databases on this throwaway server.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      TEST_POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/postgres
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -78,6 +99,26 @@ jobs:
   coverage:
     name: Coverage
     runs-on: ubuntu-latest
+
+    # Same real PostgreSQL as the test job: the guarded parity/migrations specs
+    # run under coverage too, so they are exercised in CI.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      TEST_POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/postgres
 
     steps:
       - name: Checkout
@@ -130,6 +171,59 @@ jobs:
 
       - name: Run E2E tests
         run: npm run test:e2e
+
+  # Optional job: runs the SAME foundation E2E suite against PostgreSQL. The
+  # AppModule still boots an in-memory MongoDB (Mongoose stays until P5), and a
+  # fresh ephemeral PostgreSQL database is provisioned per spec so the repository
+  # factories pick the Postgres repos — proving the REST contract is identical.
+  e2e-postgres:
+    name: E2E PostgreSQL (optional)
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      # The harness still needs the cached mongodb-memory-server (AppModule boots
+      # Mongo too) plus a throwaway PostgreSQL server for the ephemeral databases.
+      MONGOMS_DOWNLOAD_DIR: ${{ github.workspace }}/.cache/mongodb-binaries
+      E2E_POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/postgres
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Cache mongodb-memory-server binaries
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.cache/mongodb-binaries
+          key: mongodb-binaries-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            mongodb-binaries-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run E2E tests on PostgreSQL
+        run: npm run test:e2e:postgres
 
   # Conventional Commits check for the commits introduced by a pull request.
   commitlint:

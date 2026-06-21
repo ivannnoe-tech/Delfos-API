@@ -6,13 +6,36 @@ import { resolveCorsOptions } from '../../../src/config/cors.config';
 import { HttpExceptionFilter } from '../../../src/core/filters/http-exception.filter';
 import { RequestContextInterceptor } from '../../../src/core/interceptors/request-context.interceptor';
 import { createApiValidationPipe } from '../../../src/core/pipes/api-validation.pipe';
+import {
+  EphemeralDb,
+  provisionEphemeralDb,
+} from '../../../src/database/postgres/tests/ephemeral-db';
 
 /**
- * Foundation E2E harness. Boots the real AppModule against an in-memory
- * MongoDB, with the exact global middleware applied by src/main.ts. No
- * production database, no real secrets, no connector execution.
+ * Foundation E2E harness. Boots the real AppModule with the exact global
+ * middleware applied by src/main.ts. No production database, no real secrets,
+ * no connector execution.
+ *
+ * Backend selection:
+ * - Default (no `E2E_POSTGRES_URL`): in-memory MongoDB only. `DELFOS_POSTGRES_URL`
+ *   is cleared so the repository factories stay on the Mongo repos.
+ * - `E2E_POSTGRES_URL` set: Mongo still boots (AppModule imports MongooseModule
+ *   until P5), and a fresh ephemeral PostgreSQL database is provisioned, migrated
+ *   to latest, and exposed via `DELFOS_POSTGRES_URL` so the factories pick the
+ *   Postgres repos. The SAME 5 specs then run on PostgreSQL, proving REST parity.
  */
 export const E2E_ADMIN_KEY = 'e2e-foundation-admin-key-not-a-real-secret';
+
+/** Base PostgreSQL server URL for the ephemeral E2E database, or `undefined`. */
+export const E2E_POSTGRES_BASE_URL = normalizeBaseUrl(process.env.E2E_POSTGRES_URL);
+
+/** True when the E2E suite runs against PostgreSQL (drives id encoding). */
+export const E2E_ON_POSTGRES = E2E_POSTGRES_BASE_URL !== undefined;
+
+// Fixed isolation tenant/actor as UUIDs for the Postgres path. Must mirror the
+// ids exported by `e2e-client.ts`; kept here so the harness can seed the tenant
+// row (its FK target) before any spec runs.
+const E2E_PG_TENANT_ID = '662d4f6e-7a1c-4b00-8a4f-000000000001';
 
 // 32 bytes encoded as base64; only satisfies the AES key length check.
 const E2E_ENCRYPTION_KEY = Buffer.alloc(32, 9).toString('base64');
@@ -31,8 +54,38 @@ export interface StartE2EAppOptions {
   readonly corsOrigin?: string;
 }
 
+function normalizeBaseUrl(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+  return trimmed && trimmed.length > 0 ? trimmed : undefined;
+}
+
+/**
+ * Seed the isolation tenant directly so every tenant-scoped insert satisfies the
+ * `tenant_id → tenants(id)` foreign key. Inserts the tenant with a fixed UUID
+ * primary key matching `E2E_TENANT_ID`; idempotent within a fresh database.
+ */
+async function seedE2ETenant(ephemeral: EphemeralDb): Promise<void> {
+  await ephemeral.db
+    .insertInto('tenants')
+    .values({
+      id: E2E_PG_TENANT_ID,
+      name: 'E2E Foundation Tenant',
+      slug: 'e2e-foundation-tenant',
+      status: 'active',
+      settings: JSON.stringify({ environment: 'test', demo: true }),
+    })
+    .onConflict((oc) => oc.column('id').doNothing())
+    .execute();
+}
+
 export async function startE2EApp(options: StartE2EAppOptions = {}): Promise<E2EApp> {
   const mongo = await MongoMemoryServer.create();
+
+  let ephemeral: EphemeralDb | undefined;
+  if (E2E_POSTGRES_BASE_URL) {
+    ephemeral = await provisionEphemeralDb(E2E_POSTGRES_BASE_URL, 'e2e');
+    await seedE2ETenant(ephemeral);
+  }
 
   // Env must be set BEFORE AppModule is imported: ConfigModule.forRoot reads
   // process.env eagerly, so AppModule is loaded lazily here, not at file top.
@@ -42,6 +95,15 @@ export async function startE2EApp(options: StartE2EAppOptions = {}): Promise<E2E
   process.env.ENCRYPTION_KEY_BASE64 = E2E_ENCRYPTION_KEY;
   process.env.SWAGGER_ENABLED = 'false';
   process.env.CORS_ORIGIN = options.corsOrigin ?? '';
+
+  // Select the repository backend: Postgres when an ephemeral DB was provisioned,
+  // Mongo otherwise. The factory reads DELFOS_POSTGRES_URL, so it must be set (or
+  // cleared) before AppModule is imported.
+  if (ephemeral) {
+    process.env.DELFOS_POSTGRES_URL = ephemeral.url;
+  } else {
+    delete process.env.DELFOS_POSTGRES_URL;
+  }
 
   const { AppModule } = await import('../../../src/app.module');
 
@@ -63,6 +125,9 @@ export async function startE2EApp(options: StartE2EAppOptions = {}): Promise<E2E
     close: async (): Promise<void> => {
       await app.close();
       await mongo.stop();
+      if (ephemeral) {
+        await ephemeral.cleanup();
+      }
     },
   };
 }

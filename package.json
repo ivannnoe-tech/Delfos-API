@@ -22,7 +22,8 @@
     "test": "jest",
     "test:cov": "jest --coverage",
     "test:watch": "jest --watch",
-    "test:e2e": "jest --config jest.e2e.config.js --runInBand"
+    "test:e2e": "jest --config jest.e2e.config.js --runInBand",
+    "test:e2e:postgres": "node scripts/run-e2e-postgres.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",

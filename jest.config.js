@@ -23,7 +23,9 @@ module.exports = {
     // (ADR-0035 / ADR-0036, migration phase P3.)
     '!src/modules/**/repositories/mongo-*.repository.ts',
     '!src/modules/**/repositories/postgres-*.repository.ts',
-    '!src/database/postgres/tests/pg-test-db.ts',
+    // Real-Postgres test harness helpers: exercised by the guarded parity specs
+    // and the PostgreSQL E2E path, not by unit tests. (ADR-0035 / ADR-0036, P3/P4.)
+    '!src/database/postgres/tests/**',
   ],
   coverageDirectory: 'coverage',
   // Progressive coverage floor. Set just below the current measured coverage

@@ -84,6 +84,21 @@ O script usa models Mongoose diretamente porque os services/repositories atuais 
 upsert por todas essas chaves estaveis; isso mantem o seed local explicito e evita criar
 contrato publico ou endpoint administrativo para desenvolvimento.
 
+### Seed em PostgreSQL (migração ADR-0035, fase P4)
+
+Com `DELFOS_POSTGRES_URL` configurado, o `seed:dev` ramifica e popula o
+**PostgreSQL** em vez do MongoDB (via `KYSELY_DB`, `scripts/seed-dev-postgres.ts`),
+usando o mesmo conjunto ficticio e as mesmas chaves estaveis, com upserts
+`onConflict(...).doUpdateSet(...)` — idempotente e re-executavel. Os IDs sao UUIDs
+(nao ObjectIds), entao o comando `--dart-define` impresso ja traz UUIDs. Sem a URL,
+o caminho MongoDB segue inalterado.
+
+```powershell
+docker compose up -d postgres
+npm run migrate:latest   # aplica o schema antes do primeiro seed
+npm run seed:dev         # com DELFOS_POSTGRES_URL no .env, semeia o PostgreSQL
+```
+
 Ao final, o terminal imprime o `tenantId`, o `actorId` sugerido, o `connectionId`, o
 `credentialRef` e os IDs reais dos datasets, query definitions e dashboard definitions
 criados ou reutilizados. Esses IDs facilitam testes manuais dos previews sem criar

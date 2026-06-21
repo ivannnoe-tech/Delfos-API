@@ -159,7 +159,16 @@ npm test
 npm run test:cov
 npm run build
 npm run test:e2e
+npm run test:e2e:postgres   # mesmas specs E2E contra PostgreSQL efêmero (ADR-0035, P4)
 ```
+
+`test:e2e:postgres` provisiona um banco PostgreSQL efêmero por spec (precisa de um
+servidor PostgreSQL descartável; usa `E2E_POSTGRES_URL`, default
+`postgresql://postgres:postgres@localhost:55432/postgres`) e roda as **mesmas** 5
+specs E2E com os repositórios PostgreSQL ativos. O AppModule ainda sobe o Mongo em
+memória (MongooseModule fica até a P5). As specs de paridade de repositório e o
+round-trip de migrations rodam com `TEST_POSTGRES_URL` apontando para um servidor
+PostgreSQL descartável (pulam quando a variável não está definida).
 
 Frontend:
 
@@ -195,9 +204,10 @@ Jobs obrigatorios (devem passar para o merge):
 Esses tres jobs falham o CI se quebrarem. Nao usam `continue-on-error` e nao
 mascaram falhas.
 
-Job opcional:
+Jobs opcionais:
 
-- `e2e` - `npm run test:e2e`.
+- `e2e` - `npm run test:e2e`;
+- `e2e-postgres` - `npm run test:e2e:postgres` (migração ADR-0035, fase P4).
 
 Regras do job `e2e`:
 
@@ -212,7 +222,20 @@ Regras do job `e2e`:
 - cacheia os binarios do `mongodb-memory-server` (`MONGOMS_DOWNLOAD_DIR`) com
   chave por sistema operacional e hash do `package-lock.json`.
 
-O E2E so se tornara status check obrigatorio quando o job estiver estavel.
+Regras do job `e2e-postgres`:
+
+- roda as **mesmas** specs E2E contra um serviço `postgres:16-alpine`
+  health-checked, com `E2E_POSTGRES_URL` apontando para ele;
+- cada spec provisiona e descarta seu próprio banco PostgreSQL efêmero; o
+  AppModule ainda sobe o Mongo em memória (cache do `mongodb-memory-server`
+  permanece necessário);
+- mesmas garantias de segurança do `e2e` (sem secrets reais, sem execução real).
+
+Além disso, os jobs obrigatórios `test` e `coverage` ganharam um serviço
+`postgres:16-alpine` + `TEST_POSTGRES_URL`, de modo que as specs de paridade de
+repositório e o round-trip de migrations passam a **rodar** no CI (antes pulavam).
+
+Os jobs E2E so se tornarao status check obrigatorio quando estiverem estaveis.
 
 ---
 

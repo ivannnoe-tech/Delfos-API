@@ -3,11 +3,21 @@ import {
   DELFOS_ACTOR_ROLE_HEADER,
   DELFOS_ADMIN_KEY_HEADER,
 } from '../../../src/modules/auth/constants/auth-headers';
-import { E2E_ADMIN_KEY } from './e2e-app';
+import { E2E_ADMIN_KEY, E2E_ON_POSTGRES } from './e2e-app';
 
-/** A fixed, syntactically valid ObjectId used as the isolation tenant. */
-export const E2E_TENANT_ID = '662d4f6e7a1c2b00124f0001';
-export const E2E_ACTOR_ID = '662d4f6e7a1c2b00124f0999';
+/**
+ * Fixed isolation tenant/actor ids. The id FORMAT must match the active backend:
+ * a 24-hex ObjectId for MongoDB (`tenantId` is an ObjectId there) or a UUID for
+ * PostgreSQL (`tenant_id` is a `uuid` column). The harness seeds a tenant row
+ * with `E2E_TENANT_ID` as its primary key on the Postgres path so the FK holds.
+ * The REST contract is identical either way — only the id encoding differs.
+ */
+export const E2E_TENANT_ID = E2E_ON_POSTGRES
+  ? '662d4f6e-7a1c-4b00-8a4f-000000000001'
+  : '662d4f6e7a1c2b00124f0001';
+export const E2E_ACTOR_ID = E2E_ON_POSTGRES
+  ? '662d4f6e-7a1c-4b00-8a4f-000000000999'
+  : '662d4f6e7a1c2b00124f0999';
 
 export interface E2EResponse {
   readonly status: number;

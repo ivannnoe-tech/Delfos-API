@@ -1,9 +1,12 @@
 import { INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { getModelToken } from '@nestjs/mongoose';
+import { Kysely } from 'kysely';
 import { Model } from 'mongoose';
 
 import { AppModule } from '../src/app.module';
+import { DB } from '../src/database/postgres/database.types';
+import { KYSELY_DB } from '../src/database/postgres/postgres.constants';
 import { ConnectionDocument } from '../src/modules/connections/schemas/connection.schema';
 import { CredentialDocument } from '../src/modules/credentials/schemas/credential.schema';
 import { LocalCredentialProtectorService } from '../src/modules/credentials/services/local-credential-protector.service';
@@ -47,6 +50,7 @@ import {
   upsertSemanticModels,
   upsertTenant,
 } from './seed-dev-upserts';
+import { seedPostgresFoundation } from './seed-dev-postgres';
 
 interface SeedModels {
   tenants: Model<TenantDocument>;
@@ -92,11 +96,66 @@ async function run(): Promise<void> {
   const app = await NestFactory.createApplicationContext(AppModule, { logger: ['error', 'warn'] });
 
   try {
-    const result = await seedDevFoundation(app);
+    // Backend selection mirrors the repository factories: when DELFOS_POSTGRES_URL
+    // is configured the Kysely instance is non-null, so seed PostgreSQL; otherwise
+    // seed MongoDB (the operational default until P5).
+    const kysely = app.get<Kysely<DB> | null>(KYSELY_DB, { strict: false });
+
+    const result = kysely
+      ? await seedDevFoundationPostgres(app, kysely)
+      : await seedDevFoundation(app);
+
     printSeedResult(result);
   } finally {
     await app.close();
   }
+}
+
+async function seedDevFoundationPostgres(
+  app: INestApplicationContext,
+  kysely: Kysely<DB>,
+): Promise<SeedResult> {
+  const credentialProtector = app.get(LocalCredentialProtectorService);
+  const protectedCredential = credentialProtector.protect(demoCredentialPlaceholder);
+  const seeded = await seedPostgresFoundation(kysely, protectedCredential);
+
+  const previewQuery = requireCatalogItem(seeded.queryDefinitions, 'sales_overview_demo');
+  const previewDashboard = requireCatalogItem(
+    seeded.dashboardDefinitions,
+    'commercial_dashboard_demo',
+  );
+
+  return {
+    tenantId: seeded.tenantId,
+    actorId: seeded.actorId,
+    connectionId: seeded.connectionId,
+    credentialRef: seeded.credentialRef,
+    datasets: seeded.datasets,
+    queryDefinitions: seeded.queryDefinitions,
+    dashboardDefinitions: seeded.dashboardDefinitions,
+    reportDefinitions: seeded.reportDefinitions,
+    semanticModels: seeded.semanticModels,
+    webCommand: buildDelfosWebCommand(seeded.tenantId, seeded.actorId),
+    previewCommands: {
+      listQueryDefinitions: buildListQueryDefinitionsCommand(seeded.tenantId, seeded.actorId),
+      previewQueryDefinition: buildPreviewQueryDefinitionCommand({
+        tenantId: seeded.tenantId,
+        actorId: seeded.actorId,
+        queryDefinitionId: previewQuery.id,
+        dashboardDefinitionId: previewDashboard.id,
+      }),
+      listDashboardDefinitions: buildListDashboardDefinitionsCommand(
+        seeded.tenantId,
+        seeded.actorId,
+      ),
+      previewDashboardDefinition: buildPreviewDashboardDefinitionCommand({
+        tenantId: seeded.tenantId,
+        actorId: seeded.actorId,
+        queryDefinitionId: previewQuery.id,
+        dashboardDefinitionId: previewDashboard.id,
+      }),
+    },
+  };
 }
 
 export async function seedDevFoundation(app: INestApplicationContext): Promise<SeedResult> {
