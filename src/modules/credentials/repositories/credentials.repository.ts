@@ -1,16 +1,40 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model, Types } from 'mongoose';
+import { CredentialStatus, CredentialType } from '../schemas/credential.schema';
 
-import { Credential, CredentialDocument, CredentialStatus } from '../schemas/credential.schema';
-
-export interface CreateCredentialRecord {
-  tenantId: Types.ObjectId;
-  connectionId?: Types.ObjectId;
-  type: Credential['type'];
+/**
+ * Persistence-neutral credential record returned by every
+ * {@link CredentialsRepository} implementation (Mongo or PostgreSQL). The
+ * service maps this to the response DTO, so the REST contract is identical
+ * regardless of the backend (ADR-0035 / ADR-0036).
+ *
+ * The protected secret value is intentionally **absent**: the Mongoose schema
+ * marks `protectedSecretValue` as `select: false` and no read path ever loads
+ * it, so the neutral record never carries it either. Reads must never leak the
+ * secret.
+ */
+export interface CredentialRecord {
+  id: string;
+  tenantId: string;
+  connectionId?: string;
+  type: CredentialType;
   provider?: string;
   name: string;
-  status?: Credential['status'];
+  status: CredentialStatus;
+  maskedPreview: string | null;
+  rotatedAt?: Date;
+  revokedAt?: Date;
+  createdBy?: string;
+  updatedBy?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateCredentialRecord {
+  tenantId: string;
+  connectionId?: string;
+  type: CredentialType;
+  provider?: string;
+  name: string;
+  status?: CredentialStatus;
   maskedPreview: string | null;
   protectedSecretValue: string;
   protectionProvider: string;
@@ -19,8 +43,8 @@ export interface CreateCredentialRecord {
 }
 
 export interface CredentialFilters {
-  tenantId: Types.ObjectId;
-  connectionId?: Types.ObjectId;
+  tenantId: string;
+  connectionId?: string;
 }
 
 export interface RotateCredentialRecord {
@@ -38,62 +62,32 @@ export interface RevokeCredentialRecord {
   updatedBy?: string;
 }
 
-@Injectable()
-export class CredentialsRepository {
-  constructor(
-    @InjectModel(Credential.name)
-    private readonly credentialModel: Model<CredentialDocument>,
-  ) {}
-
-  create(record: CreateCredentialRecord): Promise<CredentialDocument> {
-    return this.credentialModel.create(record);
-  }
-
-  findByFilters(
+/**
+ * Repository contract for credentials. Implemented by
+ * `MongoCredentialsRepository` and `PostgresCredentialsRepository`; the module
+ * selects one at runtime based on whether `DELFOS_POSTGRES_URL` is configured.
+ * Used as the DI token.
+ *
+ * Every query is tenant-scoped: `tenantId` is a mandatory isolation boundary,
+ * never an optional filter.
+ */
+export abstract class CredentialsRepository {
+  abstract create(record: CreateCredentialRecord): Promise<CredentialRecord>;
+  abstract findByFilters(
     filters: CredentialFilters,
     page: number,
     pageSize: number,
-  ): Promise<CredentialDocument[]> {
-    return this.credentialModel
-      .find(this.toMongoFilters(filters))
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .exec();
-  }
-
-  countByFilters(filters: CredentialFilters): Promise<number> {
-    return this.credentialModel.countDocuments(this.toMongoFilters(filters)).exec();
-  }
-
-  findByTenantAndId(tenantId: Types.ObjectId, id: string): Promise<CredentialDocument | null> {
-    return this.credentialModel.findOne({ _id: id, tenantId }).exec();
-  }
-
-  rotateByTenantAndId(
-    tenantId: Types.ObjectId,
+  ): Promise<CredentialRecord[]>;
+  abstract countByFilters(filters: CredentialFilters): Promise<number>;
+  abstract findByTenantAndId(tenantId: string, id: string): Promise<CredentialRecord | null>;
+  abstract rotateByTenantAndId(
+    tenantId: string,
     id: string,
     record: RotateCredentialRecord,
-  ): Promise<CredentialDocument | null> {
-    return this.credentialModel
-      .findOneAndUpdate({ _id: id, tenantId }, record, { new: true, runValidators: true })
-      .exec();
-  }
-
-  revokeByTenantAndId(
-    tenantId: Types.ObjectId,
+  ): Promise<CredentialRecord | null>;
+  abstract revokeByTenantAndId(
+    tenantId: string,
     id: string,
     record: RevokeCredentialRecord,
-  ): Promise<CredentialDocument | null> {
-    return this.credentialModel
-      .findOneAndUpdate({ _id: id, tenantId }, record, { new: true, runValidators: true })
-      .exec();
-  }
-
-  private toMongoFilters(filters: CredentialFilters): FilterQuery<CredentialDocument> {
-    return {
-      tenantId: filters.tenantId,
-      ...(filters.connectionId ? { connectionId: filters.connectionId } : {}),
-    };
-  }
+  ): Promise<CredentialRecord | null>;
 }

@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import { buildListMeta, ListResponse } from '../../../core/dto/list-meta.dto';
 import { AuditService } from '../../audit/services/audit.service';
@@ -7,8 +6,8 @@ import { CreateCredentialDto } from '../dto/create-credential.dto';
 import { CredentialResponseDto } from '../dto/credential-response.dto';
 import { ListCredentialsQueryDto } from '../dto/credential-query.dto';
 import { RotateCredentialDto } from '../dto/rotate-credential.dto';
-import { CredentialsRepository } from '../repositories/credentials.repository';
-import { CredentialDocument, CredentialStatus } from '../schemas/credential.schema';
+import { CredentialRecord, CredentialsRepository } from '../repositories/credentials.repository';
+import { CredentialStatus } from '../schemas/credential.schema';
 import { LocalCredentialProtectorService } from './local-credential-protector.service';
 
 export interface CredentialActorContext {
@@ -29,8 +28,8 @@ export class CredentialsService {
   ): Promise<CredentialResponseDto> {
     const protectedCredential = this.credentialProtector.protect(dto.secretValue);
     const credential = await this.credentialsRepository.create({
-      tenantId: new Types.ObjectId(dto.tenantId),
-      connectionId: dto.connectionId ? new Types.ObjectId(dto.connectionId) : undefined,
+      tenantId: dto.tenantId,
+      connectionId: dto.connectionId,
       type: dto.type,
       provider: dto.provider,
       name: dto.name,
@@ -51,8 +50,8 @@ export class CredentialsService {
     query: ListCredentialsQueryDto,
   ): Promise<ListResponse<CredentialResponseDto>> {
     const filters = {
-      tenantId: new Types.ObjectId(query.tenantId),
-      connectionId: query.connectionId ? new Types.ObjectId(query.connectionId) : undefined,
+      tenantId: query.tenantId,
+      connectionId: query.connectionId,
     };
     const [items, total] = await Promise.all([
       this.credentialsRepository.findByFilters(filters, query.page, query.pageSize),
@@ -66,10 +65,7 @@ export class CredentialsService {
   }
 
   async findOne(tenantId: string, id: string): Promise<CredentialResponseDto> {
-    const credential = await this.credentialsRepository.findByTenantAndId(
-      new Types.ObjectId(tenantId),
-      id,
-    );
+    const credential = await this.credentialsRepository.findByTenantAndId(tenantId, id);
 
     if (!credential) {
       throw new NotFoundException('Credential not found.');
@@ -85,18 +81,14 @@ export class CredentialsService {
     actor: CredentialActorContext = {},
   ): Promise<CredentialResponseDto> {
     const protectedCredential = this.credentialProtector.protect(dto.secretValue);
-    const credential = await this.credentialsRepository.rotateByTenantAndId(
-      new Types.ObjectId(tenantId),
-      id,
-      {
-        maskedPreview: protectedCredential.maskedPreview,
-        protectedSecretValue: protectedCredential.protectedValue,
-        protectionProvider: protectedCredential.provider,
-        rotatedAt: new Date(),
-        status: CredentialStatus.Active,
-        updatedBy: actor.actorId,
-      },
-    );
+    const credential = await this.credentialsRepository.rotateByTenantAndId(tenantId, id, {
+      maskedPreview: protectedCredential.maskedPreview,
+      protectedSecretValue: protectedCredential.protectedValue,
+      protectionProvider: protectedCredential.provider,
+      rotatedAt: new Date(),
+      status: CredentialStatus.Active,
+      updatedBy: actor.actorId,
+    });
 
     if (!credential) {
       throw new NotFoundException('Credential not found.');
@@ -112,15 +104,11 @@ export class CredentialsService {
     id: string,
     actor: CredentialActorContext = {},
   ): Promise<CredentialResponseDto> {
-    const credential = await this.credentialsRepository.revokeByTenantAndId(
-      new Types.ObjectId(tenantId),
-      id,
-      {
-        status: CredentialStatus.Revoked,
-        revokedAt: new Date(),
-        updatedBy: actor.actorId,
-      },
-    );
+    const credential = await this.credentialsRepository.revokeByTenantAndId(tenantId, id, {
+      status: CredentialStatus.Revoked,
+      revokedAt: new Date(),
+      updatedBy: actor.actorId,
+    });
 
     if (!credential) {
       throw new NotFoundException('Credential not found.');
@@ -133,20 +121,20 @@ export class CredentialsService {
 
   private async recordAudit(
     action: string,
-    credential: CredentialDocument,
+    credential: CredentialRecord,
     actor: CredentialActorContext,
   ): Promise<void> {
     await this.auditService.record({
-      tenantId: credential.tenantId.toString(),
+      tenantId: credential.tenantId,
       actorUserId: this.toAuditActorUserId(actor.actorId),
       action,
       entity: 'credential',
-      entityId: credential._id.toString(),
+      entityId: credential.id,
       metadata: {
         type: credential.type,
         status: credential.status,
         provider: credential.provider ?? null,
-        connectionId: credential.connectionId?.toString() ?? null,
+        connectionId: credential.connectionId ?? null,
       },
     });
   }
@@ -159,12 +147,12 @@ export class CredentialsService {
     return actorId;
   }
 
-  private toResponse(credential: CredentialDocument): CredentialResponseDto {
+  private toResponse(credential: CredentialRecord): CredentialResponseDto {
     return {
-      id: credential._id.toString(),
-      credentialRef: this.toCredentialRef(credential._id),
-      tenantId: credential.tenantId.toString(),
-      connectionId: credential.connectionId?.toString(),
+      id: credential.id,
+      credentialRef: this.toCredentialRef(credential.id),
+      tenantId: credential.tenantId,
+      connectionId: credential.connectionId,
       type: credential.type,
       provider: credential.provider,
       name: credential.name,
@@ -179,7 +167,7 @@ export class CredentialsService {
     };
   }
 
-  private toCredentialRef(id: Types.ObjectId): string {
-    return `cred_${id.toString()}`;
+  private toCredentialRef(id: string): string {
+    return `cred_${id}`;
   }
 }
