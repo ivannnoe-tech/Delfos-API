@@ -156,46 +156,11 @@ jobs:
       - name: Run tests with coverage
         run: npm run test:cov
 
-  # Optional job: runs the foundation E2E suite (in-memory MongoDB).
-  # Kept separate from the required checks above. It is NOT marked as a
-  # required status check in branch protection yet, but it still fails
-  # this workflow if the E2E suite fails (no continue-on-error).
-  e2e:
-    name: E2E (optional)
-    runs-on: ubuntu-latest
-
-    env:
-      # Pin the mongodb-memory-server binary directory so it can be cached.
-      MONGOMS_DOWNLOAD_DIR: ${{ github.workspace }}/.cache/mongodb-binaries
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: npm
-
-      - name: Cache mongodb-memory-server binaries
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/.cache/mongodb-binaries
-          key: mongodb-binaries-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            mongodb-binaries-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run E2E tests
-        run: npm run test:e2e
-
-  # Optional job: runs the SAME foundation E2E suite against PostgreSQL. The
-  # AppModule still boots an in-memory MongoDB (Mongoose stays until P5), and a
-  # fresh ephemeral PostgreSQL database is provisioned per spec so the repository
-  # factories pick the Postgres repos — proving the REST contract is identical.
+  # Optional job: runs the foundation E2E suite against PostgreSQL — the sole
+  # backend since P5 (ADR-0035). A fresh ephemeral PostgreSQL database is
+  # provisioned per spec. Kept separate from the required checks above; it is
+  # NOT marked as a required status check in branch protection yet, but it still
+  # fails this workflow if the E2E suite fails (no continue-on-error).
   e2e-postgres:
     name: E2E PostgreSQL (optional)
     runs-on: ubuntu-latest
@@ -216,9 +181,6 @@ jobs:
           --health-retries 5
 
     env:
-      # The harness still needs the cached mongodb-memory-server (AppModule boots
-      # Mongo too) plus a throwaway PostgreSQL server for the ephemeral databases.
-      MONGOMS_DOWNLOAD_DIR: ${{ github.workspace }}/.cache/mongodb-binaries
       E2E_POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/postgres
 
     steps:
@@ -230,14 +192,6 @@ jobs:
         with:
           node-version: 24
           cache: npm
-
-      - name: Cache mongodb-memory-server binaries
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/.cache/mongodb-binaries
-          key: mongodb-binaries-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            mongodb-binaries-${{ runner.os }}-
 
       - name: Install dependencies
         run: npm ci

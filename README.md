@@ -21,20 +21,17 @@ foundation e nao substitui a autenticacao final de producao.
 
 - **Node.js** 24 LTS
 - **NestJS** 11
-- **MongoDB** 8.0+ via Mongoose (backend padrão)
-- **PostgreSQL** 16 via Kysely — backend dual opcional, ativado por `DELFOS_POSTGRES_URL` (ADR-0035 / ADR-0036)
+- **PostgreSQL** 16 via Kysely — banco primário e único (ADR-0035 / ADR-0036), obrigatório via `DELFOS_POSTGRES_URL`
 - **Valkey** 8 — cache, desligado por padrão; ativado por `VALKEY_URL` (ADR-0035)
 - **class-validator** + **class-transformer**
 - **Jest**
 
 Planejado/futuro, mas não implementado no estado atual: JWT/login/OAuth, conectores reais, chamadas externas para clientes, cache/fila/scheduler e serviço `delfos-connectors`.
 
-> **Decisão arquitetural (ADR-0035 / ADR-0036)**: o banco primário do Delfos é
-> **PostgreSQL** (camada de acesso **Kysely**) e o cache é **Valkey**. A migração
-> faseada (P1–P7) está **concluída** e o backend roda em modo **dual**: o
-> **MongoDB/Mongoose** segue como padrão e o **PostgreSQL** é ativado por
-> `DELFOS_POSTGRES_URL`. A remoção definitiva do MongoDB (fase **P5**) está
-> **adiada**, aguardando decisão humana de cutover. Estado das fases em
+> **Decisão arquitetural (ADR-0035 / ADR-0036)**: o banco primário e **único** do
+> Delfos é **PostgreSQL** (camada de acesso **Kysely**) e o cache é **Valkey**. A
+> migração faseada (P1–P7) está **concluída**, incluindo a **P5** (remoção do
+> MongoDB/Mongoose). `DELFOS_POSTGRES_URL` é obrigatório. Estado das fases em
 > [`docs/postgresql-migration-plan.md`](./docs/postgresql-migration-plan.md).
 
 ---
@@ -42,24 +39,17 @@ Planejado/futuro, mas não implementado no estado atual: JWT/login/OAuth, conect
 ## Quick start
 
 ```bash
-nvm use                       # ou fnm use
+nvm use                                # ou fnm use
 npm ci
-cp .env.example .env          # edite os valores
-docker compose up -d mongo    # backend padrão; ou aponte DELFOS_DATABASE_URL
+cp .env.example .env                   # edite os valores (DELFOS_POSTGRES_URL é obrigatório)
+docker compose up -d postgres valkey   # valkey é opcional (cache)
+npm run migrate:latest                 # aplica as migrations Kysely
 npm run start:dev
 ```
 
 A API sobe em `http://localhost:3000`. Swagger em `http://localhost:3000/docs`.
 
-Para rodar no backend **PostgreSQL** (opcional): suba os serviços, defina
-`DELFOS_POSTGRES_URL` no `.env` e aplique as migrations antes do `start:dev`.
-
-```bash
-docker compose up -d postgres valkey   # valkey é opcional (cache)
-npm run migrate:latest                 # aplica as migrations Kysely
-```
-
-Para o fluxo local validado no Windows com MongoDB local, veja [`docs/local-development.md`](./docs/local-development.md).
+Para o fluxo local validado no Windows com PostgreSQL local, veja [`docs/local-development.md`](./docs/local-development.md).
 
 ---
 
@@ -70,7 +60,7 @@ Para o fluxo local validado no Windows com MongoDB local, veja [`docs/local-deve
 | `npm run start:dev` | desenvolvimento com watch |
 | `npm run build` | build de produção |
 | `npm start` | executa o build |
-| `npm run seed:dev` | popula o banco local (MongoDB ou PostgreSQL conforme env) com dados fictícios da foundation |
+| `npm run seed:dev` | popula o banco local PostgreSQL com dados fictícios da foundation |
 | `npm run migrate:latest` | aplica as migrations Kysely no PostgreSQL |
 | `npm run migrate:status` / `migrate:down` | status / rollback das migrations PostgreSQL |
 | `npm run lint` | ESLint |
@@ -78,13 +68,13 @@ Para o fluxo local validado no Windows com MongoDB local, veja [`docs/local-deve
 | `npm run format:check` | Prettier check |
 | `npm test` | testes unitários e de integração |
 | `npm run test:cov` | cobertura |
-| `npm run test:e2e` | E2E smoke da foundation (MongoDB em memória) |
+| `npm run test:e2e` | E2E smoke da foundation (PostgreSQL efêmero) |
 | `npm run test:e2e:postgres` | E2E da foundation contra PostgreSQL efêmero |
 
-O `npm run test:e2e` sobe o `AppModule` real contra um MongoDB em memória
-(`mongodb-memory-server`), sem banco de produção, sem secrets reais e sem execução real de
-conectores. O `npm run test:e2e:postgres` roda o mesmo conjunto contra um PostgreSQL
-efêmero. No CI há serviço `postgres:16` e os jobs E2E rodam separados e opcionais.
+O E2E sobe o `AppModule` real contra um **PostgreSQL efêmero** (provisionado por
+spec), sem banco de produção, sem secrets reais e sem execução real de conectores.
+Defina `E2E_POSTGRES_URL` (URL base do servidor) ao rodar `test:e2e`/`test:e2e:postgres`.
+No CI há serviço `postgres:16` e o job E2E roda separado e opcional.
 
 ---
 

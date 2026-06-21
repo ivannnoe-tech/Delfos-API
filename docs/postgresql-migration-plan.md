@@ -302,6 +302,15 @@ Ordem sugerida (de menor para maior acoplamento):
 
 ## P5 — Mongo / Mongoose Removal
 
+> **Concluída (2026-06-21).** MongoDB/Mongoose removidos; PostgreSQL é o banco
+> único. Os 12 módulos ficaram sem schema/repo Mongoose, `MongooseModule`/config
+> Mongo saíram do `AppModule`/`src/config/`, `mongoose`/`@nestjs/mongoose`/
+> `mongodb-memory-server` saíram do `package.json`, o serviço `mongo` saiu do
+> `docker-compose.yml`, e `DELFOS_DATABASE_URL` deu lugar a `DELFOS_POSTGRES_URL`
+> **obrigatório**. ADR-0005 promovida a `Superseded by ADR-0035`. Verificado:
+> `format:check`/`lint`/`build` verdes, **565/565** unit + **17/17** E2E contra
+> PostgreSQL+Valkey reais.
+
 ### Escopo
 - Remover os schemas Mongoose (`src/modules/<n>/schemas/*.schema.ts`).
 - Remover `MongooseModule` e a config Mongo do `AppModule`/`src/config/`.
@@ -440,7 +449,7 @@ Ordem sugerida (de menor para maior acoplamento):
 | P2 | Schema / Migrations Foundation | concluída |
 | P3 | Repository Port Migration | concluída (12 módulos, dual-backend) |
 | P4 | Seed and E2E Migration | concluída (seed + E2E em PostgreSQL; CI com serviço PG) |
-| P5 | Mongo / Mongoose Removal | adiada (decisão humana de cutover — estado atual dual-backend) |
+| P5 | Mongo / Mongoose Removal | concluída (PostgreSQL é o banco único; ADR-0005 superseded) |
 | P6 | Valkey Cache Foundation | concluída (fundação — cache não aplicado a endpoints ainda) |
 | P7 | Hardening | concluída (núcleo; performance sob carga adiada até runtime real) |
 
