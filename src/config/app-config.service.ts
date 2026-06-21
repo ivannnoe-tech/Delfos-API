@@ -3,6 +3,17 @@ import { ConfigService } from '@nestjs/config';
 
 import { EnvironmentVariables, NodeEnvironment } from './environment';
 
+/** Connector dispatch transport config (ADR-0038). `enabled` is false by default. */
+export interface ConnectorDispatchConfig {
+  readonly enabled: boolean;
+  readonly baseUrl?: string;
+  readonly timeoutMs: number;
+  readonly maxRetries: number;
+  readonly clientCertBase64?: string;
+  readonly clientKeyBase64?: string;
+  readonly caBase64?: string;
+}
+
 @Injectable()
 export class AppConfigService {
   constructor(private readonly configService: ConfigService<EnvironmentVariables, true>) {}
@@ -57,5 +68,22 @@ export class AppConfigService {
 
   get swaggerEnabled(): boolean {
     return this.configService.get('SWAGGER_ENABLED', { infer: true });
+  }
+
+  /** Connector dispatch transport config (ADR-0038); disabled by default. */
+  get connectorDispatch(): ConnectorDispatchConfig {
+    return {
+      enabled: this.configService.get('CONNECTOR_DISPATCH_ENABLED', { infer: true }),
+      baseUrl: this.configService.get('CONNECTOR_DISPATCH_BASE_URL', { infer: true }),
+      timeoutMs: this.configService.get('CONNECTOR_DISPATCH_TIMEOUT_MS', { infer: true }),
+      maxRetries: this.configService.get('CONNECTOR_DISPATCH_MAX_RETRIES', { infer: true }),
+      clientCertBase64: this.configService.get('CONNECTOR_DISPATCH_CLIENT_CERT_BASE64', {
+        infer: true,
+      }),
+      clientKeyBase64: this.configService.get('CONNECTOR_DISPATCH_CLIENT_KEY_BASE64', {
+        infer: true,
+      }),
+      caBase64: this.configService.get('CONNECTOR_DISPATCH_CA_BASE64', { infer: true }),
+    };
   }
 }

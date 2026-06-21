@@ -112,7 +112,7 @@ export interface BridgeReadinessResult {
 export interface RuntimeConnectorBridgeSafeError {
   readonly code: string;
   readonly safeMessage: string;
-  readonly category: 'validation' | 'security' | 'not_supported' | 'readiness';
+  readonly category: 'validation' | 'security' | 'not_supported' | 'readiness' | 'runtime';
   readonly retryable: false;
   readonly safeMetadata: ConnectorCommandSafeMetadata;
 }
@@ -121,7 +121,8 @@ export type RuntimeConnectorBridgeEventType =
   | 'command_prepared'
   | 'command_blocked'
   | 'command_not_supported'
-  | 'command_validation_failed';
+  | 'command_validation_failed'
+  | 'command_dispatch_not_supported';
 
 export type RuntimeConnectorBridgeEventStatus =
   | ExecutionRequestStatus.Accepted

@@ -25,6 +25,9 @@ describe('validateEnvironment', () => {
       CORS_ORIGIN: ['http://localhost:8080', 'http://localhost:3000'],
       LOG_LEVEL: 'debug',
       SWAGGER_ENABLED: false,
+      CONNECTOR_DISPATCH_ENABLED: false,
+      CONNECTOR_DISPATCH_TIMEOUT_MS: 5000,
+      CONNECTOR_DISPATCH_MAX_RETRIES: 2,
     });
   });
 
@@ -194,4 +197,72 @@ describe('validateEnvironment', () => {
 
     expect(result.SWAGGER_ENABLED).toBe(true);
   });
+
+  it('defaults connector dispatch to disabled with safe defaults', () => {
+    const result = validateEnvironment(base());
+
+    expect(result.CONNECTOR_DISPATCH_ENABLED).toBe(false);
+    expect(result.CONNECTOR_DISPATCH_TIMEOUT_MS).toBe(5000);
+    expect(result.CONNECTOR_DISPATCH_MAX_RETRIES).toBe(2);
+    expect(result.CONNECTOR_DISPATCH_BASE_URL).toBeUndefined();
+    expect(result.CONNECTOR_DISPATCH_CLIENT_CERT_BASE64).toBeUndefined();
+  });
+
+  it('requires a base URL when connector dispatch is enabled', () => {
+    expect(() => validateEnvironment({ ...base(), CONNECTOR_DISPATCH_ENABLED: 'true' })).toThrow(
+      'CONNECTOR_DISPATCH_BASE_URL is required when CONNECTOR_DISPATCH_ENABLED is true.',
+    );
+  });
+
+  it('rejects a non-https connector dispatch base URL when enabled', () => {
+    expect(() =>
+      validateEnvironment({
+        ...base(),
+        CONNECTOR_DISPATCH_ENABLED: 'true',
+        CONNECTOR_DISPATCH_BASE_URL: 'http://connectors.local/dispatch',
+        CONNECTOR_DISPATCH_CLIENT_CERT_BASE64: 'cert',
+        CONNECTOR_DISPATCH_CLIENT_KEY_BASE64: 'key',
+        CONNECTOR_DISPATCH_CA_BASE64: 'ca',
+      }),
+    ).toThrow('CONNECTOR_DISPATCH_BASE_URL must use https (mTLS).');
+  });
+
+  it('requires mTLS client cert, key and CA when connector dispatch is enabled', () => {
+    expect(() =>
+      validateEnvironment({
+        ...base(),
+        CONNECTOR_DISPATCH_ENABLED: 'true',
+        CONNECTOR_DISPATCH_BASE_URL: 'https://connectors.local/dispatch',
+      }),
+    ).toThrow(
+      'CONNECTOR_DISPATCH_CLIENT_CERT_BASE64 is required when CONNECTOR_DISPATCH_ENABLED is true.',
+    );
+  });
+
+  it('accepts a fully configured connector dispatch', () => {
+    const result = validateEnvironment({
+      ...base(),
+      CONNECTOR_DISPATCH_ENABLED: 'true',
+      CONNECTOR_DISPATCH_BASE_URL: 'https://connectors.local/dispatch',
+      CONNECTOR_DISPATCH_TIMEOUT_MS: '2000',
+      CONNECTOR_DISPATCH_MAX_RETRIES: '3',
+      CONNECTOR_DISPATCH_CLIENT_CERT_BASE64: 'cert',
+      CONNECTOR_DISPATCH_CLIENT_KEY_BASE64: 'key',
+      CONNECTOR_DISPATCH_CA_BASE64: 'ca',
+    });
+
+    expect(result.CONNECTOR_DISPATCH_ENABLED).toBe(true);
+    expect(result.CONNECTOR_DISPATCH_BASE_URL).toBe('https://connectors.local/dispatch');
+    expect(result.CONNECTOR_DISPATCH_TIMEOUT_MS).toBe(2000);
+    expect(result.CONNECTOR_DISPATCH_MAX_RETRIES).toBe(3);
+    expect(result.CONNECTOR_DISPATCH_CA_BASE64).toBe('ca');
+  });
 });
+
+function base(): Record<string, unknown> {
+  return {
+    DELFOS_POSTGRES_URL: POSTGRES_URL,
+    DELFOS_ADMIN_KEY: 'test-admin-key-not-a-real-secret',
+    ENCRYPTION_KEY_BASE64: encryptionKeyBase64,
+  };
+}

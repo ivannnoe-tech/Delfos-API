@@ -1,4 +1,9 @@
-import { PrepareRuntimeConnectorCommandResult } from '../bridge';
+import {
+  ConnectorExecutionCommandShape,
+  PrepareRuntimeConnectorCommandResult,
+  RuntimeConnectorDispatchPort,
+  RuntimeConnectorDispatchResult,
+} from '../bridge';
 import { ExecutionRequestStatus } from '../schemas/execution-request.constants';
 import {
   ConnectorBridgeEventRecorderPort,
@@ -15,6 +20,9 @@ const INPUT = {
   requestId: 'req-1',
   correlationId: 'corr-1',
 };
+
+const DISPATCH_NOT_SUPPORTED_MESSAGE =
+  'Connector dispatch is not supported yet. No external call was made.';
 
 function preparedResult(): PrepareRuntimeConnectorCommandResult {
   return {
@@ -71,41 +79,73 @@ function createRecorder(): ConnectorBridgeEventRecorderPort & {
   };
 }
 
+function createDispatchPort(): RuntimeConnectorDispatchPort & {
+  readonly dispatched: ConnectorExecutionCommandShape[];
+} {
+  const dispatched: ConnectorExecutionCommandShape[] = [];
+  return {
+    dispatched,
+    dispatch: jest.fn(
+      async (command: ConnectorExecutionCommandShape): Promise<RuntimeConnectorDispatchResult> => {
+        dispatched.push(command);
+        return {
+          dispatched: false,
+          status: 'not_supported',
+          safeMessage: DISPATCH_NOT_SUPPORTED_MESSAGE,
+          safeError: {
+            code: 'connector_dispatch_not_supported',
+            safeMessage: DISPATCH_NOT_SUPPORTED_MESSAGE,
+            category: 'not_supported',
+            retryable: false,
+            safeMetadata: {},
+          },
+          safeMetadata: {},
+        };
+      },
+    ),
+  };
+}
+
 describe('ConnectorCommandPreparationService', () => {
-  it('prepares a command, records the bridge events, and never leaks the raw command/credentialRef', async () => {
+  it('prepares, dispatches the no-op, records the prepare + dispatch events, and never leaks the raw command', async () => {
     const prepareCommand = jest.fn(async () => preparedResult());
     const resolver: RuntimeConnectorBridgeResolverPort = { prepareCommand };
     const recorder = createRecorder();
-    const service = new ConnectorCommandPreparationService(resolver, recorder);
+    const dispatchPort = createDispatchPort();
+    const service = new ConnectorCommandPreparationService(resolver, recorder, dispatchPort);
 
     const result = await service.prepare(INPUT);
 
     expect(prepareCommand).toHaveBeenCalledWith(INPUT);
     expect(result.prepared).toBe(true);
-    expect(result.status).toBe(ExecutionRequestStatus.Accepted);
-    expect(recorder.recorded).toHaveLength(1);
-    expect(recorder.recorded[0]).toMatchObject({
-      executionRequestId: 'er-1',
-      tenantId: 't-1',
-      eventType: 'command_prepared',
-    });
+    expect(dispatchPort.dispatched).toHaveLength(1);
+    expect(result.dispatch?.status).toBe('not_supported');
+    // Command prepared but dispatch is not supported yet -> overall not_supported.
+    expect(result.status).toBe(ExecutionRequestStatus.NotSupported);
+    expect(recorder.recorded).toHaveLength(2);
+    expect(recorder.recorded[0].eventType).toBe('command_prepared');
+    expect(recorder.recorded[1].eventType).toBe('command_dispatch_not_supported');
+    expect(recorder.recorded[1].status).toBe(ExecutionRequestStatus.NotSupported);
     // The raw command (and its credentialRef) must NOT be exposed by the result.
     expect((result as { command?: unknown }).command).toBeUndefined();
     expect(JSON.stringify(result)).not.toContain('cred_must_not_leak');
   });
 
-  it('records the blocked event and surfaces the safe error when preparation is blocked', async () => {
+  it('records the blocked event, skips dispatch, and surfaces the safe error when preparation is blocked', async () => {
     const resolver: RuntimeConnectorBridgeResolverPort = {
       prepareCommand: jest.fn(async () => blockedResult()),
     };
     const recorder = createRecorder();
-    const service = new ConnectorCommandPreparationService(resolver, recorder);
+    const dispatchPort = createDispatchPort();
+    const service = new ConnectorCommandPreparationService(resolver, recorder, dispatchPort);
 
     const result = await service.prepare(INPUT);
 
     expect(result.prepared).toBe(false);
     expect(result.status).toBe(ExecutionRequestStatus.Blocked);
     expect(result.safeError?.code).toBe('readiness_blocked');
+    expect(dispatchPort.dispatched).toHaveLength(0);
+    expect(result.dispatch).toBeUndefined();
     expect(recorder.recorded).toHaveLength(1);
     expect(recorder.recorded[0].eventType).toBe('command_blocked');
   });

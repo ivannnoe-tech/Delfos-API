@@ -47,6 +47,21 @@ export interface CredentialFilters {
   connectionId?: string;
 }
 
+/**
+ * Tenant-scoped read of the encrypted secret material for the credential
+ * broker (ADR-0037). This is the **only** read path that carries
+ * `protectedSecretValue` (the ciphertext envelope); it must never be used by a
+ * REST/read path that could leak it. The plaintext is produced only by the
+ * broker, just-in-time, and never persisted/cached/logged.
+ */
+export interface CredentialSecretMaterial {
+  id: string;
+  tenantId: string;
+  status: CredentialStatus;
+  protectionProvider: string;
+  protectedSecretValue: string;
+}
+
 export interface RotateCredentialRecord {
   maskedPreview: string | null;
   protectedSecretValue: string;
@@ -80,6 +95,10 @@ export abstract class CredentialsRepository {
   ): Promise<CredentialRecord[]>;
   abstract countByFilters(filters: CredentialFilters): Promise<number>;
   abstract findByTenantAndId(tenantId: string, id: string): Promise<CredentialRecord | null>;
+  abstract findSecretMaterialByTenantAndId(
+    tenantId: string,
+    id: string,
+  ): Promise<CredentialSecretMaterial | null>;
   abstract rotateByTenantAndId(
     tenantId: string,
     id: string,
