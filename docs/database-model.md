@@ -1,18 +1,16 @@
 # Modelo de Banco — Delfos Analytics
 
-> Status: documento normativo inicial  
-> Banco: MongoDB 8.0+  
-> Escopo: dados de configuração do Delfos na Fase 1.
+> Status: **histórico (Fase 1, MongoDB) — superseded pela P5**  
+> Banco atual: **PostgreSQL 16** (ADR-0035 / ADR-0036)  
+> Escopo: dados de configuração do Delfos.
 
-O MongoDB armazena configuração e metadados do Delfos, não dados operacionais permanentes dos clientes.
-
-> **Direção futura (ADR-0035)**: foi aprovada a migração do banco primário para
-> **PostgreSQL** (com Valkey como cache layer futuro). Este documento descreve o
-> **modelo MongoDB vigente**, que continua sendo o banco em uso até a migração
-> faseada. O modelo relacional candidato está em
-> `docs/postgresql-data-model-draft.md` e o plano de migração em
-> `docs/postgresql-migration-plan.md`. Enquanto a fase de remoção do MongoDB
-> (P5) não concluir, este documento permanece a referência do banco real.
+> **Banco único desde a P5 (2026-06-21).** O MongoDB foi removido (ADR-0035, fase
+> P5) e o **PostgreSQL** passou a ser o banco único do Delfos. O modelo relacional
+> **canônico** está em [`postgresql-data-model-draft.md`](postgresql-data-model-draft.md)
+> e nas migrations Kysely (`src/database/postgres/migrations/`). Este documento é
+> mantido como **registro histórico** do modelo MongoDB da Fase 1. Os princípios
+> de modelagem abaixo (isolamento por `tenantId`, criptografia, timestamps, soft
+> delete, índices que refletem consultas reais) seguem válidos no PostgreSQL.
 
 ---
 
