@@ -1,6 +1,6 @@
 # ADR-0021 — Descriptografia de credenciais no fluxo de execução futura
 
-- **Status**: Proposed
+- **Status**: Superseded by ADR-0037
 - **Data**: 2026-05-15
 - **Autores**: Equipe Delfos Analytics
 - **Repositório**: delfos-api

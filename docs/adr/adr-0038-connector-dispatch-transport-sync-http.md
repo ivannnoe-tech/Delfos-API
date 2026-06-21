@@ -1,20 +1,20 @@
 # ADR-0038 — Transporte de dispatch via HTTP síncrono (mTLS)
 
-- **Status**: Proposed
+- **Status**: Accepted
 - **Data**: 2026-06-21
 - **Autores**: Equipe Delfos Analytics
 - **Repositório**: delfos-api
 - **Fase impactada**: Fase 2
-- **Implementação**: não iniciada
+- **Implementação**: não iniciada (1º incremento liberado: command-prep + validation)
 
 ---
 
-> **Esta ADR registra uma decisão humana, mas permanece `Proposed`.** Ela **não
-> autoriza implementação**. Por ADR-0024, a promoção para `Accepted` é **ato
-> humano explícito** — nenhum agente pode mudar este status. **Nada** de
-> transporte real, cliente HTTP, servidor de execução ou dispatch pode ser
-> construído enquanto esta ADR não for `Accepted` por um humano. Ao ser aceita,
-> **supersede a ADR-0022** (que enquadrou o problema sem decidir).
+> **Aceita por decisão humana explícita do owner em 2026-06-21** — entrada na
+> Fase 2 (ADR-0024); **supersede a ADR-0022**. A aceitação autoriza o *caminho*
+> (transporte = HTTP síncrono + mTLS, chamadas curtas), mas cada incremento de
+> código exige go-ahead específico e TDD. O **1º incremento liberado** é a bridge
+> **command-prep + validation**, sem dispatch, cliente HTTP ou chamada externa
+> real.
 
 ## Contexto
 
