@@ -57,7 +57,7 @@ Contrato vigente para todos os endpoints:
   "details": [
     {
       "field": "tenantId",
-      "message": "tenantId must be a mongodb id"
+      "message": "tenantId must be a Mongo ObjectId or a UUID"
     }
   ],
   "requestId": "req_123",

@@ -25,6 +25,21 @@ describe('RequestAuthContextService', () => {
     });
   });
 
+  it('accepts a PostgreSQL UUID tenant and actor id (ADR-0035 / P5)', () => {
+    const service = new RequestAuthContextService();
+    const request = createRequest({
+      [DELFOS_TENANT_ID_HEADER]: '04dfcf68-3d27-4f24-a599-f3ef57edad36',
+      [DELFOS_ACTOR_ID_HEADER]: '7b0dcbed-442f-4f6d-aa3d-cd46327cbbb6',
+      [DELFOS_ACTOR_ROLE_HEADER]: AdminRole.Operator,
+    });
+
+    expect(service.extract(request)).toEqual({
+      tenantId: '04dfcf68-3d27-4f24-a599-f3ef57edad36',
+      actorId: '7b0dcbed-442f-4f6d-aa3d-cd46327cbbb6',
+      actorRole: AdminRole.Operator,
+    });
+  });
+
   it('rejects invalid tenant context format', () => {
     const service = new RequestAuthContextService();
     const request = createRequest({
