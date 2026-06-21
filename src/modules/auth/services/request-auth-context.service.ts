@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { isMongoId, isUUID } from 'class-validator';
 import { Request } from 'express';
 
 import {
@@ -16,7 +17,7 @@ export class RequestAuthContextService {
     const actorId = this.readOptionalHeader(request, DELFOS_ACTOR_ID_HEADER);
     const actorRole = this.readOptionalHeader(request, DELFOS_ACTOR_ROLE_HEADER);
 
-    if (tenantId && !this.isMongoObjectId(tenantId)) {
+    if (tenantId && !this.isValidTenantId(tenantId)) {
       throw new BadRequestException('Invalid tenant context.');
     }
 
@@ -48,8 +49,11 @@ export class RequestAuthContextService {
     return trimmedValue.length > 0 ? trimmedValue : undefined;
   }
 
-  private isMongoObjectId(value: string): boolean {
-    return /^[0-9a-f]{24}$/i.test(value);
+  private isValidTenantId(value: string): boolean {
+    // Accept a legacy Mongo ObjectId (24-hex) and a PostgreSQL UUID, mirroring
+    // @IsEntityId so the tenant header stays valid across the MongoDB → PostgreSQL
+    // migration and after it (ADR-0035 / ADR-0036, P5).
+    return isMongoId(value) || isUUID(value);
   }
 
   private isSafeActorId(value: string): boolean {
