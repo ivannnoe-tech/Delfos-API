@@ -25,14 +25,25 @@ Este documento descreve variaveis esperadas para local, homologacao e producao.
 |---|---:|---|---|
 | `DELFOS_DATABASE_URL` | Sim | `mongodb://localhost:27017/delfos` | URL completa do MongoDB de configuracao/metadados. |
 
-Na Fase 1, MongoDB armazena configuracao e metadados do Delfos, nao payload operacional bruto de cliente.
+Na Fase 1, MongoDB armazena configuracao e metadados do Delfos, nao payload operacional bruto de cliente. `DELFOS_DATABASE_URL` continua sendo a URL do banco **operacional** ate a fase P5 da migracao (remocao do Mongo).
 
-> **Direcao futura (ADR-0035)**: o banco primario sera migrado para PostgreSQL e
-> o cache futuro sera Valkey. Variaveis como `DELFOS_POSTGRES_URL` e a config do
-> Valkey serao adicionadas nas fases P1 e P6 do plano de migracao
-> (`docs/postgresql-migration-plan.md`). Elas **nao existem hoje** e nao devem
-> receber valores agora. `DELFOS_DATABASE_URL` continua sendo a unica URL de
-> banco em uso ate a migracao.
+## PostgreSQL (migracao ADR-0035 / ADR-0036)
+
+| Variavel | Obrigatoria | Exemplo | Descricao |
+|---|---:|---|---|
+| `DELFOS_POSTGRES_URL` | Nao (P1) | `postgresql://delfos:delfos@localhost:5432/delfos` | URL do PostgreSQL, banco primario futuro. **Opcional** durante a migracao: se ausente, a API roda 100% em MongoDB e o health-check de Postgres reporta `disabled`; se presente, a conexao Kysely sobe e `/health` reporta o status do Postgres. Validada no bootstrap (deve comecar com `postgres://` ou `postgresql://`). |
+
+> **Estado da migracao (P1 em andamento)**: o ORM escolhido e **Kysely** (ADR-0036).
+> A fase P1 adiciona a conexao e o health-check de Postgres; o schema/migrations
+> vem na P2 e a troca de repositorios na P3. Ate la, MongoDB continua sendo o
+> banco operacional. A config do **Valkey** so e adicionada na fase P6 e **nao
+> existe hoje**. Plano completo: `docs/postgresql-migration-plan.md`.
+
+## Valkey (cache — ADR-0035 / P6)
+
+| Variavel | Obrigatoria | Exemplo | Descricao |
+|---|---:|---|---|
+| `VALKEY_URL` | Nao | `redis://localhost:6379` | URL do Valkey (cache). **Opcional**: se ausente, o cache fica **desligado** (no-op) e tudo vem do banco; se presente, habilita o `CacheService` com Valkey. Aceita `valkey://`, `redis://` ou `rediss://`. Toda chave tem TTL e namespace por tenant; nunca armazena secret/credencial/token. |
 
 ## Seguranca
 

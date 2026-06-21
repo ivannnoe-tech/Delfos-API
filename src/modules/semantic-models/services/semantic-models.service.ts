@@ -4,7 +4,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import { buildListMeta, ListResponse } from '../../../core/dto/list-meta.dto';
 import { sanitizeMetadata } from '../../../core/utils/sanitize-metadata';
@@ -23,6 +22,7 @@ import {
 } from '../dto/semantic-model-response.dto';
 import { UpdateSemanticModelDto } from '../dto/update-semantic-model.dto';
 import {
+  SemanticModelRecord,
   SemanticModelsRepository,
   UpdateSemanticModelRecord,
 } from '../repositories/semantic-models.repository';
@@ -30,7 +30,6 @@ import {
   SemanticDimension,
   SemanticGlossaryTerm,
   SemanticMeasure,
-  SemanticModelDocument,
   SemanticModelQuality,
 } from '../schemas/semantic-model.schema';
 import { SemanticModelSanitizerService } from './semantic-model-sanitizer.service';
@@ -58,7 +57,7 @@ export class SemanticModelsService {
 
     try {
       const semanticModel = await this.semanticModelsRepository.create({
-        tenantId: new Types.ObjectId(dto.tenantId),
+        tenantId: dto.tenantId,
         modelKey: dto.modelKey,
         name: dto.name,
         description: dto.description,
@@ -90,7 +89,7 @@ export class SemanticModelsService {
     query: ListSemanticModelsQueryDto,
   ): Promise<ListResponse<SemanticModelResponseDto>> {
     const filters = {
-      tenantId: new Types.ObjectId(query.tenantId),
+      tenantId: query.tenantId,
       modelKey: query.modelKey,
       status: query.status,
     };
@@ -109,10 +108,7 @@ export class SemanticModelsService {
     tenantId: SemanticModelTenantQueryDto['tenantId'],
     id: string,
   ): Promise<SemanticModelResponseDto> {
-    const semanticModel = await this.semanticModelsRepository.findByTenantAndId(
-      new Types.ObjectId(tenantId),
-      id,
-    );
+    const semanticModel = await this.semanticModelsRepository.findByTenantAndId(tenantId, id);
 
     if (!semanticModel) {
       throw new NotFoundException('Semantic model not found.');
@@ -129,7 +125,7 @@ export class SemanticModelsService {
   ): Promise<SemanticModelResponseDto> {
     try {
       const semanticModel = await this.semanticModelsRepository.updateByTenantAndId(
-        new Types.ObjectId(tenantId),
+        tenantId,
         id,
         this.toUpdateRecord(dto, actor),
       );
@@ -152,7 +148,7 @@ export class SemanticModelsService {
     actor: SemanticModelActorContext = {},
   ): Promise<SemanticModelResponseDto> {
     const semanticModel = await this.semanticModelsRepository.archiveByTenantAndId(
-      new Types.ObjectId(tenantId),
+      tenantId,
       id,
       actor.actorId,
     );
@@ -246,15 +242,15 @@ export class SemanticModelsService {
 
   private async recordAudit(
     action: string,
-    semanticModel: SemanticModelDocument,
+    semanticModel: SemanticModelRecord,
     actor: SemanticModelActorContext,
   ): Promise<void> {
     await this.auditService.record({
-      tenantId: semanticModel.tenantId.toString(),
+      tenantId: semanticModel.tenantId,
       actorUserId: this.toAuditActorUserId(actor.actorId),
       action,
       entity: 'semantic_model',
-      entityId: semanticModel._id.toString(),
+      entityId: semanticModel.id,
       metadata: {
         modelKey: semanticModel.modelKey,
         status: semanticModel.status,
@@ -273,10 +269,10 @@ export class SemanticModelsService {
     return actorId;
   }
 
-  private toResponse(semanticModel: SemanticModelDocument): SemanticModelResponseDto {
+  private toResponse(semanticModel: SemanticModelRecord): SemanticModelResponseDto {
     return {
-      id: semanticModel._id.toString(),
-      tenantId: semanticModel.tenantId.toString(),
+      id: semanticModel.id,
+      tenantId: semanticModel.tenantId,
       modelKey: semanticModel.modelKey,
       name: semanticModel.name,
       description: semanticModel.description,
@@ -374,11 +370,12 @@ export class SemanticModelsService {
   }
 
   private isDuplicateKeyError(error: unknown): boolean {
-    return (
-      typeof error === 'object' &&
-      error !== null &&
-      'code' in error &&
-      (error as { code?: unknown }).code === 11000
-    );
+    if (typeof error !== 'object' || error === null || !('code' in error)) {
+      return false;
+    }
+
+    const code = (error as { code?: unknown }).code;
+    // Mongo duplicate-key error code (11000) or PostgreSQL unique_violation (23505).
+    return code === 11000 || code === '23505';
   }
 }

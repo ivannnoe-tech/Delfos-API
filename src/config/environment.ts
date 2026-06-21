@@ -3,7 +3,11 @@ export type NodeEnvironment = 'development' | 'test' | 'production';
 export interface EnvironmentVariables {
   NODE_ENV: NodeEnvironment;
   PORT: number;
-  DELFOS_DATABASE_URL: string;
+  // PostgreSQL primary database (ADR-0035). Sole database since P5 (Mongo removed).
+  DELFOS_POSTGRES_URL: string;
+  // Valkey cache URL (ADR-0035 / P6). OPTIONAL: when absent the cache is
+  // disabled (no-op) and the system serves everything from PostgreSQL/MongoDB.
+  VALKEY_URL?: string;
   DELFOS_ADMIN_KEY: string;
   ENCRYPTION_KEY_BASE64: string;
   CORS_ORIGIN: string[];
@@ -22,7 +26,8 @@ const allowedLogLevels = new Set<EnvironmentVariables['LOG_LEVEL']>([
 export function validateEnvironment(config: Record<string, unknown>): EnvironmentVariables {
   const nodeEnv = readEnum(config, 'NODE_ENV', allowedNodeEnvironments, 'development');
   const port = readPort(config);
-  const databaseUrl = readRequiredString(config, 'DELFOS_DATABASE_URL');
+  const postgresUrl = readRequiredPostgresUrl(config);
+  const valkeyUrl = readOptionalValkeyUrl(config);
   const adminKey = readAdminKey(config);
   const encryptionKeyBase64 = readEncryptionKey(config);
   const corsOrigin = readCsv(config, 'CORS_ORIGIN');
@@ -32,7 +37,8 @@ export function validateEnvironment(config: Record<string, unknown>): Environmen
   return {
     NODE_ENV: nodeEnv,
     PORT: port,
-    DELFOS_DATABASE_URL: databaseUrl,
+    DELFOS_POSTGRES_URL: postgresUrl,
+    VALKEY_URL: valkeyUrl,
     DELFOS_ADMIN_KEY: adminKey,
     ENCRYPTION_KEY_BASE64: encryptionKeyBase64,
     CORS_ORIGIN: corsOrigin,
@@ -60,6 +66,42 @@ function readAdminKey(config: Record<string, unknown>): string {
   }
 
   return value;
+}
+
+function readRequiredPostgresUrl(config: Record<string, unknown>): string {
+  const value = config.DELFOS_POSTGRES_URL;
+
+  if (typeof value !== 'string' || value.trim() === '') {
+    throw new Error('DELFOS_POSTGRES_URL is required.');
+  }
+
+  const trimmed = value.trim();
+
+  if (!/^postgres(ql)?:\/\//.test(trimmed)) {
+    throw new Error('DELFOS_POSTGRES_URL must start with postgres:// or postgresql://.');
+  }
+
+  return trimmed;
+}
+
+function readOptionalValkeyUrl(config: Record<string, unknown>): string | undefined {
+  const value = config.VALKEY_URL;
+
+  if (value === undefined || value === null || (typeof value === 'string' && value.trim() === '')) {
+    return undefined;
+  }
+
+  if (typeof value !== 'string') {
+    throw new Error('VALKEY_URL must be a string when provided.');
+  }
+
+  const trimmed = value.trim();
+
+  if (!/^(valkey|rediss?):\/\//.test(trimmed)) {
+    throw new Error('VALKEY_URL must start with valkey://, redis:// or rediss://.');
+  }
+
+  return trimmed;
 }
 
 function readRequiredString(config: Record<string, unknown>, key: string): string {

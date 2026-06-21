@@ -1,19 +1,22 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 
 import { AuditModule } from '../audit/audit.module';
 import { FieldMappingsController } from './controllers/field-mappings.controller';
 import { FieldMappingsRepository } from './repositories/field-mappings.repository';
-import { FieldMapping, FieldMappingSchema } from './schemas/field-mapping.schema';
+import { PostgresFieldMappingsRepository } from './repositories/postgres-field-mappings.repository';
 import { FieldMappingsService } from './services/field-mappings.service';
 
 @Module({
-  imports: [
-    AuditModule,
-    MongooseModule.forFeature([{ name: FieldMapping.name, schema: FieldMappingSchema }]),
-  ],
+  imports: [AuditModule],
   controllers: [FieldMappingsController],
-  providers: [FieldMappingsRepository, FieldMappingsService],
+  providers: [
+    PostgresFieldMappingsRepository,
+    {
+      provide: FieldMappingsRepository,
+      useExisting: PostgresFieldMappingsRepository,
+    },
+    FieldMappingsService,
+  ],
   exports: [FieldMappingsService],
 })
 export class FieldMappingsModule {}

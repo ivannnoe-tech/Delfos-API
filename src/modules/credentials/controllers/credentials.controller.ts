@@ -6,8 +6,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { IsMongoId } from 'class-validator';
-
+import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import { AdminRoles } from '../../auth/decorators/admin-roles.decorator';
 import { ApiFoundationAuthHeaders } from '../../auth/decorators/api-foundation-auth-headers.decorator';
 import { AdminKeyGuard } from '../../auth/guards/admin-key.guard';
@@ -21,7 +20,7 @@ import { RotateCredentialDto } from '../dto/rotate-credential.dto';
 import { CredentialsService } from '../services/credentials.service';
 
 class CredentialIdParamDto {
-  @IsMongoId()
+  @IsEntityId()
   id!: string;
 }
 

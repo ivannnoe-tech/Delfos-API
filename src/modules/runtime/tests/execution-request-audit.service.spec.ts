@@ -28,16 +28,18 @@ describe('ExecutionRequestAuditService', () => {
     });
 
     expect(auditService.record).toHaveBeenCalledWith({
-      tenantId: executionRequest.tenantId.toString(),
+      tenantId: executionRequest.tenantId,
       actorUserId: actor.actorId,
       action: 'execution_request.created',
       entity: 'execution_request',
-      entityId: executionRequest._id.toString(),
+      entityId: executionRequest.id,
       metadata: {
-        tenantId: executionRequest.tenantId.toString(),
+        tenantId: executionRequest.tenantId,
         kind: ExecutionRequestKind.Query,
         status: executionRequest.status,
-        queryDefinitionId: executionRequest.queryDefinitionId?.toString(),
+        queryDefinitionId: executionRequest.queryDefinitionId,
+        dashboardDefinitionId: executionRequest.dashboardDefinitionId,
+        reportDefinitionId: executionRequest.reportDefinitionId,
         actorId: actor.actorId,
         actorRole: actor.actorRole,
         reason: 'foundation_only',
@@ -74,14 +76,14 @@ describe('ExecutionRequestAuditService', () => {
     await service.recordEvent(event, actor);
 
     expect(auditService.record).toHaveBeenCalledWith({
-      tenantId: event.tenantId.toString(),
+      tenantId: event.tenantId,
       actorUserId: actor.actorId,
       action: 'execution_request.event.created',
       entity: 'execution_request_event',
-      entityId: event._id.toString(),
+      entityId: event.id,
       metadata: {
-        tenantId: event.tenantId.toString(),
-        executionRequestId: event.executionRequestId.toString(),
+        tenantId: event.tenantId,
+        executionRequestId: event.executionRequestId,
         requestKey: event.requestKey,
         eventType: event.eventType,
         previousStatus: event.previousStatus,

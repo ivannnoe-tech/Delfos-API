@@ -3,7 +3,6 @@ import {
   ArrayMaxSize,
   IsArray,
   IsEnum,
-  IsMongoId,
   IsObject,
   IsOptional,
   IsString,
@@ -13,6 +12,7 @@ import {
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
+import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import {
   ReportDefinitionStatus,
   ReportDefinitionVisibility,
@@ -27,7 +27,7 @@ const stableKeyPattern = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
 
 export class CreateReportDefinitionDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })
-  @IsMongoId()
+  @IsEntityId()
   tenantId!: string;
 
   @ApiProperty({ example: 'monthly_sales_report' })
@@ -62,12 +62,12 @@ export class CreateReportDefinitionDto {
 
   @ApiPropertyOptional({ example: '662d4f6e7a1c2b00124f0601' })
   @IsOptional()
-  @IsMongoId()
+  @IsEntityId()
   queryDefinitionId?: string;
 
   @ApiPropertyOptional({ example: '662d4f6e7a1c2b00124f0701' })
   @IsOptional()
-  @IsMongoId()
+  @IsEntityId()
   dashboardDefinitionId?: string;
 
   @ApiPropertyOptional({ type: ReportDefinitionLayoutDto })

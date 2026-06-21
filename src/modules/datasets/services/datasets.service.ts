@@ -1,5 +1,4 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import { buildListMeta, ListResponse } from '../../../core/dto/list-meta.dto';
 import { sanitizeMetadata } from '../../../core/utils/sanitize-metadata';
@@ -8,8 +7,12 @@ import { CreateDatasetDto } from '../dto/create-dataset.dto';
 import { DatasetFieldResponseDto, DatasetResponseDto } from '../dto/dataset-response.dto';
 import { ListDatasetsQueryDto } from '../dto/dataset-query.dto';
 import { UpdateDatasetDto } from '../dto/update-dataset.dto';
-import { DatasetsRepository, UpdateDatasetRecord } from '../repositories/datasets.repository';
-import { DatasetDocument } from '../schemas/dataset.schema';
+import {
+  DatasetRecord,
+  DatasetsRepository,
+  UpdateDatasetRecord,
+} from '../repositories/datasets.repository';
+import { DatasetField } from '../schemas/dataset.schema';
 import { DatasetFieldSanitizerService } from './dataset-field-sanitizer.service';
 
 export interface DatasetActorContext {
@@ -30,8 +33,8 @@ export class DatasetsService {
   ): Promise<DatasetResponseDto> {
     try {
       const dataset = await this.datasetsRepository.create({
-        tenantId: new Types.ObjectId(dto.tenantId),
-        connectionId: dto.connectionId ? new Types.ObjectId(dto.connectionId) : undefined,
+        tenantId: dto.tenantId,
+        connectionId: dto.connectionId,
         datasetKey: dto.datasetKey,
         name: dto.name,
         description: dto.description,
@@ -59,8 +62,8 @@ export class DatasetsService {
 
   async findByFilters(query: ListDatasetsQueryDto): Promise<ListResponse<DatasetResponseDto>> {
     const filters = {
-      tenantId: new Types.ObjectId(query.tenantId),
-      connectionId: query.connectionId ? new Types.ObjectId(query.connectionId) : undefined,
+      tenantId: query.tenantId,
+      connectionId: query.connectionId,
       datasetKey: query.datasetKey,
       status: query.status,
       sourceType: query.sourceType,
@@ -77,10 +80,7 @@ export class DatasetsService {
   }
 
   async findOne(tenantId: string, id: string): Promise<DatasetResponseDto> {
-    const dataset = await this.datasetsRepository.findByTenantAndId(
-      new Types.ObjectId(tenantId),
-      id,
-    );
+    const dataset = await this.datasetsRepository.findByTenantAndId(tenantId, id);
 
     if (!dataset) {
       throw new NotFoundException('Dataset not found.');
@@ -97,11 +97,7 @@ export class DatasetsService {
   ): Promise<DatasetResponseDto> {
     try {
       const record = this.toUpdateRecord(dto, actor);
-      const dataset = await this.datasetsRepository.updateByTenantAndId(
-        new Types.ObjectId(tenantId),
-        id,
-        record,
-      );
+      const dataset = await this.datasetsRepository.updateByTenantAndId(tenantId, id, record);
 
       if (!dataset) {
         throw new NotFoundException('Dataset not found.');
@@ -117,9 +113,7 @@ export class DatasetsService {
 
   private toUpdateRecord(dto: UpdateDatasetDto, actor: DatasetActorContext): UpdateDatasetRecord {
     return {
-      ...(dto.connectionId !== undefined
-        ? { connectionId: new Types.ObjectId(dto.connectionId) }
-        : {}),
+      ...(dto.connectionId !== undefined ? { connectionId: dto.connectionId } : {}),
       ...(dto.datasetKey !== undefined ? { datasetKey: dto.datasetKey } : {}),
       ...(dto.name !== undefined ? { name: dto.name } : {}),
       ...(dto.description !== undefined ? { description: dto.description } : {}),
@@ -144,11 +138,7 @@ export class DatasetsService {
     id: string,
     actor: DatasetActorContext = {},
   ): Promise<DatasetResponseDto> {
-    const dataset = await this.datasetsRepository.archiveByTenantAndId(
-      new Types.ObjectId(tenantId),
-      id,
-      actor.actorId,
-    );
+    const dataset = await this.datasetsRepository.archiveByTenantAndId(tenantId, id, actor.actorId);
 
     if (!dataset) {
       throw new NotFoundException('Dataset not found.');
@@ -161,20 +151,20 @@ export class DatasetsService {
 
   private async recordAudit(
     action: string,
-    dataset: DatasetDocument,
+    dataset: DatasetRecord,
     actor: DatasetActorContext,
   ): Promise<void> {
     await this.auditService.record({
-      tenantId: dataset.tenantId.toString(),
+      tenantId: dataset.tenantId,
       actorUserId: this.toAuditActorUserId(actor.actorId),
       action,
       entity: 'dataset',
-      entityId: dataset._id.toString(),
+      entityId: dataset.id,
       metadata: {
         datasetKey: dataset.datasetKey,
         status: dataset.status,
         sourceType: dataset.sourceType,
-        connectionId: dataset.connectionId?.toString() ?? null,
+        connectionId: dataset.connectionId ?? null,
       },
     });
   }
@@ -187,11 +177,11 @@ export class DatasetsService {
     return actorId;
   }
 
-  private toResponse(dataset: DatasetDocument): DatasetResponseDto {
+  private toResponse(dataset: DatasetRecord): DatasetResponseDto {
     return {
-      id: dataset._id.toString(),
-      tenantId: dataset.tenantId.toString(),
-      connectionId: dataset.connectionId?.toString(),
+      id: dataset.id,
+      tenantId: dataset.tenantId,
+      connectionId: dataset.connectionId,
       datasetKey: dataset.datasetKey,
       name: dataset.name,
       description: dataset.description,
@@ -212,7 +202,7 @@ export class DatasetsService {
     };
   }
 
-  private toFieldResponse(field: DatasetDocument['fields'][number]): DatasetFieldResponseDto {
+  private toFieldResponse(field: DatasetField): DatasetFieldResponseDto {
     return {
       key: field.key,
       label: field.label,
@@ -237,11 +227,12 @@ export class DatasetsService {
   }
 
   private isDuplicateKeyError(error: unknown): boolean {
-    return (
-      typeof error === 'object' &&
-      error !== null &&
-      'code' in error &&
-      (error as { code?: unknown }).code === 11000
-    );
+    if (typeof error !== 'object' || error === null || !('code' in error)) {
+      return false;
+    }
+
+    const code = (error as { code?: unknown }).code;
+    // Mongo duplicate-key error code (11000) or PostgreSQL unique_violation (23505).
+    return code === 11000 || code === '23505';
   }
 }

@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 
 import { AuditLogsRepository } from './repositories/audit-logs.repository';
-import { AuditLog, AuditLogSchema } from './schemas/audit-log.schema';
+import { PostgresAuditLogsRepository } from './repositories/postgres-audit-logs.repository';
 import { AuditService } from './services/audit.service';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: AuditLog.name, schema: AuditLogSchema }])],
-  providers: [AuditLogsRepository, AuditService],
+  providers: [
+    PostgresAuditLogsRepository,
+    { provide: AuditLogsRepository, useExisting: PostgresAuditLogsRepository },
+    AuditService,
+  ],
   exports: [AuditService],
 })
 export class AuditModule {}

@@ -2,7 +2,6 @@ import { Type } from 'class-transformer';
 import {
   IsEnum,
   IsInt,
-  IsMongoId,
   IsObject,
   IsOptional,
   IsString,
@@ -13,6 +12,7 @@ import {
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
+import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import { SanitizedMetadata } from '../../../core/utils/sanitize-metadata';
 import { ReportDefinitionBlockType } from '../schemas/report-definition.schema';
 
@@ -42,12 +42,12 @@ export class ReportDefinitionBlockDto {
 
   @ApiPropertyOptional({ example: '662d4f6e7a1c2b00124f0601' })
   @IsOptional()
-  @IsMongoId()
+  @IsEntityId()
   queryDefinitionId?: string;
 
   @ApiPropertyOptional({ example: '662d4f6e7a1c2b00124f0701' })
   @IsOptional()
-  @IsMongoId()
+  @IsEntityId()
   dashboardDefinitionId?: string;
 
   @ApiPropertyOptional({ example: 'summary' })

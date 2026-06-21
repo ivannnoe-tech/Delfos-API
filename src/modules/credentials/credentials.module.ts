@@ -1,20 +1,21 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 
 import { AuditModule } from '../audit/audit.module';
 import { CredentialsController } from './controllers/credentials.controller';
 import { CredentialsRepository } from './repositories/credentials.repository';
-import { Credential, CredentialSchema } from './schemas/credential.schema';
+import { PostgresCredentialsRepository } from './repositories/postgres-credentials.repository';
 import { CredentialsService } from './services/credentials.service';
 import { LocalCredentialProtectorService } from './services/local-credential-protector.service';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: Credential.name, schema: CredentialSchema }]),
-    AuditModule,
-  ],
+  imports: [AuditModule],
   controllers: [CredentialsController],
-  providers: [CredentialsRepository, CredentialsService, LocalCredentialProtectorService],
+  providers: [
+    PostgresCredentialsRepository,
+    { provide: CredentialsRepository, useExisting: PostgresCredentialsRepository },
+    CredentialsService,
+    LocalCredentialProtectorService,
+  ],
   exports: [CredentialsService],
 })
 export class CredentialsModule {}

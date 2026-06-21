@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import { buildListMeta, ListResponse } from '../../../core/dto/list-meta.dto';
 import { sanitizeMetadata } from '../../../core/utils/sanitize-metadata';
@@ -7,8 +6,7 @@ import { AuditService } from '../../audit/services/audit.service';
 import { ConnectionResponseDto } from '../dto/connection-response.dto';
 import { CreateConnectionDto } from '../dto/create-connection.dto';
 import { UpdateConnectionDto } from '../dto/update-connection.dto';
-import { ConnectionsRepository } from '../repositories/connections.repository';
-import { ConnectionDocument } from '../schemas/connection.schema';
+import { ConnectionRecord, ConnectionsRepository } from '../repositories/connections.repository';
 
 @Injectable()
 export class ConnectionsService {
@@ -22,7 +20,7 @@ export class ConnectionsService {
     actor: { actorId?: string } = {},
   ): Promise<ConnectionResponseDto> {
     const connection = await this.connectionsRepository.create({
-      tenantId: new Types.ObjectId(dto.tenantId),
+      tenantId: dto.tenantId,
       name: dto.name,
       type: dto.type,
       baseUrl: dto.baseUrl,
@@ -43,10 +41,9 @@ export class ConnectionsService {
     page: number,
     pageSize: number,
   ): Promise<ListResponse<ConnectionResponseDto>> {
-    const tenantObjectId = new Types.ObjectId(tenantId);
     const [items, total] = await Promise.all([
-      this.connectionsRepository.findByTenant(tenantObjectId, page, pageSize),
-      this.connectionsRepository.countByTenant(tenantObjectId),
+      this.connectionsRepository.findByTenant(tenantId, page, pageSize),
+      this.connectionsRepository.countByTenant(tenantId),
     ]);
 
     return {
@@ -56,10 +53,7 @@ export class ConnectionsService {
   }
 
   async findOne(tenantId: string, id: string): Promise<ConnectionResponseDto> {
-    const connection = await this.connectionsRepository.findByTenantAndId(
-      new Types.ObjectId(tenantId),
-      id,
-    );
+    const connection = await this.connectionsRepository.findByTenantAndId(tenantId, id);
 
     if (!connection) {
       throw new NotFoundException('Connection not found.');
@@ -74,14 +68,10 @@ export class ConnectionsService {
     dto: UpdateConnectionDto,
     actor: { actorId?: string } = {},
   ): Promise<ConnectionResponseDto> {
-    const connection = await this.connectionsRepository.updateByTenantAndId(
-      new Types.ObjectId(tenantId),
-      id,
-      {
-        ...dto,
-        metadata: dto.metadata ? sanitizeMetadata(dto.metadata) : undefined,
-      },
-    );
+    const connection = await this.connectionsRepository.updateByTenantAndId(tenantId, id, {
+      ...dto,
+      metadata: dto.metadata ? sanitizeMetadata(dto.metadata) : undefined,
+    });
 
     if (!connection) {
       throw new NotFoundException('Connection not found.');
@@ -94,15 +84,15 @@ export class ConnectionsService {
 
   private async recordAudit(
     action: string,
-    connection: ConnectionDocument,
+    connection: ConnectionRecord,
     actor: { actorId?: string },
   ): Promise<void> {
     await this.auditService.record({
-      tenantId: connection.tenantId.toString(),
+      tenantId: connection.tenantId,
       actorUserId: this.toAuditActorUserId(actor.actorId),
       action,
       entity: 'connection',
-      entityId: connection._id.toString(),
+      entityId: connection.id,
       metadata: {
         type: connection.type,
         authType: connection.authType,
@@ -120,10 +110,10 @@ export class ConnectionsService {
     return actorId;
   }
 
-  private toResponse(connection: ConnectionDocument): ConnectionResponseDto {
+  private toResponse(connection: ConnectionRecord): ConnectionResponseDto {
     return {
-      id: connection._id.toString(),
-      tenantId: connection.tenantId.toString(),
+      id: connection.id,
+      tenantId: connection.tenantId,
       name: connection.name,
       type: connection.type,
       baseUrl: connection.baseUrl,

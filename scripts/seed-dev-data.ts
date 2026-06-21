@@ -1,5 +1,3 @@
-import { Types } from 'mongoose';
-
 import {
   SemanticMeasureAggregation,
   SemanticDimensionDomain,
@@ -128,7 +126,7 @@ export interface SeedDashboardInput {
     title: string;
     description: string;
     type: DashboardDefinitionWidgetType;
-    queryDefinitionId: Types.ObjectId;
+    queryDefinitionId: string;
     sectionKey: string;
     order: number;
     size: { cols: number; rows: number };
@@ -159,8 +157,8 @@ export interface SeedReportInput {
   reportKey: string;
   name: string;
   description: string;
-  queryDefinitionId: Types.ObjectId;
-  dashboardDefinitionId: Types.ObjectId;
+  queryDefinitionId: string;
+  dashboardDefinitionId: string;
   layout: {
     type: ReportDefinitionLayoutType;
     columns: number;
@@ -178,8 +176,8 @@ export interface SeedReportInput {
     title: string;
     description: string;
     type: ReportDefinitionBlockType;
-    queryDefinitionId?: Types.ObjectId;
-    dashboardDefinitionId?: Types.ObjectId;
+    queryDefinitionId?: string;
+    dashboardDefinitionId?: string;
     sectionKey: string;
     order: number;
     options: Record<string, boolean | string | number>;
@@ -333,9 +331,9 @@ export function buildQueryInputs(): SeedQueryInput[] {
 }
 
 export function buildDashboardInput(queryIds: {
-  salesOverview: Types.ObjectId;
-  salesByDay: Types.ObjectId;
-  customersSummary: Types.ObjectId;
+  salesOverview: string;
+  salesByDay: string;
+  customersSummary: string;
 }): SeedDashboardInput {
   return {
     dashboardKey: 'commercial_dashboard_demo',
@@ -408,8 +406,8 @@ export function buildDashboardInput(queryIds: {
 }
 
 export function buildReportInput(ids: {
-  salesOverview: Types.ObjectId;
-  commercialDashboard: Types.ObjectId;
+  salesOverview: string;
+  commercialDashboard: string;
 }): SeedReportInput {
   return {
     reportKey: 'monthly_sales_report_demo',
@@ -545,7 +543,7 @@ function widget(
   description: string,
   input: {
     type: DashboardDefinitionWidgetType;
-    queryDefinitionId: Types.ObjectId;
+    queryDefinitionId: string;
     order: number;
     size: { cols: number; rows: number };
     position: { x: number; y: number };

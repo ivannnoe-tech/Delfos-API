@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
+import { randomUUID } from 'node:crypto';
 
 import { buildListMeta, ListResponse } from '../../../core/dto/list-meta.dto';
 import { sanitizeMetadata } from '../../../core/utils/sanitize-metadata';
@@ -17,9 +17,11 @@ import {
   ListExecutionRequestsQueryDto,
 } from '../dto/execution-request-query.dto';
 import { ExecutionRequestResponseDto } from '../dto/execution-request-response.dto';
-import { ExecutionRequestsRepository } from '../repositories/execution-requests.repository';
 import {
-  ExecutionRequestDocument,
+  ExecutionRequestRecord,
+  ExecutionRequestsRepository,
+} from '../repositories/execution-requests.repository';
+import {
   ExecutionRequestKind,
   ExecutionRequestMode,
   ExecutionRequestStatus,
@@ -46,18 +48,17 @@ export class ExecutionRequestsService {
   ): Promise<ExecutionRequestResponseDto> {
     this.validateRequiredReference(dto);
 
-    const executionRequestId = new Types.ObjectId();
+    const requestKey = `exec_req_${randomUUID()}`;
     const executionRequest = await this.executionRequestsRepository.create({
-      _id: executionRequestId,
-      tenantId: new Types.ObjectId(dto.tenantId),
-      requestKey: `exec_req_${executionRequestId.toString()}`,
+      tenantId: dto.tenantId,
+      requestKey,
       kind: dto.kind,
       status: ExecutionRequestStatus.Accepted,
-      queryDefinitionId: this.toOptionalObjectId(dto.queryDefinitionId),
-      dashboardDefinitionId: this.toOptionalObjectId(dto.dashboardDefinitionId),
-      reportDefinitionId: this.toOptionalObjectId(dto.reportDefinitionId),
-      connectionId: this.toOptionalObjectId(dto.connectionId),
-      datasetId: this.toOptionalObjectId(dto.datasetId),
+      queryDefinitionId: dto.queryDefinitionId,
+      dashboardDefinitionId: dto.dashboardDefinitionId,
+      reportDefinitionId: dto.reportDefinitionId,
+      connectionId: dto.connectionId,
+      datasetId: dto.datasetId,
       requestedByActorId: actor.actorId,
       requestedByRole: actor.actorRole,
       mode: dto.mode ?? ExecutionRequestMode.FutureRuntime,
@@ -85,15 +86,15 @@ export class ExecutionRequestsService {
     query: ListExecutionRequestsQueryDto,
   ): Promise<ListResponse<ExecutionRequestResponseDto>> {
     const filters = {
-      tenantId: new Types.ObjectId(query.tenantId),
+      tenantId: query.tenantId,
       kind: query.kind,
       status: query.status,
       mode: query.mode,
-      queryDefinitionId: this.toOptionalObjectId(query.queryDefinitionId),
-      dashboardDefinitionId: this.toOptionalObjectId(query.dashboardDefinitionId),
-      reportDefinitionId: this.toOptionalObjectId(query.reportDefinitionId),
-      connectionId: this.toOptionalObjectId(query.connectionId),
-      datasetId: this.toOptionalObjectId(query.datasetId),
+      queryDefinitionId: query.queryDefinitionId,
+      dashboardDefinitionId: query.dashboardDefinitionId,
+      reportDefinitionId: query.reportDefinitionId,
+      connectionId: query.connectionId,
+      datasetId: query.datasetId,
     };
     const [items, total] = await Promise.all([
       this.executionRequestsRepository.findByFilters(filters, query.page, query.pageSize),
@@ -160,16 +161,12 @@ export class ExecutionRequestsService {
     }
   }
 
-  private toOptionalObjectId(value?: string): Types.ObjectId | undefined {
-    return value ? new Types.ObjectId(value) : undefined;
-  }
-
   private async getExecutionRequestOrThrow(
     tenantId: string,
     executionRequestId: string,
-  ): Promise<ExecutionRequestDocument> {
+  ): Promise<ExecutionRequestRecord> {
     const executionRequest = await this.executionRequestsRepository.findByTenantAndId(
-      new Types.ObjectId(tenantId),
+      tenantId,
       executionRequestId,
     );
 
@@ -180,18 +177,18 @@ export class ExecutionRequestsService {
     return executionRequest;
   }
 
-  private toResponse(executionRequest: ExecutionRequestDocument): ExecutionRequestResponseDto {
+  private toResponse(executionRequest: ExecutionRequestRecord): ExecutionRequestResponseDto {
     return {
-      id: executionRequest._id.toString(),
-      tenantId: executionRequest.tenantId.toString(),
+      id: executionRequest.id,
+      tenantId: executionRequest.tenantId,
       requestKey: executionRequest.requestKey,
       kind: executionRequest.kind,
       status: executionRequest.status,
-      queryDefinitionId: executionRequest.queryDefinitionId?.toString(),
-      dashboardDefinitionId: executionRequest.dashboardDefinitionId?.toString(),
-      reportDefinitionId: executionRequest.reportDefinitionId?.toString(),
-      connectionId: executionRequest.connectionId?.toString(),
-      datasetId: executionRequest.datasetId?.toString(),
+      queryDefinitionId: executionRequest.queryDefinitionId,
+      dashboardDefinitionId: executionRequest.dashboardDefinitionId,
+      reportDefinitionId: executionRequest.reportDefinitionId,
+      connectionId: executionRequest.connectionId,
+      datasetId: executionRequest.datasetId,
       requestedByActorId: executionRequest.requestedByActorId,
       requestedByRole: executionRequest.requestedByRole,
       mode: executionRequest.mode,

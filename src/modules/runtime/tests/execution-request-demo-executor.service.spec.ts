@@ -1,5 +1,3 @@
-import { Types } from 'mongoose';
-
 import { ExecutionRequestEventsRepository } from '../repositories/execution-request-events.repository';
 import { ExecutionRequestsRepository } from '../repositories/execution-requests.repository';
 import {
@@ -18,6 +16,7 @@ import {
   createActorFixture,
   createRuntimeEventFixture,
   createRuntimeRequestFixture,
+  newId,
 } from './execution-request-test-fixtures';
 
 describe('ExecutionRequestDemoExecutorService', () => {
@@ -32,14 +31,14 @@ describe('ExecutionRequestDemoExecutorService', () => {
     });
 
     const result = await harness.service.demoExecute(
-      harness.executionRequestId.toString(),
-      { tenantId: harness.tenantId.toString() },
+      harness.executionRequestId,
+      { tenantId: harness.tenantId },
       createActorFixture(),
     );
 
     expect(result).toMatchObject({
-      executionRequestId: harness.executionRequestId.toString(),
-      requestKey: `exec_req_${harness.executionRequestId.toString()}`,
+      executionRequestId: harness.executionRequestId,
+      requestKey: `exec_req_${harness.executionRequestId}`,
       kind,
       status: ExecutionRequestStatus.CompletedDemo,
       mode: ExecutionRequestMode.Demo,
@@ -54,11 +53,11 @@ describe('ExecutionRequestDemoExecutorService', () => {
     expect(result.demoResult).toHaveProperty(resultKey);
     expect(harness.executionRequestsRepository.findByTenantAndId).toHaveBeenCalledWith(
       harness.tenantId,
-      harness.executionRequestId.toString(),
+      harness.executionRequestId,
     );
     expect(harness.executionRequestsRepository.updateStatusByTenantAndId).toHaveBeenCalledWith(
       harness.tenantId,
-      harness.executionRequestId.toString(),
+      harness.executionRequestId,
       ExecutionRequestStatus.CompletedDemo,
     );
     expect(harness.readinessService.evaluate).toHaveBeenCalledWith(
@@ -83,7 +82,7 @@ describe('ExecutionRequestDemoExecutorService', () => {
       }),
     );
     expect(harness.auditService.recordDemoExecute).toHaveBeenCalledWith(
-      expect.objectContaining({ requestKey: `exec_req_${harness.executionRequestId.toString()}` }),
+      expect.objectContaining({ requestKey: `exec_req_${harness.executionRequestId}` }),
       createActorFixture(),
       {
         ready: true,
@@ -101,8 +100,8 @@ describe('ExecutionRequestDemoExecutorService', () => {
       readiness: createBlockedReadiness(),
     });
 
-    const result = await harness.service.demoExecute(harness.executionRequestId.toString(), {
-      tenantId: harness.tenantId.toString(),
+    const result = await harness.service.demoExecute(harness.executionRequestId, {
+      tenantId: harness.tenantId,
     });
 
     expect(result.ready).toBe(false);
@@ -111,7 +110,7 @@ describe('ExecutionRequestDemoExecutorService', () => {
     expect(result.summary).toContain('blocked by declarative readiness');
     expect(harness.executionRequestsRepository.updateStatusByTenantAndId).toHaveBeenCalledWith(
       harness.tenantId,
-      harness.executionRequestId.toString(),
+      harness.executionRequestId,
       ExecutionRequestStatus.Blocked,
     );
     expect(harness.eventRepository.create).toHaveBeenCalledWith(
@@ -140,8 +139,8 @@ describe('ExecutionRequestDemoExecutorService', () => {
     });
 
     await harness.service.demoExecute(
-      harness.executionRequestId.toString(),
-      { tenantId: harness.tenantId.toString() },
+      harness.executionRequestId,
+      { tenantId: harness.tenantId },
       createActorFixture(),
     );
 
@@ -169,8 +168,8 @@ describe('ExecutionRequestDemoExecutorService', () => {
       readiness: createReadyReadiness(),
     });
 
-    await harness.service.demoExecute(harness.executionRequestId.toString(), {
-      tenantId: harness.tenantId.toString(),
+    await harness.service.demoExecute(harness.executionRequestId, {
+      tenantId: harness.tenantId,
     });
 
     expect(externalExecutors.findConnection).not.toHaveBeenCalled();
@@ -186,10 +185,10 @@ interface DemoExecutorHarnessOptions {
 }
 
 function createDemoExecutorHarness(options: DemoExecutorHarnessOptions) {
-  const tenantId = new Types.ObjectId();
-  const executionRequestId = new Types.ObjectId();
+  const tenantId = newId();
+  const executionRequestId = newId();
   const executionRequest = createRuntimeRequestFixture({
-    _id: executionRequestId,
+    id: executionRequestId,
     tenantId,
     kind: options.kind,
     status: ExecutionRequestStatus.Accepted,

@@ -1,6 +1,4 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
-
+// Domain enums for the semantic-models module. Mongoose schema removed in P5 (ADR-0035); file kept at this path so existing imports stay valid — rename to *.constants.ts is a tracked follow-up.
 import { SanitizedMetadata } from '../../../core/utils/sanitize-metadata';
 
 export enum SemanticModelStatus {
@@ -68,233 +66,62 @@ export enum SemanticQualityLevel {
   Strong = 'strong',
 }
 
-@Schema({ _id: false })
-export class SemanticModelQuality {
-  @Prop({ min: 0, max: 100 })
+/**
+ * Persistence-neutral shapes for the semantic-model embedded subdocuments.
+ * These were Mongoose `@Schema` sub-classes before P5; they are now plain
+ * interfaces so repositories and services keep their existing imports while the
+ * data lives in PostgreSQL JSONB columns (ADR-0035 / ADR-0036).
+ */
+export interface SemanticModelQuality {
   score?: number;
-
-  @Prop({ enum: SemanticQualityLevel })
   level?: SemanticQualityLevel;
-
-  @Prop({ type: [String], default: [] })
-  warnings!: string[];
+  warnings: string[];
 }
 
-export const SemanticModelQualitySchema = SchemaFactory.createForClass(SemanticModelQuality);
-
-@Schema({ _id: false })
-export class SemanticMeasure {
-  @Prop({ required: true, trim: true, maxlength: 80 })
-  key!: string;
-
-  @Prop({ required: true, trim: true, maxlength: 120 })
-  name!: string;
-
-  @Prop({ trim: true, maxlength: 300 })
+export interface SemanticMeasure {
+  key: string;
+  name: string;
   description?: string;
-
-  @Prop({ required: true, enum: SemanticMeasureAggregation })
-  aggregation!: SemanticMeasureAggregation;
-
-  @Prop({ enum: SemanticType })
+  aggregation: SemanticMeasureAggregation;
   semanticType?: SemanticType;
-
-  @Prop({ trim: true, maxlength: 80 })
   datasetKey?: string;
-
-  @Prop({ trim: true, maxlength: 160 })
   fieldKey?: string;
-
-  @Prop({ trim: true, maxlength: 40 })
   unit?: string;
-
-  @Prop({ trim: true, maxlength: 80 })
   formatHint?: string;
-
-  @Prop({
-    required: true,
-    enum: SemanticModelStatus,
-    default: SemanticModelStatus.Draft,
-  })
-  status!: SemanticModelStatus;
-
-  @Prop({ trim: true, maxlength: 128 })
+  status: SemanticModelStatus;
   owner?: string;
-
-  @Prop({ type: [String], default: [] })
-  tags!: string[];
-
-  @Prop({ default: false })
-  isReusable!: boolean;
-
-  @Prop({ type: [String], default: [] })
-  warnings!: string[];
-
-  @Prop({ type: Object, default: {} })
-  metadata!: SanitizedMetadata;
+  tags: string[];
+  isReusable: boolean;
+  warnings: string[];
+  metadata: SanitizedMetadata;
 }
 
-export const SemanticMeasureSchema = SchemaFactory.createForClass(SemanticMeasure);
-
-@Schema({ _id: false })
-export class SemanticDimension {
-  @Prop({ required: true, trim: true, maxlength: 80 })
-  key!: string;
-
-  @Prop({ required: true, trim: true, maxlength: 120 })
-  name!: string;
-
-  @Prop({ trim: true, maxlength: 300 })
+export interface SemanticDimension {
+  key: string;
+  name: string;
   description?: string;
-
-  @Prop({ enum: SemanticType })
   semanticType?: SemanticType;
-
-  @Prop({ required: true, enum: SemanticDimensionDomain })
-  domain!: SemanticDimensionDomain;
-
-  @Prop({ trim: true, maxlength: 80 })
+  domain: SemanticDimensionDomain;
   datasetKey?: string;
-
-  @Prop({ trim: true, maxlength: 160 })
   fieldKey?: string;
-
-  @Prop({ enum: SemanticCardinalityHint })
   cardinalityHint?: SemanticCardinalityHint;
-
-  @Prop({
-    required: true,
-    enum: SemanticModelStatus,
-    default: SemanticModelStatus.Draft,
-  })
-  status!: SemanticModelStatus;
-
-  @Prop({ trim: true, maxlength: 128 })
+  status: SemanticModelStatus;
   owner?: string;
-
-  @Prop({ type: [String], default: [] })
-  tags!: string[];
-
-  @Prop({ type: [String], default: [] })
-  warnings!: string[];
-
-  @Prop({ type: Object, default: {} })
-  metadata!: SanitizedMetadata;
+  tags: string[];
+  warnings: string[];
+  metadata: SanitizedMetadata;
 }
 
-export const SemanticDimensionSchema = SchemaFactory.createForClass(SemanticDimension);
-
-@Schema({ _id: false })
-export class SemanticGlossaryTerm {
-  @Prop({ required: true, trim: true, maxlength: 80 })
-  key!: string;
-
-  @Prop({ required: true, trim: true, maxlength: 120 })
-  name!: string;
-
-  @Prop({ trim: true, maxlength: 500 })
+export interface SemanticGlossaryTerm {
+  key: string;
+  name: string;
   description?: string;
-
-  @Prop({ type: [String], default: [] })
-  aliases!: string[];
-
-  @Prop({ enum: SemanticDimensionDomain })
+  aliases: string[];
   domain?: SemanticDimensionDomain;
-
-  @Prop({ type: [String], default: [] })
-  relatedMeasureKeys!: string[];
-
-  @Prop({ type: [String], default: [] })
-  relatedDimensionKeys!: string[];
-
-  @Prop({
-    required: true,
-    enum: SemanticModelStatus,
-    default: SemanticModelStatus.Draft,
-  })
-  status!: SemanticModelStatus;
-
-  @Prop({ trim: true, maxlength: 128 })
+  relatedMeasureKeys: string[];
+  relatedDimensionKeys: string[];
+  status: SemanticModelStatus;
   owner?: string;
-
-  @Prop({ type: [String], default: [] })
-  tags!: string[];
-
-  @Prop({ type: Object, default: {} })
-  metadata!: SanitizedMetadata;
+  tags: string[];
+  metadata: SanitizedMetadata;
 }
-
-export const SemanticGlossaryTermSchema = SchemaFactory.createForClass(SemanticGlossaryTerm);
-
-@Schema({ collection: 'semantic_models', timestamps: true })
-export class SemanticModel {
-  @Prop({ required: true, type: Types.ObjectId, ref: 'Tenant' })
-  tenantId!: Types.ObjectId;
-
-  @Prop({ required: true, trim: true, maxlength: 80 })
-  modelKey!: string;
-
-  @Prop({ required: true, trim: true, maxlength: 120 })
-  name!: string;
-
-  @Prop({ trim: true, maxlength: 500 })
-  description?: string;
-
-  @Prop({
-    required: true,
-    enum: SemanticModelStatus,
-    default: SemanticModelStatus.Draft,
-  })
-  status!: SemanticModelStatus;
-
-  @Prop({ type: [String], default: [] })
-  datasetKeys!: string[];
-
-  @Prop({ trim: true, maxlength: 128 })
-  owner?: string;
-
-  @Prop({ trim: true, maxlength: 128 })
-  steward?: string;
-
-  @Prop({ trim: true, maxlength: 128 })
-  certificationOwner?: string;
-
-  @Prop({ type: [String], default: [] })
-  tags!: string[];
-
-  @Prop({ type: SemanticModelQualitySchema, default: () => ({}) })
-  quality!: SemanticModelQuality;
-
-  @Prop({ type: [SemanticMeasureSchema], default: [] })
-  measures!: SemanticMeasure[];
-
-  @Prop({ type: [SemanticDimensionSchema], default: [] })
-  dimensions!: SemanticDimension[];
-
-  @Prop({ type: [SemanticGlossaryTermSchema], default: [] })
-  glossaryTerms!: SemanticGlossaryTerm[];
-
-  @Prop({ type: Object, default: {} })
-  metadata!: SanitizedMetadata;
-
-  @Prop({ type: Object, default: {} })
-  settings!: SanitizedMetadata;
-
-  @Prop({ trim: true, maxlength: 128 })
-  createdBy?: string;
-
-  @Prop({ trim: true, maxlength: 128 })
-  updatedBy?: string;
-
-  createdAt!: Date;
-  updatedAt!: Date;
-}
-
-export type SemanticModelDocument = HydratedDocument<SemanticModel> & {
-  _id: Types.ObjectId;
-};
-
-export const SemanticModelSchema = SchemaFactory.createForClass(SemanticModel);
-
-SemanticModelSchema.index({ tenantId: 1, modelKey: 1 }, { unique: true });
-SemanticModelSchema.index({ tenantId: 1, status: 1 });

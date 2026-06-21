@@ -1,16 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import { sanitizeMetadata } from '../../../core/utils/sanitize-metadata';
 import { ExecutionRequestDryRunResponseDto } from '../dto/execution-request-dry-run-response.dto';
 import { ExecutionRequestTenantQueryDto } from '../dto/execution-request-query.dto';
 import { ExecutionRequestEventsRepository } from '../repositories/execution-request-events.repository';
-import { ExecutionRequestsRepository } from '../repositories/execution-requests.repository';
 import {
-  ExecutionRequestDocument,
-  ExecutionRequestMode,
-  ExecutionRequestStatus,
-} from '../schemas/execution-request.schema';
+  ExecutionRequestRecord,
+  ExecutionRequestsRepository,
+} from '../repositories/execution-requests.repository';
+import { ExecutionRequestMode, ExecutionRequestStatus } from '../schemas/execution-request.schema';
 import { ExecutionRequestEventType } from '../schemas/execution-request-event.schema';
 import { ExecutionRequestActorContext } from './execution-request-actor-context';
 import { ExecutionRequestAuditService } from './execution-request-audit.service';
@@ -46,14 +44,14 @@ export class ExecutionRequestDryRunService {
       updatedExecutionRequest =
         (await this.executionRequestsRepository.updateStatusByTenantAndId(
           executionRequest.tenantId,
-          executionRequest._id.toString(),
+          executionRequest.id,
           recommendedStatus,
         )) ?? executionRequest;
     }
 
     const event = await this.executionRequestEventsRepository.create({
       tenantId: executionRequest.tenantId,
-      executionRequestId: executionRequest._id,
+      executionRequestId: executionRequest.id,
       requestKey: executionRequest.requestKey,
       eventType: ready ? ExecutionRequestEventType.Accepted : ExecutionRequestEventType.Blocked,
       previousStatus,
@@ -95,7 +93,7 @@ export class ExecutionRequestDryRunService {
     }
 
     return {
-      executionRequestId: executionRequest._id.toString(),
+      executionRequestId: executionRequest.id,
       requestKey: executionRequest.requestKey,
       kind: executionRequest.kind,
       recommendedStatus,
@@ -113,9 +111,9 @@ export class ExecutionRequestDryRunService {
   private async getExecutionRequestOrThrow(
     tenantId: string,
     executionRequestId: string,
-  ): Promise<ExecutionRequestDocument> {
+  ): Promise<ExecutionRequestRecord> {
     const executionRequest = await this.executionRequestsRepository.findByTenantAndId(
-      new Types.ObjectId(tenantId),
+      tenantId,
       executionRequestId,
     );
 

@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import { sanitizeMetadata } from '../../../core/utils/sanitize-metadata';
 import {
@@ -8,9 +7,11 @@ import {
 } from '../dto/execution-request-demo-execute-response.dto';
 import { ExecutionRequestTenantQueryDto } from '../dto/execution-request-query.dto';
 import { ExecutionRequestEventsRepository } from '../repositories/execution-request-events.repository';
-import { ExecutionRequestsRepository } from '../repositories/execution-requests.repository';
 import {
-  ExecutionRequestDocument,
+  ExecutionRequestRecord,
+  ExecutionRequestsRepository,
+} from '../repositories/execution-requests.repository';
+import {
   ExecutionRequestKind,
   ExecutionRequestMode,
   ExecutionRequestStatus,
@@ -51,14 +52,14 @@ export class ExecutionRequestDemoExecutorService {
       updatedExecutionRequest =
         (await this.executionRequestsRepository.updateStatusByTenantAndId(
           executionRequest.tenantId,
-          executionRequest._id.toString(),
+          executionRequest.id,
           status,
         )) ?? executionRequest;
     }
 
     const event = await this.executionRequestEventsRepository.create({
       tenantId: executionRequest.tenantId,
-      executionRequestId: executionRequest._id,
+      executionRequestId: executionRequest.id,
       requestKey: executionRequest.requestKey,
       eventType: ready
         ? ExecutionRequestEventType.CompletedDemo
@@ -103,7 +104,7 @@ export class ExecutionRequestDemoExecutorService {
     }
 
     return {
-      executionRequestId: executionRequest._id.toString(),
+      executionRequestId: executionRequest.id,
       requestKey: executionRequest.requestKey,
       kind: executionRequest.kind,
       status,
@@ -123,9 +124,9 @@ export class ExecutionRequestDemoExecutorService {
   private async getExecutionRequestOrThrow(
     tenantId: string,
     executionRequestId: string,
-  ): Promise<ExecutionRequestDocument> {
+  ): Promise<ExecutionRequestRecord> {
     const executionRequest = await this.executionRequestsRepository.findByTenantAndId(
-      new Types.ObjectId(tenantId),
+      tenantId,
       executionRequestId,
     );
 

@@ -1,15 +1,17 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 
 import { TenantsController } from './controllers/tenants.controller';
+import { PostgresTenantsRepository } from './repositories/postgres-tenants.repository';
 import { TenantsRepository } from './repositories/tenants.repository';
-import { Tenant, TenantSchema } from './schemas/tenant.schema';
 import { TenantsService } from './services/tenants.service';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Tenant.name, schema: TenantSchema }])],
   controllers: [TenantsController],
-  providers: [TenantsRepository, TenantsService],
+  providers: [
+    PostgresTenantsRepository,
+    { provide: TenantsRepository, useExisting: PostgresTenantsRepository },
+    TenantsService,
+  ],
   exports: [TenantsService],
 })
 export class TenantsModule {}

@@ -41,6 +41,23 @@ npm install
 npm run start:dev
 ```
 
+## PostgreSQL local (opcional — migração ADR-0035, fase P1)
+
+O banco operacional continua sendo o MongoDB. O PostgreSQL é **opcional** nesta
+fase: serve para exercitar a conexão e o health-check introduzidos na P1. Suba o
+serviço via Docker (recomendado) e aponte `DELFOS_POSTGRES_URL` para ele:
+
+```powershell
+docker compose up -d postgres
+# no .env local:
+# DELFOS_POSTGRES_URL=postgresql://delfos:delfos@localhost:5432/delfos
+```
+
+Com a URL configurada, `GET /health` passa a reportar `postgres: { status: "up", latencyMs }`.
+Sem a URL, reporta `postgres: { status: "disabled" }` e a API roda 100% em MongoDB.
+O schema/migrations e a troca de repositórios vêm nas fases P2/P3
+(`docs/postgresql-migration-plan.md`). O ORM é Kysely (ADR-0036).
+
 ## Seed local da foundation
 
 Para popular o MongoDB local com configuracoes ficticias da foundation, rode:
@@ -66,6 +83,21 @@ armazena payload operacional. A idempotencia usa chaves estaveis como `slug`, e-
 O script usa models Mongoose diretamente porque os services/repositories atuais nao expõem
 upsert por todas essas chaves estaveis; isso mantem o seed local explicito e evita criar
 contrato publico ou endpoint administrativo para desenvolvimento.
+
+### Seed em PostgreSQL (migração ADR-0035, fase P4)
+
+Com `DELFOS_POSTGRES_URL` configurado, o `seed:dev` ramifica e popula o
+**PostgreSQL** em vez do MongoDB (via `KYSELY_DB`, `scripts/seed-dev-postgres.ts`),
+usando o mesmo conjunto ficticio e as mesmas chaves estaveis, com upserts
+`onConflict(...).doUpdateSet(...)` — idempotente e re-executavel. Os IDs sao UUIDs
+(nao ObjectIds), entao o comando `--dart-define` impresso ja traz UUIDs. Sem a URL,
+o caminho MongoDB segue inalterado.
+
+```powershell
+docker compose up -d postgres
+npm run migrate:latest   # aplica o schema antes do primeiro seed
+npm run seed:dev         # com DELFOS_POSTGRES_URL no .env, semeia o PostgreSQL
+```
 
 Ao final, o terminal imprime o `tenantId`, o `actorId` sugerido, o `connectionId`, o
 `credentialRef` e os IDs reais dos datasets, query definitions e dashboard definitions

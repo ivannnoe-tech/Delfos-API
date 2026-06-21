@@ -1,26 +1,21 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 
 import { AuditModule } from '../audit/audit.module';
 import { DashboardDefinitionsController } from './controllers/dashboard-definitions.controller';
 import { DashboardDefinitionsRepository } from './repositories/dashboard-definitions.repository';
-import {
-  DashboardDefinition,
-  DashboardDefinitionSchema,
-} from './schemas/dashboard-definition.schema';
+import { PostgresDashboardDefinitionsRepository } from './repositories/postgres-dashboard-definitions.repository';
 import { DashboardDefinitionSanitizerService } from './services/dashboard-definition-sanitizer.service';
 import { DashboardDefinitionsService } from './services/dashboard-definitions.service';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: DashboardDefinition.name, schema: DashboardDefinitionSchema },
-    ]),
-    AuditModule,
-  ],
+  imports: [AuditModule],
   controllers: [DashboardDefinitionsController],
   providers: [
-    DashboardDefinitionsRepository,
+    PostgresDashboardDefinitionsRepository,
+    {
+      provide: DashboardDefinitionsRepository,
+      useExisting: PostgresDashboardDefinitionsRepository,
+    },
     DashboardDefinitionsService,
     DashboardDefinitionSanitizerService,
   ],

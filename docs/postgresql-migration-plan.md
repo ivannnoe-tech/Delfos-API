@@ -60,15 +60,27 @@ explícito e, quando indicado, ADR própria. A fase atual concluída é a **P0**
 
 ## P1 — PostgreSQL Infrastructure Foundation
 
+> **Infra concluída (resta CI).** Subdecisão de ORM **resolvida**: **Kysely**
+> (ADR-0036), via spike comparativo runnable (Kysely 43 / Drizzle 42 / Prisma 37
+> em PostgreSQL real, módulo `tenants`+`users`). Dependências, env, serviço Docker,
+> conexão Kysely e health-check entregues e testados (436 testes verdes, conexão
+> real validada). Pendência: serviço `postgres` no pipeline de CI (será fechada
+> junto com a P4, que move o E2E para PostgreSQL).
+
 ### Escopo
-- Resolver a subdecisão pendente **"ORM/Query Layer Decision Review"** (Kysely
-  vs. Prisma vs. Drizzle) via spike curto em um módulo representativo.
-- Adicionar as dependências do PostgreSQL e do ORM escolhido.
-- Configurar variáveis de ambiente (`DELFOS_POSTGRES_URL` ou equivalente) com
-  validação no bootstrap.
-- Adicionar o serviço `postgres` ao `docker-compose.yml`.
-- Adicionar um health-check de conexão PostgreSQL (sem trocar o health atual).
-- Testes de conexão.
+- ~~Resolver a subdecisão pendente **"ORM/Query Layer Decision Review"**~~ —
+  **CONCLUÍDO**: spike comparativo runnable resolveu para **Kysely** (ADR-0036).
+- ~~Adicionar as dependências do PostgreSQL e do ORM escolhido~~ — **CONCLUÍDO**:
+  `kysely` + `pg` (deps), `kysely-codegen` + `@types/pg` (devDeps).
+- ~~Configurar `DELFOS_POSTGRES_URL` com validação no bootstrap~~ — **CONCLUÍDO**:
+  variável **opcional**, validada em `src/config/environment.ts`.
+- ~~Adicionar o serviço `postgres` ao `docker-compose.yml`~~ — **CONCLUÍDO**
+  (`postgres:16-alpine`, coexiste com `mongo`, com healthcheck).
+- ~~Health-check de conexão PostgreSQL (sem trocar o health atual)~~ —
+  **CONCLUÍDO**: `src/database/postgres/` (módulo global, provider Kysely,
+  `PostgresHealthService`); `/health` ganha o campo `postgres` (up/down/disabled).
+- ~~Testes de conexão~~ — **CONCLUÍDO**: unit (DummyDriver) + teste de conexão
+  real guardado por `TEST_POSTGRES_URL` (validado contra PostgreSQL 16 em Docker).
 
 ### Fora de escopo
 - Criar schema de domínio, migrations de tabela ou repositories PostgreSQL.
@@ -91,21 +103,34 @@ explícito e, quando indicado, ADR própria. A fase atual concluída é a **P0**
   `src/modules/health/`.
 
 ### Critérios de conclusão
-- ORM decidido e registrado; conexão PostgreSQL validada local + CI; MongoDB
-  intacto.
+- ORM decidido e registrado **(ok — Kysely, ADR-0036)**; conexão PostgreSQL
+  validada local **(ok)** + CI **(pendente — fecha com a P4)**; MongoDB intacto
+  **(ok)**.
 
 ---
 
 ## P2 — Schema / Migrations Foundation
 
+> **Concluída.** Schema das 13 tabelas criado como **migrations versionadas
+> Kysely** (5 arquivos `0001`–`0005` em `src/database/postgres/migrations/`),
+> com `up`/`down` validados contra PostgreSQL 16 real (sobe as 13 tabelas e
+> reverte a zero, idempotente). Tipos `DB` gerados por `kysely-codegen` a partir
+> do schema migrado. Subdecisões abertas resolvidas no `postgresql-data-model-draft.md`
+> §4 (UUID v4; semantic subdocs → JSONB; política de FK real × lógica).
+
 ### Escopo
-- Criar o schema inicial PostgreSQL conforme `postgresql-data-model-draft.md`.
-- Estabelecer o mecanismo de **migrations versionadas**.
-- `tenant_id` obrigatório (`NOT NULL`) nas tabelas de domínio.
-- Índices (prefixados por `tenant_id`), constraints e unique compostos.
-- Colunas JSONB para metadata/config declarativa.
-- `created_at` / `updated_at` obrigatórios; `archived_at` quando aplicável.
-- Soft archive/status conforme o modelo atual.
+- ~~Criar o schema inicial PostgreSQL conforme `postgresql-data-model-draft.md`~~
+  — **CONCLUÍDO** (13 tabelas, fiel ao modelo Mongoose atual).
+- ~~Mecanismo de **migrations versionadas**~~ — **CONCLUÍDO**: Kysely `Migrator`
+  com `FileMigrationProvider` (`migrator.ts`), CLI `scripts/migrate.ts`
+  (`migrate:latest`/`down`/`status`).
+- ~~`tenant_id NOT NULL` + FK → tenants em toda tabela tenant-scoped~~ — **OK**
+  (17 FKs reais; refs declarativas opcionais ficam lógicas, ver §4 do draft).
+- ~~Índices prefixados por `tenant_id`, constraints e unique compostos~~ — **OK**.
+- ~~Colunas JSONB para metadata/config declarativa~~ — **OK** (inclui measures/
+  dimensions/glossaryTerms como JSONB, decisão P2).
+- ~~`created_at`/`updated_at`~~ — **OK** (`execution_request_events` e `audit_logs`
+  só `created_at`, fiel ao modelo). Soft archive via coluna `status`.
 
 ### Fora de escopo
 - Migrar dados; ligar repositories aos módulos; remover MongoDB.
@@ -115,27 +140,55 @@ explícito e, quando indicado, ADR própria. A fase atual concluída é a **P0**
   `database-model.md` e os schemas `*.schema.ts`.
 
 ### Validações
-- Migrations sobem e descem de forma limpa (up/down) em banco efêmero.
-- Constraints e índices verificados por testes de schema.
+- ~~Migrations sobem e descem limpas (up/down) em banco efêmero~~ — **OK**
+  (`src/database/postgres/tests/migrations.spec.ts`, guardado por
+  `TEST_POSTGRES_URL`, contra PostgreSQL 16 em Docker).
+- ~~Constraints e índices verificados~~ — **OK** (FKs/uniques conferidos no schema vivo).
+- `format:check`, `lint`, `build`, `test` verdes; cobertura acima do piso
+  (migrations/migrator ficam fora do piso de cobertura unitária — são cobertos
+  pelo spec de integração com Postgres real).
 
 ### Rollback
 - Migrations `down`; schema é descartável (sem dados reais ainda).
 
 ### Arquivos/módulos afetados
-- Diretório de migrations; possível `src/database/` PostgreSQL.
+- `src/database/postgres/migrations/0001`–`0005`, `migrator.ts`,
+  `scripts/migrate.ts`, `database.types.ts` (codegen), `package.json` (scripts),
+  `jest.config.js` (exclusão de cobertura das migrations).
 
 ### Critérios de conclusão
-- Schema completo aplicável via migration; índices e constraints conferidos;
-  MongoDB ainda é o banco em uso.
+- **OK**: schema completo aplicável via migration; índices e constraints
+  conferidos; tipos `DB` gerados; MongoDB ainda é o banco em uso.
 
 ---
 
 ## P3 — Repository Port Migration
 
+> **Concluída.** Os 12 repositórios foram portados para o padrão **dual-backend**:
+> um contrato abstrato por repositório retornando um **record persistence-neutral**,
+> com `Mongo*Repository` (lógica Mongoose atual) e `Postgres*Repository` (Kysely),
+> selecionados em runtime por um factory no módulo conforme `DELFOS_POSTGRES_URL`.
+> O service mapeia record→DTO, então **o contrato REST é idêntico** nos dois
+> backends. MongoDB segue o default até a P5.
+>
+> Verificação: **550 testes verdes contra PostgreSQL 16 real** (specs de paridade
+> de todos os módulos + migrations) e **E2E 17/17 no caminho MongoDB** (sem
+> regressão). format/lint/build verdes; cobertura 87.9/71.6/83.1/88.1 acima do piso.
+>
+> Notas de implementação:
+> - Decorator compartilhado **`@IsEntityId`** (aceita ObjectId **ou** UUID) substitui
+>   `@IsMongoId` em todos os controllers/DTOs — mantém a validação estável na
+>   transição de formato de id.
+> - Repos PostgreSQL: `tenant_id` em todo `WHERE`; JSONB via `JSON.stringify`
+>   (lido de volta como objeto); ids não-UUID retornam não-encontrado (404, não 500);
+>   `updated_at` atualizado via `sql\`now()\``.
+> - Harness de teste `pg-test-db.ts`: um banco efêmero isolado por spec, migrado,
+>   para specs de paridade rodarem concorrentes sem corrida.
+
 Migração **módulo a módulo**. Para cada módulo: criar o repository PostgreSQL,
 manter o contrato do repository, validar paridade por testes, e só então passar
-ao próximo. O service/controller/DTO não muda; muda a implementação do
-repository.
+ao próximo. O service/controller/DTO muda o **mínimo** (passa a consumir o record
+neutro); o contrato REST não muda.
 
 Ordem sugerida (de menor para maior acoplamento):
 
@@ -188,6 +241,36 @@ Ordem sugerida (de menor para maior acoplamento):
 
 ## P4 — Seed and E2E Migration
 
+> **Concluída.** Três entregas:
+> 1. **E2E em PostgreSQL** — `startE2EApp` provisiona um banco efêmero
+>    (`provisionEphemeralDb`, helper compartilhado com o `pg-test-db.ts` das
+>    specs de paridade), migra para latest, semeia o tenant de isolamento e
+>    define `DELFOS_POSTGRES_URL` **antes** do `import('app.module')` para que os
+>    factories escolham os repos PostgreSQL. As **mesmas 5 specs** passam nos dois
+>    backends (Mongo via `npm run test:e2e`; Postgres via
+>    `npm run test:e2e:postgres`), provando paridade do contrato REST. O AppModule
+>    ainda sobe o Mongo em memória (MongooseModule fica até a P5).
+> 2. **Seed em PostgreSQL** — `seed:dev` ramifica por backend: com
+>    `DELFOS_POSTGRES_URL` configurado, semeia o PostgreSQL via `KYSELY_DB`
+>    (`scripts/seed-dev-postgres.ts`) com upserts `onConflict(...).doUpdateSet(...)`
+>    nas **mesmas chaves estáveis** do seed Mongo; reuso das shapes de
+>    `seed-dev-data.ts`. Mesmo conjunto fictício, idempotente e re-executável.
+>    Sem `DELFOS_POSTGRES_URL`, o caminho Mongo segue inalterado.
+> - **Encoding de id no E2E:** `tenantId`/`actorId` são ObjectId (Mongo) ou UUID
+>   (Postgres) conforme o backend — o formato muda, o contrato REST não. No
+>   caminho Postgres o harness semeia a linha `tenants` com o UUID fixo do
+>   `E2E_TENANT_ID` para satisfazer a FK `tenant_id → tenants(id)`.
+> - **CI:** `test` e `coverage` ganharam um serviço `postgres:16-alpine`
+>   health-checked + `TEST_POSTGRES_URL`, então as specs de paridade e o
+>   round-trip de migrations passam a **rodar** no CI (antes pulavam). Novo job
+>   opcional `e2e-postgres` (espelha o `e2e`) roda `npm run test:e2e:postgres`.
+>
+> Verificação: `format:check`/`lint`/`build` verdes; `npm test` (sem env) 439
+> testes (15 suites de paridade puladas); suíte completa contra PostgreSQL real
+> **76 suites / 550 testes verdes**; E2E Mongo e E2E Postgres **5 suites / 17
+> testes** cada; seed Postgres idempotente (contagens estáveis na 2ª execução).
+> Cobertura 87.9/71.6/83.1/88.1 acima do piso.
+
 ### Escopo
 - `npm run seed:dev` passa a popular PostgreSQL com dados fictícios.
 - E2E (`test:e2e`) passa a usar PostgreSQL efêmero (container ou embedded) no
@@ -218,6 +301,15 @@ Ordem sugerida (de menor para maior acoplamento):
 ---
 
 ## P5 — Mongo / Mongoose Removal
+
+> **Concluída (2026-06-21).** MongoDB/Mongoose removidos; PostgreSQL é o banco
+> único. Os 12 módulos ficaram sem schema/repo Mongoose, `MongooseModule`/config
+> Mongo saíram do `AppModule`/`src/config/`, `mongoose`/`@nestjs/mongoose`/
+> `mongodb-memory-server` saíram do `package.json`, o serviço `mongo` saiu do
+> `docker-compose.yml`, e `DELFOS_DATABASE_URL` deu lugar a `DELFOS_POSTGRES_URL`
+> **obrigatório**. ADR-0005 promovida a `Superseded by ADR-0035`. Verificado:
+> `format:check`/`lint`/`build` verdes, **565/565** unit + **17/17** E2E contra
+> PostgreSQL+Valkey reais.
 
 ### Escopo
 - Remover os schemas Mongoose (`src/modules/<n>/schemas/*.schema.ts`).
@@ -253,14 +345,28 @@ Ordem sugerida (de menor para maior acoplamento):
 
 ## P6 — Valkey Cache Foundation
 
+> **Concluída (fundação).** Abstração de cache implementada em `src/core/cache/`;
+> **não** há cache aplicado a endpoints ainda (cada caso de uso da §2 do
+> `valkey-cache-plan.md` exige escopo próprio). Cache **desligado por default**
+> (NoopCacheService); habilita Valkey quando `VALKEY_URL` é configurado.
+> Verificado contra Valkey 8 real em Docker.
+
 ### Escopo
-- Adicionar o serviço `valkey` ao `docker-compose.yml`.
-- Configurar variáveis de ambiente do Valkey com validação no bootstrap.
-- Criar uma **abstração de cache** (`CacheService` / port), com Valkey atrás.
-- **TTL obrigatório** em toda chave.
-- **Namespace por tenant** nas chaves (ver `valkey-cache-plan.md`).
-- Política de invalidação documentada.
-- Fallback para PostgreSQL quando o cache falhar.
+- ~~Adicionar o serviço `valkey` ao `docker-compose.yml`~~ — **OK**
+  (`valkey/valkey:8-alpine`, healthcheck).
+- ~~Variáveis de ambiente do Valkey com validação no bootstrap~~ — **OK**
+  (`VALKEY_URL` opcional, validada em `environment.ts`).
+- ~~Abstração de cache (`CacheService` / port), com Valkey atrás~~ — **OK**
+  (`CacheService` abstrato; `ValkeyCacheService` via `iovalkey`;
+  `NoopCacheService` default desligado; factory por config no `CacheModule`).
+- ~~**TTL obrigatório** em toda chave~~ — **OK** (`set` rejeita TTL ≤ 0).
+- ~~**Namespace por tenant** nas chaves~~ — **OK** (`buildCacheKey`: env + tenant
+  obrigatórios; sem chave cross-tenant; `delByPrefix` por `SCAN`, nunca `KEYS *`).
+- Política de invalidação documentada — **parcial**: o mecanismo (`delByPrefix`
+  por tenant/namespace) existe; a política por recurso será fechada ao aplicar o
+  cache a cada caso de uso.
+- ~~Fallback para o banco quando o cache falhar~~ — **OK** (erros do backend são
+  engolidos: `get`→miss, `set`/`del`→no-op; cache nunca é dependência crítica).
 
 ### Fora de escopo
 - Fila, worker, dispatch, scheduler — exigem ADR de promoção própria.
@@ -289,15 +395,28 @@ Ordem sugerida (de menor para maior acoplamento):
 
 ## P7 — Hardening
 
+> **Concluída (núcleo).** Observabilidade, CI contra PostgreSQL+Valkey, e os
+> registros de backup/restore, segurança de migrations, rollback por fase e
+> avaliação de RLS estão em `docs/postgresql-hardening.md`. Itens de performance
+> sob carga real (planos de query, N+1) ficam para quando houver carga real —
+> não há runtime de query real ainda (gates ADR-0021/0022).
+
 ### Escopo
-- CI completo (lint/test/build/E2E) estável contra PostgreSQL + Valkey.
-- Revisão de branch protection.
-- Observabilidade: métricas de pool de conexão, cache hit ratio, latência.
-- Performance: revisão de índices, planos de query, N+1.
-- Backups e estratégia de restore do PostgreSQL.
-- Segurança de migrations (revisão de migrations destrutivas).
-- Rollback drills documentados e exercitados.
-- Avaliar Row-Level Security (RLS) como defesa adicional de tenant.
+- ~~CI estável contra PostgreSQL + Valkey~~ — **OK**: jobs `test`/`coverage` com
+  serviços `postgres` + `valkey` (os specs guardados rodam em CI); `e2e-postgres`.
+- ~~Observabilidade: cache hit ratio, latência~~ — **OK**: `/health` reporta
+  `postgres` (status+latência) e `cache` (enabled+hits/misses/errors). Métricas
+  de pool e export de métricas ficam como futuro (`observability-plan.md`).
+- ~~Backups e restore do PostgreSQL~~ — **OK (registro)**: `postgresql-hardening.md`
+  §3 + `backup-restore.md` (Valkey não tem backup — derivável/descartável).
+- ~~Segurança de migrations (destrutivas)~~ — **OK (registro)**: `down()` é
+  test-only; produção é forward-only (hardening §4).
+- ~~Rollback drills documentados~~ — **OK (registro)**: rollback por fase +
+  reversibilidade por config (hardening §5).
+- ~~Avaliar Row-Level Security (RLS)~~ — **OK**: avaliada, **não adotada** agora
+  (isolamento já garantido na aplicação); registrada como opção futura (§6).
+- Revisão de branch protection — **registro** em hardening §7 + checklist.
+- Performance sob carga (índices/N+1) — **adiado** (sem runtime de query real).
 
 ### Fora de escopo
 - Novos recursos de produto; runtime real; dispatch real.
@@ -326,13 +445,13 @@ Ordem sugerida (de menor para maior acoplamento):
 | Fase | Tema | Estado |
 |---|---|---|
 | P0 | ADR / docs only | concluída |
-| P1 | PostgreSQL Infrastructure Foundation | futura |
-| P2 | Schema / Migrations Foundation | futura |
-| P3 | Repository Port Migration | futura |
-| P4 | Seed and E2E Migration | futura |
-| P5 | Mongo / Mongoose Removal | futura |
-| P6 | Valkey Cache Foundation | futura |
-| P7 | Hardening | futura |
+| P1 | PostgreSQL Infrastructure Foundation | concluída (serviço PG no CI fechado na P4) |
+| P2 | Schema / Migrations Foundation | concluída |
+| P3 | Repository Port Migration | concluída (12 módulos, dual-backend) |
+| P4 | Seed and E2E Migration | concluída (seed + E2E em PostgreSQL; CI com serviço PG) |
+| P5 | Mongo / Mongoose Removal | concluída (PostgreSQL é o banco único; ADR-0005 superseded) |
+| P6 | Valkey Cache Foundation | concluída (fundação — cache não aplicado a endpoints ainda) |
+| P7 | Hardening | concluída (núcleo; performance sob carga adiada até runtime real) |
 
 ## Relação com outros documentos
 

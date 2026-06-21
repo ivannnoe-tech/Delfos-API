@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { randomUUID } from 'node:crypto';
 
 import {
   buildDashboardInput,
@@ -46,17 +46,17 @@ describe('seed-dev data', () => {
     ]);
 
     const dashboard = buildDashboardInput({
-      salesOverview: new Types.ObjectId(),
-      salesByDay: new Types.ObjectId(),
-      customersSummary: new Types.ObjectId(),
+      salesOverview: randomUUID(),
+      salesByDay: randomUUID(),
+      customersSummary: randomUUID(),
     });
 
     expect(dashboard.dashboardKey).toBe('commercial_dashboard_demo');
     expect(dashboard.widgets).toHaveLength(3);
 
     const report = buildReportInput({
-      salesOverview: new Types.ObjectId(),
-      commercialDashboard: new Types.ObjectId(),
+      salesOverview: randomUUID(),
+      commercialDashboard: randomUUID(),
     });
 
     expect(report.reportKey).toBe('monthly_sales_report_demo');
@@ -70,13 +70,13 @@ describe('seed-dev data', () => {
       fieldMappings: buildFieldMappingInputs(),
       queries: buildQueryInputs(),
       dashboard: buildDashboardInput({
-        salesOverview: new Types.ObjectId('662d4f6e7a1c2b00124f0601'),
-        salesByDay: new Types.ObjectId('662d4f6e7a1c2b00124f0602'),
-        customersSummary: new Types.ObjectId('662d4f6e7a1c2b00124f0603'),
+        salesOverview: '662d4f6e7a1c2b00124f0601',
+        salesByDay: '662d4f6e7a1c2b00124f0602',
+        customersSummary: '662d4f6e7a1c2b00124f0603',
       }),
       report: buildReportInput({
-        salesOverview: new Types.ObjectId('662d4f6e7a1c2b00124f0601'),
-        commercialDashboard: new Types.ObjectId('662d4f6e7a1c2b00124f0701'),
+        salesOverview: '662d4f6e7a1c2b00124f0601',
+        commercialDashboard: '662d4f6e7a1c2b00124f0701',
       }),
     }).toLowerCase();
 

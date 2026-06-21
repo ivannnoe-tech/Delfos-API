@@ -17,8 +17,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { IsMongoId } from 'class-validator';
-
+import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import { AdminRoles } from '../../auth/decorators/admin-roles.decorator';
 import { ApiFoundationAuthHeaders } from '../../auth/decorators/api-foundation-auth-headers.decorator';
 import { AdminKeyGuard } from '../../auth/guards/admin-key.guard';
@@ -38,7 +37,7 @@ import { UpdateSemanticModelDto } from '../dto/update-semantic-model.dto';
 import { SemanticModelsService } from '../services/semantic-models.service';
 
 class SemanticModelIdParamDto {
-  @IsMongoId()
+  @IsEntityId()
   id!: string;
 }
 

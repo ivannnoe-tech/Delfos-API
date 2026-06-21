@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 
 import { AppConfigModule } from './config/app-config.module';
-import { AppConfigService } from './config/app-config.service';
-import { createMongooseOptions } from './config/mongoose.config';
+import { CacheModule } from './core/cache/cache.module';
+import { PostgresModule } from './database/postgres/postgres.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConnectionsModule } from './modules/connections/connections.module';
@@ -23,11 +22,8 @@ import { UsersModule } from './modules/users/users.module';
 @Module({
   imports: [
     AppConfigModule,
-    MongooseModule.forRootAsync({
-      imports: [AppConfigModule],
-      inject: [AppConfigService],
-      useFactory: createMongooseOptions,
-    }),
+    PostgresModule,
+    CacheModule,
     AuthModule,
     HealthModule,
     TenantsModule,

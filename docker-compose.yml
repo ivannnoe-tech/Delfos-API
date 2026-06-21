@@ -1,12 +1,41 @@
 services:
-  mongo:
-    image: mongo:8.0
-    container_name: delfos-mongo
+  # PostgreSQL: banco primario e unico do Delfos (ADR-0035), desde a fase P5.
+  # DELFOS_POSTGRES_URL local: postgresql://delfos:delfos@localhost:5432/delfos
+  postgres:
+    image: postgres:16-alpine
+    container_name: delfos-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-delfos}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-delfos}
+      POSTGRES_DB: ${POSTGRES_DB:-delfos}
+    ports:
+      - "5432:5432"
+    volumes:
+      - delfos_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-delfos} -d ${POSTGRES_DB:-delfos}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Valkey: cache layer (ADR-0035), introduzido na fase P6. Opcional — o sistema
+  # sobe e funciona sem ele (cache desligado). Nunca é source of truth.
+  # VALKEY_URL local: redis://localhost:6379
+  valkey:
+    image: valkey/valkey:8-alpine
+    container_name: delfos-valkey
     restart: unless-stopped
     ports:
-      - "27017:27017"
+      - "6379:6379"
     volumes:
-      - delfos_mongo_data:/data/db
+      - delfos_valkey_data:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
-  delfos_mongo_data:
+  delfos_postgres_data:
+  delfos_valkey_data:

@@ -1,5 +1,4 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import { buildListMeta, ListResponse } from '../../../core/dto/list-meta.dto';
 import { sanitizeMetadata } from '../../../core/utils/sanitize-metadata';
@@ -19,16 +18,16 @@ import {
 } from '../dto/dashboard-definition-response.dto';
 import { UpdateDashboardDefinitionDto } from '../dto/update-dashboard-definition.dto';
 import {
+  DashboardDefinitionRecord,
   DashboardDefinitionsRepository,
+  DashboardDefinitionWidgetRecord,
   UpdateDashboardDefinitionRecord,
 } from '../repositories/dashboard-definitions.repository';
 import {
-  DashboardDefinitionDocument,
   DashboardDefinitionFilter,
   DashboardDefinitionLayout,
   DashboardDefinitionSection,
   DashboardDefinitionVisualization,
-  DashboardDefinitionWidget,
 } from '../schemas/dashboard-definition.schema';
 import { DashboardDefinitionSanitizerService } from './dashboard-definition-sanitizer.service';
 
@@ -50,7 +49,7 @@ export class DashboardDefinitionsService {
   ): Promise<DashboardDefinitionResponseDto> {
     try {
       const dashboardDefinition = await this.dashboardDefinitionsRepository.create({
-        tenantId: new Types.ObjectId(dto.tenantId),
+        tenantId: dto.tenantId,
         dashboardKey: dto.dashboardKey,
         name: dto.name,
         description: dto.description,
@@ -79,7 +78,7 @@ export class DashboardDefinitionsService {
     query: ListDashboardDefinitionsQueryDto,
   ): Promise<ListResponse<DashboardDefinitionResponseDto>> {
     const filters = {
-      tenantId: new Types.ObjectId(query.tenantId),
+      tenantId: query.tenantId,
       dashboardKey: query.dashboardKey,
       status: query.status,
       visibility: query.visibility,
@@ -100,7 +99,7 @@ export class DashboardDefinitionsService {
     id: string,
   ): Promise<DashboardDefinitionResponseDto> {
     const dashboardDefinition = await this.dashboardDefinitionsRepository.findByTenantAndId(
-      new Types.ObjectId(tenantId),
+      tenantId,
       id,
     );
 
@@ -119,7 +118,7 @@ export class DashboardDefinitionsService {
   ): Promise<DashboardDefinitionResponseDto> {
     try {
       const dashboardDefinition = await this.dashboardDefinitionsRepository.updateByTenantAndId(
-        new Types.ObjectId(tenantId),
+        tenantId,
         id,
         this.toUpdateRecord(dto, actor),
       );
@@ -142,7 +141,7 @@ export class DashboardDefinitionsService {
     actor: DashboardDefinitionActorContext = {},
   ): Promise<DashboardDefinitionResponseDto> {
     const dashboardDefinition = await this.dashboardDefinitionsRepository.archiveByTenantAndId(
-      new Types.ObjectId(tenantId),
+      tenantId,
       id,
       actor.actorId,
     );
@@ -187,15 +186,15 @@ export class DashboardDefinitionsService {
 
   private async recordAudit(
     action: string,
-    dashboardDefinition: DashboardDefinitionDocument,
+    dashboardDefinition: DashboardDefinitionRecord,
     actor: DashboardDefinitionActorContext,
   ): Promise<void> {
     await this.auditService.record({
-      tenantId: dashboardDefinition.tenantId.toString(),
+      tenantId: dashboardDefinition.tenantId,
       actorUserId: this.toAuditActorUserId(actor.actorId),
       action,
       entity: 'dashboard_definition',
-      entityId: dashboardDefinition._id.toString(),
+      entityId: dashboardDefinition.id,
       metadata: {
         dashboardKey: dashboardDefinition.dashboardKey,
         status: dashboardDefinition.status,
@@ -215,11 +214,11 @@ export class DashboardDefinitionsService {
   }
 
   private toResponse(
-    dashboardDefinition: DashboardDefinitionDocument,
+    dashboardDefinition: DashboardDefinitionRecord,
   ): DashboardDefinitionResponseDto {
     return {
-      id: dashboardDefinition._id.toString(),
-      tenantId: dashboardDefinition.tenantId.toString(),
+      id: dashboardDefinition.id,
+      tenantId: dashboardDefinition.tenantId,
       dashboardKey: dashboardDefinition.dashboardKey,
       name: dashboardDefinition.name,
       description: dashboardDefinition.description,
@@ -263,14 +262,14 @@ export class DashboardDefinitionsService {
   }
 
   private toWidgetResponse(
-    widget: DashboardDefinitionWidget,
+    widget: DashboardDefinitionWidgetRecord,
   ): DashboardDefinitionWidgetResponseDto {
     return {
       key: widget.key,
       title: widget.title,
       description: widget.description,
       type: widget.type,
-      queryDefinitionId: widget.queryDefinitionId?.toString(),
+      queryDefinitionId: widget.queryDefinitionId,
       sectionKey: widget.sectionKey,
       order: widget.order,
       size: widget.size,
@@ -321,11 +320,12 @@ export class DashboardDefinitionsService {
   }
 
   private isDuplicateKeyError(error: unknown): boolean {
-    return (
-      typeof error === 'object' &&
-      error !== null &&
-      'code' in error &&
-      (error as { code?: unknown }).code === 11000
-    );
+    if (typeof error !== 'object' || error === null || !('code' in error)) {
+      return false;
+    }
+
+    const code = (error as { code?: unknown }).code;
+    // Mongo duplicate-key error code (11000) or PostgreSQL unique_violation (23505).
+    return code === 11000 || code === '23505';
   }
 }

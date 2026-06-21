@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import {
   isSensitiveMetadataValue,
   sanitizeMetadata,
   SanitizedMetadataValue,
 } from '../../../core/utils/sanitize-metadata';
+import { DashboardDefinitionWidgetRecord } from '../repositories/dashboard-definitions.repository';
 import { DashboardDefinitionFilterDto } from '../dto/dashboard-definition-filter.dto';
 import { DashboardDefinitionLayoutDto } from '../dto/dashboard-definition-layout.dto';
 import {
@@ -19,7 +19,6 @@ import {
   DashboardDefinitionLayoutType,
   DashboardDefinitionSection,
   DashboardDefinitionVisualization,
-  DashboardDefinitionWidget,
 } from '../schemas/dashboard-definition.schema';
 
 @Injectable()
@@ -43,15 +42,13 @@ export class DashboardDefinitionSanitizerService {
     }));
   }
 
-  sanitizeWidgets(widgets?: DashboardDefinitionWidgetDto[]): DashboardDefinitionWidget[] {
+  sanitizeWidgets(widgets?: DashboardDefinitionWidgetDto[]): DashboardDefinitionWidgetRecord[] {
     return (widgets ?? []).map((widget) => ({
       key: widget.key,
       title: widget.title,
       description: widget.description,
       type: widget.type,
-      queryDefinitionId: widget.queryDefinitionId
-        ? new Types.ObjectId(widget.queryDefinitionId)
-        : undefined,
+      queryDefinitionId: widget.queryDefinitionId,
       sectionKey: widget.sectionKey,
       order: widget.order,
       size: widget.size,

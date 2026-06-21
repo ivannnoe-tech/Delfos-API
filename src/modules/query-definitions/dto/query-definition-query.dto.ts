@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsMongoId, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
+import { IsEnum, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 
+import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import { PaginationQueryDto } from '../../../core/dto/pagination-query.dto';
 import { QueryDefinitionStatus, QueryDefinitionType } from '../schemas/query-definition.schema';
 
@@ -8,12 +9,12 @@ const stableKeyPattern = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
 
 export class ListQueryDefinitionsQueryDto extends PaginationQueryDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })
-  @IsMongoId()
+  @IsEntityId()
   tenantId!: string;
 
   @ApiPropertyOptional({ example: '662d4f6e7a1c2b00124f0501' })
   @IsOptional()
-  @IsMongoId()
+  @IsEntityId()
   datasetId?: string;
 
   @ApiPropertyOptional({ example: 'sales_overview' })
@@ -36,6 +37,6 @@ export class ListQueryDefinitionsQueryDto extends PaginationQueryDto {
 
 export class QueryDefinitionTenantQueryDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })
-  @IsMongoId()
+  @IsEntityId()
   tenantId!: string;
 }

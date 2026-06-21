@@ -3,7 +3,6 @@ import {
   ArrayMaxSize,
   IsArray,
   IsEnum,
-  IsMongoId,
   IsObject,
   IsOptional,
   IsString,
@@ -13,6 +12,7 @@ import {
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
+import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import { SemanticModelStatus } from '../schemas/semantic-model.schema';
 import { SemanticDimensionDto } from './semantic-dimension.dto';
 import { SemanticGlossaryTermDto } from './semantic-glossary-term.dto';
@@ -23,7 +23,7 @@ const stableKeyPattern = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
 
 export class CreateSemanticModelDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })
-  @IsMongoId()
+  @IsEntityId()
   tenantId!: string;
 
   @ApiProperty({ example: 'comercial_semantico' })

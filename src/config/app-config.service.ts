@@ -15,8 +15,28 @@ export class AppConfigService {
     return this.configService.get('PORT', { infer: true });
   }
 
-  get databaseUrl(): string {
-    return this.configService.get('DELFOS_DATABASE_URL', { infer: true });
+  /**
+   * PostgreSQL connection URL (ADR-0035). Sole database since P5 (Mongo removed);
+   * required and validated at bootstrap.
+   */
+  get postgresUrl(): string {
+    return this.configService.get('DELFOS_POSTGRES_URL', { infer: true });
+  }
+
+  /**
+   * Valkey cache URL (ADR-0035 / P6). Optional: `undefined` means the cache is
+   * disabled and the system serves from the database only.
+   */
+  get valkeyUrl(): string | undefined {
+    return this.configService.get('VALKEY_URL', { infer: true });
+  }
+
+  /** Environment label used in cache key namespaces (`delfos:{env}:...`). */
+  get cacheEnv(): string {
+    const nodeEnv = this.nodeEnv;
+    if (nodeEnv === 'production') return 'prod';
+    if (nodeEnv === 'test') return 'test';
+    return 'local';
   }
 
   get adminKey(): string {

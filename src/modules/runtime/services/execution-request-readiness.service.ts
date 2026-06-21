@@ -9,10 +9,8 @@ import { QueryDefinitionStatus } from '../../query-definitions/schemas/query-def
 import { QueryDefinitionsService } from '../../query-definitions/services/query-definitions.service';
 import { ReportDefinitionsService } from '../../report-definitions/services/report-definitions.service';
 import { ExecutionRequestReadinessItemDto } from '../dto/execution-request-dry-run-response.dto';
-import {
-  ExecutionRequestDocument,
-  ExecutionRequestKind,
-} from '../schemas/execution-request.schema';
+import { ExecutionRequestRecord } from '../repositories/execution-requests.repository';
+import { ExecutionRequestKind } from '../schemas/execution-request.schema';
 
 export interface ReadinessAccumulator {
   checks: ExecutionRequestReadinessItemDto[];
@@ -30,24 +28,24 @@ export class ExecutionRequestReadinessService {
     private readonly fieldMappingsService: FieldMappingsService,
   ) {}
 
-  async evaluate(executionRequest: ExecutionRequestDocument): Promise<ReadinessAccumulator> {
+  async evaluate(executionRequest: ExecutionRequestRecord): Promise<ReadinessAccumulator> {
     switch (executionRequest.kind) {
       case ExecutionRequestKind.Query:
         return this.evaluateQuery(
-          executionRequest.tenantId.toString(),
-          executionRequest.queryDefinitionId?.toString(),
+          executionRequest.tenantId,
+          executionRequest.queryDefinitionId,
           'executionRequest.queryDefinitionId',
         );
       case ExecutionRequestKind.Dashboard:
         return this.evaluateDashboard(
-          executionRequest.tenantId.toString(),
-          executionRequest.dashboardDefinitionId?.toString(),
+          executionRequest.tenantId,
+          executionRequest.dashboardDefinitionId,
           'executionRequest.dashboardDefinitionId',
         );
       case ExecutionRequestKind.Report:
         return this.evaluateReport(
-          executionRequest.tenantId.toString(),
-          executionRequest.reportDefinitionId?.toString(),
+          executionRequest.tenantId,
+          executionRequest.reportDefinitionId,
           'executionRequest.reportDefinitionId',
         );
     }

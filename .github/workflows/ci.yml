@@ -38,6 +38,37 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
 
+    # Real PostgreSQL + Valkey so the guarded parity/migrations specs and the
+    # Valkey integration spec (all skipped without their env URLs) actually run.
+    # They provision and drop their own ephemeral databases/keys.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      valkey:
+        image: valkey/valkey:8-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "valkey-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      TEST_POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/postgres
+      TEST_VALKEY_URL: redis://localhost:6379
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -79,6 +110,36 @@ jobs:
     name: Coverage
     runs-on: ubuntu-latest
 
+    # Same real PostgreSQL + Valkey as the test job: the guarded parity/migrations
+    # and Valkey specs run under coverage too, so they are exercised in CI.
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      valkey:
+        image: valkey/valkey:8-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "valkey-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      TEST_POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/postgres
+      TEST_VALKEY_URL: redis://localhost:6379
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -95,17 +156,32 @@ jobs:
       - name: Run tests with coverage
         run: npm run test:cov
 
-  # Optional job: runs the foundation E2E suite (in-memory MongoDB).
-  # Kept separate from the required checks above. It is NOT marked as a
-  # required status check in branch protection yet, but it still fails
-  # this workflow if the E2E suite fails (no continue-on-error).
-  e2e:
-    name: E2E (optional)
+  # Optional job: runs the foundation E2E suite against PostgreSQL — the sole
+  # backend since P5 (ADR-0035). A fresh ephemeral PostgreSQL database is
+  # provisioned per spec. Kept separate from the required checks above; it is
+  # NOT marked as a required status check in branch protection yet, but it still
+  # fails this workflow if the E2E suite fails (no continue-on-error).
+  e2e-postgres:
+    name: E2E PostgreSQL (optional)
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     env:
-      # Pin the mongodb-memory-server binary directory so it can be cached.
-      MONGOMS_DOWNLOAD_DIR: ${{ github.workspace }}/.cache/mongodb-binaries
+      E2E_POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/postgres
 
     steps:
       - name: Checkout
@@ -117,19 +193,11 @@ jobs:
           node-version: 24
           cache: npm
 
-      - name: Cache mongodb-memory-server binaries
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/.cache/mongodb-binaries
-          key: mongodb-binaries-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            mongodb-binaries-${{ runner.os }}-
-
       - name: Install dependencies
         run: npm ci
 
-      - name: Run E2E tests
-        run: npm run test:e2e
+      - name: Run E2E tests on PostgreSQL
+        run: npm run test:e2e:postgres
 
   # Conventional Commits check for the commits introduced by a pull request.
   commitlint:

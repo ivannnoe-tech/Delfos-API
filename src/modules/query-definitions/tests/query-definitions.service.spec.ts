@@ -1,12 +1,14 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
+import { randomUUID } from 'node:crypto';
 
 import { AuditService } from '../../audit/services/audit.service';
-import { QueryDefinitionsRepository } from '../repositories/query-definitions.repository';
+import {
+  QueryDefinitionRecord,
+  QueryDefinitionsRepository,
+} from '../repositories/query-definitions.repository';
 import {
   QueryDefinitionAggregation,
   QueryDefinitionDimensionType,
-  QueryDefinitionDocument,
   QueryDefinitionFilterOperator,
   QueryDefinitionSortDirection,
   QueryDefinitionStatus,
@@ -22,14 +24,14 @@ type AuditServiceMock = {
 
 describe('QueryDefinitionsService', () => {
   it('creates a query definition with sanitized free values and safe audit', async () => {
-    const queryDefinitionId = new Types.ObjectId();
-    const tenantId = new Types.ObjectId();
-    const datasetId = new Types.ObjectId();
+    const queryDefinitionId = '662d4f6e7a1c2b00124f0601';
+    const tenantId = '662d4f6e7a1c2b00124f0001';
+    const datasetId = '662d4f6e7a1c2b00124f0501';
     const createdAt = new Date('2026-04-26T12:00:00.000Z');
     const repository: Pick<QueryDefinitionsRepository, 'create'> = {
       create: jest.fn(async (record) =>
-        createQueryDefinitionDocument({
-          _id: queryDefinitionId,
+        buildQueryDefinitionRecord({
+          id: queryDefinitionId,
           tenantId: record.tenantId,
           datasetId: record.datasetId,
           queryKey: record.queryKey,
@@ -59,8 +61,8 @@ describe('QueryDefinitionsService', () => {
 
     const result = await service.create(
       {
-        tenantId: tenantId.toString(),
-        datasetId: datasetId.toString(),
+        tenantId,
+        datasetId,
         queryKey: 'sales_overview',
         name: 'Visao geral de vendas',
         description: 'Definicao logica para indicadores de vendas',
@@ -138,9 +140,9 @@ describe('QueryDefinitionsService', () => {
       }),
     );
     expect(result).toMatchObject({
-      id: queryDefinitionId.toString(),
-      tenantId: tenantId.toString(),
-      datasetId: datasetId.toString(),
+      id: queryDefinitionId,
+      tenantId,
+      datasetId,
       queryKey: 'sales_overview',
       metadata: { domain: 'sales' },
       settings: { visibleInBuilder: true },
@@ -148,30 +150,30 @@ describe('QueryDefinitionsService', () => {
     expect(JSON.stringify(result)).not.toContain('must-not-leak');
     expect(JSON.stringify(result)).not.toContain('postgres://user:pass@example/db');
     expect(auditService.record).toHaveBeenCalledWith({
-      tenantId: tenantId.toString(),
+      tenantId,
       actorUserId: undefined,
       action: 'query_definition.created',
       entity: 'query_definition',
-      entityId: queryDefinitionId.toString(),
+      entityId: queryDefinitionId,
       metadata: {
         queryKey: 'sales_overview',
         status: QueryDefinitionStatus.Draft,
         type: QueryDefinitionType.Metric,
-        datasetId: datasetId.toString(),
+        datasetId,
       },
     });
     expect(JSON.stringify(auditService.record.mock.calls)).not.toContain('must-not-leak');
   });
 
   it('lists query definitions by tenant filters', async () => {
-    const tenantId = new Types.ObjectId();
-    const datasetId = new Types.ObjectId();
-    const queryDefinitionId = new Types.ObjectId();
+    const tenantId = '662d4f6e7a1c2b00124f0001';
+    const datasetId = '662d4f6e7a1c2b00124f0501';
+    const queryDefinitionId = '662d4f6e7a1c2b00124f0601';
     const createdAt = new Date('2026-04-26T12:00:00.000Z');
     const repository: Pick<QueryDefinitionsRepository, 'findByFilters' | 'countByFilters'> = {
       findByFilters: jest.fn(async () => [
-        createQueryDefinitionDocument({
-          _id: queryDefinitionId,
+        buildQueryDefinitionRecord({
+          id: queryDefinitionId,
           tenantId,
           datasetId,
           queryKey: 'sales_overview',
@@ -195,8 +197,8 @@ describe('QueryDefinitionsService', () => {
     const service = createService(repository);
 
     const result = await service.findByFilters({
-      tenantId: tenantId.toString(),
-      datasetId: datasetId.toString(),
+      tenantId,
+      datasetId,
       status: QueryDefinitionStatus.Active,
       page: 1,
       pageSize: 25,
@@ -218,31 +220,28 @@ describe('QueryDefinitionsService', () => {
   });
 
   it('gets one query definition using tenant scoped lookup', async () => {
-    const tenantId = new Types.ObjectId();
-    const queryDefinitionId = new Types.ObjectId();
+    const tenantId = '662d4f6e7a1c2b00124f0001';
+    const queryDefinitionId = '662d4f6e7a1c2b00124f0601';
     const repository: Pick<QueryDefinitionsRepository, 'findByTenantAndId'> = {
       findByTenantAndId: jest.fn(async () => null),
     };
     const service = createService(repository);
 
-    await expect(
-      service.findOne(tenantId.toString(), queryDefinitionId.toString()),
-    ).rejects.toBeInstanceOf(NotFoundException);
-    expect(repository.findByTenantAndId).toHaveBeenCalledWith(
-      tenantId,
-      queryDefinitionId.toString(),
+    await expect(service.findOne(tenantId, queryDefinitionId)).rejects.toBeInstanceOf(
+      NotFoundException,
     );
+    expect(repository.findByTenantAndId).toHaveBeenCalledWith(tenantId, queryDefinitionId);
   });
 
   it('updates a query definition with sanitized settings and audit', async () => {
-    const tenantId = new Types.ObjectId();
-    const datasetId = new Types.ObjectId();
-    const queryDefinitionId = new Types.ObjectId();
+    const tenantId = '662d4f6e7a1c2b00124f0001';
+    const datasetId = '662d4f6e7a1c2b00124f0501';
+    const queryDefinitionId = '662d4f6e7a1c2b00124f0601';
     const updatedAt = new Date('2026-04-26T13:00:00.000Z');
     const repository: Pick<QueryDefinitionsRepository, 'updateByTenantAndId'> = {
       updateByTenantAndId: jest.fn(async (_tenantId, _id, record) =>
-        createQueryDefinitionDocument({
-          _id: queryDefinitionId,
+        buildQueryDefinitionRecord({
+          id: queryDefinitionId,
           tenantId,
           datasetId: record.datasetId ?? datasetId,
           queryKey: record.queryKey ?? 'sales_overview',
@@ -267,8 +266,8 @@ describe('QueryDefinitionsService', () => {
     const service = createService(repository, auditService);
 
     const result = await service.update(
-      tenantId.toString(),
-      queryDefinitionId.toString(),
+      tenantId,
+      queryDefinitionId,
       {
         name: 'Visao atualizada',
         settings: { visibleInBuilder: false, token: 'must-not-leak' },
@@ -278,7 +277,7 @@ describe('QueryDefinitionsService', () => {
 
     expect(repository.updateByTenantAndId).toHaveBeenCalledWith(
       tenantId,
-      queryDefinitionId.toString(),
+      queryDefinitionId,
       expect.objectContaining({
         name: 'Visao atualizada',
         settings: { visibleInBuilder: false },
@@ -292,14 +291,14 @@ describe('QueryDefinitionsService', () => {
   });
 
   it('archives a query definition using soft delete', async () => {
-    const tenantId = new Types.ObjectId();
-    const datasetId = new Types.ObjectId();
-    const queryDefinitionId = new Types.ObjectId();
+    const tenantId = '662d4f6e7a1c2b00124f0001';
+    const datasetId = '662d4f6e7a1c2b00124f0501';
+    const queryDefinitionId = '662d4f6e7a1c2b00124f0601';
     const updatedAt = new Date('2026-04-26T13:30:00.000Z');
     const repository: Pick<QueryDefinitionsRepository, 'archiveByTenantAndId'> = {
       archiveByTenantAndId: jest.fn(async () =>
-        createQueryDefinitionDocument({
-          _id: queryDefinitionId,
+        buildQueryDefinitionRecord({
+          id: queryDefinitionId,
           tenantId,
           datasetId,
           queryKey: 'sales_overview',
@@ -322,13 +321,13 @@ describe('QueryDefinitionsService', () => {
     const auditService = createAuditService();
     const service = createService(repository, auditService);
 
-    const result = await service.archive(tenantId.toString(), queryDefinitionId.toString(), {
+    const result = await service.archive(tenantId, queryDefinitionId, {
       actorId: 'dev-actor-003',
     });
 
     expect(repository.archiveByTenantAndId).toHaveBeenCalledWith(
       tenantId,
-      queryDefinitionId.toString(),
+      queryDefinitionId,
       'dev-actor-003',
     );
     expect(result.status).toBe(QueryDefinitionStatus.Archived);
@@ -349,8 +348,30 @@ describe('QueryDefinitionsService', () => {
 
     await expect(
       service.create({
-        tenantId: new Types.ObjectId().toString(),
-        datasetId: new Types.ObjectId().toString(),
+        tenantId: '662d4f6e7a1c2b00124f0001',
+        datasetId: '662d4f6e7a1c2b00124f0501',
+        queryKey: 'sales_overview',
+        name: 'Visao geral',
+      }),
+    ).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it('maps a PostgreSQL unique violation to a conflict', async () => {
+    const repository: Pick<QueryDefinitionsRepository, 'create'> = {
+      create: jest.fn(async () => {
+        const error = new Error('duplicate key value violates unique constraint') as Error & {
+          code: string;
+        };
+        error.code = '23505';
+        throw error;
+      }),
+    };
+    const service = createService(repository);
+
+    await expect(
+      service.create({
+        tenantId: '662d4f6e7a1c2b00124f0001',
+        datasetId: '662d4f6e7a1c2b00124f0501',
         queryKey: 'sales_overview',
         name: 'Visao geral',
       }),
@@ -372,8 +393,8 @@ function createService(
 function createAuditService(): AuditServiceMock {
   return {
     record: jest.fn(async () => ({
-      id: new Types.ObjectId().toString(),
-      tenantId: new Types.ObjectId().toString(),
+      id: randomUUID(),
+      tenantId: randomUUID(),
       action: 'query_definition.created',
       entity: 'query_definition',
       metadata: {},
@@ -382,8 +403,6 @@ function createAuditService(): AuditServiceMock {
   };
 }
 
-function createQueryDefinitionDocument(
-  record: Partial<QueryDefinitionDocument>,
-): QueryDefinitionDocument {
-  return record as QueryDefinitionDocument;
+function buildQueryDefinitionRecord(record: Partial<QueryDefinitionRecord>): QueryDefinitionRecord {
+  return record as QueryDefinitionRecord;
 }

@@ -5,7 +5,6 @@
  * Splitting is deferred to a dedicated, test-driven refactor.
  */
 import { NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import {
   DashboardDefinitionLayoutType,
@@ -52,6 +51,7 @@ import {
   createActorFixture,
   createRuntimeEventFixture,
   createRuntimeRequestFixture,
+  newId,
 } from './execution-request-test-fixtures';
 
 type DeclarativeServicesMock = {
@@ -72,14 +72,14 @@ describe('ExecutionRequestDryRunService', () => {
     });
 
     const result = await harness.service.dryRun(
-      harness.executionRequestId.toString(),
-      { tenantId: harness.tenantId.toString() },
+      harness.executionRequestId,
+      { tenantId: harness.tenantId },
       createActorFixture(),
     );
 
     expect(result).toMatchObject({
-      executionRequestId: harness.executionRequestId.toString(),
-      requestKey: `exec_req_${harness.executionRequestId.toString()}`,
+      executionRequestId: harness.executionRequestId,
+      requestKey: `exec_req_${harness.executionRequestId}`,
       kind: ExecutionRequestKind.Query,
       recommendedStatus: ExecutionRequestStatus.Accepted,
       ready: true,
@@ -97,15 +97,15 @@ describe('ExecutionRequestDryRunService', () => {
       ]),
     );
     expect(harness.queryDefinitionsService.findOne).toHaveBeenCalledWith(
-      harness.tenantId.toString(),
-      harness.queryDefinitionId.toString(),
+      harness.tenantId,
+      harness.queryDefinitionId,
     );
     expect(harness.datasetsService.findOne).toHaveBeenCalledWith(
-      harness.tenantId.toString(),
-      harness.datasetId.toString(),
+      harness.tenantId,
+      harness.datasetId,
     );
     expect(harness.fieldMappingsService.findByFilters).toHaveBeenCalledWith({
-      tenantId: harness.tenantId.toString(),
+      tenantId: harness.tenantId,
       datasetKey: 'sales_orders',
       page: 1,
       pageSize: 1000,
@@ -129,7 +129,7 @@ describe('ExecutionRequestDryRunService', () => {
       }),
     );
     expect(harness.auditService.recordDryRun).toHaveBeenCalledWith(
-      expect.objectContaining({ requestKey: `exec_req_${harness.executionRequestId.toString()}` }),
+      expect.objectContaining({ requestKey: `exec_req_${harness.executionRequestId}` }),
       createActorFixture(),
       {
         ready: true,
@@ -147,8 +147,8 @@ describe('ExecutionRequestDryRunService', () => {
       missingQueryDefinitionId: true,
     });
 
-    const result = await harness.service.dryRun(harness.executionRequestId.toString(), {
-      tenantId: harness.tenantId.toString(),
+    const result = await harness.service.dryRun(harness.executionRequestId, {
+      tenantId: harness.tenantId,
     });
 
     expect(result.ready).toBe(false);
@@ -158,7 +158,7 @@ describe('ExecutionRequestDryRunService', () => {
     );
     expect(harness.executionRequestsRepository.updateStatusByTenantAndId).toHaveBeenCalledWith(
       harness.tenantId,
-      harness.executionRequestId.toString(),
+      harness.executionRequestId,
       ExecutionRequestStatus.Blocked,
     );
     expect(harness.eventRepository.create).toHaveBeenCalledWith(
@@ -173,8 +173,8 @@ describe('ExecutionRequestDryRunService', () => {
   it('blocks query dry-run when query definition does not exist for the tenant', async () => {
     const harness = createDryRunHarness({ kind: ExecutionRequestKind.Query });
 
-    const result = await harness.service.dryRun(harness.executionRequestId.toString(), {
-      tenantId: harness.tenantId.toString(),
+    const result = await harness.service.dryRun(harness.executionRequestId, {
+      tenantId: harness.tenantId,
     });
 
     expect(result.ready).toBe(false);
@@ -182,8 +182,8 @@ describe('ExecutionRequestDryRunService', () => {
       expect.objectContaining({ code: 'query_definition_not_found' }),
     );
     expect(harness.queryDefinitionsService.findOne).toHaveBeenCalledWith(
-      harness.tenantId.toString(),
-      harness.queryDefinitionId.toString(),
+      harness.tenantId,
+      harness.queryDefinitionId,
     );
   });
 
@@ -195,8 +195,8 @@ describe('ExecutionRequestDryRunService', () => {
       }),
     });
 
-    const result = await harness.service.dryRun(harness.executionRequestId.toString(), {
-      tenantId: harness.tenantId.toString(),
+    const result = await harness.service.dryRun(harness.executionRequestId, {
+      tenantId: harness.tenantId,
     });
 
     expect(result.ready).toBe(false);
@@ -216,12 +216,12 @@ describe('ExecutionRequestDryRunService', () => {
     });
 
     const missingDatasetResult = await missingDataset.service.dryRun(
-      missingDataset.executionRequestId.toString(),
-      { tenantId: missingDataset.tenantId.toString() },
+      missingDataset.executionRequestId,
+      { tenantId: missingDataset.tenantId },
     );
     const datasetWithoutMappingsResult = await datasetWithoutMappings.service.dryRun(
-      datasetWithoutMappings.executionRequestId.toString(),
-      { tenantId: datasetWithoutMappings.tenantId.toString() },
+      datasetWithoutMappings.executionRequestId,
+      { tenantId: datasetWithoutMappings.tenantId },
     );
 
     expect(missingDatasetResult.blockers).toContainEqual(
@@ -243,8 +243,8 @@ describe('ExecutionRequestDryRunService', () => {
       ],
     });
 
-    const result = await harness.service.dryRun(harness.executionRequestId.toString(), {
-      tenantId: harness.tenantId.toString(),
+    const result = await harness.service.dryRun(harness.executionRequestId, {
+      tenantId: harness.tenantId,
     });
 
     expect(result.ready).toBe(true);
@@ -262,8 +262,8 @@ describe('ExecutionRequestDryRunService', () => {
       fieldMappings: [createFieldMappingResponse()],
     });
 
-    const result = await harness.service.dryRun(harness.executionRequestId.toString(), {
-      tenantId: harness.tenantId.toString(),
+    const result = await harness.service.dryRun(harness.executionRequestId, {
+      tenantId: harness.tenantId,
     });
 
     expect(result.ready).toBe(true);
@@ -295,13 +295,12 @@ describe('ExecutionRequestDryRunService', () => {
       }),
     });
 
-    const noWidgetsResult = await noWidgets.service.dryRun(
-      noWidgets.executionRequestId.toString(),
-      { tenantId: noWidgets.tenantId.toString() },
-    );
+    const noWidgetsResult = await noWidgets.service.dryRun(noWidgets.executionRequestId, {
+      tenantId: noWidgets.tenantId,
+    });
     const noWidgetQueriesResult = await noWidgetQueries.service.dryRun(
-      noWidgetQueries.executionRequestId.toString(),
-      { tenantId: noWidgetQueries.tenantId.toString() },
+      noWidgetQueries.executionRequestId,
+      { tenantId: noWidgetQueries.tenantId },
     );
 
     expect(noWidgetsResult.blockers).toContainEqual(
@@ -327,7 +326,7 @@ describe('ExecutionRequestDryRunService', () => {
       kind: ExecutionRequestKind.Report,
       reportDefinition: createReportDefinitionResponse({
         queryDefinitionId: undefined,
-        dashboardDefinitionId: withQuery.dashboardDefinitionId.toString(),
+        dashboardDefinitionId: withQuery.dashboardDefinitionId,
       }),
       dashboardDefinition: createDashboardDefinitionResponse(),
       queryDefinition: createQueryDefinitionResponse(),
@@ -343,17 +342,16 @@ describe('ExecutionRequestDryRunService', () => {
       }),
     });
 
-    const withQueryResult = await withQuery.service.dryRun(
-      withQuery.executionRequestId.toString(),
-      { tenantId: withQuery.tenantId.toString() },
-    );
+    const withQueryResult = await withQuery.service.dryRun(withQuery.executionRequestId, {
+      tenantId: withQuery.tenantId,
+    });
     const withDashboardResult = await withDashboard.service.dryRun(
-      withDashboard.executionRequestId.toString(),
-      { tenantId: withDashboard.tenantId.toString() },
+      withDashboard.executionRequestId,
+      { tenantId: withDashboard.tenantId },
     );
     const withoutReferenceResult = await withoutReference.service.dryRun(
-      withoutReference.executionRequestId.toString(),
-      { tenantId: withoutReference.tenantId.toString() },
+      withoutReference.executionRequestId,
+      { tenantId: withoutReference.tenantId },
     );
 
     expect(withQueryResult.ready).toBe(true);
@@ -373,17 +371,17 @@ describe('ExecutionRequestDryRunService', () => {
   it('keeps dry-run tenant scoped and updates blocked status after readiness failure', async () => {
     const harness = createDryRunHarness({ kind: ExecutionRequestKind.Query });
 
-    await harness.service.dryRun(harness.executionRequestId.toString(), {
-      tenantId: harness.tenantId.toString(),
+    await harness.service.dryRun(harness.executionRequestId, {
+      tenantId: harness.tenantId,
     });
 
     expect(harness.executionRequestsRepository.findByTenantAndId).toHaveBeenCalledWith(
       harness.tenantId,
-      harness.executionRequestId.toString(),
+      harness.executionRequestId,
     );
     expect(harness.executionRequestsRepository.updateStatusByTenantAndId).toHaveBeenCalledWith(
       harness.tenantId,
-      harness.executionRequestId.toString(),
+      harness.executionRequestId,
       ExecutionRequestStatus.Blocked,
     );
   });
@@ -401,14 +399,14 @@ interface DryRunHarnessOptions {
 }
 
 function createDryRunHarness(options: DryRunHarnessOptions) {
-  const tenantId = new Types.ObjectId();
-  const executionRequestId = new Types.ObjectId();
-  const queryDefinitionId = new Types.ObjectId();
-  const dashboardDefinitionId = new Types.ObjectId();
-  const reportDefinitionId = new Types.ObjectId();
-  const datasetId = new Types.ObjectId('662d4f6e7a1c2b00124f0501');
+  const tenantId = newId();
+  const executionRequestId = newId();
+  const queryDefinitionId = newId();
+  const dashboardDefinitionId = newId();
+  const reportDefinitionId = newId();
+  const datasetId = '662d4f6e7a1c2b00124f0501';
   const executionRequest = createRuntimeRequestFixture({
-    _id: executionRequestId,
+    id: executionRequestId,
     tenantId,
     kind: options.kind,
     status: options.status ?? ExecutionRequestStatus.Accepted,
@@ -466,30 +464,28 @@ function createDryRunHarness(options: DryRunHarnessOptions) {
 function createDeclarativeServices(
   options: DryRunHarnessOptions,
   ids: {
-    queryDefinitionId: Types.ObjectId;
-    dashboardDefinitionId: Types.ObjectId;
-    reportDefinitionId: Types.ObjectId;
-    datasetId: Types.ObjectId;
+    queryDefinitionId: string;
+    dashboardDefinitionId: string;
+    reportDefinitionId: string;
+    datasetId: string;
   },
 ): DeclarativeServicesMock {
   const queryDefinition = options.queryDefinition
     ? {
         ...options.queryDefinition,
-        id: ids.queryDefinitionId.toString(),
+        id: ids.queryDefinitionId,
         datasetId: Object.prototype.hasOwnProperty.call(options.queryDefinition, 'datasetId')
           ? options.queryDefinition.datasetId
-          : ids.datasetId.toString(),
+          : ids.datasetId,
       }
     : undefined;
   const dashboardDefinition = options.dashboardDefinition
-    ? { ...options.dashboardDefinition, id: ids.dashboardDefinitionId.toString() }
+    ? { ...options.dashboardDefinition, id: ids.dashboardDefinitionId }
     : undefined;
   const reportDefinition = options.reportDefinition
-    ? { ...options.reportDefinition, id: ids.reportDefinitionId.toString() }
+    ? { ...options.reportDefinition, id: ids.reportDefinitionId }
     : undefined;
-  const dataset = options.dataset
-    ? { ...options.dataset, id: ids.datasetId.toString() }
-    : undefined;
+  const dataset = options.dataset ? { ...options.dataset, id: ids.datasetId } : undefined;
 
   return {
     queryDefinitionsService: {

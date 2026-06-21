@@ -1,22 +1,30 @@
-# Decisão de ORM / Query Layer — PENDENTE
+# Decisão de ORM / Query Layer — DECIDIDO (Kysely)
 
-> **Status: pendente. Nenhuma biblioteca escolhida.**
-> Este documento registra a decisão de ORM/query layer como **aberta**. Ele
-> **não** escolhe Prisma, Kysely, Drizzle ou TypeORM, **não** autoriza instalar
-> dependência e **não** autoriza implementar runtime SQL.
+> **Status: decidido — Kysely** (ver [ADR-0036](./adr/adr-0036-orm-query-layer-kysely.md)).
+> A escolha foi resolvida na **fase P1** da migração por **spike comparativo
+> runnable** em PostgreSQL real, conforme exigido pela ADR-0035. Este documento
+> mantém a análise de candidatos como contexto histórico; a decisão formal é a
+> ADR-0036. A escolha vale para a **camada de acesso a dados** da migração; ela
+> **não** autoriza runtime SQL real (segue bloqueado por ADR-0021/0022/0024).
 
 ---
 
 ## 1. Decisão atual
 
-**Nenhum** ORM / query layer foi escolhido:
+**Kysely** é a camada de acesso ao PostgreSQL escolhida (query builder SQL
+type-safe sobre `pg`), com migrations versionadas (Migrator nativo, up/down) e
+tipos do banco via `kysely-codegen`.
 
-- Prisma — **não escolhido**;
-- Kysely — **não escolhido**;
-- Drizzle — **não escolhido**;
-- TypeORM — **não escolhido**.
+Placar do spike (PostgreSQL 16.14 real, módulo `tenants`+`users`, A1–A10 10/10):
 
-Status: **pendente**. Nenhuma dependência nova foi adicionada.
+| Candidato | Total /45 | Veredito |
+|---|:--:|---|
+| **Kysely** | **43** | **Escolhido** — vence os critérios críticos (auditabilidade, multi-tenant, SQL dinâmico) |
+| Drizzle | 42 | Runner-up; migrations forward-only conflitam com o requisito up/down do P2 |
+| Prisma | 37 | `migrate` bloqueado p/ agente de IA; fraco p/ SQL analítico dinâmico (C9=2) |
+| TypeORM | n/a | Não finalista (de-priorizado pela ADR-0035) |
+
+Detalhes, evidência de SQL capturado e justificativas por critério: **ADR-0036**.
 
 ## 2. Contexto atual
 
@@ -108,10 +116,12 @@ Hoje, tudo permanece **pendente**.
 
 ## 7. Recomendação atual
 
-- **Manter pendente.**
-- **Não introduzir dependência nova.**
-- Resolver via spike no início da fase P1 (ADR-0035), registrando a escolha em
-  ADR própria ou atualização formal deste documento.
+- **Resolvido: Kysely** (ADR-0036), via spike comparativo runnable no início da P1.
+- Adicionar dependências `kysely` + `pg` ao `delfos-api` (P1).
+- Adotar `kysely-codegen` como fonte dos tipos do schema (P2).
+- Os critérios de **runtime SQL analítico real** (queries dinâmicas sobre fontes
+  de cliente) continuam reavaliáveis sob os gates ADR-0021/0022 — a escolha do
+  Kysely é compatível com eles (C9), mas **não** os antecipa nem os autoriza.
 
 ## Relação com outros documentos
 

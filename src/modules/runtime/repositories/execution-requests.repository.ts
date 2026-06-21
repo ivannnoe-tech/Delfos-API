@@ -1,106 +1,90 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model, Types } from 'mongoose';
-
 import { SanitizedMetadata } from '../../../core/utils/sanitize-metadata';
 import { AdminRole } from '../../auth/types/admin-role';
 import {
-  ExecutionRequest,
-  ExecutionRequestDocument,
   ExecutionRequestKind,
   ExecutionRequestMode,
   ExecutionRequestStatus,
 } from '../schemas/execution-request.schema';
 
-export interface CreateExecutionRequestRecord {
-  _id: Types.ObjectId;
-  tenantId: Types.ObjectId;
+/**
+ * Persistence-neutral execution request record returned by every
+ * {@link ExecutionRequestsRepository} implementation (Mongo or PostgreSQL).
+ * Ids are opaque strings and dates are `Date`s, so the record is identical
+ * regardless of the backend (ADR-0035 / ADR-0036). The service maps this to the
+ * response DTO and passes it to the audit/readiness/event services.
+ */
+export interface ExecutionRequestRecord {
+  id: string;
+  tenantId: string;
   requestKey: string;
   kind: ExecutionRequestKind;
   status: ExecutionRequestStatus;
-  queryDefinitionId?: Types.ObjectId;
-  dashboardDefinitionId?: Types.ObjectId;
-  reportDefinitionId?: Types.ObjectId;
-  connectionId?: Types.ObjectId;
-  datasetId?: Types.ObjectId;
+  queryDefinitionId?: string;
+  dashboardDefinitionId?: string;
+  reportDefinitionId?: string;
+  connectionId?: string;
+  datasetId?: string;
   requestedByActorId?: string;
   requestedByRole?: AdminRole;
   mode: ExecutionRequestMode;
-  reason: string;
-  message: string;
+  reason?: string;
+  message?: string;
+  metadata: SanitizedMetadata;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateExecutionRequestRecord {
+  tenantId: string;
+  requestKey: string;
+  kind: ExecutionRequestKind;
+  status: ExecutionRequestStatus;
+  queryDefinitionId?: string;
+  dashboardDefinitionId?: string;
+  reportDefinitionId?: string;
+  connectionId?: string;
+  datasetId?: string;
+  requestedByActorId?: string;
+  requestedByRole?: AdminRole;
+  mode: ExecutionRequestMode;
+  reason?: string;
+  message?: string;
   metadata: SanitizedMetadata;
 }
 
 export interface ExecutionRequestFilters {
-  tenantId: Types.ObjectId;
+  tenantId: string;
   kind?: ExecutionRequestKind;
   status?: ExecutionRequestStatus;
   mode?: ExecutionRequestMode;
-  queryDefinitionId?: Types.ObjectId;
-  dashboardDefinitionId?: Types.ObjectId;
-  reportDefinitionId?: Types.ObjectId;
-  connectionId?: Types.ObjectId;
-  datasetId?: Types.ObjectId;
+  queryDefinitionId?: string;
+  dashboardDefinitionId?: string;
+  reportDefinitionId?: string;
+  connectionId?: string;
+  datasetId?: string;
 }
 
-@Injectable()
-export class ExecutionRequestsRepository {
-  constructor(
-    @InjectModel(ExecutionRequest.name)
-    private readonly executionRequestModel: Model<ExecutionRequestDocument>,
-  ) {}
-
-  create(record: CreateExecutionRequestRecord): Promise<ExecutionRequestDocument> {
-    return this.executionRequestModel.create(record);
-  }
-
-  findByFilters(
+/**
+ * Repository contract for execution requests. Implemented by
+ * `MongoExecutionRequestsRepository` and `PostgresExecutionRequestsRepository`;
+ * the module selects one at runtime based on whether `DELFOS_POSTGRES_URL` is
+ * configured. Used as the DI token.
+ *
+ * Every query is tenant-scoped: `tenantId` is a mandatory isolation boundary,
+ * never an optional filter.
+ */
+export abstract class ExecutionRequestsRepository {
+  abstract create(record: CreateExecutionRequestRecord): Promise<ExecutionRequestRecord>;
+  abstract findByFilters(
     filters: ExecutionRequestFilters,
     page: number,
     pageSize: number,
-  ): Promise<ExecutionRequestDocument[]> {
-    return this.executionRequestModel
-      .find(this.toMongoFilters(filters))
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .exec();
-  }
-
-  countByFilters(filters: ExecutionRequestFilters): Promise<number> {
-    return this.executionRequestModel.countDocuments(this.toMongoFilters(filters)).exec();
-  }
-
-  findByTenantAndId(
-    tenantId: Types.ObjectId,
-    id: string,
-  ): Promise<ExecutionRequestDocument | null> {
-    return this.executionRequestModel.findOne({ _id: id, tenantId }).exec();
-  }
-
-  updateStatusByTenantAndId(
-    tenantId: Types.ObjectId,
+  ): Promise<ExecutionRequestRecord[]>;
+  abstract countByFilters(filters: ExecutionRequestFilters): Promise<number>;
+  abstract findByTenantAndId(tenantId: string, id: string): Promise<ExecutionRequestRecord | null>;
+  abstract updateStatusByTenantAndId(
+    tenantId: string,
     id: string,
     status: ExecutionRequestStatus,
-  ): Promise<ExecutionRequestDocument | null> {
-    return this.executionRequestModel
-      .findOneAndUpdate({ _id: id, tenantId }, { status }, { new: true })
-      .exec();
-  }
-
-  private toMongoFilters(filters: ExecutionRequestFilters): FilterQuery<ExecutionRequestDocument> {
-    return {
-      tenantId: filters.tenantId,
-      ...(filters.kind ? { kind: filters.kind } : {}),
-      ...(filters.status ? { status: filters.status } : {}),
-      ...(filters.mode ? { mode: filters.mode } : {}),
-      ...(filters.queryDefinitionId ? { queryDefinitionId: filters.queryDefinitionId } : {}),
-      ...(filters.dashboardDefinitionId
-        ? { dashboardDefinitionId: filters.dashboardDefinitionId }
-        : {}),
-      ...(filters.reportDefinitionId ? { reportDefinitionId: filters.reportDefinitionId } : {}),
-      ...(filters.connectionId ? { connectionId: filters.connectionId } : {}),
-      ...(filters.datasetId ? { datasetId: filters.datasetId } : {}),
-    };
-  }
+  ): Promise<ExecutionRequestRecord | null>;
 }

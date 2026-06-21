@@ -1,12 +1,14 @@
 import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
+import { randomUUID } from 'node:crypto';
 
 import { AuditService } from '../../audit/services/audit.service';
-import { SemanticModelsRepository } from '../repositories/semantic-models.repository';
+import {
+  SemanticModelRecord,
+  SemanticModelsRepository,
+} from '../repositories/semantic-models.repository';
 import {
   SemanticDimensionDomain,
   SemanticMeasureAggregation,
-  SemanticModelDocument,
   SemanticModelStatus,
   SemanticQualityLevel,
   SemanticType,
@@ -20,13 +22,13 @@ type AuditServiceMock = {
 
 describe('SemanticModelsService', () => {
   it('creates a semantic model with sanitized free fields and safe audit', async () => {
-    const semanticModelId = new Types.ObjectId();
-    const tenantId = new Types.ObjectId();
+    const semanticModelId = randomUUID();
+    const tenantId = randomUUID();
     const createdAt = new Date('2026-05-17T12:00:00.000Z');
     const repository: Pick<SemanticModelsRepository, 'create'> = {
       create: jest.fn(async (record) =>
-        createSemanticModelDocument({
-          _id: semanticModelId,
+        createSemanticModelRecord({
+          id: semanticModelId,
           tenantId: record.tenantId,
           modelKey: record.modelKey,
           name: record.name,
@@ -55,7 +57,7 @@ describe('SemanticModelsService', () => {
 
     const result = await service.create(
       {
-        tenantId: tenantId.toString(),
+        tenantId,
         modelKey: 'comercial_semantico',
         name: 'Modelo semantico comercial',
         description: 'Agrupamento semantico declarativo',
@@ -108,19 +110,19 @@ describe('SemanticModelsService', () => {
       }),
     );
     expect(result).toMatchObject({
-      id: semanticModelId.toString(),
-      tenantId: tenantId.toString(),
+      id: semanticModelId,
+      tenantId,
       modelKey: 'comercial_semantico',
       metadata: { domain: 'sales' },
       measures: [{ key: 'faturamento', metadata: { domain: 'sales' } }],
     });
     expect(JSON.stringify(result)).not.toContain('must-not-leak');
     expect(auditService.record).toHaveBeenCalledWith({
-      tenantId: tenantId.toString(),
+      tenantId,
       actorUserId: undefined,
       action: 'semantic_model.created',
       entity: 'semantic_model',
-      entityId: semanticModelId.toString(),
+      entityId: semanticModelId,
       metadata: {
         modelKey: 'comercial_semantico',
         status: SemanticModelStatus.Draft,
@@ -140,7 +142,7 @@ describe('SemanticModelsService', () => {
 
     await expect(
       service.create({
-        tenantId: new Types.ObjectId().toString(),
+        tenantId: randomUUID(),
         modelKey: 'comercial_semantico',
         name: 'Modelo',
         measures: [
@@ -153,13 +155,13 @@ describe('SemanticModelsService', () => {
   });
 
   it('lists semantic models by tenant filters', async () => {
-    const tenantId = new Types.ObjectId();
-    const semanticModelId = new Types.ObjectId();
+    const tenantId = randomUUID();
+    const semanticModelId = randomUUID();
     const createdAt = new Date('2026-05-17T12:00:00.000Z');
     const repository: Pick<SemanticModelsRepository, 'findByFilters' | 'countByFilters'> = {
       findByFilters: jest.fn(async () => [
-        createSemanticModelDocument({
-          _id: semanticModelId,
+        createSemanticModelRecord({
+          id: semanticModelId,
           tenantId,
           modelKey: 'comercial_semantico',
           name: 'Modelo semantico comercial',
@@ -181,7 +183,7 @@ describe('SemanticModelsService', () => {
     const service = createService(repository);
 
     const result = await service.findByFilters({
-      tenantId: tenantId.toString(),
+      tenantId,
       status: SemanticModelStatus.Verified,
       page: 1,
       pageSize: 25,
@@ -197,27 +199,27 @@ describe('SemanticModelsService', () => {
   });
 
   it('throws when a semantic model is not found', async () => {
-    const tenantId = new Types.ObjectId();
-    const semanticModelId = new Types.ObjectId();
+    const tenantId = randomUUID();
+    const semanticModelId = randomUUID();
     const repository: Pick<SemanticModelsRepository, 'findByTenantAndId'> = {
       findByTenantAndId: jest.fn(async () => null),
     };
     const service = createService(repository);
 
-    await expect(
-      service.findOne(tenantId.toString(), semanticModelId.toString()),
-    ).rejects.toBeInstanceOf(NotFoundException);
-    expect(repository.findByTenantAndId).toHaveBeenCalledWith(tenantId, semanticModelId.toString());
+    await expect(service.findOne(tenantId, semanticModelId)).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
+    expect(repository.findByTenantAndId).toHaveBeenCalledWith(tenantId, semanticModelId);
   });
 
   it('archives a semantic model using soft delete', async () => {
-    const tenantId = new Types.ObjectId();
-    const semanticModelId = new Types.ObjectId();
+    const tenantId = randomUUID();
+    const semanticModelId = randomUUID();
     const updatedAt = new Date('2026-05-17T13:30:00.000Z');
     const repository: Pick<SemanticModelsRepository, 'archiveByTenantAndId'> = {
       archiveByTenantAndId: jest.fn(async () =>
-        createSemanticModelDocument({
-          _id: semanticModelId,
+        createSemanticModelRecord({
+          id: semanticModelId,
           tenantId,
           modelKey: 'comercial_semantico',
           name: 'Modelo',
@@ -238,13 +240,13 @@ describe('SemanticModelsService', () => {
     const auditService = createAuditService();
     const service = createService(repository, auditService);
 
-    const result = await service.archive(tenantId.toString(), semanticModelId.toString(), {
+    const result = await service.archive(tenantId, semanticModelId, {
       actorId: 'dev-actor-003',
     });
 
     expect(repository.archiveByTenantAndId).toHaveBeenCalledWith(
       tenantId,
-      semanticModelId.toString(),
+      semanticModelId,
       'dev-actor-003',
     );
     expect(result.status).toBe(SemanticModelStatus.Archived);
@@ -265,7 +267,7 @@ describe('SemanticModelsService', () => {
 
     await expect(
       service.create({
-        tenantId: new Types.ObjectId().toString(),
+        tenantId: randomUUID(),
         modelKey: 'comercial_semantico',
         name: 'Modelo',
       }),
@@ -287,8 +289,8 @@ function createService(
 function createAuditService(): AuditServiceMock {
   return {
     record: jest.fn(async () => ({
-      id: new Types.ObjectId().toString(),
-      tenantId: new Types.ObjectId().toString(),
+      id: randomUUID(),
+      tenantId: randomUUID(),
       action: 'semantic_model.created',
       entity: 'semantic_model',
       metadata: {},
@@ -297,8 +299,6 @@ function createAuditService(): AuditServiceMock {
   };
 }
 
-function createSemanticModelDocument(
-  record: Partial<SemanticModelDocument>,
-): SemanticModelDocument {
-  return record as SemanticModelDocument;
+function createSemanticModelRecord(record: Partial<SemanticModelRecord>): SemanticModelRecord {
+  return record as SemanticModelRecord;
 }

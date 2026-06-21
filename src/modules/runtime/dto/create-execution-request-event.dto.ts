@@ -1,12 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsMongoId, IsObject, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsEnum, IsObject, IsOptional, IsString, MaxLength } from 'class-validator';
 
+import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import { ExecutionRequestStatus } from '../schemas/execution-request.schema';
 import { ExecutionRequestEventType } from '../schemas/execution-request-event.schema';
 
 export class CreateExecutionRequestEventDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })
-  @IsMongoId()
+  @IsEntityId()
   tenantId!: string;
 
   @ApiProperty({

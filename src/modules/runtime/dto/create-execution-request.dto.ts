@@ -1,11 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsMongoId, IsObject, IsOptional } from 'class-validator';
+import { IsEnum, IsObject, IsOptional } from 'class-validator';
 
+import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import { ExecutionRequestKind, ExecutionRequestMode } from '../schemas/execution-request.schema';
 
 export class CreateExecutionRequestDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })
-  @IsMongoId()
+  @IsEntityId()
   tenantId!: string;
 
   @ApiProperty({ enum: ExecutionRequestKind, example: ExecutionRequestKind.Query })
@@ -14,27 +15,27 @@ export class CreateExecutionRequestDto {
 
   @ApiPropertyOptional({ example: '662d4f6e7a1c2b00124f0601' })
   @IsOptional()
-  @IsMongoId()
+  @IsEntityId()
   queryDefinitionId?: string;
 
   @ApiPropertyOptional({ example: '662d4f6e7a1c2b00124f0701' })
   @IsOptional()
-  @IsMongoId()
+  @IsEntityId()
   dashboardDefinitionId?: string;
 
   @ApiPropertyOptional({ example: '662d4f6e7a1c2b00124f0801' })
   @IsOptional()
-  @IsMongoId()
+  @IsEntityId()
   reportDefinitionId?: string;
 
   @ApiPropertyOptional({ example: '662d4f6e7a1c2b00124f0201' })
   @IsOptional()
-  @IsMongoId()
+  @IsEntityId()
   connectionId?: string;
 
   @ApiPropertyOptional({ example: '662d4f6e7a1c2b00124f0501' })
   @IsOptional()
-  @IsMongoId()
+  @IsEntityId()
   datasetId?: string;
 
   @ApiPropertyOptional({

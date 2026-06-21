@@ -1,33 +1,27 @@
-import { Types } from 'mongoose';
-
-import { AuditLogsRepository } from '../repositories/audit-logs.repository';
-import { AuditLogDocument } from '../schemas/audit-log.schema';
+import { AuditLogRecord, AuditLogsRepository } from '../repositories/audit-logs.repository';
 import { AuditService } from '../services/audit.service';
 
 describe('AuditService', () => {
   it('records audit metadata without sensitive values', async () => {
-    const auditId = new Types.ObjectId();
-    const tenantId = new Types.ObjectId();
     const timestamp = new Date('2026-04-26T12:00:00.000Z');
     const repository: Pick<AuditLogsRepository, 'create'> = {
       create: jest.fn(
-        async (record) =>
-          ({
-            _id: auditId,
-            tenantId: record.tenantId,
-            actorUserId: record.actorUserId,
-            action: record.action,
-            entity: record.entity,
-            entityId: record.entityId,
-            metadata: record.metadata,
-            timestamp,
-          }) as unknown as AuditLogDocument,
+        async (record): Promise<AuditLogRecord> => ({
+          id: '662d4f6e7a1c2b00124f0001',
+          tenantId: record.tenantId,
+          actorUserId: record.actorUserId,
+          action: record.action,
+          entity: record.entity,
+          entityId: record.entityId,
+          metadata: record.metadata,
+          timestamp,
+        }),
       ),
     };
-    const service = new AuditService(repository as AuditLogsRepository);
+    const service = new AuditService(repository);
 
     const result = await service.record({
-      tenantId: tenantId.toString(),
+      tenantId: '662d4f6e7a1c2b00124f00aa',
       action: 'connection.created',
       entity: 'connection',
       metadata: { status: 'draft', secret: 'must-not-leak' },
@@ -35,9 +29,11 @@ describe('AuditService', () => {
 
     expect(repository.create).toHaveBeenCalledWith(
       expect.objectContaining({
+        tenantId: '662d4f6e7a1c2b00124f00aa',
         metadata: { status: 'draft' },
       }),
     );
     expect(result.metadata).toEqual({ status: 'draft' });
+    expect(result.timestamp).toBe(timestamp.toISOString());
   });
 });

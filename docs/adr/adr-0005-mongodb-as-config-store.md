@@ -1,11 +1,20 @@
 # ADR-0005 — MongoDB as Delfos configuration store
 
-- **Status**: Accepted
+- **Status**: Superseded by ADR-0035
 - **Data**: 2026-04-25
 - **Autores**: Equipe Delfos Analytics
 - **Repositório**: delfos-api
 - **Fase impactada**: Fase 1
-- **Implementação**: implementado
+- **Implementação**: substituído na fase P5 da migração (MongoDB/Mongoose removidos)
+
+---
+
+> **Superseded (2026-06-21).** A fase **P5** do
+> [postgresql-migration-plan.md](../postgresql-migration-plan.md) foi concluída:
+> MongoDB/Mongoose foram removidos e o **PostgreSQL** passou a ser o banco único
+> (ver [ADR-0035](adr-0035-postgresql-primary-database-and-valkey-cache.md) e
+> [ADR-0036](adr-0036-orm-query-layer-kysely.md)). O contexto e a decisão abaixo
+> permanecem como registro histórico do estado da Fase 1.
 
 ---
 
