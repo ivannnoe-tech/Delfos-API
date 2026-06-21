@@ -127,7 +127,6 @@ Use a skill mais específica quando a tarefa se encaixar em um destes fluxos:
 | `nestjs-structure` | criar/reorganizar estrutura NestJS, módulos, config, healthcheck, Swagger e testes base |
 | `api-contract-review` | criar/revisar endpoints, DTOs, OpenAPI, paginação, filtros e erros |
 | `security-lgpd-review` | revisar autenticação, autorização, multi-tenant, LGPD, secrets e logs |
-| `mongo-modeling-review` | criar/revisar schemas MongoDB, índices, De/Para, auditoria e metadados |
 | `testing-quality-review` | revisar testes, lint, build, DoD e qualidade final |
 | `ci-fix-review` | corrigir falhas de build, lint, testes e, quando houver CI configurado, falhas de workflow |
 
@@ -139,7 +138,7 @@ Regras:
 - se a tarefa for de estrutura NestJS, use `nestjs-structure`.
 - se a tarefa alterar contrato público, use `api-contract-review`.
 - se a tarefa tocar auth, tenant, permissão, secrets, logs ou dados pessoais, use `security-lgpd-review`.
-- se a tarefa criar ou alterar schema MongoDB, use `mongo-modeling-review`.
+- se a tarefa criar ou alterar o modelo de dados, o backend é **PostgreSQL/Kysely** desde a P5: siga `docs/postgresql-data-model-draft.md` e as migrations em `src/database/postgres/migrations/` (`docs/database-model.md` é registro histórico do modelo Mongo da Fase 1).
 - antes de finalizar PR/commit relevante, use `testing-quality-review`.
 - se houver erro de lint/test/build ou CI futuro, use `ci-fix-review`.
 

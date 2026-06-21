@@ -1,12 +1,13 @@
 # Desenvolvimento local
 
-Fluxo curto para executar o `delfos-api` em Windows com MongoDB local.
+Fluxo curto para executar o `delfos-api` em Windows com PostgreSQL local.
 
 ## Pré-requisitos
 
 - Node.js 24 LTS.
 - npm.
-- MongoDB local instalado e rodando no Windows.
+- PostgreSQL local rodando no Windows (recomendado via Docker: `docker compose up -d postgres`).
+- Opcional: Valkey para cache (`docker compose up -d valkey`), desligado por padrão.
 
 ## Arquivo `.env` local
 
@@ -17,7 +18,7 @@ Exemplo:
 ```env
 NODE_ENV=development
 PORT=3000
-DELFOS_DATABASE_URL=mongodb://127.0.0.1:27017/delfos_analytics
+DELFOS_POSTGRES_URL=postgresql://delfos:delfos@127.0.0.1:5432/delfos
 DELFOS_ADMIN_KEY=change-me-local-admin-key-at-least-32-chars
 ENCRYPTION_KEY_BASE64=MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
 CORS_ORIGIN=http://localhost:5173,http://localhost:8080,http://localhost:3000,http://127.0.0.1:4174,http://localhost:4174
@@ -38,29 +39,31 @@ o valor acima e apenas exemplo inseguro para desenvolvimento.
 
 ```powershell
 npm install
+docker compose up -d postgres   # opcional: adicione valkey para exercitar o cache
+npm run migrate:latest          # aplica o schema Kysely antes do primeiro start
 npm run start:dev
 ```
 
-## PostgreSQL local (opcional — migração ADR-0035, fase P1)
+## PostgreSQL local
 
-O banco operacional continua sendo o MongoDB. O PostgreSQL é **opcional** nesta
-fase: serve para exercitar a conexão e o health-check introduzidos na P1. Suba o
-serviço via Docker (recomendado) e aponte `DELFOS_POSTGRES_URL` para ele:
+O PostgreSQL é o **único** banco operacional do `delfos-api` (migração ADR-0035
+concluída na P5; MongoDB/Mongoose removidos). Defina `DELFOS_POSTGRES_URL` (obrigatória,
+`postgres://` ou `postgresql://`) e suba o serviço via Docker (recomendado):
 
 ```powershell
 docker compose up -d postgres
 # no .env local:
-# DELFOS_POSTGRES_URL=postgresql://delfos:delfos@localhost:5432/delfos
+# DELFOS_POSTGRES_URL=postgresql://delfos:delfos@127.0.0.1:5432/delfos
+npm run migrate:latest   # aplica as migrations Kysely (migrate:status / migrate:down disponíveis)
 ```
 
-Com a URL configurada, `GET /health` passa a reportar `postgres: { status: "up", latencyMs }`.
-Sem a URL, reporta `postgres: { status: "disabled" }` e a API roda 100% em MongoDB.
-O schema/migrations e a troca de repositórios vêm nas fases P2/P3
-(`docs/postgresql-migration-plan.md`). O ORM é Kysely (ADR-0036).
+Com o banco conectado, `GET /health` reporta `postgres: { status: "up", latencyMs }`.
+O ORM é Kysely (ADR-0036). O Valkey é o cache opcional (desligado por padrão); suba-o com
+`docker compose up -d valkey` quando quiser exercitá-lo.
 
 ## Seed local da foundation
 
-Para popular o MongoDB local com configuracoes ficticias da foundation, rode:
+Para popular o PostgreSQL local com configuracoes ficticias da foundation, rode:
 
 ```powershell
 $env:DELFOS_ADMIN_KEY="change-me-local-admin-key-at-least-32-chars"
@@ -80,23 +83,17 @@ O seed cria ou atualiza dados demo seguros e idempotentes:
 O script nao executa query, nao chama API externa, nao conecta em banco de cliente e nao
 armazena payload operacional. A idempotencia usa chaves estaveis como `slug`, e-mail,
 `datasetKey`, `queryKey`, `dashboardKey` e `tenantId + datasetKey + targetField`.
-O script usa models Mongoose diretamente porque os services/repositories atuais nao expõem
-upsert por todas essas chaves estaveis; isso mantem o seed local explicito e evita criar
-contrato publico ou endpoint administrativo para desenvolvimento.
+O seed grava direto no PostgreSQL via Kysely (`KYSELY_DB`, `scripts/seed-dev-postgres.ts`)
+com upserts `onConflict(...).doUpdateSet(...)`, mantendo o seed local explicito e evitando
+criar contrato publico ou endpoint administrativo para desenvolvimento. Os IDs sao UUIDs,
+entao o comando `--dart-define` impresso ja traz UUIDs.
 
-### Seed em PostgreSQL (migração ADR-0035, fase P4)
-
-Com `DELFOS_POSTGRES_URL` configurado, o `seed:dev` ramifica e popula o
-**PostgreSQL** em vez do MongoDB (via `KYSELY_DB`, `scripts/seed-dev-postgres.ts`),
-usando o mesmo conjunto ficticio e as mesmas chaves estaveis, com upserts
-`onConflict(...).doUpdateSet(...)` — idempotente e re-executavel. Os IDs sao UUIDs
-(nao ObjectIds), entao o comando `--dart-define` impresso ja traz UUIDs. Sem a URL,
-o caminho MongoDB segue inalterado.
+Antes do primeiro seed, garanta o banco no ar e o schema aplicado:
 
 ```powershell
 docker compose up -d postgres
 npm run migrate:latest   # aplica o schema antes do primeiro seed
-npm run seed:dev         # com DELFOS_POSTGRES_URL no .env, semeia o PostgreSQL
+npm run seed:dev         # semeia o PostgreSQL local
 ```
 
 Ao final, o terminal imprime o `tenantId`, o `actorId` sugerido, o `connectionId`, o
@@ -119,10 +116,10 @@ preview demo de um dashboard definition. Esses comandos usam o `tenantId`, o `ac
 os IDs retornados pelo proprio seed, mantendo `$env:DELFOS_ADMIN_KEY` literal e sem
 imprimir valor de secret.
 
-Verifique se o MongoDB está acessível:
+Verifique se o PostgreSQL está acessível:
 
 ```powershell
-Test-NetConnection localhost -Port 27017
+Test-NetConnection localhost -Port 5432
 ```
 
 Verifique o healthcheck da API:
@@ -141,5 +138,5 @@ Invoke-RestMethod http://localhost:3000/api/v1/tenants -Headers @{
 
 ## Observações
 
-- Use `127.0.0.1` na URL do MongoDB para evitar problemas de resolução IPv6 no Windows.
-- Docker é opcional. Ele não é obrigatório para quem já tem MongoDB local instalado e rodando.
+- Use `127.0.0.1` na URL do PostgreSQL para evitar problemas de resolução IPv6 no Windows.
+- Docker é o caminho recomendado para o PostgreSQL local; quem já tem um PostgreSQL nativo rodando pode apenas apontar `DELFOS_POSTGRES_URL` para ele.

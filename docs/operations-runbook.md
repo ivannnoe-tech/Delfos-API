@@ -33,9 +33,9 @@ cliente, cache, fila, scheduler, worker real, dashboard runtime ou query builder
 
 1. Verificar processo/container.
 2. Conferir logs por `requestId` ou `correlationId`.
-3. Validar variaveis obrigatorias: `DELFOS_DATABASE_URL`, `DELFOS_ADMIN_KEY` e
+3. Validar variaveis obrigatorias: `DELFOS_POSTGRES_URL`, `DELFOS_ADMIN_KEY` e
    `ENCRYPTION_KEY_BASE64`.
-4. Testar conexao com MongoDB.
+4. Testar conexao com PostgreSQL.
 5. Conferir ultimo deploy ou ultima alteracao local.
 6. Fazer rollback apenas com autorizacao quando o problema tiver comecado apos deploy.
 
@@ -44,13 +44,13 @@ cliente, cache, fila, scheduler, worker real, dashboard runtime ou query builder
 1. Chamar `GET /health`.
 2. Confirmar status HTTP `200`.
 3. Confirmar envelope esperado do healthcheck.
-4. Se falhar, verificar processo, porta `PORT` e conectividade com MongoDB.
+4. Se falhar, verificar processo, porta `PORT` e conectividade com PostgreSQL.
 
-## MongoDB indisponivel
+## PostgreSQL indisponivel
 
 1. Verificar rede e credenciais.
 2. Conferir disponibilidade do servidor/container.
-3. Validar `DELFOS_DATABASE_URL`.
+3. Validar `DELFOS_POSTGRES_URL`.
 4. Avaliar disco/volume quando aplicavel.
 5. Confirmar que o banco usado para desenvolvimento local nao contem dado real de cliente.
 
@@ -230,7 +230,7 @@ Para incidentes de vazamento, conferir que:
 
 O comando `npm run seed:dev` e exclusivo para ambiente local. Se falhar, verifique:
 
-1. MongoDB local acessivel em `DELFOS_DATABASE_URL`.
+1. PostgreSQL local acessivel em `DELFOS_POSTGRES_URL`.
 2. Variaveis obrigatorias do `.env`, principalmente `ENCRYPTION_KEY_BASE64`.
 3. Ausencia de dados reais no banco local usado para validacao.
 4. Mensagem de erro do terminal sem expor secrets.

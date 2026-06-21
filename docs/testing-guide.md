@@ -159,16 +159,16 @@ npm test
 npm run test:cov
 npm run build
 npm run test:e2e
-npm run test:e2e:postgres   # mesmas specs E2E contra PostgreSQL efêmero (ADR-0035, P4)
 ```
 
-`test:e2e:postgres` provisiona um banco PostgreSQL efêmero por spec (precisa de um
+`test:e2e` provisiona um banco PostgreSQL efêmero por execução (precisa de um
 servidor PostgreSQL descartável; usa `E2E_POSTGRES_URL`, default
-`postgresql://postgres:postgres@localhost:55432/postgres`) e roda as **mesmas** 5
-specs E2E com os repositórios PostgreSQL ativos. O AppModule ainda sobe o Mongo em
-memória (MongooseModule fica até a P5). As specs de paridade de repositório e o
-round-trip de migrations rodam com `TEST_POSTGRES_URL` apontando para um servidor
-PostgreSQL descartável (pulam quando a variável não está definida).
+`postgresql://postgres:postgres@localhost:55432/postgres`) e roda as specs E2E com
+os repositórios PostgreSQL ativos. PostgreSQL (Kysely, ADR-0036) é o único backend;
+não há mais Mongo em memória (`mongodb-memory-server` removido na P5). As specs de
+paridade de repositório, cache Valkey e o round-trip de migrations rodam com
+`TEST_POSTGRES_URL` / `TEST_VALKEY_URL` apontando para servidores descartáveis
+(pulam quando a variável não está definida).
 
 Frontend:
 
@@ -185,10 +185,10 @@ Nao documentar nem exigir script inexistente como operacional.
 
 ## 8a. CI - delfos-api
 
-Marco de estabilizacao da foundation (2026-05-16; atualizado 2026-05-17).
-Numeros atuais de teste: `delfos-api` 425 testes unit/integration
-(58 suites) e 17 E2E; `delfos-web` 376 testes Flutter e 36 Playwright E2E;
-`delfos-connectors` 106 testes. O E2E de API e o
+Marco de estabilizacao da foundation (2026-05-16; atualizado na P5).
+Numeros atuais de teste: `delfos-api` 565 testes unit/integration
+e 17 E2E (contra PostgreSQL + Valkey reais); `delfos-web` 376 testes Flutter e 36
+Playwright E2E; `delfos-connectors` 106 testes. O E2E de API e o
 E2E de Web rodam em jobs separados e opcionais. A execucao real de conectores
 permanece bloqueada e ADR-0021/ADR-0022 permanecem `Proposed`.
 
@@ -206,34 +206,26 @@ mascaram falhas.
 
 Jobs opcionais:
 
-- `e2e` - `npm run test:e2e`;
-- `e2e-postgres` - `npm run test:e2e:postgres` (migração ADR-0035, fase P4).
+- `e2e` - `npm run test:e2e` (contra PostgreSQL efêmero, ADR-0035/ADR-0036).
 
 Regras do job `e2e`:
 
 - e separado dos checks obrigatorios e ainda nao e exigido como status check
   obrigatorio em branch protection;
 - mesmo opcional, falha o workflow se o E2E falhar (sem `continue-on-error`);
-- usa MongoDB em memoria via `mongodb-memory-server`, nunca producao;
+- roda contra um serviço `postgres:16-alpine` health-checked, com
+  `E2E_POSTGRES_URL` apontando para ele, e provisiona/descarta um banco PostgreSQL
+  efêmero por execução; PostgreSQL é o único backend (Mongo em memória removido na
+  P5);
 - nao usa secrets reais - chave admin e chave de criptografia sao valores
   ficticios definidos no proprio harness de teste;
 - nao habilita execucao real de connectors, dispatch real nem descriptografia
-  real de credenciais;
-- cacheia os binarios do `mongodb-memory-server` (`MONGOMS_DOWNLOAD_DIR`) com
-  chave por sistema operacional e hash do `package-lock.json`.
+  real de credenciais.
 
-Regras do job `e2e-postgres`:
-
-- roda as **mesmas** specs E2E contra um serviço `postgres:16-alpine`
-  health-checked, com `E2E_POSTGRES_URL` apontando para ele;
-- cada spec provisiona e descarta seu próprio banco PostgreSQL efêmero; o
-  AppModule ainda sobe o Mongo em memória (cache do `mongodb-memory-server`
-  permanece necessário);
-- mesmas garantias de segurança do `e2e` (sem secrets reais, sem execução real).
-
-Além disso, os jobs obrigatórios `test` e `coverage` ganharam um serviço
-`postgres:16-alpine` + `TEST_POSTGRES_URL`, de modo que as specs de paridade de
-repositório e o round-trip de migrations passam a **rodar** no CI (antes pulavam).
+Além disso, os jobs obrigatórios `test` e `coverage` rodam com um serviço
+`postgres:16-alpine` + `TEST_POSTGRES_URL` (e `TEST_VALKEY_URL` quando há cache),
+de modo que as specs de paridade de repositório e o round-trip de migrations
+**rodam** no CI.
 
 Os jobs E2E so se tornarao status check obrigatorio quando estiverem estaveis.
 

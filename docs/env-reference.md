@@ -19,27 +19,19 @@ Este documento descreve variaveis esperadas para local, homologacao e producao.
 | `CORS_ORIGIN` | Nao | `http://localhost:5173,http://localhost:8080,http://localhost:3000,http://127.0.0.1:4174,http://localhost:4174` | Origens permitidas separadas por virgula (whitelist exata, sem coringa). Quando omitida, CORS fica desabilitado. Cada origem e exata: protocolo + host + porta, e `localhost` **nao** equivale a `127.0.0.1`. A porta `4174` cobre o servidor estatico do E2E integrado do `delfos-web`. |
 | `LOG_LEVEL` | Sim | `info` | Nivel de log. |
 
-## MongoDB
+## PostgreSQL (banco unico — ADR-0035 / ADR-0036)
 
 | Variavel | Obrigatoria | Exemplo | Descricao |
 |---|---:|---|---|
-| `DELFOS_DATABASE_URL` | Sim | `mongodb://localhost:27017/delfos` | URL completa do MongoDB de configuracao/metadados. |
+| `DELFOS_POSTGRES_URL` | Sim | `postgresql://delfos:delfos@localhost:5432/delfos` | URL do PostgreSQL, **unico** banco de configuracao/metadados do Delfos. Validada no bootstrap (deve comecar com `postgres://` ou `postgresql://`). Acesso via Kysely (ADR-0036). PostgreSQL armazena configuracao e metadados do Delfos, nao payload operacional bruto de cliente. |
 
-Na Fase 1, MongoDB armazena configuracao e metadados do Delfos, nao payload operacional bruto de cliente. `DELFOS_DATABASE_URL` continua sendo a URL do banco **operacional** ate a fase P5 da migracao (remocao do Mongo).
+> **Migracao concluida (P5)**: o ORM/query builder e **Kysely** (ADR-0036) e o
+> PostgreSQL e o **unico backend**. MongoDB/Mongoose foram **removidos** na P5;
+> `DELFOS_DATABASE_URL` **nao existe mais** (removido na P5). Os testes E2E rodam
+> contra um PostgreSQL efemero via `E2E_POSTGRES_URL`. Plano completo:
+> `docs/postgresql-migration-plan.md`.
 
-## PostgreSQL (migracao ADR-0035 / ADR-0036)
-
-| Variavel | Obrigatoria | Exemplo | Descricao |
-|---|---:|---|---|
-| `DELFOS_POSTGRES_URL` | Nao (P1) | `postgresql://delfos:delfos@localhost:5432/delfos` | URL do PostgreSQL, banco primario futuro. **Opcional** durante a migracao: se ausente, a API roda 100% em MongoDB e o health-check de Postgres reporta `disabled`; se presente, a conexao Kysely sobe e `/health` reporta o status do Postgres. Validada no bootstrap (deve comecar com `postgres://` ou `postgresql://`). |
-
-> **Estado da migracao (P1 em andamento)**: o ORM escolhido e **Kysely** (ADR-0036).
-> A fase P1 adiciona a conexao e o health-check de Postgres; o schema/migrations
-> vem na P2 e a troca de repositorios na P3. Ate la, MongoDB continua sendo o
-> banco operacional. A config do **Valkey** so e adicionada na fase P6 e **nao
-> existe hoje**. Plano completo: `docs/postgresql-migration-plan.md`.
-
-## Valkey (cache — ADR-0035 / P6)
+## Valkey (cache — ADR-0035)
 
 | Variavel | Obrigatoria | Exemplo | Descricao |
 |---|---:|---|---|

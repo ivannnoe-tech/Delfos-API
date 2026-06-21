@@ -51,7 +51,7 @@ A coluna **Implementação** distingue decisão `Accepted` já construída de de
 | [0002](./adr-0002-no-paid-components.md) | No paid or restrictive-license components | Accepted | implementado |
 | [0003](./adr-0003-chart-renderer-abstraction.md) | ChartRenderer abstraction over fl_chart + graphic | Accepted | implementado |
 | [0004](./adr-0004-two-repos-strategy.md) | Two-repo strategy (delfos-api + delfos-web) | Accepted | implementado |
-| [0005](./adr-0005-mongodb-as-config-store.md) | MongoDB as Delfos configuration store | Accepted | implementado |
+| [0005](./adr-0005-mongodb-as-config-store.md) | MongoDB as Delfos configuration store | Superseded by ADR-0035 | substituído (P5) |
 | [0006](./adr-0006-jwt-self-managed-auth.md) | Self-managed JWT auth (no Auth0/Clerk) | Accepted | não iniciada |
 | [0007](./adr-0007-no-cache-redis-phase-1.md) | No Redis cache in Phase 1 | Superseded by ADR-0033 | não iniciada |
 | [0008](./adr-0008-connectors-and-integration-execution.md) | delfos-connectors and integration execution | Accepted | não iniciada |
