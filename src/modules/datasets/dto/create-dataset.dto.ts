@@ -3,7 +3,6 @@ import {
   ArrayMaxSize,
   IsArray,
   IsEnum,
-  IsMongoId,
   IsObject,
   IsOptional,
   IsString,
@@ -13,6 +12,7 @@ import {
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
+import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import { DatasetFieldDto } from './dataset-field.dto';
 import {
   DatasetRefreshMode,
@@ -23,12 +23,12 @@ import {
 
 export class CreateDatasetDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })
-  @IsMongoId()
+  @IsEntityId()
   tenantId!: string;
 
   @ApiPropertyOptional({ example: '662d4f6e7a1c2b00124f0201' })
   @IsOptional()
-  @IsMongoId()
+  @IsEntityId()
   connectionId?: string;
 
   @ApiProperty({ example: 'sales_orders' })

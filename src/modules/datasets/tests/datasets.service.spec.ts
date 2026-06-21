@@ -2,9 +2,8 @@ import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Types } from 'mongoose';
 
 import { AuditService } from '../../audit/services/audit.service';
-import { DatasetsRepository } from '../repositories/datasets.repository';
+import { DatasetRecord, DatasetsRepository } from '../repositories/datasets.repository';
 import {
-  DatasetDocument,
   DatasetFieldType,
   DatasetRefreshMode,
   DatasetSchemaMode,
@@ -20,14 +19,14 @@ type AuditServiceMock = {
 
 describe('DatasetsService', () => {
   it('creates a dataset with sanitized metadata/settings and safe audit', async () => {
-    const datasetId = new Types.ObjectId();
-    const tenantId = new Types.ObjectId();
-    const connectionId = new Types.ObjectId();
+    const datasetId = '662d4f6e7a1c2b00124f0501';
+    const tenantId = '662d4f6e7a1c2b00124f0001';
+    const connectionId = '662d4f6e7a1c2b00124f0201';
     const createdAt = new Date('2026-04-26T12:00:00.000Z');
     const repository: Pick<DatasetsRepository, 'create'> = {
       create: jest.fn(async (record) =>
-        createDatasetDocument({
-          _id: datasetId,
+        buildDatasetRecord({
+          id: datasetId,
           tenantId: record.tenantId,
           connectionId: record.connectionId,
           datasetKey: record.datasetKey,
@@ -55,8 +54,8 @@ describe('DatasetsService', () => {
 
     const result = await service.create(
       {
-        tenantId: tenantId.toString(),
-        connectionId: connectionId.toString(),
+        tenantId,
+        connectionId,
         datasetKey: 'sales_orders',
         name: 'Pedidos de venda',
         description: 'Dataset logico para pedidos de venda',
@@ -92,9 +91,9 @@ describe('DatasetsService', () => {
       }),
     );
     expect(result).toMatchObject({
-      id: datasetId.toString(),
-      tenantId: tenantId.toString(),
-      connectionId: connectionId.toString(),
+      id: datasetId,
+      tenantId,
+      connectionId,
       datasetKey: 'sales_orders',
       metadata: { domain: 'sales' },
       settings: { defaultPageSize: 50 },
@@ -102,29 +101,29 @@ describe('DatasetsService', () => {
     expect(JSON.stringify(result)).not.toContain('must-not-leak');
     expect(JSON.stringify(result)).not.toContain('postgres://user:pass@example/db');
     expect(auditService.record).toHaveBeenCalledWith({
-      tenantId: tenantId.toString(),
+      tenantId,
       actorUserId: undefined,
       action: 'dataset.created',
       entity: 'dataset',
-      entityId: datasetId.toString(),
+      entityId: datasetId,
       metadata: {
         datasetKey: 'sales_orders',
         status: DatasetStatus.Draft,
         sourceType: DatasetSourceType.Database,
-        connectionId: connectionId.toString(),
+        connectionId,
       },
     });
     expect(JSON.stringify(auditService.record.mock.calls)).not.toContain('must-not-leak');
   });
 
   it('lists datasets by tenant filters', async () => {
-    const tenantId = new Types.ObjectId();
-    const datasetId = new Types.ObjectId();
+    const tenantId = '662d4f6e7a1c2b00124f0001';
+    const datasetId = '662d4f6e7a1c2b00124f0501';
     const createdAt = new Date('2026-04-26T12:00:00.000Z');
     const repository: Pick<DatasetsRepository, 'findByFilters' | 'countByFilters'> = {
       findByFilters: jest.fn(async () => [
-        createDatasetDocument({
-          _id: datasetId,
+        buildDatasetRecord({
+          id: datasetId,
           tenantId,
           datasetKey: 'sales_orders',
           name: 'Pedidos',
@@ -146,7 +145,7 @@ describe('DatasetsService', () => {
     const service = createService(repository);
 
     const result = await service.findByFilters({
-      tenantId: tenantId.toString(),
+      tenantId,
       status: DatasetStatus.Active,
       page: 1,
       pageSize: 25,
@@ -168,27 +167,25 @@ describe('DatasetsService', () => {
   });
 
   it('gets one dataset using tenant scoped lookup', async () => {
-    const tenantId = new Types.ObjectId();
-    const datasetId = new Types.ObjectId();
+    const tenantId = '662d4f6e7a1c2b00124f0001';
+    const datasetId = '662d4f6e7a1c2b00124f0501';
     const repository: Pick<DatasetsRepository, 'findByTenantAndId'> = {
       findByTenantAndId: jest.fn(async () => null),
     };
     const service = createService(repository);
 
-    await expect(service.findOne(tenantId.toString(), datasetId.toString())).rejects.toBeInstanceOf(
-      NotFoundException,
-    );
-    expect(repository.findByTenantAndId).toHaveBeenCalledWith(tenantId, datasetId.toString());
+    await expect(service.findOne(tenantId, datasetId)).rejects.toBeInstanceOf(NotFoundException);
+    expect(repository.findByTenantAndId).toHaveBeenCalledWith(tenantId, datasetId);
   });
 
   it('updates a dataset with sanitized settings and audit', async () => {
-    const tenantId = new Types.ObjectId();
-    const datasetId = new Types.ObjectId();
+    const tenantId = '662d4f6e7a1c2b00124f0001';
+    const datasetId = '662d4f6e7a1c2b00124f0501';
     const updatedAt = new Date('2026-04-26T13:00:00.000Z');
     const repository: Pick<DatasetsRepository, 'updateByTenantAndId'> = {
       updateByTenantAndId: jest.fn(async (_tenantId, _id, record) =>
-        createDatasetDocument({
-          _id: datasetId,
+        buildDatasetRecord({
+          id: datasetId,
           tenantId,
           datasetKey: record.datasetKey ?? 'sales_orders',
           name: record.name ?? 'Pedidos',
@@ -211,8 +208,8 @@ describe('DatasetsService', () => {
     const service = createService(repository, auditService);
 
     const result = await service.update(
-      tenantId.toString(),
-      datasetId.toString(),
+      tenantId,
+      datasetId,
       {
         name: 'Pedidos atualizados',
         settings: { defaultPageSize: 25, token: 'must-not-leak' },
@@ -222,7 +219,7 @@ describe('DatasetsService', () => {
 
     expect(repository.updateByTenantAndId).toHaveBeenCalledWith(
       tenantId,
-      datasetId.toString(),
+      datasetId,
       expect.objectContaining({
         name: 'Pedidos atualizados',
         settings: { defaultPageSize: 25 },
@@ -236,13 +233,13 @@ describe('DatasetsService', () => {
   });
 
   it('archives a dataset using soft delete', async () => {
-    const tenantId = new Types.ObjectId();
-    const datasetId = new Types.ObjectId();
+    const tenantId = '662d4f6e7a1c2b00124f0001';
+    const datasetId = '662d4f6e7a1c2b00124f0501';
     const updatedAt = new Date('2026-04-26T13:30:00.000Z');
     const repository: Pick<DatasetsRepository, 'archiveByTenantAndId'> = {
       archiveByTenantAndId: jest.fn(async () =>
-        createDatasetDocument({
-          _id: datasetId,
+        buildDatasetRecord({
+          id: datasetId,
           tenantId,
           datasetKey: 'sales_orders',
           name: 'Pedidos',
@@ -263,13 +260,13 @@ describe('DatasetsService', () => {
     const auditService = createAuditService();
     const service = createService(repository, auditService);
 
-    const result = await service.archive(tenantId.toString(), datasetId.toString(), {
+    const result = await service.archive(tenantId, datasetId, {
       actorId: 'dev-actor-003',
     });
 
     expect(repository.archiveByTenantAndId).toHaveBeenCalledWith(
       tenantId,
-      datasetId.toString(),
+      datasetId,
       'dev-actor-003',
     );
     expect(result.status).toBe(DatasetStatus.Archived);
@@ -290,7 +287,28 @@ describe('DatasetsService', () => {
 
     await expect(
       service.create({
-        tenantId: new Types.ObjectId().toString(),
+        tenantId: '662d4f6e7a1c2b00124f0001',
+        datasetKey: 'sales_orders',
+        name: 'Pedidos',
+      }),
+    ).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it('maps a PostgreSQL unique violation to a conflict', async () => {
+    const repository: Pick<DatasetsRepository, 'create'> = {
+      create: jest.fn(async () => {
+        const error = new Error('duplicate key value violates unique constraint') as Error & {
+          code: string;
+        };
+        error.code = '23505';
+        throw error;
+      }),
+    };
+    const service = createService(repository);
+
+    await expect(
+      service.create({
+        tenantId: '662d4f6e7a1c2b00124f0001',
         datasetKey: 'sales_orders',
         name: 'Pedidos',
       }),
@@ -298,13 +316,13 @@ describe('DatasetsService', () => {
   });
 
   it('supports datasets without connectionId', async () => {
-    const datasetId = new Types.ObjectId();
-    const tenantId = new Types.ObjectId();
+    const datasetId = '662d4f6e7a1c2b00124f0501';
+    const tenantId = '662d4f6e7a1c2b00124f0001';
     const createdAt = new Date('2026-04-26T12:00:00.000Z');
     const repository: Pick<DatasetsRepository, 'create'> = {
       create: jest.fn(async (record) =>
-        createDatasetDocument({
-          _id: datasetId,
+        buildDatasetRecord({
+          id: datasetId,
           tenantId: record.tenantId,
           datasetKey: record.datasetKey,
           name: record.name,
@@ -325,7 +343,7 @@ describe('DatasetsService', () => {
     const service = createService(repository);
 
     const result = await service.create({
-      tenantId: tenantId.toString(),
+      tenantId,
       datasetKey: 'manual_metrics',
       name: 'Metricas manuais',
       sourceType: DatasetSourceType.Manual,
@@ -363,6 +381,6 @@ function createAuditService(): AuditServiceMock {
   };
 }
 
-function createDatasetDocument(record: Partial<DatasetDocument>): DatasetDocument {
-  return record as DatasetDocument;
+function buildDatasetRecord(record: Partial<DatasetRecord>): DatasetRecord {
+  return record as DatasetRecord;
 }

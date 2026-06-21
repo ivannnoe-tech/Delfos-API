@@ -1,17 +1,18 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsMongoId, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
+import { IsEnum, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 
+import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import { PaginationQueryDto } from '../../../core/dto/pagination-query.dto';
 import { DatasetSourceType, DatasetStatus } from '../schemas/dataset.schema';
 
 export class ListDatasetsQueryDto extends PaginationQueryDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })
-  @IsMongoId()
+  @IsEntityId()
   tenantId!: string;
 
   @ApiPropertyOptional({ example: '662d4f6e7a1c2b00124f0201' })
   @IsOptional()
-  @IsMongoId()
+  @IsEntityId()
   connectionId?: string;
 
   @ApiPropertyOptional({ example: 'sales_orders' })
@@ -34,6 +35,6 @@ export class ListDatasetsQueryDto extends PaginationQueryDto {
 
 export class DatasetTenantQueryDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })
-  @IsMongoId()
+  @IsEntityId()
   tenantId!: string;
 }
