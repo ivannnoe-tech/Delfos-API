@@ -1,83 +1,74 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model, Types } from 'mongoose';
-
 import {
-  FieldMapping,
-  FieldMappingDocument,
   FieldMappingStatus,
+  FieldMappingTargetType,
+  FieldMappingTransform,
 } from '../schemas/field-mapping.schema';
 
-export interface CreateFieldMappingRecord {
-  tenantId: Types.ObjectId;
-  connectionId?: Types.ObjectId;
+/**
+ * Persistence-neutral field-mapping record returned by every
+ * {@link FieldMappingsRepository} implementation (Mongo or PostgreSQL). The
+ * service maps this to the response DTO, so the REST contract is identical
+ * regardless of the backend (ADR-0035 / ADR-0036).
+ */
+export interface FieldMappingRecord {
+  id: string;
+  tenantId: string;
+  connectionId?: string;
   datasetKey: string;
   sourcePath: string;
   targetField: string;
-  targetType: FieldMapping['targetType'];
+  targetType: FieldMappingTargetType;
+  required: boolean;
+  transform?: FieldMappingTransform;
+  status: FieldMappingStatus;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateFieldMappingRecord {
+  tenantId: string;
+  connectionId?: string;
+  datasetKey: string;
+  sourcePath: string;
+  targetField: string;
+  targetType: FieldMappingTargetType;
   required?: boolean;
-  transform?: FieldMapping['transform'];
-  status?: FieldMapping['status'];
+  transform?: FieldMappingTransform;
+  status?: FieldMappingStatus;
 }
 
 export type UpdateFieldMappingRecord = Partial<Omit<CreateFieldMappingRecord, 'tenantId'>>;
 
 export interface FieldMappingFilters {
-  tenantId: Types.ObjectId;
+  tenantId: string;
   datasetKey?: string;
-  connectionId?: Types.ObjectId;
+  connectionId?: string;
 }
 
-@Injectable()
-export class FieldMappingsRepository {
-  constructor(
-    @InjectModel(FieldMapping.name)
-    private readonly fieldMappingModel: Model<FieldMappingDocument>,
-  ) {}
-
-  create(record: CreateFieldMappingRecord): Promise<FieldMappingDocument> {
-    return this.fieldMappingModel.create(record);
-  }
-
-  findByFilters(
+/**
+ * Repository contract for field mappings. Implemented by
+ * `MongoFieldMappingsRepository` and `PostgresFieldMappingsRepository`; the
+ * module selects one at runtime based on whether `DELFOS_POSTGRES_URL` is
+ * configured. Used as the DI token.
+ *
+ * Every query is tenant-scoped: `tenantId` is a mandatory isolation boundary,
+ * never an optional filter.
+ */
+export abstract class FieldMappingsRepository {
+  abstract create(record: CreateFieldMappingRecord): Promise<FieldMappingRecord>;
+  abstract findByFilters(
     filters: FieldMappingFilters,
     page: number,
     pageSize: number,
-  ): Promise<FieldMappingDocument[]> {
-    return this.fieldMappingModel
-      .find(this.toMongoFilters(filters))
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .exec();
-  }
-
-  countByFilters(filters: FieldMappingFilters): Promise<number> {
-    return this.fieldMappingModel.countDocuments(this.toMongoFilters(filters)).exec();
-  }
-
-  updateByTenantAndId(
-    tenantId: Types.ObjectId,
+  ): Promise<FieldMappingRecord[]>;
+  abstract countByFilters(filters: FieldMappingFilters): Promise<number>;
+  abstract updateByTenantAndId(
+    tenantId: string,
     id: string,
     record: UpdateFieldMappingRecord,
-  ): Promise<FieldMappingDocument | null> {
-    return this.fieldMappingModel
-      .findOneAndUpdate({ _id: id, tenantId }, record, { new: true, runValidators: true })
-      .exec();
-  }
-
-  deactivateByTenantAndId(
-    tenantId: Types.ObjectId,
+  ): Promise<FieldMappingRecord | null>;
+  abstract deactivateByTenantAndId(
+    tenantId: string,
     id: string,
-  ): Promise<FieldMappingDocument | null> {
-    return this.updateByTenantAndId(tenantId, id, { status: FieldMappingStatus.Inactive });
-  }
-
-  private toMongoFilters(filters: FieldMappingFilters): FilterQuery<FieldMappingDocument> {
-    return {
-      tenantId: filters.tenantId,
-      ...(filters.datasetKey ? { datasetKey: filters.datasetKey } : {}),
-      ...(filters.connectionId ? { connectionId: filters.connectionId } : {}),
-    };
-  }
+  ): Promise<FieldMappingRecord | null>;
 }

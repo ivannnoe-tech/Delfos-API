@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import { buildListMeta, ListResponse } from '../../../core/dto/list-meta.dto';
 import { AuditService } from '../../audit/services/audit.service';
@@ -7,8 +6,11 @@ import { CreateFieldMappingDto } from '../dto/create-field-mapping.dto';
 import { FieldMappingResponseDto } from '../dto/field-mapping-response.dto';
 import { ListFieldMappingsQueryDto } from '../dto/field-mapping-query.dto';
 import { UpdateFieldMappingDto } from '../dto/update-field-mapping.dto';
-import { FieldMappingsRepository } from '../repositories/field-mappings.repository';
-import { FieldMappingDocument } from '../schemas/field-mapping.schema';
+import {
+  FieldMappingRecord,
+  FieldMappingsRepository,
+  UpdateFieldMappingRecord,
+} from '../repositories/field-mappings.repository';
 
 @Injectable()
 export class FieldMappingsService {
@@ -22,8 +24,8 @@ export class FieldMappingsService {
     actor: { actorId?: string } = {},
   ): Promise<FieldMappingResponseDto> {
     const fieldMapping = await this.fieldMappingsRepository.create({
-      tenantId: new Types.ObjectId(dto.tenantId),
-      connectionId: dto.connectionId ? new Types.ObjectId(dto.connectionId) : undefined,
+      tenantId: dto.tenantId,
+      connectionId: dto.connectionId,
       datasetKey: dto.datasetKey,
       sourcePath: dto.sourcePath,
       targetField: dto.targetField,
@@ -42,9 +44,9 @@ export class FieldMappingsService {
     query: ListFieldMappingsQueryDto,
   ): Promise<ListResponse<FieldMappingResponseDto>> {
     const filters = {
-      tenantId: new Types.ObjectId(query.tenantId),
+      tenantId: query.tenantId,
       datasetKey: query.datasetKey,
-      connectionId: query.connectionId ? new Types.ObjectId(query.connectionId) : undefined,
+      connectionId: query.connectionId,
     };
     const [items, total] = await Promise.all([
       this.fieldMappingsRepository.findByFilters(filters, query.page, query.pageSize),
@@ -64,12 +66,9 @@ export class FieldMappingsService {
     actor: { actorId?: string } = {},
   ): Promise<FieldMappingResponseDto> {
     const fieldMapping = await this.fieldMappingsRepository.updateByTenantAndId(
-      new Types.ObjectId(tenantId),
+      tenantId,
       id,
-      {
-        ...dto,
-        connectionId: dto.connectionId ? new Types.ObjectId(dto.connectionId) : undefined,
-      },
+      this.toUpdateRecord(dto),
     );
 
     if (!fieldMapping) {
@@ -86,10 +85,7 @@ export class FieldMappingsService {
     id: string,
     actor: { actorId?: string } = {},
   ): Promise<FieldMappingResponseDto> {
-    const fieldMapping = await this.fieldMappingsRepository.deactivateByTenantAndId(
-      new Types.ObjectId(tenantId),
-      id,
-    );
+    const fieldMapping = await this.fieldMappingsRepository.deactivateByTenantAndId(tenantId, id);
 
     if (!fieldMapping) {
       throw new NotFoundException('Field mapping not found.');
@@ -100,23 +96,36 @@ export class FieldMappingsService {
     return this.toResponse(fieldMapping);
   }
 
+  private toUpdateRecord(dto: UpdateFieldMappingDto): UpdateFieldMappingRecord {
+    return {
+      ...(dto.connectionId !== undefined ? { connectionId: dto.connectionId } : {}),
+      ...(dto.datasetKey !== undefined ? { datasetKey: dto.datasetKey } : {}),
+      ...(dto.sourcePath !== undefined ? { sourcePath: dto.sourcePath } : {}),
+      ...(dto.targetField !== undefined ? { targetField: dto.targetField } : {}),
+      ...(dto.targetType !== undefined ? { targetType: dto.targetType } : {}),
+      ...(dto.required !== undefined ? { required: dto.required } : {}),
+      ...(dto.transform !== undefined ? { transform: dto.transform } : {}),
+      ...(dto.status !== undefined ? { status: dto.status } : {}),
+    };
+  }
+
   private async recordAudit(
     action: string,
-    fieldMapping: FieldMappingDocument,
+    fieldMapping: FieldMappingRecord,
     actor: { actorId?: string },
   ): Promise<void> {
     await this.auditService.record({
-      tenantId: fieldMapping.tenantId.toString(),
+      tenantId: fieldMapping.tenantId,
       actorUserId: this.toAuditActorUserId(actor.actorId),
       action,
       entity: 'field_mapping',
-      entityId: fieldMapping._id.toString(),
+      entityId: fieldMapping.id,
       metadata: {
         datasetKey: fieldMapping.datasetKey,
         targetField: fieldMapping.targetField,
         targetType: fieldMapping.targetType,
         status: fieldMapping.status,
-        connectionId: fieldMapping.connectionId?.toString() ?? null,
+        connectionId: fieldMapping.connectionId ?? null,
       },
     });
   }
@@ -129,11 +138,11 @@ export class FieldMappingsService {
     return actorId;
   }
 
-  private toResponse(fieldMapping: FieldMappingDocument): FieldMappingResponseDto {
+  private toResponse(fieldMapping: FieldMappingRecord): FieldMappingResponseDto {
     return {
-      id: fieldMapping._id.toString(),
-      tenantId: fieldMapping.tenantId.toString(),
-      connectionId: fieldMapping.connectionId?.toString(),
+      id: fieldMapping.id,
+      tenantId: fieldMapping.tenantId,
+      connectionId: fieldMapping.connectionId,
       datasetKey: fieldMapping.datasetKey,
       sourcePath: fieldMapping.sourcePath,
       targetField: fieldMapping.targetField,

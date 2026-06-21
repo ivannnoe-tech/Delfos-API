@@ -1,14 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsEnum,
-  IsMongoId,
-  IsOptional,
-  IsString,
-  Matches,
-  MaxLength,
-} from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 
+import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import {
   FieldMappingStatus,
   FieldMappingTargetType,
@@ -17,12 +10,12 @@ import {
 
 export class CreateFieldMappingDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })
-  @IsMongoId()
+  @IsEntityId()
   tenantId!: string;
 
   @ApiPropertyOptional({ example: '662d4f6e7a1c2b00124f0201' })
   @IsOptional()
-  @IsMongoId()
+  @IsEntityId()
   connectionId?: string;
 
   @ApiProperty({ example: 'sales' })
