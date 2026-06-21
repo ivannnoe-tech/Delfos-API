@@ -5,6 +5,7 @@ export * from './runtime-connector-bridge-resolver';
 export * from './runtime-connector-bridge-resolver.factory';
 export * from './runtime-connector-capability-mapper';
 export * from './runtime-connector-command-validation.port';
+export * from './runtime-connector-dispatch.port';
 export * from './runtime-connector-limits-policy';
 export * from './runtime-connector-reference-resolver';
 export * from './runtime-connector-reference.types';
