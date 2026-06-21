@@ -1,19 +1,34 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model, Types } from 'mongoose';
-
 import { SanitizedMetadata } from '../../../core/utils/sanitize-metadata';
 import { AdminRole } from '../../auth/types/admin-role';
 import { ExecutionRequestStatus } from '../schemas/execution-request.schema';
-import {
-  ExecutionRequestEvent,
-  ExecutionRequestEventDocument,
-  ExecutionRequestEventType,
-} from '../schemas/execution-request-event.schema';
+import { ExecutionRequestEventType } from '../schemas/execution-request-event.schema';
+
+/**
+ * Persistence-neutral execution request event record returned by every
+ * {@link ExecutionRequestEventsRepository} implementation (Mongo or
+ * PostgreSQL). Events are immutable and only carry `createdAt`. Ids are opaque
+ * strings, so the record is identical regardless of the backend
+ * (ADR-0035 / ADR-0036).
+ */
+export interface ExecutionRequestEventRecord {
+  id: string;
+  tenantId: string;
+  executionRequestId: string;
+  requestKey: string;
+  eventType: ExecutionRequestEventType;
+  previousStatus?: ExecutionRequestStatus;
+  nextStatus?: ExecutionRequestStatus;
+  message?: string;
+  reason?: string;
+  actorId?: string;
+  actorRole?: AdminRole;
+  metadata: SanitizedMetadata;
+  createdAt: Date;
+}
 
 export interface CreateExecutionRequestEventRecord {
-  tenantId: Types.ObjectId;
-  executionRequestId: Types.ObjectId;
+  tenantId: string;
+  executionRequestId: string;
   requestKey: string;
   eventType: ExecutionRequestEventType;
   previousStatus?: ExecutionRequestStatus;
@@ -26,46 +41,26 @@ export interface CreateExecutionRequestEventRecord {
 }
 
 export interface ExecutionRequestEventFilters {
-  tenantId: Types.ObjectId;
-  executionRequestId: Types.ObjectId;
+  tenantId: string;
+  executionRequestId: string;
   eventType?: ExecutionRequestEventType;
 }
 
-@Injectable()
-export class ExecutionRequestEventsRepository {
-  constructor(
-    @InjectModel(ExecutionRequestEvent.name)
-    private readonly executionRequestEventModel: Model<ExecutionRequestEventDocument>,
-  ) {}
-
-  create(record: CreateExecutionRequestEventRecord): Promise<ExecutionRequestEventDocument> {
-    return this.executionRequestEventModel.create(record);
-  }
-
-  findByFilters(
+/**
+ * Repository contract for execution request events. Implemented by
+ * `MongoExecutionRequestEventsRepository` and
+ * `PostgresExecutionRequestEventsRepository`; the module selects one at runtime
+ * based on whether `DELFOS_POSTGRES_URL` is configured. Used as the DI token.
+ *
+ * Every query is tenant-scoped: `tenantId` is a mandatory isolation boundary,
+ * never an optional filter.
+ */
+export abstract class ExecutionRequestEventsRepository {
+  abstract create(record: CreateExecutionRequestEventRecord): Promise<ExecutionRequestEventRecord>;
+  abstract findByFilters(
     filters: ExecutionRequestEventFilters,
     page: number,
     pageSize: number,
-  ): Promise<ExecutionRequestEventDocument[]> {
-    return this.executionRequestEventModel
-      .find(this.toMongoFilters(filters))
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .exec();
-  }
-
-  countByFilters(filters: ExecutionRequestEventFilters): Promise<number> {
-    return this.executionRequestEventModel.countDocuments(this.toMongoFilters(filters)).exec();
-  }
-
-  private toMongoFilters(
-    filters: ExecutionRequestEventFilters,
-  ): FilterQuery<ExecutionRequestEventDocument> {
-    return {
-      tenantId: filters.tenantId,
-      executionRequestId: filters.executionRequestId,
-      ...(filters.eventType ? { eventType: filters.eventType } : {}),
-    };
-  }
+  ): Promise<ExecutionRequestEventRecord[]>;
+  abstract countByFilters(filters: ExecutionRequestEventFilters): Promise<number>;
 }

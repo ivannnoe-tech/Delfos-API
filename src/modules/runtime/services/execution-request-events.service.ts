@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import { buildListMeta } from '../../../core/dto/list-meta.dto';
 import { sanitizeMetadata } from '../../../core/utils/sanitize-metadata';
@@ -9,16 +8,16 @@ import {
   ExecutionRequestEventListResponseDto,
   ExecutionRequestEventResponseDto,
 } from '../dto/execution-request-event-response.dto';
-import { ExecutionRequestEventsRepository } from '../repositories/execution-request-events.repository';
-import { ExecutionRequestsRepository } from '../repositories/execution-requests.repository';
 import {
-  ExecutionRequestDocument,
-  ExecutionRequestStatus,
-} from '../schemas/execution-request.schema';
+  ExecutionRequestEventRecord,
+  ExecutionRequestEventsRepository,
+} from '../repositories/execution-request-events.repository';
 import {
-  ExecutionRequestEventDocument,
-  ExecutionRequestEventType,
-} from '../schemas/execution-request-event.schema';
+  ExecutionRequestRecord,
+  ExecutionRequestsRepository,
+} from '../repositories/execution-requests.repository';
+import { ExecutionRequestStatus } from '../schemas/execution-request.schema';
+import { ExecutionRequestEventType } from '../schemas/execution-request-event.schema';
 import { ExecutionRequestActorContext } from './execution-request-actor-context';
 import { ExecutionRequestAuditService } from './execution-request-audit.service';
 
@@ -31,12 +30,12 @@ export class ExecutionRequestEventsService {
   ) {}
 
   async createInitialAcceptedEvent(
-    executionRequest: ExecutionRequestDocument,
+    executionRequest: ExecutionRequestRecord,
     actor: ExecutionRequestActorContext,
-  ): Promise<ExecutionRequestEventDocument> {
+  ): Promise<ExecutionRequestEventRecord> {
     return this.executionRequestEventsRepository.create({
       tenantId: executionRequest.tenantId,
-      executionRequestId: executionRequest._id,
+      executionRequestId: executionRequest.id,
       requestKey: executionRequest.requestKey,
       eventType: ExecutionRequestEventType.Accepted,
       nextStatus: executionRequest.status,
@@ -58,7 +57,7 @@ export class ExecutionRequestEventsService {
     );
     const filters = {
       tenantId: executionRequest.tenantId,
-      executionRequestId: executionRequest._id,
+      executionRequestId: executionRequest.id,
       eventType: query.eventType,
     };
     const [items, total] = await Promise.all([
@@ -89,14 +88,14 @@ export class ExecutionRequestEventsService {
       updatedExecutionRequest =
         (await this.executionRequestsRepository.updateStatusByTenantAndId(
           executionRequest.tenantId,
-          executionRequest._id.toString(),
+          executionRequest.id,
           nextStatus,
         )) ?? executionRequest;
     }
 
     const event = await this.executionRequestEventsRepository.create({
       tenantId: executionRequest.tenantId,
-      executionRequestId: executionRequest._id,
+      executionRequestId: executionRequest.id,
       requestKey: executionRequest.requestKey,
       eventType: dto.eventType,
       previousStatus,
@@ -129,9 +128,9 @@ export class ExecutionRequestEventsService {
   private async getExecutionRequestOrThrow(
     tenantId: string,
     executionRequestId: string,
-  ): Promise<ExecutionRequestDocument> {
+  ): Promise<ExecutionRequestRecord> {
     const executionRequest = await this.executionRequestsRepository.findByTenantAndId(
-      new Types.ObjectId(tenantId),
+      tenantId,
       executionRequestId,
     );
 
@@ -193,11 +192,11 @@ export class ExecutionRequestEventsService {
     return typeof sanitized === 'string' ? sanitized : undefined;
   }
 
-  private toEventResponse(event: ExecutionRequestEventDocument): ExecutionRequestEventResponseDto {
+  private toEventResponse(event: ExecutionRequestEventRecord): ExecutionRequestEventResponseDto {
     return {
-      id: event._id.toString(),
-      tenantId: event.tenantId.toString(),
-      executionRequestId: event.executionRequestId.toString(),
+      id: event.id,
+      tenantId: event.tenantId,
+      executionRequestId: event.executionRequestId,
       requestKey: event.requestKey,
       eventType: event.eventType,
       previousStatus: event.previousStatus,

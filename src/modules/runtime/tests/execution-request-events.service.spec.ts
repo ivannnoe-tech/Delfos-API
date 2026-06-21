@@ -1,5 +1,4 @@
 import { BadRequestException } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import { AdminRole } from '../../auth/types/admin-role';
 import { ExecutionRequestEventsRepository } from '../repositories/execution-request-events.repository';
@@ -12,6 +11,7 @@ import {
   createActorFixture,
   createRuntimeEventFixture,
   createRuntimeRequestFixture,
+  newId,
 } from './execution-request-test-fixtures';
 
 describe('ExecutionRequestEventsService', () => {
@@ -28,7 +28,7 @@ describe('ExecutionRequestEventsService', () => {
     expect(eventRepository.create).toHaveBeenCalledWith(
       expect.objectContaining({
         tenantId: request.tenantId,
-        executionRequestId: request._id,
+        executionRequestId: request.id,
         requestKey: request.requestKey,
         eventType: ExecutionRequestEventType.Accepted,
         nextStatus: ExecutionRequestStatus.Accepted,
@@ -42,9 +42,9 @@ describe('ExecutionRequestEventsService', () => {
   });
 
   it('lists events by execution request and tenant scope', async () => {
-    const tenantId = new Types.ObjectId();
-    const executionRequestId = new Types.ObjectId();
-    const request = createRuntimeRequestFixture({ _id: executionRequestId, tenantId });
+    const tenantId = newId();
+    const executionRequestId = newId();
+    const request = createRuntimeRequestFixture({ id: executionRequestId, tenantId });
     const repository: Pick<ExecutionRequestsRepository, 'findByTenantAndId'> = {
       findByTenantAndId: jest.fn(async () => request),
     };
@@ -63,16 +63,13 @@ describe('ExecutionRequestEventsService', () => {
     };
     const service = createService(repository, eventRepository);
 
-    const result = await service.findEvents(executionRequestId.toString(), {
-      tenantId: tenantId.toString(),
+    const result = await service.findEvents(executionRequestId, {
+      tenantId,
       page: 1,
       pageSize: 25,
     });
 
-    expect(repository.findByTenantAndId).toHaveBeenCalledWith(
-      tenantId,
-      executionRequestId.toString(),
-    );
+    expect(repository.findByTenantAndId).toHaveBeenCalledWith(tenantId, executionRequestId);
     expect(eventRepository.findByFilters).toHaveBeenCalledWith(
       {
         tenantId,
@@ -84,7 +81,7 @@ describe('ExecutionRequestEventsService', () => {
     );
     expect(result.items).toHaveLength(1);
     expect(result.items[0]).toMatchObject({
-      executionRequestId: executionRequestId.toString(),
+      executionRequestId,
       eventType: ExecutionRequestEventType.Accepted,
       nextStatus: ExecutionRequestStatus.Accepted,
     });
@@ -97,10 +94,10 @@ describe('ExecutionRequestEventsService', () => {
     [ExecutionRequestEventType.CompletedDemo, ExecutionRequestStatus.CompletedDemo],
     [ExecutionRequestEventType.NotSupported, ExecutionRequestStatus.NotSupported],
   ])('creates %s event and maps it to %s status', async (eventType, nextStatus) => {
-    const tenantId = new Types.ObjectId();
-    const executionRequestId = new Types.ObjectId();
+    const tenantId = newId();
+    const executionRequestId = newId();
     const request = createRuntimeRequestFixture({
-      _id: executionRequestId,
+      id: executionRequestId,
       tenantId,
       status: ExecutionRequestStatus.Queued,
     });
@@ -119,9 +116,9 @@ describe('ExecutionRequestEventsService', () => {
     const service = createService(repository, eventRepository);
 
     const result = await service.createEvent(
-      executionRequestId.toString(),
+      executionRequestId,
       {
-        tenantId: tenantId.toString(),
+        tenantId,
         eventType,
         message: 'Safe message.',
         reason: 'runtime_foundation_only',
@@ -131,7 +128,7 @@ describe('ExecutionRequestEventsService', () => {
 
     expect(repository.updateStatusByTenantAndId).toHaveBeenCalledWith(
       tenantId,
-      executionRequestId.toString(),
+      executionRequestId,
       nextStatus,
     );
     expect(result).toMatchObject({
@@ -142,9 +139,9 @@ describe('ExecutionRequestEventsService', () => {
   });
 
   it('creates note_added without updating status', async () => {
-    const tenantId = new Types.ObjectId();
-    const executionRequestId = new Types.ObjectId();
-    const request = createRuntimeRequestFixture({ _id: executionRequestId, tenantId });
+    const tenantId = newId();
+    const executionRequestId = newId();
+    const request = createRuntimeRequestFixture({ id: executionRequestId, tenantId });
     const repository: Pick<
       ExecutionRequestsRepository,
       'findByTenantAndId' | 'updateStatusByTenantAndId'
@@ -157,8 +154,8 @@ describe('ExecutionRequestEventsService', () => {
     };
     const service = createService(repository, eventRepository);
 
-    const result = await service.createEvent(executionRequestId.toString(), {
-      tenantId: tenantId.toString(),
+    const result = await service.createEvent(executionRequestId, {
+      tenantId,
       eventType: ExecutionRequestEventType.NoteAdded,
       message: 'Safe note.',
       metadata: { domain: 'sales', token: 'must-not-leak' },
@@ -175,24 +172,24 @@ describe('ExecutionRequestEventsService', () => {
   });
 
   it('rejects invalid event transition payloads', async () => {
-    const tenantId = new Types.ObjectId();
-    const executionRequestId = new Types.ObjectId();
+    const tenantId = newId();
+    const executionRequestId = newId();
     const service = createService({
       findByTenantAndId: jest.fn(async () =>
-        createRuntimeRequestFixture({ _id: executionRequestId, tenantId }),
+        createRuntimeRequestFixture({ id: executionRequestId, tenantId }),
       ),
     });
 
     await expect(
-      service.createEvent(executionRequestId.toString(), {
-        tenantId: tenantId.toString(),
+      service.createEvent(executionRequestId, {
+        tenantId,
         eventType: ExecutionRequestEventType.StatusChanged,
       }),
     ).rejects.toBeInstanceOf(BadRequestException);
 
     await expect(
-      service.createEvent(executionRequestId.toString(), {
-        tenantId: tenantId.toString(),
+      service.createEvent(executionRequestId, {
+        tenantId,
         eventType: ExecutionRequestEventType.NoteAdded,
         nextStatus: ExecutionRequestStatus.Blocked,
       }),

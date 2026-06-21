@@ -1,5 +1,4 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import { AdminRole } from '../../auth/types/admin-role';
 import { ExecutionRequestsRepository } from '../repositories/execution-requests.repository';
@@ -20,6 +19,7 @@ import {
   createActorFixture,
   createRuntimeEventFixture,
   createRuntimeRequestFixture,
+  newId,
 } from './execution-request-test-fixtures';
 
 describe('ExecutionRequestsService', () => {
@@ -27,26 +27,25 @@ describe('ExecutionRequestsService', () => {
     {
       kind: ExecutionRequestKind.Query,
       referenceField: 'queryDefinitionId',
-      referenceId: new Types.ObjectId(),
+      referenceId: newId(),
     },
     {
       kind: ExecutionRequestKind.Dashboard,
       referenceField: 'dashboardDefinitionId',
-      referenceId: new Types.ObjectId(),
+      referenceId: newId(),
     },
     {
       kind: ExecutionRequestKind.Report,
       referenceField: 'reportDefinitionId',
-      referenceId: new Types.ObjectId(),
+      referenceId: newId(),
     },
   ] as const)('creates a $kind request and initial accepted event', async (caseData) => {
-    const tenantId = new Types.ObjectId();
-    const datasetId = new Types.ObjectId();
-    const connectionId = new Types.ObjectId();
+    const tenantId = newId();
+    const datasetId = newId();
+    const connectionId = newId();
     const repository: Pick<ExecutionRequestsRepository, 'create'> = {
       create: jest.fn(async (record) =>
         createRuntimeRequestFixture({
-          _id: record._id,
           tenantId: record.tenantId,
           requestKey: record.requestKey,
           kind: record.kind,
@@ -71,11 +70,11 @@ describe('ExecutionRequestsService', () => {
 
     const result = await service.create(
       {
-        tenantId: tenantId.toString(),
+        tenantId,
         kind: caseData.kind,
-        [caseData.referenceField]: caseData.referenceId.toString(),
-        connectionId: connectionId.toString(),
-        datasetId: datasetId.toString(),
+        [caseData.referenceField]: caseData.referenceId,
+        connectionId,
+        datasetId,
         mode: ExecutionRequestMode.FutureRuntime,
         metadata: {
           domain: 'sales',
@@ -89,11 +88,11 @@ describe('ExecutionRequestsService', () => {
     const createRecord = jest.mocked(repository.create).mock.calls[0]?.[0];
 
     expect(createRecord).toBeDefined();
-    expect(createRecord?.tenantId).toEqual(tenantId);
+    expect(createRecord?.tenantId).toBe(tenantId);
     expect(createRecord?.requestKey).toMatch(/^exec_req_[0-9a-f]{24}$/);
     expect(createRecord?.kind).toBe(caseData.kind);
     expect(createRecord?.status).toBe(ExecutionRequestStatus.Accepted);
-    expect(createRecord?.[caseData.referenceField]).toEqual(caseData.referenceId);
+    expect(createRecord?.[caseData.referenceField]).toBe(caseData.referenceId);
     expect(createRecord?.metadata).toEqual({ domain: 'sales' });
     expect(auditService.recordExecutionRequest).toHaveBeenCalledWith(
       'execution_request.created',
@@ -112,11 +111,11 @@ describe('ExecutionRequestsService', () => {
       createActorFixture(),
     );
     expect(result).toMatchObject({
-      tenantId: tenantId.toString(),
+      tenantId,
       kind: caseData.kind,
       status: ExecutionRequestStatus.Accepted,
-      connectionId: connectionId.toString(),
-      datasetId: datasetId.toString(),
+      connectionId,
+      datasetId,
       requestedByRole: AdminRole.Operator,
       mode: ExecutionRequestMode.FutureRuntime,
       reason: 'runtime_foundation_only',
@@ -131,15 +130,15 @@ describe('ExecutionRequestsService', () => {
 
     await expect(
       service.create({
-        tenantId: new Types.ObjectId().toString(),
+        tenantId: newId(),
         kind: ExecutionRequestKind.Query,
       }),
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
   it('lists execution requests by tenant scoped filters', async () => {
-    const tenantId = new Types.ObjectId();
-    const queryDefinitionId = new Types.ObjectId();
+    const tenantId = newId();
+    const queryDefinitionId = newId();
     const repository: Pick<ExecutionRequestsRepository, 'findByFilters' | 'countByFilters'> = {
       findByFilters: jest.fn(async () => [
         createRuntimeRequestFixture({
@@ -152,10 +151,10 @@ describe('ExecutionRequestsService', () => {
     const service = createService(repository);
 
     const result = await service.findByFilters({
-      tenantId: tenantId.toString(),
+      tenantId,
       kind: ExecutionRequestKind.Query,
       status: ExecutionRequestStatus.Accepted,
-      queryDefinitionId: queryDefinitionId.toString(),
+      queryDefinitionId,
       page: 1,
       pageSize: 25,
     });
@@ -180,20 +179,17 @@ describe('ExecutionRequestsService', () => {
   });
 
   it('reads one execution request using tenant scoped lookup', async () => {
-    const tenantId = new Types.ObjectId();
-    const executionRequestId = new Types.ObjectId();
+    const tenantId = newId();
+    const executionRequestId = newId();
     const repository: Pick<ExecutionRequestsRepository, 'findByTenantAndId'> = {
       findByTenantAndId: jest.fn(async () => null),
     };
     const service = createService(repository);
 
-    await expect(
-      service.findOne(tenantId.toString(), executionRequestId.toString()),
-    ).rejects.toBeInstanceOf(NotFoundException);
-    expect(repository.findByTenantAndId).toHaveBeenCalledWith(
-      tenantId,
-      executionRequestId.toString(),
+    await expect(service.findOne(tenantId, executionRequestId)).rejects.toBeInstanceOf(
+      NotFoundException,
     );
+    expect(repository.findByTenantAndId).toHaveBeenCalledWith(tenantId, executionRequestId);
   });
 
   it('delegates events, dry-run, and demo execution to focused services', async () => {
@@ -207,8 +203,8 @@ describe('ExecutionRequestsService', () => {
       dryRunService,
       demoExecutorService,
     );
-    const executionRequestId = new Types.ObjectId().toString();
-    const tenantId = new Types.ObjectId().toString();
+    const executionRequestId = newId();
+    const tenantId = newId();
 
     await service.findEvents(executionRequestId, { tenantId, page: 1, pageSize: 25 });
     await service.createEvent(
@@ -281,9 +277,9 @@ function createEventsServiceMock(): Partial<ExecutionRequestEventsService> {
       meta: { page: 1, pageSize: 25, total: 0, totalPages: 0 },
     })),
     createEvent: jest.fn(async () => ({
-      id: new Types.ObjectId().toString(),
-      tenantId: new Types.ObjectId().toString(),
-      executionRequestId: new Types.ObjectId().toString(),
+      id: newId(),
+      tenantId: newId(),
+      executionRequestId: newId(),
       requestKey: 'exec_req_662d4f6e7a1c2b00124f0901',
       eventType: ExecutionRequestEventType.NoteAdded,
       metadata: {},
@@ -294,7 +290,7 @@ function createEventsServiceMock(): Partial<ExecutionRequestEventsService> {
 
 function createDryRunServiceMock(): Pick<ExecutionRequestDryRunService, 'dryRun'> {
   const response: ExecutionRequestDryRunResponseDto = {
-    executionRequestId: new Types.ObjectId().toString(),
+    executionRequestId: newId(),
     requestKey: 'exec_req_662d4f6e7a1c2b00124f0901',
     kind: ExecutionRequestKind.Query,
     recommendedStatus: ExecutionRequestStatus.Accepted,
@@ -315,7 +311,7 @@ function createDryRunServiceMock(): Pick<ExecutionRequestDryRunService, 'dryRun'
 
 function createDemoExecutorServiceMock(): Pick<ExecutionRequestDemoExecutorService, 'demoExecute'> {
   const response: ExecutionRequestDemoExecuteResponseDto = {
-    executionRequestId: new Types.ObjectId().toString(),
+    executionRequestId: newId(),
     requestKey: 'exec_req_662d4f6e7a1c2b00124f0901',
     kind: ExecutionRequestKind.Query,
     status: ExecutionRequestStatus.CompletedDemo,

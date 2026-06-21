@@ -1,5 +1,4 @@
 import { NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import { DashboardDefinitionsService } from '../../dashboard-definitions/services/dashboard-definitions.service';
 import { DatasetStatus } from '../../datasets/schemas/dataset.schema';
@@ -14,7 +13,7 @@ import {
   ExecutionRequestReadinessService,
   ReadinessAccumulator,
 } from '../services/execution-request-readiness.service';
-import { createRuntimeRequestFixture } from './execution-request-test-fixtures';
+import { createRuntimeRequestFixture, newId } from './execution-request-test-fixtures';
 
 type QueryDef = Awaited<ReturnType<QueryDefinitionsService['findOne']>>;
 type DatasetDef = Awaited<ReturnType<DatasetsService['findOne']>>;
@@ -195,8 +194,8 @@ describe('ExecutionRequestReadinessService', () => {
   });
 
   it('keeps every declarative lookup scoped to the request tenant', async () => {
-    const tenantId = new Types.ObjectId();
-    const queryDefinitionId = new Types.ObjectId();
+    const tenantId = newId();
+    const queryDefinitionId = newId();
     const harness = createHarness({
       queryDefinition: queryDef(),
       dataset: datasetDef(),
@@ -212,12 +211,12 @@ describe('ExecutionRequestReadinessService', () => {
     );
 
     expect(harness.queryDefinitionsService.findOne).toHaveBeenCalledWith(
-      tenantId.toString(),
-      queryDefinitionId.toString(),
+      tenantId,
+      queryDefinitionId,
     );
-    expect(harness.datasetsService.findOne).toHaveBeenCalledWith(tenantId.toString(), DATASET_ID);
+    expect(harness.datasetsService.findOne).toHaveBeenCalledWith(tenantId, DATASET_ID);
     expect(harness.fieldMappingsService.findByFilters).toHaveBeenCalledWith({
-      tenantId: tenantId.toString(),
+      tenantId,
       datasetKey: 'sales_orders',
       page: 1,
       pageSize: 1000,
@@ -244,7 +243,7 @@ describe('ExecutionRequestReadinessService', () => {
     const readiness = await harness.service.evaluate(
       createRuntimeRequestFixture({
         kind: ExecutionRequestKind.Dashboard,
-        dashboardDefinitionId: new Types.ObjectId(),
+        dashboardDefinitionId: newId(),
       }),
     );
 
@@ -270,7 +269,7 @@ describe('ExecutionRequestReadinessService', () => {
     const readiness = await harness.service.evaluate(
       createRuntimeRequestFixture({
         kind: ExecutionRequestKind.Report,
-        reportDefinitionId: new Types.ObjectId(),
+        reportDefinitionId: newId(),
       }),
     );
 
@@ -289,7 +288,7 @@ describe('ExecutionRequestReadinessService', () => {
     const readiness = await harness.service.evaluate(
       createRuntimeRequestFixture({
         kind: ExecutionRequestKind.Report,
-        reportDefinitionId: new Types.ObjectId(),
+        reportDefinitionId: newId(),
       }),
     );
 
@@ -314,7 +313,7 @@ describe('ExecutionRequestReadinessService', () => {
     const readiness = await harness.service.evaluate(
       createRuntimeRequestFixture({
         kind: ExecutionRequestKind.Report,
-        reportDefinitionId: new Types.ObjectId(),
+        reportDefinitionId: newId(),
       }),
     );
 

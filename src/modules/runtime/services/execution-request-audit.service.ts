@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { AuditService } from '../../audit/services/audit.service';
+import { ExecutionRequestEventRecord } from '../repositories/execution-request-events.repository';
+import { ExecutionRequestRecord } from '../repositories/execution-requests.repository';
+import { ExecutionRequestStatus } from '../schemas/execution-request.schema';
 import { ExecutionRequestActorContext } from './execution-request-actor-context';
-import {
-  ExecutionRequestDocument,
-  ExecutionRequestStatus,
-} from '../schemas/execution-request.schema';
-import { ExecutionRequestEventDocument } from '../schemas/execution-request-event.schema';
 
 @Injectable()
 export class ExecutionRequestAuditService {
@@ -14,24 +12,24 @@ export class ExecutionRequestAuditService {
 
   recordExecutionRequest(
     action: string,
-    executionRequest: ExecutionRequestDocument,
+    executionRequest: ExecutionRequestRecord,
     actor: ExecutionRequestActorContext,
     extraMetadata: Record<string, unknown> = {},
   ): Promise<void> {
     return this.auditService
       .record({
-        tenantId: executionRequest.tenantId.toString(),
+        tenantId: executionRequest.tenantId,
         actorUserId: this.toAuditActorUserId(actor.actorId),
         action,
         entity: 'execution_request',
-        entityId: executionRequest._id.toString(),
+        entityId: executionRequest.id,
         metadata: {
-          tenantId: executionRequest.tenantId.toString(),
+          tenantId: executionRequest.tenantId,
           kind: executionRequest.kind,
           status: executionRequest.status,
-          queryDefinitionId: executionRequest.queryDefinitionId?.toString(),
-          dashboardDefinitionId: executionRequest.dashboardDefinitionId?.toString(),
-          reportDefinitionId: executionRequest.reportDefinitionId?.toString(),
+          queryDefinitionId: executionRequest.queryDefinitionId,
+          dashboardDefinitionId: executionRequest.dashboardDefinitionId,
+          reportDefinitionId: executionRequest.reportDefinitionId,
           actorId: actor.actorId,
           actorRole: actor.actorRole,
           ...extraMetadata,
@@ -41,19 +39,19 @@ export class ExecutionRequestAuditService {
   }
 
   recordEvent(
-    event: ExecutionRequestEventDocument,
+    event: ExecutionRequestEventRecord,
     actor: ExecutionRequestActorContext,
   ): Promise<void> {
     return this.auditService
       .record({
-        tenantId: event.tenantId.toString(),
+        tenantId: event.tenantId,
         actorUserId: this.toAuditActorUserId(actor.actorId),
         action: 'execution_request.event.created',
         entity: 'execution_request_event',
-        entityId: event._id.toString(),
+        entityId: event.id,
         metadata: {
-          tenantId: event.tenantId.toString(),
-          executionRequestId: event.executionRequestId.toString(),
+          tenantId: event.tenantId,
+          executionRequestId: event.executionRequestId,
           requestKey: event.requestKey,
           eventType: event.eventType,
           previousStatus: event.previousStatus,
@@ -66,7 +64,7 @@ export class ExecutionRequestAuditService {
   }
 
   recordDryRun(
-    executionRequest: ExecutionRequestDocument,
+    executionRequest: ExecutionRequestRecord,
     actor: ExecutionRequestActorContext,
     metadata: {
       ready: boolean;
@@ -77,14 +75,14 @@ export class ExecutionRequestAuditService {
   ): Promise<void> {
     return this.auditService
       .record({
-        tenantId: executionRequest.tenantId.toString(),
+        tenantId: executionRequest.tenantId,
         actorUserId: this.toAuditActorUserId(actor.actorId),
         action: 'execution_request.dry_run_checked',
         entity: 'execution_request',
-        entityId: executionRequest._id.toString(),
+        entityId: executionRequest.id,
         metadata: {
-          tenantId: executionRequest.tenantId.toString(),
-          executionRequestId: executionRequest._id.toString(),
+          tenantId: executionRequest.tenantId,
+          executionRequestId: executionRequest.id,
           requestKey: executionRequest.requestKey,
           kind: executionRequest.kind,
           ready: metadata.ready,
@@ -97,7 +95,7 @@ export class ExecutionRequestAuditService {
   }
 
   recordDemoExecute(
-    executionRequest: ExecutionRequestDocument,
+    executionRequest: ExecutionRequestRecord,
     actor: ExecutionRequestActorContext,
     metadata: {
       ready: boolean;
@@ -108,14 +106,14 @@ export class ExecutionRequestAuditService {
   ): Promise<void> {
     return this.auditService
       .record({
-        tenantId: executionRequest.tenantId.toString(),
+        tenantId: executionRequest.tenantId,
         actorUserId: this.toAuditActorUserId(actor.actorId),
         action: 'execution_request.demo_executed',
         entity: 'execution_request',
-        entityId: executionRequest._id.toString(),
+        entityId: executionRequest.id,
         metadata: {
-          tenantId: executionRequest.tenantId.toString(),
-          executionRequestId: executionRequest._id.toString(),
+          tenantId: executionRequest.tenantId,
+          executionRequestId: executionRequest.id,
           requestKey: executionRequest.requestKey,
           kind: executionRequest.kind,
           status: metadata.status,
