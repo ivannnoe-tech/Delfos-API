@@ -111,14 +111,26 @@ explícito e, quando indicado, ADR própria. A fase atual concluída é a **P0**
 
 ## P2 — Schema / Migrations Foundation
 
+> **Concluída.** Schema das 13 tabelas criado como **migrations versionadas
+> Kysely** (5 arquivos `0001`–`0005` em `src/database/postgres/migrations/`),
+> com `up`/`down` validados contra PostgreSQL 16 real (sobe as 13 tabelas e
+> reverte a zero, idempotente). Tipos `DB` gerados por `kysely-codegen` a partir
+> do schema migrado. Subdecisões abertas resolvidas no `postgresql-data-model-draft.md`
+> §4 (UUID v4; semantic subdocs → JSONB; política de FK real × lógica).
+
 ### Escopo
-- Criar o schema inicial PostgreSQL conforme `postgresql-data-model-draft.md`.
-- Estabelecer o mecanismo de **migrations versionadas**.
-- `tenant_id` obrigatório (`NOT NULL`) nas tabelas de domínio.
-- Índices (prefixados por `tenant_id`), constraints e unique compostos.
-- Colunas JSONB para metadata/config declarativa.
-- `created_at` / `updated_at` obrigatórios; `archived_at` quando aplicável.
-- Soft archive/status conforme o modelo atual.
+- ~~Criar o schema inicial PostgreSQL conforme `postgresql-data-model-draft.md`~~
+  — **CONCLUÍDO** (13 tabelas, fiel ao modelo Mongoose atual).
+- ~~Mecanismo de **migrations versionadas**~~ — **CONCLUÍDO**: Kysely `Migrator`
+  + `FileMigrationProvider` (`migrator.ts`), CLI `scripts/migrate.ts`
+  (`migrate:latest`/`down`/`status`).
+- ~~`tenant_id NOT NULL` + FK → tenants em toda tabela tenant-scoped~~ — **OK**
+  (17 FKs reais; refs declarativas opcionais ficam lógicas, ver §4 do draft).
+- ~~Índices prefixados por `tenant_id`, constraints e unique compostos~~ — **OK**.
+- ~~Colunas JSONB para metadata/config declarativa~~ — **OK** (inclui measures/
+  dimensions/glossaryTerms como JSONB, decisão P2).
+- ~~`created_at`/`updated_at`~~ — **OK** (`execution_request_events` e `audit_logs`
+  só `created_at`, fiel ao modelo). Soft archive via coluna `status`.
 
 ### Fora de escopo
 - Migrar dados; ligar repositories aos módulos; remover MongoDB.
@@ -128,18 +140,25 @@ explícito e, quando indicado, ADR própria. A fase atual concluída é a **P0**
   `database-model.md` e os schemas `*.schema.ts`.
 
 ### Validações
-- Migrations sobem e descem de forma limpa (up/down) em banco efêmero.
-- Constraints e índices verificados por testes de schema.
+- ~~Migrations sobem e descem limpas (up/down) em banco efêmero~~ — **OK**
+  (`src/database/postgres/tests/migrations.spec.ts`, guardado por
+  `TEST_POSTGRES_URL`, contra PostgreSQL 16 em Docker).
+- ~~Constraints e índices verificados~~ — **OK** (FKs/uniques conferidos no schema vivo).
+- `format:check`, `lint`, `build`, `test` verdes; cobertura acima do piso
+  (migrations/migrator ficam fora do piso de cobertura unitária — são cobertos
+  pelo spec de integração com Postgres real).
 
 ### Rollback
 - Migrations `down`; schema é descartável (sem dados reais ainda).
 
 ### Arquivos/módulos afetados
-- Diretório de migrations; possível `src/database/` PostgreSQL.
+- `src/database/postgres/migrations/0001`–`0005`, `migrator.ts`,
+  `scripts/migrate.ts`, `database.types.ts` (codegen), `package.json` (scripts),
+  `jest.config.js` (exclusão de cobertura das migrations).
 
 ### Critérios de conclusão
-- Schema completo aplicável via migration; índices e constraints conferidos;
-  MongoDB ainda é o banco em uso.
+- **OK**: schema completo aplicável via migration; índices e constraints
+  conferidos; tipos `DB` gerados; MongoDB ainda é o banco em uso.
 
 ---
 
@@ -339,8 +358,8 @@ Ordem sugerida (de menor para maior acoplamento):
 | Fase | Tema | Estado |
 |---|---|---|
 | P0 | ADR / docs only | concluída |
-| P1 | PostgreSQL Infrastructure Foundation | em andamento (ORM decidido: Kysely, ADR-0036) |
-| P2 | Schema / Migrations Foundation | futura |
+| P1 | PostgreSQL Infrastructure Foundation | concluída (resta serviço PG no CI, fecha com P4) |
+| P2 | Schema / Migrations Foundation | concluída |
 | P3 | Repository Port Migration | futura |
 | P4 | Seed and E2E Migration | futura |
 | P5 | Mongo / Mongoose Removal | futura |

@@ -1,13 +1,14 @@
 # Modelo Relacional Draft — PostgreSQL (Delfos Analytics)
 
-> Status: **draft** — modelo candidato, não normativo ainda.
-> Decisão de origem: **ADR-0035**.
-> Escopo: esboço do schema relacional PostgreSQL para a migração faseada
-> descrita em `docs/postgresql-migration-plan.md` (fase P2).
+> Status: **draft + decisões de P2 fixadas** (subdecisões resolvidas na §4).
+> Decisão de origem: **ADR-0035**; ORM: **Kysely** (ADR-0036).
+> Escopo: schema relacional PostgreSQL para a migração faseada descrita em
+> `docs/postgresql-migration-plan.md` (fase P2).
 
-Este documento é um **rascunho de trabalho**. Ele não cria schema, não autoriza
-migrations e não substitui `docs/database-model.md` (que descreve o MongoDB
-atual). O modelo definitivo será fixado na fase P2, após a decisão de ORM (P1).
+Este documento guiou o schema inicial da **fase P2** (migration versionada
+Kysely). As subdecisões abertas foram resolvidas na §4. Ele não substitui
+`docs/database-model.md` (que descreve o MongoDB atual, banco operacional até a
+fase P5). MongoDB continua sendo o banco em uso durante P2.
 
 ---
 
@@ -15,7 +16,7 @@ atual). O modelo definitivo será fixado na fase P2, após a decisão de ORM (P1
 
 | Tema | Decisão draft | Justificativa |
 |---|---|---|
-| Chave primária | **UUID v4** (`uuid` nativo, `gen_random_uuid()`) | Migração direta de `ObjectId` (ambos opacos, não sequenciais); suportado nativamente pelo PostgreSQL via `pgcrypto`/`gen_random_uuid()`; não exige extensão de terceiros. ULID foi considerado (ordenável por tempo, bom para índices) mas exigiria extensão/encoding custom; UUID v4 + coluna `created_at` indexada cobre ordenação temporal com menos dependência. **Subdecisão aberta:** reavaliar UUID v7 (ordenável por tempo, padronizado) em P2. |
+| Chave primária | **UUID v4** (`uuid` nativo, `gen_random_uuid()`) — **decidido (P2)** | Migração direta de `ObjectId` (ambos opacos, não sequenciais); suportado nativamente pelo PostgreSQL via `gen_random_uuid()`; não exige extensão de terceiros. UUID v7 (ordenável por tempo) fica como reavaliação futura de performance de índice (P7), não bloqueia a P2. |
 | `tenant_id` | **Obrigatório** (`NOT NULL`) em toda tabela tenant-scoped | Isolamento é boundary, não filtro (ADR-0035 §multi-tenant). |
 | FK vs referência lógica | **FK real** entre entidades do mesmo tenant; referências hoje "declarativas sem validação cruzada" viram FK quando a integridade for desejável | O banco passa a garantir integridade que hoje só existe na aplicação. Algumas referências declarativas opcionais (ex.: `query_definition_id` em widget) podem permanecer **referência lógica** se a validação cruzada não for desejada — marcado caso a caso. |
 | JSONB | Para metadata/config declarativa variável e segura | Relacional para o domínio governado; JSONB para o declarativo (ADR-0035 §JSONB). |
@@ -109,8 +110,7 @@ tem.
 - **Índices:** `(tenant_id, dataset_key, target_field)`,
   `(tenant_id, connection_id)`.
 - **FKs:** `tenant_id → tenants(id)`, `connection_id → connections(id)`.
-  `dataset_key` pode virar FK lógica para `datasets(dataset_key)` por tenant —
-  avaliar em P2.
+  `dataset_key` permanece **referência lógica** indexada (decidido P2, sem FK).
 - **JSONB permitido:** `transform`. **Proibido:** payload real.
 - **Status/archive:** n/a (ou `status` se introduzido).
 
@@ -169,8 +169,8 @@ tem.
   `(tenant_id, visibility)`, `(tenant_id, query_definition_id)`,
   `(tenant_id, dashboard_definition_id)`.
 - **FKs:** `tenant_id → tenants(id)`. `query_definition_id` e
-  `dashboard_definition_id` são **referências declarativas opcionais**; avaliar
-  em P2 se viram FK real (com `ON DELETE SET NULL`) ou permanecem lógicas.
+  `dashboard_definition_id` permanecem **referências lógicas** indexadas
+  (decidido P2, sem FK; promoção a FK real é decisão futura).
 - **JSONB permitido:** `layout`, `sections`, `blocks`, `filters`, `parameters`,
   `export_options`, `tags`, `metadata`, `settings`. **Proibido:** secret.
 - **Status/archive:** `status: archived`.
@@ -236,22 +236,19 @@ tem.
   `settings`. **Proibido:** secret.
 - **Status/archive:** `status` (inclui `archived`).
 
-### semantic_measures / semantic_dimensions / semantic_glossary_terms — **decisão aberta**
+### semantic_measures / semantic_dimensions / semantic_glossary_terms — **decidido (P2): opção B (JSONB)**
 - **Estado atual:** no modelo Mongoose, `measures`, `dimensions` e
   `glossaryTerms` são **subdocumentos embutidos** em `semantic_models`.
-- **Decisão draft:** **opção A — tabelas-filhas** (`semantic_measures`,
-  `semantic_dimensions`, `semantic_glossary_terms`), cada uma com
-  `semantic_model_id` FK, `tenant_id`, `key`, `name`, `status` e os campos
-  específicos; `metadata JSONB` por linha.
-- **Justificativa da preferência por tabelas-filhas:** measures/dimensions/terms
-  têm `key` único por modelo, `status` próprio e relações cruzadas
-  (`relatedMeasureKeys`, `relatedDimensionKeys`); são candidatos naturais a
-  consulta/filtragem individual e a constraints de unicidade
-  (`UNIQUE (semantic_model_id, key)`). Tabelas-filhas tornam isso verificável no
-  banco.
-- **Opção B (alternativa):** manter como arrays JSONB em `semantic_models`,
-  espelhando o modelo atual — mais simples de migrar, aceitável **se** não
-  houver consulta individual. Decisão final em P2.
+- **Decisão P2: opção B — arrays JSONB** (`measures`, `dimensions`,
+  `glossary_terms`) em `semantic_models`. Espelha fielmente o modelo atual e o
+  contrato REST (que retorna o modelo com os subdocumentos aninhados), com risco
+  mínimo de paridade na P3. O próprio draft autoriza B **enquanto não houver
+  consulta individual** — e hoje não há (foundation declarativa, sem endpoint
+  por measure/dimension).
+- **Promoção futura à opção A (tabelas-filhas):** condicionada ao runtime real
+  que consulte/version/filtre measures/dimensions individualmente (Fase 2). Aí
+  uma tabela-filha com `UNIQUE (semantic_model_id, key)` passa a se justificar —
+  decisão futura própria, fora desta migração.
 
 ### semantic_quality_rules — **não existe hoje**
 - **Estado atual:** não há entidade `quality_rules`. A qualidade é um objeto
@@ -279,15 +276,38 @@ tenants 1───N audit_events
 tenants 1───N semantic_models 1───N semantic_measures / _dimensions / _glossary_terms
 ```
 
-## 4. Itens a fechar na fase P2
+## 4. Itens fechados na fase P2 (decididos)
 
-- UUID v4 vs UUID v7 para PK.
-- `field_mappings.dataset_key` → FK real para `datasets`?
-- `report_definitions` refs e `execution_requests` refs → FK real ou lógica?
-- semantic measures/dimensions/glossary → tabelas-filhas (opção A) vs JSONB
-  (opção B).
-- Necessidade de índices GIN em colunas JSONB efetivamente consultadas.
-- Avaliação de Row-Level Security por tenant (hardening, P7).
+As subdecisões abertas foram resolvidas na P2, otimizando para **migração
+incremental, paridade de contrato REST e baixo risco** (princípios do plano):
+
+- **UUID v4** (`gen_random_uuid()` nativo) — **decidido**. Sem extensão de
+  terceiros; `created_at` indexado cobre ordenação temporal. UUID v7 fica como
+  reavaliação futura de performance de índice (P7), não bloqueia.
+- **`field_mappings.dataset_key` → referência lógica** (indexada, **sem FK**) —
+  **decidido**. Preserva o comportamento atual (sem validação cruzada) e evita
+  quebra por ordem de inserção. `tenant_id` e `connection_id` continuam FK reais.
+- **`report_definitions` refs e `execution_requests` refs → referência lógica**
+  (indexadas, **sem FK**) — **decidido**. São refs declarativas opcionais sem
+  validação cruzada hoje; FK real é promoção futura. `execution_request_events →
+  execution_requests` permanece **FK real** (1‑N, integridade importa).
+- **semantic measures/dimensions/glossary → JSONB (opção B)** — **decidido para
+  P2**. Espelha o modelo Mongoose atual (subdocumentos embutidos) e é aceitável
+  enquanto **não há consulta individual** (o próprio draft autoriza B nesse caso).
+  Promoção a tabelas-filhas (opção A) fica condicionada ao runtime real que
+  consulte/version measures/dimensions individualmente — decisão futura própria.
+- **Índices GIN em JSONB** — **não criar agora**; só quando houver consulta real
+  sobre o conteúdo do JSONB (reavaliar em P7).
+- **Row-Level Security por tenant** — avaliação adiada para o hardening (P7),
+  como defesa adicional; o boundary é garantido na aplicação + `tenant_id NOT NULL`.
+
+Política de FK consolidada para a P2: `tenant_id → tenants(id)` é **FK real** em
+toda tabela tenant-scoped; FKs reais adicionais — `credentials.connection_id →
+connections(id)`, `datasets.connection_id → connections(id)`,
+`field_mappings.connection_id → connections(id)`, `query_definitions.dataset_id →
+datasets(id)`, `execution_request_events.execution_request_id →
+execution_requests(id)`. Demais referências cruzadas permanecem **lógicas**
+(indexadas) até que a validação cruzada seja escopo explícito.
 
 ## Relação com outros documentos
 
