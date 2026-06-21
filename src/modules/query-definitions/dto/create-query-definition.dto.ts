@@ -4,7 +4,6 @@ import {
   IsArray,
   IsEnum,
   IsInt,
-  IsMongoId,
   IsObject,
   IsOptional,
   IsString,
@@ -16,6 +15,7 @@ import {
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
+import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import {
   QueryDefinitionStatus,
   QueryDefinitionTimeGranularity,
@@ -30,11 +30,11 @@ const stableKeyPattern = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
 
 export class CreateQueryDefinitionDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })
-  @IsMongoId()
+  @IsEntityId()
   tenantId!: string;
 
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0501' })
-  @IsMongoId()
+  @IsEntityId()
   datasetId!: string;
 
   @ApiProperty({ example: 'sales_overview' })

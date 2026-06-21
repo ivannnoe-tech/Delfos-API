@@ -1,5 +1,4 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import { buildListMeta, ListResponse } from '../../../core/dto/list-meta.dto';
 import { sanitizeMetadata } from '../../../core/utils/sanitize-metadata';
@@ -18,12 +17,12 @@ import {
 } from '../dto/query-definition-response.dto';
 import { UpdateQueryDefinitionDto } from '../dto/update-query-definition.dto';
 import {
+  QueryDefinitionRecord,
   QueryDefinitionsRepository,
   UpdateQueryDefinitionRecord,
 } from '../repositories/query-definitions.repository';
 import {
   QueryDefinitionDimension,
-  QueryDefinitionDocument,
   QueryDefinitionFilter,
   QueryDefinitionMetric,
   QueryDefinitionSort,
@@ -48,8 +47,8 @@ export class QueryDefinitionsService {
   ): Promise<QueryDefinitionResponseDto> {
     try {
       const queryDefinition = await this.queryDefinitionsRepository.create({
-        tenantId: new Types.ObjectId(dto.tenantId),
-        datasetId: new Types.ObjectId(dto.datasetId),
+        tenantId: dto.tenantId,
+        datasetId: dto.datasetId,
         queryKey: dto.queryKey,
         name: dto.name,
         description: dto.description,
@@ -81,8 +80,8 @@ export class QueryDefinitionsService {
     query: ListQueryDefinitionsQueryDto,
   ): Promise<ListResponse<QueryDefinitionResponseDto>> {
     const filters = {
-      tenantId: new Types.ObjectId(query.tenantId),
-      datasetId: query.datasetId ? new Types.ObjectId(query.datasetId) : undefined,
+      tenantId: query.tenantId,
+      datasetId: query.datasetId,
       queryKey: query.queryKey,
       status: query.status,
       type: query.type,
@@ -102,10 +101,7 @@ export class QueryDefinitionsService {
     tenantId: QueryDefinitionTenantQueryDto['tenantId'],
     id: string,
   ): Promise<QueryDefinitionResponseDto> {
-    const queryDefinition = await this.queryDefinitionsRepository.findByTenantAndId(
-      new Types.ObjectId(tenantId),
-      id,
-    );
+    const queryDefinition = await this.queryDefinitionsRepository.findByTenantAndId(tenantId, id);
 
     if (!queryDefinition) {
       throw new NotFoundException('Query definition not found.');
@@ -122,7 +118,7 @@ export class QueryDefinitionsService {
   ): Promise<QueryDefinitionResponseDto> {
     try {
       const queryDefinition = await this.queryDefinitionsRepository.updateByTenantAndId(
-        new Types.ObjectId(tenantId),
+        tenantId,
         id,
         this.toUpdateRecord(dto, actor),
       );
@@ -145,7 +141,7 @@ export class QueryDefinitionsService {
     actor: QueryDefinitionActorContext = {},
   ): Promise<QueryDefinitionResponseDto> {
     const queryDefinition = await this.queryDefinitionsRepository.archiveByTenantAndId(
-      new Types.ObjectId(tenantId),
+      tenantId,
       id,
       actor.actorId,
     );
@@ -164,7 +160,7 @@ export class QueryDefinitionsService {
     actor: QueryDefinitionActorContext,
   ): UpdateQueryDefinitionRecord {
     return {
-      ...(dto.datasetId !== undefined ? { datasetId: new Types.ObjectId(dto.datasetId) } : {}),
+      ...(dto.datasetId !== undefined ? { datasetId: dto.datasetId } : {}),
       ...(dto.queryKey !== undefined ? { queryKey: dto.queryKey } : {}),
       ...(dto.name !== undefined ? { name: dto.name } : {}),
       ...(dto.description !== undefined ? { description: dto.description } : {}),
@@ -196,20 +192,20 @@ export class QueryDefinitionsService {
 
   private async recordAudit(
     action: string,
-    queryDefinition: QueryDefinitionDocument,
+    queryDefinition: QueryDefinitionRecord,
     actor: QueryDefinitionActorContext,
   ): Promise<void> {
     await this.auditService.record({
-      tenantId: queryDefinition.tenantId.toString(),
+      tenantId: queryDefinition.tenantId,
       actorUserId: this.toAuditActorUserId(actor.actorId),
       action,
       entity: 'query_definition',
-      entityId: queryDefinition._id.toString(),
+      entityId: queryDefinition.id,
       metadata: {
         queryKey: queryDefinition.queryKey,
         status: queryDefinition.status,
         type: queryDefinition.type,
-        datasetId: queryDefinition.datasetId.toString(),
+        datasetId: queryDefinition.datasetId,
       },
     });
   }
@@ -222,11 +218,11 @@ export class QueryDefinitionsService {
     return actorId;
   }
 
-  private toResponse(queryDefinition: QueryDefinitionDocument): QueryDefinitionResponseDto {
+  private toResponse(queryDefinition: QueryDefinitionRecord): QueryDefinitionResponseDto {
     return {
-      id: queryDefinition._id.toString(),
-      tenantId: queryDefinition.tenantId.toString(),
-      datasetId: queryDefinition.datasetId.toString(),
+      id: queryDefinition.id,
+      tenantId: queryDefinition.tenantId,
+      datasetId: queryDefinition.datasetId,
       queryKey: queryDefinition.queryKey,
       name: queryDefinition.name,
       description: queryDefinition.description,
@@ -306,11 +302,12 @@ export class QueryDefinitionsService {
   }
 
   private isDuplicateKeyError(error: unknown): boolean {
-    return (
-      typeof error === 'object' &&
-      error !== null &&
-      'code' in error &&
-      (error as { code?: unknown }).code === 11000
-    );
+    if (typeof error !== 'object' || error === null || !('code' in error)) {
+      return false;
+    }
+
+    const code = (error as { code?: unknown }).code;
+    // Mongo duplicate-key error code (11000) or PostgreSQL unique_violation (23505).
+    return code === 11000 || code === '23505';
   }
 }

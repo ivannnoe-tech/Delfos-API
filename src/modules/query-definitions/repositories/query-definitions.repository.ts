@@ -1,34 +1,60 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model, Types } from 'mongoose';
-
 import { SanitizedMetadata } from '../../../core/utils/sanitize-metadata';
 import {
-  QueryDefinition,
   QueryDefinitionDimension,
-  QueryDefinitionDocument,
   QueryDefinitionFilter,
   QueryDefinitionMetric,
   QueryDefinitionSort,
   QueryDefinitionStatus,
+  QueryDefinitionTimeGranularity,
   QueryDefinitionType,
 } from '../schemas/query-definition.schema';
 
-export interface CreateQueryDefinitionRecord {
-  tenantId: Types.ObjectId;
-  datasetId: Types.ObjectId;
+/**
+ * Persistence-neutral query definition record returned by every
+ * {@link QueryDefinitionsRepository} implementation (Mongo or PostgreSQL). The
+ * service maps this to the response DTO, so the REST contract is identical
+ * regardless of the backend (ADR-0035 / ADR-0036).
+ */
+export interface QueryDefinitionRecord {
+  id: string;
+  tenantId: string;
+  datasetId: string;
   queryKey: string;
   name: string;
   description?: string;
-  status?: QueryDefinition['status'];
-  type?: QueryDefinition['type'];
+  status: QueryDefinitionStatus;
+  type: QueryDefinitionType;
   metrics: QueryDefinitionMetric[];
   dimensions: QueryDefinitionDimension[];
   filters: QueryDefinitionFilter[];
   sorts: QueryDefinitionSort[];
   defaultLimit?: number;
   timeField?: string;
-  allowedGranularities: QueryDefinition['allowedGranularities'];
+  allowedGranularities: QueryDefinitionTimeGranularity[];
+  tags: string[];
+  metadata: SanitizedMetadata;
+  settings: SanitizedMetadata;
+  createdBy?: string;
+  updatedBy?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateQueryDefinitionRecord {
+  tenantId: string;
+  datasetId: string;
+  queryKey: string;
+  name: string;
+  description?: string;
+  status?: QueryDefinitionStatus;
+  type?: QueryDefinitionType;
+  metrics: QueryDefinitionMetric[];
+  dimensions: QueryDefinitionDimension[];
+  filters: QueryDefinitionFilter[];
+  sorts: QueryDefinitionSort[];
+  defaultLimit?: number;
+  timeField?: string;
+  allowedGranularities: QueryDefinitionTimeGranularity[];
   tags: string[];
   metadata: SanitizedMetadata;
   settings: SanitizedMetadata;
@@ -41,73 +67,39 @@ export type UpdateQueryDefinitionRecord = Partial<
 >;
 
 export interface QueryDefinitionFilters {
-  tenantId: Types.ObjectId;
-  datasetId?: Types.ObjectId;
+  tenantId: string;
+  datasetId?: string;
   queryKey?: string;
   status?: QueryDefinitionStatus;
   type?: QueryDefinitionType;
 }
 
-@Injectable()
-export class QueryDefinitionsRepository {
-  constructor(
-    @InjectModel(QueryDefinition.name)
-    private readonly queryDefinitionModel: Model<QueryDefinitionDocument>,
-  ) {}
-
-  create(record: CreateQueryDefinitionRecord): Promise<QueryDefinitionDocument> {
-    return this.queryDefinitionModel.create(record);
-  }
-
-  findByFilters(
+/**
+ * Repository contract for query definitions. Implemented by
+ * `MongoQueryDefinitionsRepository` and `PostgresQueryDefinitionsRepository`;
+ * the module selects one at runtime based on whether `DELFOS_POSTGRES_URL` is
+ * configured. Used as the DI token.
+ *
+ * Every query is tenant-scoped: `tenantId` is a mandatory isolation boundary,
+ * never an optional filter.
+ */
+export abstract class QueryDefinitionsRepository {
+  abstract create(record: CreateQueryDefinitionRecord): Promise<QueryDefinitionRecord>;
+  abstract findByFilters(
     filters: QueryDefinitionFilters,
     page: number,
     pageSize: number,
-  ): Promise<QueryDefinitionDocument[]> {
-    return this.queryDefinitionModel
-      .find(this.toMongoFilters(filters))
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .exec();
-  }
-
-  countByFilters(filters: QueryDefinitionFilters): Promise<number> {
-    return this.queryDefinitionModel.countDocuments(this.toMongoFilters(filters)).exec();
-  }
-
-  findByTenantAndId(tenantId: Types.ObjectId, id: string): Promise<QueryDefinitionDocument | null> {
-    return this.queryDefinitionModel.findOne({ _id: id, tenantId }).exec();
-  }
-
-  updateByTenantAndId(
-    tenantId: Types.ObjectId,
+  ): Promise<QueryDefinitionRecord[]>;
+  abstract countByFilters(filters: QueryDefinitionFilters): Promise<number>;
+  abstract findByTenantAndId(tenantId: string, id: string): Promise<QueryDefinitionRecord | null>;
+  abstract updateByTenantAndId(
+    tenantId: string,
     id: string,
     record: UpdateQueryDefinitionRecord,
-  ): Promise<QueryDefinitionDocument | null> {
-    return this.queryDefinitionModel
-      .findOneAndUpdate({ _id: id, tenantId }, record, { new: true, runValidators: true })
-      .exec();
-  }
-
-  archiveByTenantAndId(
-    tenantId: Types.ObjectId,
+  ): Promise<QueryDefinitionRecord | null>;
+  abstract archiveByTenantAndId(
+    tenantId: string,
     id: string,
     updatedBy?: string,
-  ): Promise<QueryDefinitionDocument | null> {
-    return this.updateByTenantAndId(tenantId, id, {
-      status: QueryDefinitionStatus.Archived,
-      updatedBy,
-    });
-  }
-
-  private toMongoFilters(filters: QueryDefinitionFilters): FilterQuery<QueryDefinitionDocument> {
-    return {
-      tenantId: filters.tenantId,
-      ...(filters.datasetId ? { datasetId: filters.datasetId } : {}),
-      ...(filters.queryKey ? { queryKey: filters.queryKey } : {}),
-      ...(filters.status ? { status: filters.status } : {}),
-      ...(filters.type ? { type: filters.type } : {}),
-    };
-  }
+  ): Promise<QueryDefinitionRecord | null>;
 }
