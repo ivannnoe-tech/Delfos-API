@@ -27,6 +27,22 @@ export class AppConfigService {
     return this.configService.get('DELFOS_POSTGRES_URL', { infer: true });
   }
 
+  /**
+   * Valkey cache URL (ADR-0035 / P6). Optional: `undefined` means the cache is
+   * disabled and the system serves from the database only.
+   */
+  get valkeyUrl(): string | undefined {
+    return this.configService.get('VALKEY_URL', { infer: true });
+  }
+
+  /** Environment label used in cache key namespaces (`delfos:{env}:...`). */
+  get cacheEnv(): string {
+    const nodeEnv = this.nodeEnv;
+    if (nodeEnv === 'production') return 'prod';
+    if (nodeEnv === 'test') return 'test';
+    return 'local';
+  }
+
   get adminKey(): string {
     return this.configService.get('DELFOS_ADMIN_KEY', { infer: true });
   }

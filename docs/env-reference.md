@@ -39,6 +39,12 @@ Na Fase 1, MongoDB armazena configuracao e metadados do Delfos, nao payload oper
 > banco operacional. A config do **Valkey** so e adicionada na fase P6 e **nao
 > existe hoje**. Plano completo: `docs/postgresql-migration-plan.md`.
 
+## Valkey (cache — ADR-0035 / P6)
+
+| Variavel | Obrigatoria | Exemplo | Descricao |
+|---|---:|---|---|
+| `VALKEY_URL` | Nao | `redis://localhost:6379` | URL do Valkey (cache). **Opcional**: se ausente, o cache fica **desligado** (no-op) e tudo vem do banco; se presente, habilita o `CacheService` com Valkey. Aceita `valkey://`, `redis://` ou `rediss://`. Toda chave tem TTL e namespace por tenant; nunca armazena secret/credencial/token. |
+
 ## Seguranca
 
 | Variavel | Obrigatoria | Exemplo | Descricao |

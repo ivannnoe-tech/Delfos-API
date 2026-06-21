@@ -336,14 +336,28 @@ Ordem sugerida (de menor para maior acoplamento):
 
 ## P6 — Valkey Cache Foundation
 
+> **Concluída (fundação).** Abstração de cache implementada em `src/core/cache/`;
+> **não** há cache aplicado a endpoints ainda (cada caso de uso da §2 do
+> `valkey-cache-plan.md` exige escopo próprio). Cache **desligado por default**
+> (NoopCacheService); habilita Valkey quando `VALKEY_URL` é configurado.
+> Verificado contra Valkey 8 real em Docker.
+
 ### Escopo
-- Adicionar o serviço `valkey` ao `docker-compose.yml`.
-- Configurar variáveis de ambiente do Valkey com validação no bootstrap.
-- Criar uma **abstração de cache** (`CacheService` / port), com Valkey atrás.
-- **TTL obrigatório** em toda chave.
-- **Namespace por tenant** nas chaves (ver `valkey-cache-plan.md`).
-- Política de invalidação documentada.
-- Fallback para PostgreSQL quando o cache falhar.
+- ~~Adicionar o serviço `valkey` ao `docker-compose.yml`~~ — **OK**
+  (`valkey/valkey:8-alpine`, healthcheck).
+- ~~Variáveis de ambiente do Valkey com validação no bootstrap~~ — **OK**
+  (`VALKEY_URL` opcional, validada em `environment.ts`).
+- ~~Abstração de cache (`CacheService` / port), com Valkey atrás~~ — **OK**
+  (`CacheService` abstrato; `ValkeyCacheService` via `iovalkey`;
+  `NoopCacheService` default desligado; factory por config no `CacheModule`).
+- ~~**TTL obrigatório** em toda chave~~ — **OK** (`set` rejeita TTL ≤ 0).
+- ~~**Namespace por tenant** nas chaves~~ — **OK** (`buildCacheKey`: env + tenant
+  obrigatórios; sem chave cross-tenant; `delByPrefix` por `SCAN`, nunca `KEYS *`).
+- Política de invalidação documentada — **parcial**: o mecanismo (`delByPrefix`
+  por tenant/namespace) existe; a política por recurso será fechada ao aplicar o
+  cache a cada caso de uso.
+- ~~Fallback para o banco quando o cache falhar~~ — **OK** (erros do backend são
+  engolidos: `get`→miss, `set`/`del`→no-op; cache nunca é dependência crítica).
 
 ### Fora de escopo
 - Fila, worker, dispatch, scheduler — exigem ADR de promoção própria.
@@ -414,7 +428,7 @@ Ordem sugerida (de menor para maior acoplamento):
 | P3 | Repository Port Migration | concluída (12 módulos, dual-backend) |
 | P4 | Seed and E2E Migration | concluída (seed + E2E em PostgreSQL; CI com serviço PG) |
 | P5 | Mongo / Mongoose Removal | futura |
-| P6 | Valkey Cache Foundation | futura |
+| P6 | Valkey Cache Foundation | concluída (fundação — cache não aplicado a endpoints ainda) |
 | P7 | Hardening | futura |
 
 ## Relação com outros documentos

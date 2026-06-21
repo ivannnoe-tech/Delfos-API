@@ -5,8 +5,20 @@
 > Escopo: define **como** o Valkey será usado quando o cache for promovido
 > (fase P6 do `docs/postgresql-migration-plan.md`).
 
-Este documento **não autoriza** implementação. O cache não existe no estado
-atual (ADR-0033). Valkey só é introduzido na fase P6, com escopo explícito.
+> **Fundação implementada (fase P6).** O cache passou a existir como
+> **abstração** — não como cache aplicado a endpoints ainda. O que existe:
+> `CacheService` (porta) em `src/core/cache/`, com `ValkeyCacheService` (Valkey
+> por trás, via `iovalkey`) selecionado por `VALKEY_URL` e `NoopCacheService`
+> como **default desligado**; builder de chave `buildCacheKey` (env + tenant
+> obrigatórios, §4); TTL obrigatório em todo `set`; `delByPrefix` por `SCAN`
+> (nunca `KEYS *`/`FLUSH`); fallback silencioso para o banco em erro; serviço
+> `valkey` no `docker-compose.yml`. **Ainda NÃO existe**: cache aplicado a
+> qualquer caso de uso da §2 — cada um exige escopo explícito próprio. Aplicar o
+> cache a um endpoint específico continua sendo decisão futura.
+
+Quando este plano foi escrito, o cache não existia (ADR-0033). A fase P6
+introduziu a **fundação** acima; os casos de uso da §2 permanecem como trabalho
+futuro com escopo explícito.
 
 ---
 

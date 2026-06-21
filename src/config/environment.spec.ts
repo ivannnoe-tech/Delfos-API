@@ -60,6 +60,28 @@ describe('validateEnvironment', () => {
     ).toThrow('DELFOS_POSTGRES_URL must start with postgres:// or postgresql://.');
   });
 
+  it('parses an optional Valkey URL when provided', () => {
+    const result = validateEnvironment({
+      DELFOS_DATABASE_URL: 'mongodb://localhost:27017/delfos',
+      VALKEY_URL: 'redis://localhost:6379',
+      DELFOS_ADMIN_KEY: 'test-admin-key-not-a-real-secret',
+      ENCRYPTION_KEY_BASE64: encryptionKeyBase64,
+    });
+
+    expect(result.VALKEY_URL).toBe('redis://localhost:6379');
+  });
+
+  it('rejects a malformed Valkey URL', () => {
+    expect(() =>
+      validateEnvironment({
+        DELFOS_DATABASE_URL: 'mongodb://localhost:27017/delfos',
+        VALKEY_URL: 'http://localhost:6379',
+        DELFOS_ADMIN_KEY: 'test-admin-key-not-a-real-secret',
+        ENCRYPTION_KEY_BASE64: encryptionKeyBase64,
+      }),
+    ).toThrow('VALKEY_URL must start with valkey://, redis:// or rediss://.');
+  });
+
   it('rejects missing database URL', () => {
     expect(() => validateEnvironment({})).toThrow('DELFOS_DATABASE_URL is required.');
   });

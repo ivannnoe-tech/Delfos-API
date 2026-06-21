@@ -7,6 +7,9 @@ export interface EnvironmentVariables {
   // PostgreSQL primary database (ADR-0035), phased migration. OPTIONAL during P1:
   // when absent the API runs on MongoDB only and the Postgres health-check is skipped.
   DELFOS_POSTGRES_URL?: string;
+  // Valkey cache URL (ADR-0035 / P6). OPTIONAL: when absent the cache is
+  // disabled (no-op) and the system serves everything from PostgreSQL/MongoDB.
+  VALKEY_URL?: string;
   DELFOS_ADMIN_KEY: string;
   ENCRYPTION_KEY_BASE64: string;
   CORS_ORIGIN: string[];
@@ -27,6 +30,7 @@ export function validateEnvironment(config: Record<string, unknown>): Environmen
   const port = readPort(config);
   const databaseUrl = readRequiredString(config, 'DELFOS_DATABASE_URL');
   const postgresUrl = readOptionalPostgresUrl(config);
+  const valkeyUrl = readOptionalValkeyUrl(config);
   const adminKey = readAdminKey(config);
   const encryptionKeyBase64 = readEncryptionKey(config);
   const corsOrigin = readCsv(config, 'CORS_ORIGIN');
@@ -38,6 +42,7 @@ export function validateEnvironment(config: Record<string, unknown>): Environmen
     PORT: port,
     DELFOS_DATABASE_URL: databaseUrl,
     DELFOS_POSTGRES_URL: postgresUrl,
+    VALKEY_URL: valkeyUrl,
     DELFOS_ADMIN_KEY: adminKey,
     ENCRYPTION_KEY_BASE64: encryptionKeyBase64,
     CORS_ORIGIN: corsOrigin,
@@ -82,6 +87,26 @@ function readOptionalPostgresUrl(config: Record<string, unknown>): string | unde
 
   if (!/^postgres(ql)?:\/\//.test(trimmed)) {
     throw new Error('DELFOS_POSTGRES_URL must start with postgres:// or postgresql://.');
+  }
+
+  return trimmed;
+}
+
+function readOptionalValkeyUrl(config: Record<string, unknown>): string | undefined {
+  const value = config.VALKEY_URL;
+
+  if (value === undefined || value === null || (typeof value === 'string' && value.trim() === '')) {
+    return undefined;
+  }
+
+  if (typeof value !== 'string') {
+    throw new Error('VALKEY_URL must be a string when provided.');
+  }
+
+  const trimmed = value.trim();
+
+  if (!/^(valkey|rediss?):\/\//.test(trimmed)) {
+    throw new Error('VALKEY_URL must start with valkey://, redis:// or rediss://.');
   }
 
   return trimmed;

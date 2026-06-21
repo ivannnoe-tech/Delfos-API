@@ -31,6 +31,24 @@ services:
       timeout: 5s
       retries: 5
 
+  # Valkey: cache layer (ADR-0035), introduzido na fase P6. Opcional — o sistema
+  # sobe e funciona sem ele (cache desligado). Nunca é source of truth.
+  # VALKEY_URL local: redis://localhost:6379
+  valkey:
+    image: valkey/valkey:8-alpine
+    container_name: delfos-valkey
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - delfos_valkey_data:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   delfos_mongo_data:
   delfos_postgres_data:
+  delfos_valkey_data:
