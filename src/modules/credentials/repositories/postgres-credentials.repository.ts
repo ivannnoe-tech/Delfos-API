@@ -8,6 +8,7 @@ import {
   CreateCredentialRecord,
   CredentialFilters,
   CredentialRecord,
+  CredentialSecretMaterial,
   CredentialsRepository,
   RevokeCredentialRecord,
   RotateCredentialRecord,
@@ -170,6 +171,34 @@ export class PostgresCredentialsRepository extends CredentialsRepository {
       .executeTakeFirst();
 
     return row ? toRecord(row) : null;
+  }
+
+  async findSecretMaterialByTenantAndId(
+    tenantId: string,
+    id: string,
+  ): Promise<CredentialSecretMaterial | null> {
+    if (!UUID_RE.test(tenantId) || !UUID_RE.test(id)) {
+      return null;
+    }
+
+    const row = await this.db
+      .selectFrom('credentials')
+      .select(['id', 'tenant_id', 'status', 'protection_provider', 'protected_secret_value'])
+      .where('id', '=', id)
+      .where('tenant_id', '=', tenantId)
+      .executeTakeFirst();
+
+    if (!row) {
+      return null;
+    }
+
+    return {
+      id: row.id,
+      tenantId: row.tenant_id,
+      status: row.status as CredentialStatus,
+      protectionProvider: row.protection_provider,
+      protectedSecretValue: row.protected_secret_value,
+    };
   }
 
   async rotateByTenantAndId(

@@ -331,4 +331,36 @@ pgDescribe('PostgresCredentialsRepository (real PostgreSQL)', () => {
     expect(reread?.status).toBe(CredentialStatus.Active);
     expect(reread?.tenantId).toBe(tenantA);
   });
+
+  it('reveals the protected secret material only within the tenant scope', async () => {
+    const protectedSecretValue = 'local:v1:iv-b64:tag-b64:ct-b64';
+    const created = await repository.create({
+      tenantId: tenantA,
+      type: CredentialType.ApiKey,
+      name: 'Reveal Me',
+      maskedPreview: '********7777',
+      protectedSecretValue,
+      protectionProvider: 'local_aes_256_gcm',
+    });
+
+    const material = await repository.findSecretMaterialByTenantAndId(tenantA, created.id);
+    expect(material).toEqual({
+      id: created.id,
+      tenantId: tenantA,
+      status: CredentialStatus.Active,
+      protectionProvider: 'local_aes_256_gcm',
+      protectedSecretValue,
+    });
+
+    // Tenant isolation: another tenant cannot reveal it.
+    expect(await repository.findSecretMaterialByTenantAndId(tenantB, created.id)).toBeNull();
+    // Unknown / non-UUID ids return null.
+    expect(
+      await repository.findSecretMaterialByTenantAndId(
+        tenantA,
+        '00000000-0000-0000-0000-000000000000',
+      ),
+    ).toBeNull();
+    expect(await repository.findSecretMaterialByTenantAndId(tenantA, 'not-a-uuid')).toBeNull();
+  });
 });
