@@ -1,6 +1,6 @@
 # ADR-0039 — Receiver de dispatch (HTTP + mTLS) no `delfos-connectors`
 
-- **Status**: Proposed
+- **Status**: Accepted
 - **Data**: 2026-06-21
 - **Autores**: Equipe Delfos Analytics
 - **Repositório**: delfos-connectors (impacto primário); delfos-api (cliente já existente)
@@ -9,13 +9,14 @@
 
 ---
 
-> **Proposta para ratificação humana.** O `delfos-connectors` é hoje uma
-> biblioteca/skeleton (sem serviço rodando). Esta ADR é o **gate** (CLAUDE.md:
-> "Real connectors ... must NOT be implemented without explicit authorization
-> and an ADR where required") para torná-lo um **serviço HTTP** que recebe o
-> dispatch do `delfos-api`. A aceitação autoriza apenas o **lado receptor +
-> validação + `not_supported`** — **nenhuma execução real de fonte** (SQL/API do
-> cliente, export) é liberada aqui; isso exige ADR/incremento posterior.
+> **Aceita por decisão humana explícita do owner em 2026-06-21.** O
+> `delfos-connectors` é hoje uma biblioteca/skeleton (sem serviço rodando). Esta
+> ADR é o **gate** (CLAUDE.md: real connectors exigem autorização explícita + ADR)
+> para torná-lo um **serviço HTTP** que recebe o dispatch do `delfos-api`. A
+> aceitação autoriza apenas o **lado receptor + validação + `not_supported`** —
+> **nenhuma execução real de fonte** (SQL/API do cliente, export) é liberada
+> aqui; isso exige ADR/incremento posterior. Cada incremento de código ainda
+> exige go-ahead específico + TDD.
 
 ## Contexto
 
