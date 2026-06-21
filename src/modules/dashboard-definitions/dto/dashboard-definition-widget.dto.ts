@@ -4,7 +4,6 @@ import {
   IsArray,
   IsEnum,
   IsInt,
-  IsMongoId,
   IsObject,
   IsOptional,
   IsString,
@@ -16,6 +15,7 @@ import {
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
+import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import {
   DashboardDefinitionChartType,
   DashboardDefinitionWidgetType,
@@ -112,7 +112,7 @@ export class DashboardDefinitionWidgetDto {
 
   @ApiPropertyOptional({ example: '662d4f6e7a1c2b00124f0601' })
   @IsOptional()
-  @IsMongoId()
+  @IsEntityId()
   queryDefinitionId?: string;
 
   @ApiPropertyOptional({ example: 'overview' })

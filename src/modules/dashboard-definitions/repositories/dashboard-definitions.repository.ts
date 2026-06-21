@@ -1,28 +1,73 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model, Types } from 'mongoose';
-
 import { SanitizedMetadata } from '../../../core/utils/sanitize-metadata';
 import {
-  DashboardDefinition,
-  DashboardDefinitionDocument,
   DashboardDefinitionFilter,
+  DashboardDefinitionLayout,
   DashboardDefinitionSection,
   DashboardDefinitionStatus,
   DashboardDefinitionVisibility,
-  DashboardDefinitionWidget,
+  DashboardDefinitionVisualization,
+  DashboardDefinitionWidgetPosition,
+  DashboardDefinitionWidgetSize,
+  DashboardDefinitionWidgetType,
 } from '../schemas/dashboard-definition.schema';
 
-export interface CreateDashboardDefinitionRecord {
-  tenantId: Types.ObjectId;
+/**
+ * Persistence-neutral widget shape used inside a {@link DashboardDefinitionRecord}.
+ * It mirrors the Mongoose `DashboardDefinitionWidget` but exposes
+ * `queryDefinitionId` as an opaque string id (not a Mongo `ObjectId`), so the
+ * record is identical regardless of the backend (ADR-0035 / ADR-0036).
+ */
+export interface DashboardDefinitionWidgetRecord {
+  key: string;
+  title: string;
+  description?: string;
+  type: DashboardDefinitionWidgetType;
+  queryDefinitionId?: string;
+  sectionKey?: string;
+  order: number;
+  size?: DashboardDefinitionWidgetSize;
+  position?: DashboardDefinitionWidgetPosition;
+  visualization?: DashboardDefinitionVisualization;
+  options: SanitizedMetadata;
+}
+
+/**
+ * Persistence-neutral dashboard definition record returned by every
+ * {@link DashboardDefinitionsRepository} implementation (Mongo or PostgreSQL).
+ * The service maps this to the response DTO, so the REST contract is identical
+ * regardless of the backend (ADR-0035 / ADR-0036).
+ */
+export interface DashboardDefinitionRecord {
+  id: string;
+  tenantId: string;
   dashboardKey: string;
   name: string;
   description?: string;
-  status?: DashboardDefinition['status'];
-  visibility?: DashboardDefinition['visibility'];
-  layout: DashboardDefinition['layout'];
+  status: DashboardDefinitionStatus;
+  visibility: DashboardDefinitionVisibility;
+  layout: DashboardDefinitionLayout;
   sections: DashboardDefinitionSection[];
-  widgets: DashboardDefinitionWidget[];
+  widgets: DashboardDefinitionWidgetRecord[];
+  filters: DashboardDefinitionFilter[];
+  tags: string[];
+  metadata: SanitizedMetadata;
+  settings: SanitizedMetadata;
+  createdBy?: string;
+  updatedBy?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateDashboardDefinitionRecord {
+  tenantId: string;
+  dashboardKey: string;
+  name: string;
+  description?: string;
+  status?: DashboardDefinitionStatus;
+  visibility?: DashboardDefinitionVisibility;
+  layout: DashboardDefinitionLayout;
+  sections: DashboardDefinitionSection[];
+  widgets: DashboardDefinitionWidgetRecord[];
   filters: DashboardDefinitionFilter[];
   tags: string[];
   metadata: SanitizedMetadata;
@@ -36,76 +81,41 @@ export type UpdateDashboardDefinitionRecord = Partial<
 >;
 
 export interface DashboardDefinitionFilters {
-  tenantId: Types.ObjectId;
+  tenantId: string;
   dashboardKey?: string;
   status?: DashboardDefinitionStatus;
   visibility?: DashboardDefinitionVisibility;
 }
 
-@Injectable()
-export class DashboardDefinitionsRepository {
-  constructor(
-    @InjectModel(DashboardDefinition.name)
-    private readonly dashboardDefinitionModel: Model<DashboardDefinitionDocument>,
-  ) {}
-
-  create(record: CreateDashboardDefinitionRecord): Promise<DashboardDefinitionDocument> {
-    return this.dashboardDefinitionModel.create(record);
-  }
-
-  findByFilters(
+/**
+ * Repository contract for dashboard definitions. Implemented by
+ * `MongoDashboardDefinitionsRepository` and
+ * `PostgresDashboardDefinitionsRepository`; the module selects one at runtime
+ * based on whether `DELFOS_POSTGRES_URL` is configured. Used as the DI token.
+ *
+ * Every query is tenant-scoped: `tenantId` is a mandatory isolation boundary,
+ * never an optional filter.
+ */
+export abstract class DashboardDefinitionsRepository {
+  abstract create(record: CreateDashboardDefinitionRecord): Promise<DashboardDefinitionRecord>;
+  abstract findByFilters(
     filters: DashboardDefinitionFilters,
     page: number,
     pageSize: number,
-  ): Promise<DashboardDefinitionDocument[]> {
-    return this.dashboardDefinitionModel
-      .find(this.toMongoFilters(filters))
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .exec();
-  }
-
-  countByFilters(filters: DashboardDefinitionFilters): Promise<number> {
-    return this.dashboardDefinitionModel.countDocuments(this.toMongoFilters(filters)).exec();
-  }
-
-  findByTenantAndId(
-    tenantId: Types.ObjectId,
+  ): Promise<DashboardDefinitionRecord[]>;
+  abstract countByFilters(filters: DashboardDefinitionFilters): Promise<number>;
+  abstract findByTenantAndId(
+    tenantId: string,
     id: string,
-  ): Promise<DashboardDefinitionDocument | null> {
-    return this.dashboardDefinitionModel.findOne({ _id: id, tenantId }).exec();
-  }
-
-  updateByTenantAndId(
-    tenantId: Types.ObjectId,
+  ): Promise<DashboardDefinitionRecord | null>;
+  abstract updateByTenantAndId(
+    tenantId: string,
     id: string,
     record: UpdateDashboardDefinitionRecord,
-  ): Promise<DashboardDefinitionDocument | null> {
-    return this.dashboardDefinitionModel
-      .findOneAndUpdate({ _id: id, tenantId }, record, { new: true, runValidators: true })
-      .exec();
-  }
-
-  archiveByTenantAndId(
-    tenantId: Types.ObjectId,
+  ): Promise<DashboardDefinitionRecord | null>;
+  abstract archiveByTenantAndId(
+    tenantId: string,
     id: string,
     updatedBy?: string,
-  ): Promise<DashboardDefinitionDocument | null> {
-    return this.updateByTenantAndId(tenantId, id, {
-      status: DashboardDefinitionStatus.Archived,
-      updatedBy,
-    });
-  }
-
-  private toMongoFilters(
-    filters: DashboardDefinitionFilters,
-  ): FilterQuery<DashboardDefinitionDocument> {
-    return {
-      tenantId: filters.tenantId,
-      ...(filters.dashboardKey ? { dashboardKey: filters.dashboardKey } : {}),
-      ...(filters.status ? { status: filters.status } : {}),
-      ...(filters.visibility ? { visibility: filters.visibility } : {}),
-    };
-  }
+  ): Promise<DashboardDefinitionRecord | null>;
 }

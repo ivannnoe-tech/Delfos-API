@@ -1,7 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsMongoId, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
+import { IsEnum, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 
 import { PaginationQueryDto } from '../../../core/dto/pagination-query.dto';
+import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import {
   DashboardDefinitionStatus,
   DashboardDefinitionVisibility,
@@ -11,7 +12,7 @@ const stableKeyPattern = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
 
 export class ListDashboardDefinitionsQueryDto extends PaginationQueryDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })
-  @IsMongoId()
+  @IsEntityId()
   tenantId!: string;
 
   @ApiPropertyOptional({ example: 'sales_dashboard' })
@@ -34,6 +35,6 @@ export class ListDashboardDefinitionsQueryDto extends PaginationQueryDto {
 
 export class DashboardDefinitionTenantQueryDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })
-  @IsMongoId()
+  @IsEntityId()
   tenantId!: string;
 }

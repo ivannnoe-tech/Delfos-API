@@ -2,10 +2,12 @@ import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Types } from 'mongoose';
 
 import { AuditService } from '../../audit/services/audit.service';
-import { DashboardDefinitionsRepository } from '../repositories/dashboard-definitions.repository';
+import {
+  DashboardDefinitionRecord,
+  DashboardDefinitionsRepository,
+} from '../repositories/dashboard-definitions.repository';
 import {
   DashboardDefinitionChartType,
-  DashboardDefinitionDocument,
   DashboardDefinitionFilterOperator,
   DashboardDefinitionLayoutDensity,
   DashboardDefinitionLayoutGap,
@@ -23,14 +25,14 @@ type AuditServiceMock = {
 
 describe('DashboardDefinitionsService', () => {
   it('creates a dashboard definition with sanitized free fields and safe audit', async () => {
-    const dashboardDefinitionId = new Types.ObjectId();
-    const tenantId = new Types.ObjectId();
-    const queryDefinitionId = new Types.ObjectId();
+    const dashboardDefinitionId = new Types.ObjectId().toString();
+    const tenantId = new Types.ObjectId().toString();
+    const queryDefinitionId = new Types.ObjectId().toString();
     const createdAt = new Date('2026-04-26T12:00:00.000Z');
     const repository: Pick<DashboardDefinitionsRepository, 'create'> = {
       create: jest.fn(async (record) =>
-        createDashboardDefinitionDocument({
-          _id: dashboardDefinitionId,
+        createDashboardDefinitionRecord({
+          id: dashboardDefinitionId,
           tenantId: record.tenantId,
           dashboardKey: record.dashboardKey,
           name: record.name,
@@ -56,7 +58,7 @@ describe('DashboardDefinitionsService', () => {
 
     const result = await service.create(
       {
-        tenantId: tenantId.toString(),
+        tenantId,
         dashboardKey: 'sales_dashboard',
         name: 'Dashboard de vendas',
         description: 'Painel logico para acompanhamento comercial',
@@ -83,7 +85,7 @@ describe('DashboardDefinitionsService', () => {
             title: 'Vendas totais',
             description: 'Soma das vendas do periodo',
             type: DashboardDefinitionWidgetType.MetricCard,
-            queryDefinitionId: queryDefinitionId.toString(),
+            queryDefinitionId,
             sectionKey: 'overview',
             order: 1,
             size: { cols: 3, rows: 1 },
@@ -123,22 +125,22 @@ describe('DashboardDefinitionsService', () => {
       }),
     );
     expect(result).toMatchObject({
-      id: dashboardDefinitionId.toString(),
-      tenantId: tenantId.toString(),
+      id: dashboardDefinitionId,
+      tenantId,
       dashboardKey: 'sales_dashboard',
       metadata: { domain: 'sales' },
       settings: { visibleInBuilder: true },
       widgets: [{ options: { showTrend: true } }],
       filters: [{ defaultValue: 'last_30_days', allowedValues: ['last_7_days'] }],
     });
-    expect(result.widgets[0]?.queryDefinitionId).toBe(queryDefinitionId.toString());
+    expect(result.widgets[0]?.queryDefinitionId).toBe(queryDefinitionId);
     expect(JSON.stringify(result)).not.toContain('must-not-leak');
     expect(auditService.record).toHaveBeenCalledWith({
-      tenantId: tenantId.toString(),
+      tenantId,
       actorUserId: undefined,
       action: 'dashboard_definition.created',
       entity: 'dashboard_definition',
-      entityId: dashboardDefinitionId.toString(),
+      entityId: dashboardDefinitionId,
       metadata: {
         dashboardKey: 'sales_dashboard',
         status: DashboardDefinitionStatus.Draft,
@@ -151,13 +153,13 @@ describe('DashboardDefinitionsService', () => {
   });
 
   it('lists dashboard definitions by tenant filters', async () => {
-    const tenantId = new Types.ObjectId();
-    const dashboardDefinitionId = new Types.ObjectId();
+    const tenantId = new Types.ObjectId().toString();
+    const dashboardDefinitionId = new Types.ObjectId().toString();
     const createdAt = new Date('2026-04-26T12:00:00.000Z');
     const repository: Pick<DashboardDefinitionsRepository, 'findByFilters' | 'countByFilters'> = {
       findByFilters: jest.fn(async () => [
-        createDashboardDefinitionDocument({
-          _id: dashboardDefinitionId,
+        createDashboardDefinitionRecord({
+          id: dashboardDefinitionId,
           tenantId,
           dashboardKey: 'sales_dashboard',
           name: 'Dashboard de vendas',
@@ -179,7 +181,7 @@ describe('DashboardDefinitionsService', () => {
     const service = createService(repository);
 
     const result = await service.findByFilters({
-      tenantId: tenantId.toString(),
+      tenantId,
       status: DashboardDefinitionStatus.Active,
       page: 1,
       pageSize: 25,
@@ -200,30 +202,27 @@ describe('DashboardDefinitionsService', () => {
   });
 
   it('gets one dashboard definition using tenant scoped lookup', async () => {
-    const tenantId = new Types.ObjectId();
-    const dashboardDefinitionId = new Types.ObjectId();
+    const tenantId = new Types.ObjectId().toString();
+    const dashboardDefinitionId = new Types.ObjectId().toString();
     const repository: Pick<DashboardDefinitionsRepository, 'findByTenantAndId'> = {
       findByTenantAndId: jest.fn(async () => null),
     };
     const service = createService(repository);
 
-    await expect(
-      service.findOne(tenantId.toString(), dashboardDefinitionId.toString()),
-    ).rejects.toBeInstanceOf(NotFoundException);
-    expect(repository.findByTenantAndId).toHaveBeenCalledWith(
-      tenantId,
-      dashboardDefinitionId.toString(),
+    await expect(service.findOne(tenantId, dashboardDefinitionId)).rejects.toBeInstanceOf(
+      NotFoundException,
     );
+    expect(repository.findByTenantAndId).toHaveBeenCalledWith(tenantId, dashboardDefinitionId);
   });
 
   it('updates a dashboard definition with sanitized settings and audit', async () => {
-    const tenantId = new Types.ObjectId();
-    const dashboardDefinitionId = new Types.ObjectId();
+    const tenantId = new Types.ObjectId().toString();
+    const dashboardDefinitionId = new Types.ObjectId().toString();
     const updatedAt = new Date('2026-04-26T13:00:00.000Z');
     const repository: Pick<DashboardDefinitionsRepository, 'updateByTenantAndId'> = {
       updateByTenantAndId: jest.fn(async (_tenantId, _id, record) =>
-        createDashboardDefinitionDocument({
-          _id: dashboardDefinitionId,
+        createDashboardDefinitionRecord({
+          id: dashboardDefinitionId,
           tenantId,
           dashboardKey: record.dashboardKey ?? 'sales_dashboard',
           name: record.name ?? 'Dashboard',
@@ -246,8 +245,8 @@ describe('DashboardDefinitionsService', () => {
     const service = createService(repository, auditService);
 
     const result = await service.update(
-      tenantId.toString(),
-      dashboardDefinitionId.toString(),
+      tenantId,
+      dashboardDefinitionId,
       {
         name: 'Dashboard atualizado',
         settings: { visibleInBuilder: false, password: 'must-not-leak' },
@@ -257,7 +256,7 @@ describe('DashboardDefinitionsService', () => {
 
     expect(repository.updateByTenantAndId).toHaveBeenCalledWith(
       tenantId,
-      dashboardDefinitionId.toString(),
+      dashboardDefinitionId,
       expect.objectContaining({
         name: 'Dashboard atualizado',
         settings: { visibleInBuilder: false },
@@ -271,13 +270,13 @@ describe('DashboardDefinitionsService', () => {
   });
 
   it('archives a dashboard definition using soft delete', async () => {
-    const tenantId = new Types.ObjectId();
-    const dashboardDefinitionId = new Types.ObjectId();
+    const tenantId = new Types.ObjectId().toString();
+    const dashboardDefinitionId = new Types.ObjectId().toString();
     const updatedAt = new Date('2026-04-26T13:30:00.000Z');
     const repository: Pick<DashboardDefinitionsRepository, 'archiveByTenantAndId'> = {
       archiveByTenantAndId: jest.fn(async () =>
-        createDashboardDefinitionDocument({
-          _id: dashboardDefinitionId,
+        createDashboardDefinitionRecord({
+          id: dashboardDefinitionId,
           tenantId,
           dashboardKey: 'sales_dashboard',
           name: 'Dashboard',
@@ -298,13 +297,13 @@ describe('DashboardDefinitionsService', () => {
     const auditService = createAuditService();
     const service = createService(repository, auditService);
 
-    const result = await service.archive(tenantId.toString(), dashboardDefinitionId.toString(), {
+    const result = await service.archive(tenantId, dashboardDefinitionId, {
       actorId: 'dev-actor-003',
     });
 
     expect(repository.archiveByTenantAndId).toHaveBeenCalledWith(
       tenantId,
-      dashboardDefinitionId.toString(),
+      dashboardDefinitionId,
       'dev-actor-003',
     );
     expect(result.status).toBe(DashboardDefinitionStatus.Archived);
@@ -357,8 +356,8 @@ function createAuditService(): AuditServiceMock {
   };
 }
 
-function createDashboardDefinitionDocument(
-  record: Partial<DashboardDefinitionDocument>,
-): DashboardDefinitionDocument {
-  return record as DashboardDefinitionDocument;
+function createDashboardDefinitionRecord(
+  record: Partial<DashboardDefinitionRecord>,
+): DashboardDefinitionRecord {
+  return record as DashboardDefinitionRecord;
 }
