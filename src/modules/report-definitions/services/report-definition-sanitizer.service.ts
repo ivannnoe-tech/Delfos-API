@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import {
   isSensitiveMetadataValue,
@@ -11,8 +10,8 @@ import { ReportDefinitionFilterDto } from '../dto/report-definition-filter.dto';
 import { ReportDefinitionLayoutDto } from '../dto/report-definition-layout.dto';
 import { ReportDefinitionParameterDto } from '../dto/report-definition-parameter.dto';
 import { ReportDefinitionSectionDto } from '../dto/report-definition-section.dto';
+import { ReportDefinitionBlockRecord } from '../repositories/report-definitions.repository';
 import {
-  ReportDefinitionBlock,
   ReportDefinitionFilter,
   ReportDefinitionLayout,
   ReportDefinitionLayoutType,
@@ -40,18 +39,14 @@ export class ReportDefinitionSanitizerService {
     }));
   }
 
-  sanitizeBlocks(blocks?: ReportDefinitionBlockDto[]): ReportDefinitionBlock[] {
+  sanitizeBlocks(blocks?: ReportDefinitionBlockDto[]): ReportDefinitionBlockRecord[] {
     return (blocks ?? []).map((block) => ({
       key: block.key,
       title: block.title,
       description: block.description,
       type: block.type,
-      queryDefinitionId: block.queryDefinitionId
-        ? new Types.ObjectId(block.queryDefinitionId)
-        : undefined,
-      dashboardDefinitionId: block.dashboardDefinitionId
-        ? new Types.ObjectId(block.dashboardDefinitionId)
-        : undefined,
+      queryDefinitionId: block.queryDefinitionId,
+      dashboardDefinitionId: block.dashboardDefinitionId,
       sectionKey: block.sectionKey,
       order: block.order,
       options: sanitizeMetadata(block.options),

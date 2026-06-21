@@ -1,5 +1,4 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import { buildListMeta, ListResponse } from '../../../core/dto/list-meta.dto';
 import { sanitizeMetadata } from '../../../core/utils/sanitize-metadata';
@@ -17,12 +16,12 @@ import { ReportDefinitionParameterResponseDto } from '../dto/report-definition-p
 import { ReportDefinitionSectionResponseDto } from '../dto/report-definition-section.dto';
 import { UpdateReportDefinitionDto } from '../dto/update-report-definition.dto';
 import {
+  ReportDefinitionBlockRecord,
+  ReportDefinitionRecord,
   ReportDefinitionsRepository,
   UpdateReportDefinitionRecord,
 } from '../repositories/report-definitions.repository';
 import {
-  ReportDefinitionBlock,
-  ReportDefinitionDocument,
   ReportDefinitionFilter,
   ReportDefinitionLayout,
   ReportDefinitionParameter,
@@ -48,18 +47,14 @@ export class ReportDefinitionsService {
   ): Promise<ReportDefinitionResponseDto> {
     try {
       const reportDefinition = await this.reportDefinitionsRepository.create({
-        tenantId: new Types.ObjectId(dto.tenantId),
+        tenantId: dto.tenantId,
         reportKey: dto.reportKey,
         name: dto.name,
         description: dto.description,
         status: dto.status,
         visibility: dto.visibility,
-        queryDefinitionId: dto.queryDefinitionId
-          ? new Types.ObjectId(dto.queryDefinitionId)
-          : undefined,
-        dashboardDefinitionId: dto.dashboardDefinitionId
-          ? new Types.ObjectId(dto.dashboardDefinitionId)
-          : undefined,
+        queryDefinitionId: dto.queryDefinitionId,
+        dashboardDefinitionId: dto.dashboardDefinitionId,
         layout: this.reportDefinitionSanitizer.sanitizeLayout(dto.layout),
         sections: this.reportDefinitionSanitizer.sanitizeSections(dto.sections),
         blocks: this.reportDefinitionSanitizer.sanitizeBlocks(dto.blocks),
@@ -85,16 +80,12 @@ export class ReportDefinitionsService {
     query: ListReportDefinitionsQueryDto,
   ): Promise<ListResponse<ReportDefinitionResponseDto>> {
     const filters = {
-      tenantId: new Types.ObjectId(query.tenantId),
+      tenantId: query.tenantId,
       reportKey: query.reportKey,
       status: query.status,
       visibility: query.visibility,
-      queryDefinitionId: query.queryDefinitionId
-        ? new Types.ObjectId(query.queryDefinitionId)
-        : undefined,
-      dashboardDefinitionId: query.dashboardDefinitionId
-        ? new Types.ObjectId(query.dashboardDefinitionId)
-        : undefined,
+      queryDefinitionId: query.queryDefinitionId,
+      dashboardDefinitionId: query.dashboardDefinitionId,
     };
     const [items, total] = await Promise.all([
       this.reportDefinitionsRepository.findByFilters(filters, query.page, query.pageSize),
@@ -111,10 +102,7 @@ export class ReportDefinitionsService {
     tenantId: ReportDefinitionTenantQueryDto['tenantId'],
     id: string,
   ): Promise<ReportDefinitionResponseDto> {
-    const reportDefinition = await this.reportDefinitionsRepository.findByTenantAndId(
-      new Types.ObjectId(tenantId),
-      id,
-    );
+    const reportDefinition = await this.reportDefinitionsRepository.findByTenantAndId(tenantId, id);
 
     if (!reportDefinition) {
       throw new NotFoundException('Report definition not found.');
@@ -131,7 +119,7 @@ export class ReportDefinitionsService {
   ): Promise<ReportDefinitionResponseDto> {
     try {
       const reportDefinition = await this.reportDefinitionsRepository.updateByTenantAndId(
-        new Types.ObjectId(tenantId),
+        tenantId,
         id,
         this.toUpdateRecord(dto, actor),
       );
@@ -154,7 +142,7 @@ export class ReportDefinitionsService {
     actor: ReportDefinitionActorContext = {},
   ): Promise<ReportDefinitionResponseDto> {
     const reportDefinition = await this.reportDefinitionsRepository.archiveByTenantAndId(
-      new Types.ObjectId(tenantId),
+      tenantId,
       id,
       actor.actorId,
     );
@@ -178,11 +166,9 @@ export class ReportDefinitionsService {
       ...(dto.description !== undefined ? { description: dto.description } : {}),
       ...(dto.status !== undefined ? { status: dto.status } : {}),
       ...(dto.visibility !== undefined ? { visibility: dto.visibility } : {}),
-      ...(dto.queryDefinitionId !== undefined
-        ? { queryDefinitionId: new Types.ObjectId(dto.queryDefinitionId) }
-        : {}),
+      ...(dto.queryDefinitionId !== undefined ? { queryDefinitionId: dto.queryDefinitionId } : {}),
       ...(dto.dashboardDefinitionId !== undefined
-        ? { dashboardDefinitionId: new Types.ObjectId(dto.dashboardDefinitionId) }
+        ? { dashboardDefinitionId: dto.dashboardDefinitionId }
         : {}),
       ...(dto.layout !== undefined
         ? { layout: this.reportDefinitionSanitizer.sanitizeLayout(dto.layout) }
@@ -211,21 +197,21 @@ export class ReportDefinitionsService {
 
   private async recordAudit(
     action: string,
-    reportDefinition: ReportDefinitionDocument,
+    reportDefinition: ReportDefinitionRecord,
     actor: ReportDefinitionActorContext,
   ): Promise<void> {
     await this.auditService.record({
-      tenantId: reportDefinition.tenantId.toString(),
+      tenantId: reportDefinition.tenantId,
       actorUserId: this.toAuditActorUserId(actor.actorId),
       action,
       entity: 'report_definition',
-      entityId: reportDefinition._id.toString(),
+      entityId: reportDefinition.id,
       metadata: {
         reportKey: reportDefinition.reportKey,
         status: reportDefinition.status,
         visibility: reportDefinition.visibility,
-        queryDefinitionId: reportDefinition.queryDefinitionId?.toString(),
-        dashboardDefinitionId: reportDefinition.dashboardDefinitionId?.toString(),
+        queryDefinitionId: reportDefinition.queryDefinitionId,
+        dashboardDefinitionId: reportDefinition.dashboardDefinitionId,
         sectionsCount: reportDefinition.sections.length,
         blocksCount: reportDefinition.blocks.length,
       },
@@ -240,17 +226,17 @@ export class ReportDefinitionsService {
     return actorId;
   }
 
-  private toResponse(reportDefinition: ReportDefinitionDocument): ReportDefinitionResponseDto {
+  private toResponse(reportDefinition: ReportDefinitionRecord): ReportDefinitionResponseDto {
     return {
-      id: reportDefinition._id.toString(),
-      tenantId: reportDefinition.tenantId.toString(),
+      id: reportDefinition.id,
+      tenantId: reportDefinition.tenantId,
       reportKey: reportDefinition.reportKey,
       name: reportDefinition.name,
       description: reportDefinition.description,
       status: reportDefinition.status,
       visibility: reportDefinition.visibility,
-      queryDefinitionId: reportDefinition.queryDefinitionId?.toString(),
-      dashboardDefinitionId: reportDefinition.dashboardDefinitionId?.toString(),
+      queryDefinitionId: reportDefinition.queryDefinitionId,
+      dashboardDefinitionId: reportDefinition.dashboardDefinitionId,
       layout: this.toLayoutResponse(reportDefinition.layout),
       sections: reportDefinition.sections.map((section) => this.toSectionResponse(section)),
       blocks: reportDefinition.blocks.map((block) => this.toBlockResponse(block)),
@@ -287,14 +273,14 @@ export class ReportDefinitionsService {
     };
   }
 
-  private toBlockResponse(block: ReportDefinitionBlock): ReportDefinitionBlockResponseDto {
+  private toBlockResponse(block: ReportDefinitionBlockRecord): ReportDefinitionBlockResponseDto {
     return {
       key: block.key,
       title: block.title,
       description: block.description,
       type: block.type,
-      queryDefinitionId: block.queryDefinitionId?.toString(),
-      dashboardDefinitionId: block.dashboardDefinitionId?.toString(),
+      queryDefinitionId: block.queryDefinitionId,
+      dashboardDefinitionId: block.dashboardDefinitionId,
       sectionKey: block.sectionKey,
       order: block.order,
       options: block.options,
@@ -339,11 +325,12 @@ export class ReportDefinitionsService {
   }
 
   private isDuplicateKeyError(error: unknown): boolean {
-    return (
-      typeof error === 'object' &&
-      error !== null &&
-      'code' in error &&
-      (error as { code?: unknown }).code === 11000
-    );
+    if (typeof error !== 'object' || error === null || !('code' in error)) {
+      return false;
+    }
+
+    const code = (error as { code?: unknown }).code;
+    // Mongo duplicate-key error code (11000) or PostgreSQL unique_violation (23505).
+    return code === 11000 || code === '23505';
   }
 }

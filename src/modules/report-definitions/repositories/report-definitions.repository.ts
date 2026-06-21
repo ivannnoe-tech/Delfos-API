@@ -1,31 +1,75 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model, Types } from 'mongoose';
-
 import { SanitizedMetadata } from '../../../core/utils/sanitize-metadata';
 import {
-  ReportDefinition,
-  ReportDefinitionBlock,
-  ReportDefinitionDocument,
+  ReportDefinitionBlockType,
   ReportDefinitionFilter,
+  ReportDefinitionLayout,
   ReportDefinitionParameter,
   ReportDefinitionSection,
   ReportDefinitionStatus,
   ReportDefinitionVisibility,
 } from '../schemas/report-definition.schema';
 
-export interface CreateReportDefinitionRecord {
-  tenantId: Types.ObjectId;
+/**
+ * Persistence-neutral block shape used inside a {@link ReportDefinitionRecord}.
+ * It mirrors the Mongoose `ReportDefinitionBlock` but exposes `queryDefinitionId`
+ * and `dashboardDefinitionId` as opaque string ids (not Mongo `ObjectId`s), so
+ * the record is identical regardless of the backend (ADR-0035 / ADR-0036).
+ */
+export interface ReportDefinitionBlockRecord {
+  key: string;
+  title: string;
+  description?: string;
+  type: ReportDefinitionBlockType;
+  queryDefinitionId?: string;
+  dashboardDefinitionId?: string;
+  sectionKey?: string;
+  order: number;
+  options: SanitizedMetadata;
+}
+
+/**
+ * Persistence-neutral report definition record returned by every
+ * {@link ReportDefinitionsRepository} implementation (Mongo or PostgreSQL).
+ * The service maps this to the response DTO, so the REST contract is identical
+ * regardless of the backend (ADR-0035 / ADR-0036).
+ */
+export interface ReportDefinitionRecord {
+  id: string;
+  tenantId: string;
   reportKey: string;
   name: string;
   description?: string;
-  status?: ReportDefinition['status'];
-  visibility?: ReportDefinition['visibility'];
-  queryDefinitionId?: Types.ObjectId;
-  dashboardDefinitionId?: Types.ObjectId;
-  layout: ReportDefinition['layout'];
+  status: ReportDefinitionStatus;
+  visibility: ReportDefinitionVisibility;
+  queryDefinitionId?: string;
+  dashboardDefinitionId?: string;
+  layout: ReportDefinitionLayout;
   sections: ReportDefinitionSection[];
-  blocks: ReportDefinitionBlock[];
+  blocks: ReportDefinitionBlockRecord[];
+  filters: ReportDefinitionFilter[];
+  parameters: ReportDefinitionParameter[];
+  exportOptions: SanitizedMetadata;
+  tags: string[];
+  metadata: SanitizedMetadata;
+  settings: SanitizedMetadata;
+  createdBy?: string;
+  updatedBy?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateReportDefinitionRecord {
+  tenantId: string;
+  reportKey: string;
+  name: string;
+  description?: string;
+  status?: ReportDefinitionStatus;
+  visibility?: ReportDefinitionVisibility;
+  queryDefinitionId?: string;
+  dashboardDefinitionId?: string;
+  layout: ReportDefinitionLayout;
+  sections: ReportDefinitionSection[];
+  blocks: ReportDefinitionBlockRecord[];
   filters: ReportDefinitionFilter[];
   parameters: ReportDefinitionParameter[];
   exportOptions: SanitizedMetadata;
@@ -41,80 +85,40 @@ export type UpdateReportDefinitionRecord = Partial<
 >;
 
 export interface ReportDefinitionFilters {
-  tenantId: Types.ObjectId;
+  tenantId: string;
   reportKey?: string;
   status?: ReportDefinitionStatus;
   visibility?: ReportDefinitionVisibility;
-  queryDefinitionId?: Types.ObjectId;
-  dashboardDefinitionId?: Types.ObjectId;
+  queryDefinitionId?: string;
+  dashboardDefinitionId?: string;
 }
 
-@Injectable()
-export class ReportDefinitionsRepository {
-  constructor(
-    @InjectModel(ReportDefinition.name)
-    private readonly reportDefinitionModel: Model<ReportDefinitionDocument>,
-  ) {}
-
-  create(record: CreateReportDefinitionRecord): Promise<ReportDefinitionDocument> {
-    return this.reportDefinitionModel.create(record);
-  }
-
-  findByFilters(
+/**
+ * Repository contract for report definitions. Implemented by
+ * `MongoReportDefinitionsRepository` and `PostgresReportDefinitionsRepository`;
+ * the module selects one at runtime based on whether `DELFOS_POSTGRES_URL` is
+ * configured. Used as the DI token.
+ *
+ * Every query is tenant-scoped: `tenantId` is a mandatory isolation boundary,
+ * never an optional filter.
+ */
+export abstract class ReportDefinitionsRepository {
+  abstract create(record: CreateReportDefinitionRecord): Promise<ReportDefinitionRecord>;
+  abstract findByFilters(
     filters: ReportDefinitionFilters,
     page: number,
     pageSize: number,
-  ): Promise<ReportDefinitionDocument[]> {
-    return this.reportDefinitionModel
-      .find(this.toMongoFilters(filters))
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .exec();
-  }
-
-  countByFilters(filters: ReportDefinitionFilters): Promise<number> {
-    return this.reportDefinitionModel.countDocuments(this.toMongoFilters(filters)).exec();
-  }
-
-  findByTenantAndId(
-    tenantId: Types.ObjectId,
-    id: string,
-  ): Promise<ReportDefinitionDocument | null> {
-    return this.reportDefinitionModel.findOne({ _id: id, tenantId }).exec();
-  }
-
-  updateByTenantAndId(
-    tenantId: Types.ObjectId,
+  ): Promise<ReportDefinitionRecord[]>;
+  abstract countByFilters(filters: ReportDefinitionFilters): Promise<number>;
+  abstract findByTenantAndId(tenantId: string, id: string): Promise<ReportDefinitionRecord | null>;
+  abstract updateByTenantAndId(
+    tenantId: string,
     id: string,
     record: UpdateReportDefinitionRecord,
-  ): Promise<ReportDefinitionDocument | null> {
-    return this.reportDefinitionModel
-      .findOneAndUpdate({ _id: id, tenantId }, record, { new: true, runValidators: true })
-      .exec();
-  }
-
-  archiveByTenantAndId(
-    tenantId: Types.ObjectId,
+  ): Promise<ReportDefinitionRecord | null>;
+  abstract archiveByTenantAndId(
+    tenantId: string,
     id: string,
     updatedBy?: string,
-  ): Promise<ReportDefinitionDocument | null> {
-    return this.updateByTenantAndId(tenantId, id, {
-      status: ReportDefinitionStatus.Archived,
-      updatedBy,
-    });
-  }
-
-  private toMongoFilters(filters: ReportDefinitionFilters): FilterQuery<ReportDefinitionDocument> {
-    return {
-      tenantId: filters.tenantId,
-      ...(filters.reportKey ? { reportKey: filters.reportKey } : {}),
-      ...(filters.status ? { status: filters.status } : {}),
-      ...(filters.visibility ? { visibility: filters.visibility } : {}),
-      ...(filters.queryDefinitionId ? { queryDefinitionId: filters.queryDefinitionId } : {}),
-      ...(filters.dashboardDefinitionId
-        ? { dashboardDefinitionId: filters.dashboardDefinitionId }
-        : {}),
-    };
-  }
+  ): Promise<ReportDefinitionRecord | null>;
 }

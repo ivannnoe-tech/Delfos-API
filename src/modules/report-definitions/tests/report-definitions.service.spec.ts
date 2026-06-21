@@ -2,10 +2,12 @@ import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Types } from 'mongoose';
 
 import { AuditService } from '../../audit/services/audit.service';
-import { ReportDefinitionsRepository } from '../repositories/report-definitions.repository';
+import {
+  ReportDefinitionRecord,
+  ReportDefinitionsRepository,
+} from '../repositories/report-definitions.repository';
 import {
   ReportDefinitionBlockType,
-  ReportDefinitionDocument,
   ReportDefinitionFilterOperator,
   ReportDefinitionLayoutDensity,
   ReportDefinitionLayoutType,
@@ -22,15 +24,15 @@ type AuditServiceMock = {
 
 describe('ReportDefinitionsService', () => {
   it('creates a report definition with sanitized free fields and safe audit', async () => {
-    const reportDefinitionId = new Types.ObjectId();
-    const tenantId = new Types.ObjectId();
-    const queryDefinitionId = new Types.ObjectId();
-    const dashboardDefinitionId = new Types.ObjectId();
+    const reportDefinitionId = new Types.ObjectId().toString();
+    const tenantId = new Types.ObjectId().toString();
+    const queryDefinitionId = new Types.ObjectId().toString();
+    const dashboardDefinitionId = new Types.ObjectId().toString();
     const createdAt = new Date('2026-04-26T12:00:00.000Z');
     const repository: Pick<ReportDefinitionsRepository, 'create'> = {
       create: jest.fn(async (record) =>
-        createReportDefinitionDocument({
-          _id: reportDefinitionId,
+        createReportDefinitionRecord({
+          id: reportDefinitionId,
           tenantId: record.tenantId,
           reportKey: record.reportKey,
           name: record.name,
@@ -60,14 +62,14 @@ describe('ReportDefinitionsService', () => {
 
     const result = await service.create(
       {
-        tenantId: tenantId.toString(),
+        tenantId,
         reportKey: 'monthly_sales_report',
         name: 'Relatorio mensal de vendas',
         description: 'Definicao declarativa para relatorio comercial mensal',
         status: ReportDefinitionStatus.Draft,
         visibility: ReportDefinitionVisibility.Tenant,
-        queryDefinitionId: queryDefinitionId.toString(),
-        dashboardDefinitionId: dashboardDefinitionId.toString(),
+        queryDefinitionId,
+        dashboardDefinitionId,
         layout: {
           type: ReportDefinitionLayoutType.Paged,
           columns: 12,
@@ -86,7 +88,7 @@ describe('ReportDefinitionsService', () => {
             key: 'sales_table',
             title: 'Tabela de vendas',
             type: ReportDefinitionBlockType.Table,
-            queryDefinitionId: queryDefinitionId.toString(),
+            queryDefinitionId,
             sectionKey: 'summary',
             order: 1,
             options: { showTotals: true, token: 'must-not-leak' },
@@ -138,11 +140,11 @@ describe('ReportDefinitionsService', () => {
       }),
     );
     expect(result).toMatchObject({
-      id: reportDefinitionId.toString(),
-      tenantId: tenantId.toString(),
+      id: reportDefinitionId,
+      tenantId,
       reportKey: 'monthly_sales_report',
-      queryDefinitionId: queryDefinitionId.toString(),
-      dashboardDefinitionId: dashboardDefinitionId.toString(),
+      queryDefinitionId,
+      dashboardDefinitionId,
       exportOptions: { defaultFormat: 'pdf', includeFilters: true },
       metadata: { domain: 'sales' },
       settings: { visibleInBuilder: true },
@@ -152,17 +154,17 @@ describe('ReportDefinitionsService', () => {
     });
     expect(JSON.stringify(result)).not.toContain('must-not-leak');
     expect(auditService.record).toHaveBeenCalledWith({
-      tenantId: tenantId.toString(),
+      tenantId,
       actorUserId: undefined,
       action: 'report_definition.created',
       entity: 'report_definition',
-      entityId: reportDefinitionId.toString(),
+      entityId: reportDefinitionId,
       metadata: {
         reportKey: 'monthly_sales_report',
         status: ReportDefinitionStatus.Draft,
         visibility: ReportDefinitionVisibility.Tenant,
-        queryDefinitionId: queryDefinitionId.toString(),
-        dashboardDefinitionId: dashboardDefinitionId.toString(),
+        queryDefinitionId,
+        dashboardDefinitionId,
         sectionsCount: 1,
         blocksCount: 1,
       },
@@ -171,14 +173,14 @@ describe('ReportDefinitionsService', () => {
   });
 
   it('lists report definitions by tenant filters', async () => {
-    const tenantId = new Types.ObjectId();
-    const queryDefinitionId = new Types.ObjectId();
-    const reportDefinitionId = new Types.ObjectId();
+    const tenantId = new Types.ObjectId().toString();
+    const queryDefinitionId = new Types.ObjectId().toString();
+    const reportDefinitionId = new Types.ObjectId().toString();
     const createdAt = new Date('2026-04-26T12:00:00.000Z');
     const repository: Pick<ReportDefinitionsRepository, 'findByFilters' | 'countByFilters'> = {
       findByFilters: jest.fn(async () => [
-        createReportDefinitionDocument({
-          _id: reportDefinitionId,
+        createReportDefinitionRecord({
+          id: reportDefinitionId,
           tenantId,
           reportKey: 'monthly_sales_report',
           name: 'Relatorio',
@@ -203,8 +205,8 @@ describe('ReportDefinitionsService', () => {
     const service = createService(repository);
 
     const result = await service.findByFilters({
-      tenantId: tenantId.toString(),
-      queryDefinitionId: queryDefinitionId.toString(),
+      tenantId,
+      queryDefinitionId,
       status: ReportDefinitionStatus.Active,
       page: 1,
       pageSize: 25,
@@ -227,30 +229,27 @@ describe('ReportDefinitionsService', () => {
   });
 
   it('gets one report definition using tenant scoped lookup', async () => {
-    const tenantId = new Types.ObjectId();
-    const reportDefinitionId = new Types.ObjectId();
+    const tenantId = new Types.ObjectId().toString();
+    const reportDefinitionId = new Types.ObjectId().toString();
     const repository: Pick<ReportDefinitionsRepository, 'findByTenantAndId'> = {
       findByTenantAndId: jest.fn(async () => null),
     };
     const service = createService(repository);
 
-    await expect(
-      service.findOne(tenantId.toString(), reportDefinitionId.toString()),
-    ).rejects.toBeInstanceOf(NotFoundException);
-    expect(repository.findByTenantAndId).toHaveBeenCalledWith(
-      tenantId,
-      reportDefinitionId.toString(),
+    await expect(service.findOne(tenantId, reportDefinitionId)).rejects.toBeInstanceOf(
+      NotFoundException,
     );
+    expect(repository.findByTenantAndId).toHaveBeenCalledWith(tenantId, reportDefinitionId);
   });
 
   it('updates a report definition with sanitized settings and audit', async () => {
-    const tenantId = new Types.ObjectId();
-    const reportDefinitionId = new Types.ObjectId();
+    const tenantId = new Types.ObjectId().toString();
+    const reportDefinitionId = new Types.ObjectId().toString();
     const updatedAt = new Date('2026-04-26T13:00:00.000Z');
     const repository: Pick<ReportDefinitionsRepository, 'updateByTenantAndId'> = {
       updateByTenantAndId: jest.fn(async (_tenantId, _id, record) =>
-        createReportDefinitionDocument({
-          _id: reportDefinitionId,
+        createReportDefinitionRecord({
+          id: reportDefinitionId,
           tenantId,
           reportKey: record.reportKey ?? 'monthly_sales_report',
           name: record.name ?? 'Relatorio',
@@ -275,8 +274,8 @@ describe('ReportDefinitionsService', () => {
     const service = createService(repository, auditService);
 
     const result = await service.update(
-      tenantId.toString(),
-      reportDefinitionId.toString(),
+      tenantId,
+      reportDefinitionId,
       {
         name: 'Relatorio atualizado',
         exportOptions: { defaultFormat: 'xlsx', token: 'must-not-leak' },
@@ -287,7 +286,7 @@ describe('ReportDefinitionsService', () => {
 
     expect(repository.updateByTenantAndId).toHaveBeenCalledWith(
       tenantId,
-      reportDefinitionId.toString(),
+      reportDefinitionId,
       expect.objectContaining({
         name: 'Relatorio atualizado',
         exportOptions: { defaultFormat: 'xlsx' },
@@ -303,13 +302,13 @@ describe('ReportDefinitionsService', () => {
   });
 
   it('archives a report definition using soft delete', async () => {
-    const tenantId = new Types.ObjectId();
-    const reportDefinitionId = new Types.ObjectId();
+    const tenantId = new Types.ObjectId().toString();
+    const reportDefinitionId = new Types.ObjectId().toString();
     const updatedAt = new Date('2026-04-26T13:30:00.000Z');
     const repository: Pick<ReportDefinitionsRepository, 'archiveByTenantAndId'> = {
       archiveByTenantAndId: jest.fn(async () =>
-        createReportDefinitionDocument({
-          _id: reportDefinitionId,
+        createReportDefinitionRecord({
+          id: reportDefinitionId,
           tenantId,
           reportKey: 'monthly_sales_report',
           name: 'Relatorio',
@@ -332,13 +331,13 @@ describe('ReportDefinitionsService', () => {
     const auditService = createAuditService();
     const service = createService(repository, auditService);
 
-    const result = await service.archive(tenantId.toString(), reportDefinitionId.toString(), {
+    const result = await service.archive(tenantId, reportDefinitionId, {
       actorId: 'dev-actor-003',
     });
 
     expect(repository.archiveByTenantAndId).toHaveBeenCalledWith(
       tenantId,
-      reportDefinitionId.toString(),
+      reportDefinitionId,
       'dev-actor-003',
     );
     expect(result.status).toBe(ReportDefinitionStatus.Archived);
@@ -391,8 +390,8 @@ function createAuditService(): AuditServiceMock {
   };
 }
 
-function createReportDefinitionDocument(
-  record: Partial<ReportDefinitionDocument>,
-): ReportDefinitionDocument {
-  return record as ReportDefinitionDocument;
+function createReportDefinitionRecord(
+  record: Partial<ReportDefinitionRecord>,
+): ReportDefinitionRecord {
+  return record as ReportDefinitionRecord;
 }
