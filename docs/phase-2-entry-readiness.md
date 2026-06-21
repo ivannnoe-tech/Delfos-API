@@ -113,8 +113,15 @@ Nenhuma destas pode ser tomada por agente:
 3. Para ADR-0022: **qual transporte** (HTTP / fila / gRPC / polling) — e, se fila, autorizar a ADR de promoção de fila/worker.
 4. Promover/substituir ADR-0021 e ADR-0022 para `Accepted` (ato humano explícito, ADR-0024).
 
-**Próximo passo autônomo que posso fazer (sem cruzar o gate):** redigir os
-**rascunhos** das ADRs finais (descriptografia e transporte) e a **extensão do
-threat model** como *Proposed*, deixando as escolhas em aberto para tua decisão —
-nada disso promove ADR nem escreve código de execução. Só com tua escolha
-explícita as ADRs viram `Accepted` e o código começa.
+**Decisão registrada (2026-06-21):** broker de segredo = **`delfos-api` broker**
+(segredo just-in-time, curtíssima duração); transporte = **HTTP síncrono (mTLS)**
+para chamadas curtas. Rascunhadas como `Proposed`:
+[ADR-0037](adr/adr-0037-credential-decryption-via-delfos-api-broker.md) e
+[ADR-0038](adr/adr-0038-connector-dispatch-transport-sync-http.md) — supersedem a
+ADR-0021/0022 **ao serem aceitas**.
+
+**Ação humana pendente (gate):** revisar e **promover** ADR-0037 e ADR-0038 a
+`Accepted`, **concluir o threat model da Fase 2** e **validar a Fase 1**
+(`phase-2-vision.md`). Só com esses três passos o menor incremento de código
+(bridge = command-prep + validation) pode começar. Nenhuma ADR foi promovida por
+agente.
