@@ -1,13 +1,8 @@
 import { Types } from 'mongoose';
 
 import { AuditService } from '../../audit/services/audit.service';
-import { ConnectionsRepository } from '../repositories/connections.repository';
-import {
-  ConnectionAuthType,
-  ConnectionDocument,
-  ConnectionStatus,
-  ConnectionType,
-} from '../schemas/connection.schema';
+import { ConnectionRecord, ConnectionsRepository } from '../repositories/connections.repository';
+import { ConnectionAuthType, ConnectionStatus, ConnectionType } from '../schemas/connection.schema';
 import { ConnectionsService } from '../services/connections.service';
 
 type AuditServiceMock = {
@@ -16,26 +11,25 @@ type AuditServiceMock = {
 
 describe('ConnectionsService', () => {
   it('stores sanitized metadata, hides credential references, and audits safe context', async () => {
-    const connectionId = new Types.ObjectId();
-    const tenantId = new Types.ObjectId();
+    const connectionId = '662d4f6e7a1c2b00124f0501';
+    const tenantId = '662d4f6e7a1c2b00124f0001';
     const createdAt = new Date('2026-04-26T12:00:00.000Z');
     const repository: Pick<ConnectionsRepository, 'create'> = {
       create: jest.fn(
-        async (record) =>
-          ({
-            _id: connectionId,
-            tenantId: record.tenantId,
-            name: record.name,
-            type: record.type ?? ConnectionType.CustomerApi,
-            baseUrl: record.baseUrl,
-            authType: record.authType ?? ConnectionAuthType.None,
-            credentialRef: record.credentialRef,
-            allowedHeaders: record.allowedHeaders,
-            metadata: record.metadata,
-            status: record.status ?? ConnectionStatus.Draft,
-            createdAt,
-            updatedAt: createdAt,
-          }) as unknown as ConnectionDocument,
+        async (record): Promise<ConnectionRecord> => ({
+          id: connectionId,
+          tenantId: record.tenantId,
+          name: record.name,
+          type: record.type ?? ConnectionType.CustomerApi,
+          baseUrl: record.baseUrl,
+          authType: record.authType ?? ConnectionAuthType.None,
+          credentialRef: record.credentialRef,
+          allowedHeaders: record.allowedHeaders,
+          metadata: record.metadata,
+          status: record.status ?? ConnectionStatus.Draft,
+          createdAt,
+          updatedAt: createdAt,
+        }),
       ),
     };
     const auditService = createAuditService();
@@ -46,7 +40,7 @@ describe('ConnectionsService', () => {
 
     const result = await service.create(
       {
-        tenantId: tenantId.toString(),
+        tenantId,
         name: 'Primary customer API',
         baseUrl: 'https://api.customer.example',
         authType: ConnectionAuthType.BearerToken,
@@ -66,11 +60,11 @@ describe('ConnectionsService', () => {
     expect(result).not.toHaveProperty('credentialRef');
     expect(result.metadata).toEqual({ environment: 'sandbox' });
     expect(auditService.record).toHaveBeenCalledWith({
-      tenantId: tenantId.toString(),
+      tenantId,
       actorUserId: undefined,
       action: 'connection.created',
       entity: 'connection',
-      entityId: connectionId.toString(),
+      entityId: connectionId,
       metadata: {
         type: ConnectionType.CustomerApi,
         authType: ConnectionAuthType.BearerToken,

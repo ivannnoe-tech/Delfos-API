@@ -2,7 +2,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsArray,
   IsEnum,
-  IsMongoId,
   IsObject,
   IsOptional,
   IsString,
@@ -11,11 +10,12 @@ import {
   MaxLength,
 } from 'class-validator';
 
+import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import { ConnectionAuthType, ConnectionStatus, ConnectionType } from '../schemas/connection.schema';
 
 export class CreateConnectionDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })
-  @IsMongoId()
+  @IsEntityId()
   tenantId!: string;
 
   @ApiProperty({ example: 'Primary customer API' })

@@ -1,61 +1,62 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { SanitizedMetadata } from '../../../core/utils/sanitize-metadata';
+import { ConnectionAuthType, ConnectionStatus, ConnectionType } from '../schemas/connection.schema';
 
-import { Connection, ConnectionDocument } from '../schemas/connection.schema';
-
-export interface CreateConnectionRecord {
-  tenantId: Types.ObjectId;
+/**
+ * Persistence-neutral connection record returned by every
+ * {@link ConnectionsRepository} implementation (Mongo or PostgreSQL). The
+ * service maps this to the response DTO, so the REST contract is identical
+ * regardless of the backend (ADR-0035 / ADR-0036).
+ */
+export interface ConnectionRecord {
+  id: string;
+  tenantId: string;
   name: string;
-  type?: Connection['type'];
+  type: ConnectionType;
   baseUrl: string;
-  authType?: Connection['authType'];
+  authType: ConnectionAuthType;
   credentialRef?: string;
   allowedHeaders: string[];
-  metadata: Connection['metadata'];
-  status?: Connection['status'];
+  metadata: SanitizedMetadata;
+  status: ConnectionStatus;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export type UpdateConnectionRecord = Partial<CreateConnectionRecord>;
+export interface CreateConnectionRecord {
+  tenantId: string;
+  name: string;
+  type?: ConnectionType;
+  baseUrl: string;
+  authType?: ConnectionAuthType;
+  credentialRef?: string;
+  allowedHeaders: string[];
+  metadata: SanitizedMetadata;
+  status?: ConnectionStatus;
+}
 
-@Injectable()
-export class ConnectionsRepository {
-  constructor(
-    @InjectModel(Connection.name) private readonly connectionModel: Model<ConnectionDocument>,
-  ) {}
+export type UpdateConnectionRecord = Partial<Omit<CreateConnectionRecord, 'tenantId'>>;
 
-  create(record: CreateConnectionRecord): Promise<ConnectionDocument> {
-    return this.connectionModel.create(record);
-  }
-
-  findByTenant(
-    tenantId: Types.ObjectId,
+/**
+ * Repository contract for connections. Implemented by
+ * `MongoConnectionsRepository` and `PostgresConnectionsRepository`; the module
+ * selects one at runtime based on whether `DELFOS_POSTGRES_URL` is configured.
+ * Used as the DI token.
+ *
+ * Every query is tenant-scoped: `tenantId` is a mandatory isolation boundary,
+ * never an optional filter.
+ */
+export abstract class ConnectionsRepository {
+  abstract create(record: CreateConnectionRecord): Promise<ConnectionRecord>;
+  abstract findByTenant(
+    tenantId: string,
     page: number,
     pageSize: number,
-  ): Promise<ConnectionDocument[]> {
-    return this.connectionModel
-      .find({ tenantId })
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .exec();
-  }
-
-  countByTenant(tenantId: Types.ObjectId): Promise<number> {
-    return this.connectionModel.countDocuments({ tenantId }).exec();
-  }
-
-  findByTenantAndId(tenantId: Types.ObjectId, id: string): Promise<ConnectionDocument | null> {
-    return this.connectionModel.findOne({ _id: id, tenantId }).exec();
-  }
-
-  updateByTenantAndId(
-    tenantId: Types.ObjectId,
+  ): Promise<ConnectionRecord[]>;
+  abstract countByTenant(tenantId: string): Promise<number>;
+  abstract findByTenantAndId(tenantId: string, id: string): Promise<ConnectionRecord | null>;
+  abstract updateByTenantAndId(
+    tenantId: string,
     id: string,
     record: UpdateConnectionRecord,
-  ): Promise<ConnectionDocument | null> {
-    return this.connectionModel
-      .findOneAndUpdate({ _id: id, tenantId }, record, { new: true, runValidators: true })
-      .exec();
-  }
+  ): Promise<ConnectionRecord | null>;
 }
