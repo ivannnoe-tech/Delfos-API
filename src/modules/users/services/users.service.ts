@@ -1,12 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import { buildListMeta, ListResponse } from '../../../core/dto/list-meta.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { UserResponseDto } from '../dto/user-response.dto';
-import { UserDocument } from '../schemas/user.schema';
-import { UsersRepository } from '../repositories/users.repository';
+import { UserRecord, UsersRepository } from '../repositories/users.repository';
 
 @Injectable()
 export class UsersService {
@@ -14,7 +12,7 @@ export class UsersService {
 
   async create(dto: CreateUserDto): Promise<UserResponseDto> {
     const user = await this.usersRepository.create({
-      tenantId: new Types.ObjectId(dto.tenantId),
+      tenantId: dto.tenantId,
       name: dto.name,
       email: dto.email,
       role: dto.role,
@@ -29,10 +27,9 @@ export class UsersService {
     page: number,
     pageSize: number,
   ): Promise<ListResponse<UserResponseDto>> {
-    const tenantObjectId = new Types.ObjectId(tenantId);
     const [items, total] = await Promise.all([
-      this.usersRepository.findByTenant(tenantObjectId, page, pageSize),
-      this.usersRepository.countByTenant(tenantObjectId),
+      this.usersRepository.findByTenant(tenantId, page, pageSize),
+      this.usersRepository.countByTenant(tenantId),
     ]);
 
     return {
@@ -42,11 +39,7 @@ export class UsersService {
   }
 
   async update(tenantId: string, id: string, dto: UpdateUserDto): Promise<UserResponseDto> {
-    const user = await this.usersRepository.updateByTenantAndId(
-      new Types.ObjectId(tenantId),
-      id,
-      dto,
-    );
+    const user = await this.usersRepository.updateByTenantAndId(tenantId, id, dto);
 
     if (!user) {
       throw new NotFoundException('User not found.');
@@ -55,10 +48,10 @@ export class UsersService {
     return this.toResponse(user);
   }
 
-  private toResponse(user: UserDocument): UserResponseDto {
+  private toResponse(user: UserRecord): UserResponseDto {
     return {
-      id: user._id.toString(),
-      tenantId: user.tenantId.toString(),
+      id: user.id,
+      tenantId: user.tenantId,
       name: user.name,
       email: user.email,
       role: user.role,

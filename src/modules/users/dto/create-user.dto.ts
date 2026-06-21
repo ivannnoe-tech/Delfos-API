@@ -1,11 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEmail, IsEnum, IsMongoId, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsEmail, IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
 
+import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import { UserRole, UserStatus } from '../schemas/user.schema';
 
 export class CreateUserDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })
-  @IsMongoId()
+  @IsEntityId()
   tenantId!: string;
 
   @ApiProperty({ example: 'Delfos Operator' })

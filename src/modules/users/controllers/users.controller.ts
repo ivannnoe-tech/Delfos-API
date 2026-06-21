@@ -6,8 +6,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { IsMongoId } from 'class-validator';
-
+import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import { AdminRoles } from '../../auth/decorators/admin-roles.decorator';
 import { ApiFoundationAuthHeaders } from '../../auth/decorators/api-foundation-auth-headers.decorator';
 import { AdminKeyGuard } from '../../auth/guards/admin-key.guard';
@@ -20,7 +19,7 @@ import { UpdateUserDto } from '../dto/update-user.dto';
 import { UsersService } from '../services/users.service';
 
 class UserIdParamDto {
-  @IsMongoId()
+  @IsEntityId()
   id!: string;
 }
 
