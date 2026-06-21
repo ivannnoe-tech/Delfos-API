@@ -5,7 +5,7 @@ import { SanitizedMetadata } from '../../../core/utils/sanitize-metadata';
 import {
   ReportDefinitionStatus,
   ReportDefinitionVisibility,
-} from '../schemas/report-definition.schema';
+} from '../schemas/report-definition.constants';
 import { ReportDefinitionBlockResponseDto } from './report-definition-block.dto';
 import { ReportDefinitionFilterResponseDto } from './report-definition-filter.dto';
 import { ReportDefinitionLayoutResponseDto } from './report-definition-layout.dto';

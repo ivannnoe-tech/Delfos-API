@@ -28,7 +28,7 @@ import {
   DashboardDefinitionLayout,
   DashboardDefinitionSection,
   DashboardDefinitionVisualization,
-} from '../schemas/dashboard-definition.schema';
+} from '../schemas/dashboard-definition.constants';
 import { DashboardDefinitionSanitizerService } from './dashboard-definition-sanitizer.service';
 
 export interface DashboardDefinitionActorContext {

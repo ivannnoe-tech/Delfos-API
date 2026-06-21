@@ -1,4 +1,4 @@
-import { ExecutionRequestStatus } from '../schemas/execution-request.schema';
+import { ExecutionRequestStatus } from '../schemas/execution-request.constants';
 import {
   BridgeReadinessBlockerShape,
   BridgeReadinessResult,

@@ -1,4 +1,4 @@
-import { CredentialType } from '../../src/modules/credentials/schemas/credential.schema';
+import { CredentialType } from '../../src/modules/credentials/schemas/credential.constants';
 import { E2EApp, startE2EApp } from './support/e2e-app';
 import { E2E_ACTOR_ID, E2E_TENANT_ID, e2eRequest } from './support/e2e-client';
 

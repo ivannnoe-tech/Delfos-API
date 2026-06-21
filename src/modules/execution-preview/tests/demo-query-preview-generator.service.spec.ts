@@ -3,7 +3,7 @@ import {
   QueryDefinitionAggregation,
   QueryDefinitionDimensionType,
   QueryDefinitionType,
-} from '../../query-definitions/schemas/query-definition.schema';
+} from '../../query-definitions/schemas/query-definition.constants';
 import {
   ExecutionPreviewColumnType,
   ExecutionPreviewMode,

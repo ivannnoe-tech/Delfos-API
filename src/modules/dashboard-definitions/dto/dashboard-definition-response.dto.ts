@@ -11,7 +11,7 @@ import {
   DashboardDefinitionStatus,
   DashboardDefinitionVisibility,
   DashboardDefinitionWidgetType,
-} from '../schemas/dashboard-definition.schema';
+} from '../schemas/dashboard-definition.constants';
 
 export class DashboardDefinitionLayoutResponseDto {
   @ApiProperty({ enum: DashboardDefinitionLayoutType })

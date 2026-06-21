@@ -2,7 +2,7 @@ import {
   FieldMappingStatus,
   FieldMappingTargetType,
   FieldMappingTransform,
-} from '../schemas/field-mapping.schema';
+} from '../schemas/field-mapping.constants';
 
 /**
  * Persistence-neutral field-mapping record returned by every

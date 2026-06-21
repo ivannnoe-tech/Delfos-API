@@ -5,7 +5,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   ReportDefinitionLayoutDensity,
   ReportDefinitionLayoutType,
-} from '../schemas/report-definition.schema';
+} from '../schemas/report-definition.constants';
 
 export class ReportDefinitionLayoutDto {
   @ApiPropertyOptional({

@@ -3,8 +3,8 @@ import { BadRequestException } from '@nestjs/common';
 import { AdminRole } from '../../auth/types/admin-role';
 import { ExecutionRequestEventsRepository } from '../repositories/execution-request-events.repository';
 import { ExecutionRequestsRepository } from '../repositories/execution-requests.repository';
-import { ExecutionRequestStatus } from '../schemas/execution-request.schema';
-import { ExecutionRequestEventType } from '../schemas/execution-request-event.schema';
+import { ExecutionRequestStatus } from '../schemas/execution-request.constants';
+import { ExecutionRequestEventType } from '../schemas/execution-request-event.constants';
 import { ExecutionRequestAuditService } from '../services/execution-request-audit.service';
 import { ExecutionRequestEventsService } from '../services/execution-request-events.service';
 import {

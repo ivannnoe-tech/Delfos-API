@@ -5,7 +5,7 @@ import {
   SemanticMeasure,
   SemanticModelQuality,
   SemanticModelStatus,
-} from '../schemas/semantic-model.schema';
+} from '../schemas/semantic-model.constants';
 
 /**
  * Persistence-neutral semantic model record returned by every

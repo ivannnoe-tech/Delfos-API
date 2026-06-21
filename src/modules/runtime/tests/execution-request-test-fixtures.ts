@@ -11,8 +11,8 @@ import {
   ExecutionRequestKind,
   ExecutionRequestMode,
   ExecutionRequestStatus,
-} from '../schemas/execution-request.schema';
-import { ExecutionRequestEventType } from '../schemas/execution-request-event.schema';
+} from '../schemas/execution-request.constants';
+import { ExecutionRequestEventType } from '../schemas/execution-request-event.constants';
 
 export type AuditServiceMock = {
   record: jest.Mock<ReturnType<AuditService['record']>, Parameters<AuditService['record']>>;

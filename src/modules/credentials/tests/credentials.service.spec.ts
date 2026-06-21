@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 
 import { AuditService } from '../../audit/services/audit.service';
 import { CredentialRecord, CredentialsRepository } from '../repositories/credentials.repository';
-import { CredentialStatus, CredentialType } from '../schemas/credential.schema';
+import { CredentialStatus, CredentialType } from '../schemas/credential.constants';
 import { CredentialsService } from '../services/credentials.service';
 import { LocalCredentialProtectorService } from '../services/local-credential-protector.service';
 

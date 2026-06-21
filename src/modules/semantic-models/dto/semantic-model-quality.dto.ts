@@ -12,7 +12,7 @@ import {
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 
-import { SemanticQualityLevel } from '../schemas/semantic-model.schema';
+import { SemanticQualityLevel } from '../schemas/semantic-model.constants';
 
 export class SemanticModelQualityDto {
   @ApiPropertyOptional({ example: 72, minimum: 0, maximum: 100 })

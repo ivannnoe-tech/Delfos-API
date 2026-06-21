@@ -5,7 +5,7 @@ import {
   SemanticType,
   SemanticModelStatus,
   SemanticQualityLevel,
-} from '../src/modules/semantic-models/schemas/semantic-model.schema';
+} from '../src/modules/semantic-models/schemas/semantic-model.constants';
 import {
   DashboardDefinitionChartType,
   DashboardDefinitionFilterOperator,
@@ -13,15 +13,15 @@ import {
   DashboardDefinitionLayoutGap,
   DashboardDefinitionLayoutType,
   DashboardDefinitionWidgetType,
-} from '../src/modules/dashboard-definitions/schemas/dashboard-definition.schema';
+} from '../src/modules/dashboard-definitions/schemas/dashboard-definition.constants';
 import {
   DatasetFieldSemanticRole,
   DatasetFieldType,
-} from '../src/modules/datasets/schemas/dataset.schema';
+} from '../src/modules/datasets/schemas/dataset.constants';
 import {
   FieldMappingTargetType,
   FieldMappingTransform,
-} from '../src/modules/field-mappings/schemas/field-mapping.schema';
+} from '../src/modules/field-mappings/schemas/field-mapping.constants';
 import {
   QueryDefinitionAggregation,
   QueryDefinitionDimensionType,
@@ -29,14 +29,14 @@ import {
   QueryDefinitionSortDirection,
   QueryDefinitionTimeGranularity,
   QueryDefinitionType,
-} from '../src/modules/query-definitions/schemas/query-definition.schema';
+} from '../src/modules/query-definitions/schemas/query-definition.constants';
 import {
   ReportDefinitionBlockType,
   ReportDefinitionFilterOperator,
   ReportDefinitionLayoutDensity,
   ReportDefinitionLayoutType,
   ReportDefinitionParameterType,
-} from '../src/modules/report-definitions/schemas/report-definition.schema';
+} from '../src/modules/report-definitions/schemas/report-definition.constants';
 
 export const demoActorId = 'dev-demo-owner';
 export const demoCredentialPlaceholder = 'not-a-real-secret-value';

@@ -1,4 +1,4 @@
-import { UserRole, UserStatus } from '../schemas/user.schema';
+import { UserRole, UserStatus } from '../schemas/user.constants';
 
 /**
  * Persistence-neutral user record returned by every {@link UsersRepository}

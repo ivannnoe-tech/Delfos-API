@@ -9,7 +9,7 @@ import {
   SemanticModelStatus,
   SemanticQualityLevel,
   SemanticType,
-} from '../schemas/semantic-model.schema';
+} from '../schemas/semantic-model.constants';
 
 export class SemanticModelQualityResponseDto {
   @ApiPropertyOptional({ example: 72 })

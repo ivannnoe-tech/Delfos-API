@@ -1,14 +1,14 @@
 import { NotFoundException } from '@nestjs/common';
 
 import { DashboardDefinitionsService } from '../../dashboard-definitions/services/dashboard-definitions.service';
-import { DatasetStatus } from '../../datasets/schemas/dataset.schema';
+import { DatasetStatus } from '../../datasets/schemas/dataset.constants';
 import { DatasetsService } from '../../datasets/services/datasets.service';
-import { FieldMappingStatus } from '../../field-mappings/schemas/field-mapping.schema';
+import { FieldMappingStatus } from '../../field-mappings/schemas/field-mapping.constants';
 import { FieldMappingsService } from '../../field-mappings/services/field-mappings.service';
-import { QueryDefinitionStatus } from '../../query-definitions/schemas/query-definition.schema';
+import { QueryDefinitionStatus } from '../../query-definitions/schemas/query-definition.constants';
 import { QueryDefinitionsService } from '../../query-definitions/services/query-definitions.service';
 import { ReportDefinitionsService } from '../../report-definitions/services/report-definitions.service';
-import { ExecutionRequestKind } from '../schemas/execution-request.schema';
+import { ExecutionRequestKind } from '../schemas/execution-request.constants';
 import {
   ExecutionRequestReadinessService,
   ReadinessAccumulator,

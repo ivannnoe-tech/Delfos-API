@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsObject, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 
-import { TenantStatus } from '../schemas/tenant.schema';
+import { TenantStatus } from '../schemas/tenant.constants';
 
 export class CreateTenantDto {
   @ApiProperty({ example: 'Acme Analytics' })

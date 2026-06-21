@@ -16,8 +16,8 @@ import {
   ExecutionRequestRecord,
   ExecutionRequestsRepository,
 } from '../repositories/execution-requests.repository';
-import { ExecutionRequestStatus } from '../schemas/execution-request.schema';
-import { ExecutionRequestEventType } from '../schemas/execution-request-event.schema';
+import { ExecutionRequestStatus } from '../schemas/execution-request.constants';
+import { ExecutionRequestEventType } from '../schemas/execution-request-event.constants';
 import { ExecutionRequestActorContext } from './execution-request-actor-context';
 import { ExecutionRequestAuditService } from './execution-request-audit.service';
 

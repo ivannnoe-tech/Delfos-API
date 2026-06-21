@@ -1,7 +1,10 @@
 import { AuditService } from '../../audit/services/audit.service';
 import { AdminRole } from '../../auth/types/admin-role';
 import { ExecutionRequestAuditService } from '../services/execution-request-audit.service';
-import { ExecutionRequestKind, ExecutionRequestStatus } from '../schemas/execution-request.schema';
+import {
+  ExecutionRequestKind,
+  ExecutionRequestStatus,
+} from '../schemas/execution-request.constants';
 import {
   AuditServiceMock,
   createActorFixture,

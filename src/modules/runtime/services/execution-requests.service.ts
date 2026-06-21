@@ -25,7 +25,7 @@ import {
   ExecutionRequestKind,
   ExecutionRequestMode,
   ExecutionRequestStatus,
-} from '../schemas/execution-request.schema';
+} from '../schemas/execution-request.constants';
 import { ExecutionRequestActorContext } from './execution-request-actor-context';
 import { ExecutionRequestAuditService } from './execution-request-audit.service';
 import { ExecutionRequestDemoExecutorService } from './execution-request-demo-executor.service';

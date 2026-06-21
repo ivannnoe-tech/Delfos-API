@@ -12,7 +12,7 @@ import {
   ReportDefinitionParameterType,
   ReportDefinitionStatus,
   ReportDefinitionVisibility,
-} from '../schemas/report-definition.schema';
+} from '../schemas/report-definition.constants';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

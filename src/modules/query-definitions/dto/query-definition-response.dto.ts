@@ -10,7 +10,7 @@ import {
   QueryDefinitionStatus,
   QueryDefinitionTimeGranularity,
   QueryDefinitionType,
-} from '../schemas/query-definition.schema';
+} from '../schemas/query-definition.constants';
 
 export class QueryDefinitionMetricResponseDto {
   @ApiProperty({ example: 'total_sales' })

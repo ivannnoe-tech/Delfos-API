@@ -1,5 +1,9 @@
 import { SanitizedMetadata } from '../../../core/utils/sanitize-metadata';
-import { ConnectionAuthType, ConnectionStatus, ConnectionType } from '../schemas/connection.schema';
+import {
+  ConnectionAuthType,
+  ConnectionStatus,
+  ConnectionType,
+} from '../schemas/connection.constants';
 
 /**
  * Persistence-neutral connection record returned by every

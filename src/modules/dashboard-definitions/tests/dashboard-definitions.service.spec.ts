@@ -15,7 +15,7 @@ import {
   DashboardDefinitionStatus,
   DashboardDefinitionVisibility,
   DashboardDefinitionWidgetType,
-} from '../schemas/dashboard-definition.schema';
+} from '../schemas/dashboard-definition.constants';
 import { DashboardDefinitionSanitizerService } from '../services/dashboard-definition-sanitizer.service';
 import { DashboardDefinitionsService } from '../services/dashboard-definitions.service';
 

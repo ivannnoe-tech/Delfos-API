@@ -10,7 +10,7 @@ import {
   SemanticModelStatus,
   SemanticQualityLevel,
   SemanticType,
-} from '../schemas/semantic-model.schema';
+} from '../schemas/semantic-model.constants';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

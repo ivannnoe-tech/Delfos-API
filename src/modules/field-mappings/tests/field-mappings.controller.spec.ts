@@ -16,7 +16,7 @@ import { AdminRolesGuard } from '../../auth/guards/admin-roles.guard';
 import { RequestAuthContextService } from '../../auth/services/request-auth-context.service';
 import { AdminRole } from '../../auth/types/admin-role';
 import { FieldMappingsController } from '../controllers/field-mappings.controller';
-import { FieldMappingTargetType } from '../schemas/field-mapping.schema';
+import { FieldMappingTargetType } from '../schemas/field-mapping.constants';
 import { FieldMappingsService } from '../services/field-mappings.service';
 
 describe('FieldMappingsController', () => {

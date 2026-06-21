@@ -11,7 +11,7 @@ import {
   DashboardDefinitionStatus,
   DashboardDefinitionVisibility,
   DashboardDefinitionWidgetType,
-} from '../../dashboard-definitions/schemas/dashboard-definition.schema';
+} from '../../dashboard-definitions/schemas/dashboard-definition.constants';
 import { DashboardDefinitionsService } from '../../dashboard-definitions/services/dashboard-definitions.service';
 import { QueryDefinitionResponseDto } from '../../query-definitions/dto/query-definition-response.dto';
 import {
@@ -19,7 +19,7 @@ import {
   QueryDefinitionFilterOperator,
   QueryDefinitionStatus,
   QueryDefinitionType,
-} from '../../query-definitions/schemas/query-definition.schema';
+} from '../../query-definitions/schemas/query-definition.constants';
 import { QueryDefinitionsService } from '../../query-definitions/services/query-definitions.service';
 import {
   DashboardPreviewWidgetStatus,

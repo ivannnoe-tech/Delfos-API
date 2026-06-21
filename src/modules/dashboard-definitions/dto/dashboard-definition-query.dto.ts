@@ -6,7 +6,7 @@ import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import {
   DashboardDefinitionStatus,
   DashboardDefinitionVisibility,
-} from '../schemas/dashboard-definition.schema';
+} from '../schemas/dashboard-definition.constants';
 
 const stableKeyPattern = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
 

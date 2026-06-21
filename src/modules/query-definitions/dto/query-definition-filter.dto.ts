@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 
 import { SanitizedMetadataValue } from '../../../core/utils/sanitize-metadata';
-import { QueryDefinitionFilterOperator } from '../schemas/query-definition.schema';
+import { QueryDefinitionFilterOperator } from '../schemas/query-definition.constants';
 
 const stableKeyPattern = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
 

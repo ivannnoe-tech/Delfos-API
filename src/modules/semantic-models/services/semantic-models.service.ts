@@ -31,7 +31,7 @@ import {
   SemanticGlossaryTerm,
   SemanticMeasure,
   SemanticModelQuality,
-} from '../schemas/semantic-model.schema';
+} from '../schemas/semantic-model.constants';
 import { SemanticModelSanitizerService } from './semantic-model-sanitizer.service';
 
 export interface SemanticModelActorContext {

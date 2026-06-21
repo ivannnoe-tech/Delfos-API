@@ -1,5 +1,5 @@
-import { FieldMappingTargetType } from '../../src/modules/field-mappings/schemas/field-mapping.schema';
-import { ExecutionRequestKind } from '../../src/modules/runtime/schemas/execution-request.schema';
+import { FieldMappingTargetType } from '../../src/modules/field-mappings/schemas/field-mapping.constants';
+import { ExecutionRequestKind } from '../../src/modules/runtime/schemas/execution-request.constants';
 import { E2EApp, startE2EApp } from './support/e2e-app';
 import { E2E_ACTOR_ID, E2E_TENANT_ID, e2eRequest } from './support/e2e-client';
 

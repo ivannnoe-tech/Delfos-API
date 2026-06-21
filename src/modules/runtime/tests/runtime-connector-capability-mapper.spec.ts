@@ -1,5 +1,5 @@
 import { RuntimeConnectorCapabilityMapper } from '../bridge';
-import { ExecutionRequestKind, ExecutionRequestMode } from '../schemas/execution-request.schema';
+import { ExecutionRequestKind, ExecutionRequestMode } from '../schemas/execution-request.constants';
 
 describe('RuntimeConnectorCapabilityMapper', () => {
   const mapper = new RuntimeConnectorCapabilityMapper();

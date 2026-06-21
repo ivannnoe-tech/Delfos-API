@@ -15,7 +15,7 @@ import {
   SemanticDimensionDomain,
   SemanticModelStatus,
   SemanticType,
-} from '../schemas/semantic-model.schema';
+} from '../schemas/semantic-model.constants';
 
 const stableKeyPattern = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
 

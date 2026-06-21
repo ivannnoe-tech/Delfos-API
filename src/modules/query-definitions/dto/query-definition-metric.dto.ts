@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 
-import { QueryDefinitionAggregation } from '../schemas/query-definition.schema';
+import { QueryDefinitionAggregation } from '../schemas/query-definition.constants';
 
 const stableKeyPattern = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
 

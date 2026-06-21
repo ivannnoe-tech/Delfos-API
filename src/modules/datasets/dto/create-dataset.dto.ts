@@ -19,7 +19,7 @@ import {
   DatasetSchemaMode,
   DatasetSourceType,
   DatasetStatus,
-} from '../schemas/dataset.schema';
+} from '../schemas/dataset.constants';
 
 export class CreateDatasetDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })

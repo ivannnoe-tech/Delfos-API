@@ -11,7 +11,11 @@ import {
 } from 'class-validator';
 
 import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
-import { ConnectionAuthType, ConnectionStatus, ConnectionType } from '../schemas/connection.schema';
+import {
+  ConnectionAuthType,
+  ConnectionStatus,
+  ConnectionType,
+} from '../schemas/connection.constants';
 
 export class CreateConnectionDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })

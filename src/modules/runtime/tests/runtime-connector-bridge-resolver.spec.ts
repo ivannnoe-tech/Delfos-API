@@ -25,7 +25,7 @@ import {
   ExecutionRequestKind,
   ExecutionRequestMode,
   ExecutionRequestStatus,
-} from '../schemas/execution-request.schema';
+} from '../schemas/execution-request.constants';
 
 describe('RuntimeConnectorBridgeResolver', () => {
   it('prepares query demo command as execute_query_preview demo', async () => {

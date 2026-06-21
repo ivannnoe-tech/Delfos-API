@@ -9,7 +9,7 @@ import {
   DatasetSchemaMode,
   DatasetSourceType,
   DatasetStatus,
-} from '../schemas/dataset.schema';
+} from '../schemas/dataset.constants';
 
 export class DatasetFieldResponseDto {
   @ApiProperty({ example: 'order_id' })

@@ -2,7 +2,11 @@ import { randomUUID } from 'node:crypto';
 
 import { AuditService } from '../../audit/services/audit.service';
 import { ConnectionRecord, ConnectionsRepository } from '../repositories/connections.repository';
-import { ConnectionAuthType, ConnectionStatus, ConnectionType } from '../schemas/connection.schema';
+import {
+  ConnectionAuthType,
+  ConnectionStatus,
+  ConnectionType,
+} from '../schemas/connection.constants';
 import { ConnectionsService } from '../services/connections.service';
 
 type AuditServiceMock = {

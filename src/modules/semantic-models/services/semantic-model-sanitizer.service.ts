@@ -11,7 +11,7 @@ import {
   SemanticMeasure,
   SemanticModelQuality,
   SemanticModelStatus,
-} from '../schemas/semantic-model.schema';
+} from '../schemas/semantic-model.constants';
 
 /**
  * Pure declarative sanitizer for the semantic-models module.

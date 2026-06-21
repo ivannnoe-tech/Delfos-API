@@ -4,7 +4,7 @@ import {
   pgDescribe,
 } from '../../../database/postgres/tests/pg-test-db';
 import { PostgresCredentialsRepository } from '../repositories/postgres-credentials.repository';
-import { CredentialStatus, CredentialType } from '../schemas/credential.schema';
+import { CredentialStatus, CredentialType } from '../schemas/credential.constants';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

@@ -5,8 +5,8 @@ import { SanitizedMetadata } from '../../../core/utils/sanitize-metadata';
 import { DB, ExecutionRequestEvents } from '../../../database/postgres/database.types';
 import { KYSELY_DB } from '../../../database/postgres/postgres.constants';
 import { AdminRole } from '../../auth/types/admin-role';
-import { ExecutionRequestStatus } from '../schemas/execution-request.schema';
-import { ExecutionRequestEventType } from '../schemas/execution-request-event.schema';
+import { ExecutionRequestStatus } from '../schemas/execution-request.constants';
+import { ExecutionRequestEventType } from '../schemas/execution-request-event.constants';
 import {
   CreateExecutionRequestEventRecord,
   ExecutionRequestEventFilters,

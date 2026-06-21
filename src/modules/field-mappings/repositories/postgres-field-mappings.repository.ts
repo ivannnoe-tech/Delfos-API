@@ -7,7 +7,7 @@ import {
   FieldMappingStatus,
   FieldMappingTargetType,
   FieldMappingTransform,
-} from '../schemas/field-mapping.schema';
+} from '../schemas/field-mapping.constants';
 import {
   CreateFieldMappingRecord,
   FieldMappingFilters,

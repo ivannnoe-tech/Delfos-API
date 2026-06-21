@@ -23,7 +23,7 @@ import {
   ExecutionRequestKind,
   ExecutionRequestMode,
   ExecutionRequestStatus,
-} from '../schemas/execution-request.schema';
+} from '../schemas/execution-request.constants';
 
 describe('RuntimeConnectorReferenceResolver', () => {
   it('resolves query references through dataset, mappings, connection, credentialRef, and sourceType', async () => {

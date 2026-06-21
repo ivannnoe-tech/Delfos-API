@@ -14,7 +14,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import { SanitizedMetadata } from '../../../core/utils/sanitize-metadata';
-import { ReportDefinitionBlockType } from '../schemas/report-definition.schema';
+import { ReportDefinitionBlockType } from '../schemas/report-definition.constants';
 
 const stableKeyPattern = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
 

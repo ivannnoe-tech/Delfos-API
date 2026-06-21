@@ -31,7 +31,7 @@ import {
   ExecutionRequestKind,
   ExecutionRequestMode,
   ExecutionRequestStatus,
-} from '../schemas/execution-request.schema';
+} from '../schemas/execution-request.constants';
 
 export const TENANT_ID = '662d4f6e7a1c2b00124f0001';
 export const OTHER_TENANT_ID = '662d4f6e7a1c2b00124f0002';

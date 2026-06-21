@@ -20,7 +20,7 @@ import {
   QueryDefinitionStatus,
   QueryDefinitionTimeGranularity,
   QueryDefinitionType,
-} from '../schemas/query-definition.schema';
+} from '../schemas/query-definition.constants';
 import { QueryDefinitionDimensionDto } from './query-definition-dimension.dto';
 import { QueryDefinitionFilterDto } from './query-definition-filter.dto';
 import { QueryDefinitionMetricDto } from './query-definition-metric.dto';

@@ -16,7 +16,7 @@ import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import {
   ReportDefinitionStatus,
   ReportDefinitionVisibility,
-} from '../schemas/report-definition.schema';
+} from '../schemas/report-definition.constants';
 import { ReportDefinitionBlockDto } from './report-definition-block.dto';
 import { ReportDefinitionFilterDto } from './report-definition-filter.dto';
 import { ReportDefinitionLayoutDto } from './report-definition-layout.dto';

@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-import { DashboardDefinitionChartType } from '../../dashboard-definitions/schemas/dashboard-definition.schema';
+import { DashboardDefinitionChartType } from '../../dashboard-definitions/schemas/dashboard-definition.constants';
 import {
   ExecutionPreviewMode,
   QueryPreviewColumnDto,

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { ListMetaDto } from '../../../core/dto/list-meta.dto';
-import { UserRole, UserStatus } from '../schemas/user.schema';
+import { UserRole, UserStatus } from '../schemas/user.constants';
 
 export class UserResponseDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0101' })

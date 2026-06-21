@@ -10,7 +10,7 @@ import {
   SemanticMeasure,
   SemanticModelQuality,
   SemanticModelStatus,
-} from '../schemas/semantic-model.schema';
+} from '../schemas/semantic-model.constants';
 import {
   CreateSemanticModelRecord,
   SemanticModelFilters,

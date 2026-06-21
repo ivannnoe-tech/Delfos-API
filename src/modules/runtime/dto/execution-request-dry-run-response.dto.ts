@@ -4,7 +4,7 @@ import {
   ExecutionRequestKind,
   ExecutionRequestMode,
   ExecutionRequestStatus,
-} from '../schemas/execution-request.schema';
+} from '../schemas/execution-request.constants';
 
 export class ExecutionRequestReadinessItemDto {
   @ApiProperty({ example: 'query_definition_found' })

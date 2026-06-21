@@ -4,7 +4,7 @@ import { Insertable, Kysely, sql, Updateable } from 'kysely';
 import { SanitizedMetadata } from '../../../core/utils/sanitize-metadata';
 import { DB, Tenants } from '../../../database/postgres/database.types';
 import { KYSELY_DB } from '../../../database/postgres/postgres.constants';
-import { TenantStatus } from '../schemas/tenant.schema';
+import { TenantStatus } from '../schemas/tenant.constants';
 import {
   CreateTenantRecord,
   TenantRecord,

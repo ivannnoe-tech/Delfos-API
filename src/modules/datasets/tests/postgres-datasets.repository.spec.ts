@@ -11,7 +11,7 @@ import {
   DatasetSchemaMode,
   DatasetSourceType,
   DatasetStatus,
-} from '../schemas/dataset.schema';
+} from '../schemas/dataset.constants';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

@@ -6,7 +6,7 @@ import { PaginationQueryDto } from '../../../core/dto/pagination-query.dto';
 import {
   ReportDefinitionStatus,
   ReportDefinitionVisibility,
-} from '../schemas/report-definition.schema';
+} from '../schemas/report-definition.constants';
 
 const stableKeyPattern = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
 

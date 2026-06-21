@@ -3,7 +3,7 @@ import { Insertable, Kysely, sql, Updateable } from 'kysely';
 
 import { Credentials, DB } from '../../../database/postgres/database.types';
 import { KYSELY_DB } from '../../../database/postgres/postgres.constants';
-import { CredentialStatus, CredentialType } from '../schemas/credential.schema';
+import { CredentialStatus, CredentialType } from '../schemas/credential.constants';
 import {
   CreateCredentialRecord,
   CredentialFilters,

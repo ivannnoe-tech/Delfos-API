@@ -5,7 +5,7 @@ import {
   DatasetSchemaMode,
   DatasetSourceType,
   DatasetStatus,
-} from '../schemas/dataset.schema';
+} from '../schemas/dataset.constants';
 
 /**
  * Persistence-neutral dataset record returned by every

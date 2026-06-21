@@ -19,7 +19,7 @@ import {
   DashboardDefinitionLayoutType,
   DashboardDefinitionSection,
   DashboardDefinitionVisualization,
-} from '../schemas/dashboard-definition.schema';
+} from '../schemas/dashboard-definition.constants';
 
 @Injectable()
 export class DashboardDefinitionSanitizerService {

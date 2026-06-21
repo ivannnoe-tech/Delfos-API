@@ -6,7 +6,7 @@ import {
   DashboardDefinitionLayoutDensity,
   DashboardDefinitionLayoutGap,
   DashboardDefinitionLayoutType,
-} from '../schemas/dashboard-definition.schema';
+} from '../schemas/dashboard-definition.constants';
 
 export class DashboardDefinitionLayoutDto {
   @ApiPropertyOptional({

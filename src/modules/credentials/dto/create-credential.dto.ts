@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 
 import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
-import { CredentialType } from '../schemas/credential.schema';
+import { CredentialType } from '../schemas/credential.constants';
 
 export class CreateCredentialDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })
