@@ -1,4 +1,6 @@
 services:
+  # MongoDB segue sendo o banco real da foundation ate a fase P5 do
+  # docs/postgresql-migration-plan.md (remocao do Mongo). Nao remover antes disso.
   mongo:
     image: mongo:8.0
     container_name: delfos-mongo
@@ -8,5 +10,27 @@ services:
     volumes:
       - delfos_mongo_data:/data/db
 
+  # PostgreSQL: banco primario futuro (ADR-0035), introduzido na fase P1.
+  # Coexiste com o Mongo durante a migracao; o schema/migrations vem na fase P2.
+  # DELFOS_POSTGRES_URL local: postgresql://delfos:delfos@localhost:5432/delfos
+  postgres:
+    image: postgres:16-alpine
+    container_name: delfos-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-delfos}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-delfos}
+      POSTGRES_DB: ${POSTGRES_DB:-delfos}
+    ports:
+      - "5432:5432"
+    volumes:
+      - delfos_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-delfos} -d ${POSTGRES_DB:-delfos}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   delfos_mongo_data:
+  delfos_postgres_data:

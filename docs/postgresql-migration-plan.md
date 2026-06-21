@@ -60,15 +60,27 @@ explícito e, quando indicado, ADR própria. A fase atual concluída é a **P0**
 
 ## P1 — PostgreSQL Infrastructure Foundation
 
+> **Infra concluída (resta CI).** Subdecisão de ORM **resolvida**: **Kysely**
+> (ADR-0036), via spike comparativo runnable (Kysely 43 / Drizzle 42 / Prisma 37
+> em PostgreSQL real, módulo `tenants`+`users`). Dependências, env, serviço Docker,
+> conexão Kysely e health-check entregues e testados (436 testes verdes, conexão
+> real validada). Pendência: serviço `postgres` no pipeline de CI (será fechada
+> junto com a P4, que move o E2E para PostgreSQL).
+
 ### Escopo
-- Resolver a subdecisão pendente **"ORM/Query Layer Decision Review"** (Kysely
-  vs. Prisma vs. Drizzle) via spike curto em um módulo representativo.
-- Adicionar as dependências do PostgreSQL e do ORM escolhido.
-- Configurar variáveis de ambiente (`DELFOS_POSTGRES_URL` ou equivalente) com
-  validação no bootstrap.
-- Adicionar o serviço `postgres` ao `docker-compose.yml`.
-- Adicionar um health-check de conexão PostgreSQL (sem trocar o health atual).
-- Testes de conexão.
+- ~~Resolver a subdecisão pendente **"ORM/Query Layer Decision Review"**~~ —
+  **CONCLUÍDO**: spike comparativo runnable resolveu para **Kysely** (ADR-0036).
+- ~~Adicionar as dependências do PostgreSQL e do ORM escolhido~~ — **CONCLUÍDO**:
+  `kysely` + `pg` (deps), `kysely-codegen` + `@types/pg` (devDeps).
+- ~~Configurar `DELFOS_POSTGRES_URL` com validação no bootstrap~~ — **CONCLUÍDO**:
+  variável **opcional**, validada em `src/config/environment.ts`.
+- ~~Adicionar o serviço `postgres` ao `docker-compose.yml`~~ — **CONCLUÍDO**
+  (`postgres:16-alpine`, coexiste com `mongo`, com healthcheck).
+- ~~Health-check de conexão PostgreSQL (sem trocar o health atual)~~ —
+  **CONCLUÍDO**: `src/database/postgres/` (módulo global, provider Kysely,
+  `PostgresHealthService`); `/health` ganha o campo `postgres` (up/down/disabled).
+- ~~Testes de conexão~~ — **CONCLUÍDO**: unit (DummyDriver) + teste de conexão
+  real guardado por `TEST_POSTGRES_URL` (validado contra PostgreSQL 16 em Docker).
 
 ### Fora de escopo
 - Criar schema de domínio, migrations de tabela ou repositories PostgreSQL.
@@ -91,8 +103,9 @@ explícito e, quando indicado, ADR própria. A fase atual concluída é a **P0**
   `src/modules/health/`.
 
 ### Critérios de conclusão
-- ORM decidido e registrado; conexão PostgreSQL validada local + CI; MongoDB
-  intacto.
+- ORM decidido e registrado **(ok — Kysely, ADR-0036)**; conexão PostgreSQL
+  validada local **(ok)** + CI **(pendente — fecha com a P4)**; MongoDB intacto
+  **(ok)**.
 
 ---
 
@@ -326,7 +339,7 @@ Ordem sugerida (de menor para maior acoplamento):
 | Fase | Tema | Estado |
 |---|---|---|
 | P0 | ADR / docs only | concluída |
-| P1 | PostgreSQL Infrastructure Foundation | futura |
+| P1 | PostgreSQL Infrastructure Foundation | em andamento (ORM decidido: Kysely, ADR-0036) |
 | P2 | Schema / Migrations Foundation | futura |
 | P3 | Repository Port Migration | futura |
 | P4 | Seed and E2E Migration | futura |

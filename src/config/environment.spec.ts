@@ -27,6 +27,39 @@ describe('validateEnvironment', () => {
     });
   });
 
+  it('parses an optional PostgreSQL URL when provided', () => {
+    const result = validateEnvironment({
+      DELFOS_DATABASE_URL: 'mongodb://localhost:27017/delfos',
+      DELFOS_POSTGRES_URL: 'postgresql://delfos:delfos@localhost:5432/delfos',
+      DELFOS_ADMIN_KEY: 'test-admin-key-not-a-real-secret',
+      ENCRYPTION_KEY_BASE64: encryptionKeyBase64,
+    });
+
+    expect(result.DELFOS_POSTGRES_URL).toBe('postgresql://delfos:delfos@localhost:5432/delfos');
+  });
+
+  it('leaves the PostgreSQL URL undefined when absent or empty', () => {
+    const result = validateEnvironment({
+      DELFOS_DATABASE_URL: 'mongodb://localhost:27017/delfos',
+      DELFOS_POSTGRES_URL: '   ',
+      DELFOS_ADMIN_KEY: 'test-admin-key-not-a-real-secret',
+      ENCRYPTION_KEY_BASE64: encryptionKeyBase64,
+    });
+
+    expect(result.DELFOS_POSTGRES_URL).toBeUndefined();
+  });
+
+  it('rejects a malformed PostgreSQL URL', () => {
+    expect(() =>
+      validateEnvironment({
+        DELFOS_DATABASE_URL: 'mongodb://localhost:27017/delfos',
+        DELFOS_POSTGRES_URL: 'mysql://localhost:3306/delfos',
+        DELFOS_ADMIN_KEY: 'test-admin-key-not-a-real-secret',
+        ENCRYPTION_KEY_BASE64: encryptionKeyBase64,
+      }),
+    ).toThrow('DELFOS_POSTGRES_URL must start with postgres:// or postgresql://.');
+  });
+
   it('rejects missing database URL', () => {
     expect(() => validateEnvironment({})).toThrow('DELFOS_DATABASE_URL is required.');
   });

@@ -19,6 +19,14 @@ export class AppConfigService {
     return this.configService.get('DELFOS_DATABASE_URL', { infer: true });
   }
 
+  /**
+   * PostgreSQL connection URL (ADR-0035). Optional during the phased migration:
+   * `undefined` means Postgres is not configured and PG-backed features are skipped.
+   */
+  get postgresUrl(): string | undefined {
+    return this.configService.get('DELFOS_POSTGRES_URL', { infer: true });
+  }
+
   get adminKey(): string {
     return this.configService.get('DELFOS_ADMIN_KEY', { infer: true });
   }

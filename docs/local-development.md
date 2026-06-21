@@ -41,6 +41,23 @@ npm install
 npm run start:dev
 ```
 
+## PostgreSQL local (opcional — migração ADR-0035, fase P1)
+
+O banco operacional continua sendo o MongoDB. O PostgreSQL é **opcional** nesta
+fase: serve para exercitar a conexão e o health-check introduzidos na P1. Suba o
+serviço via Docker (recomendado) e aponte `DELFOS_POSTGRES_URL` para ele:
+
+```powershell
+docker compose up -d postgres
+# no .env local:
+# DELFOS_POSTGRES_URL=postgresql://delfos:delfos@localhost:5432/delfos
+```
+
+Com a URL configurada, `GET /health` passa a reportar `postgres: { status: "up", latencyMs }`.
+Sem a URL, reporta `postgres: { status: "disabled" }` e a API roda 100% em MongoDB.
+O schema/migrations e a troca de repositórios vêm nas fases P2/P3
+(`docs/postgresql-migration-plan.md`). O ORM é Kysely (ADR-0036).
+
 ## Seed local da foundation
 
 Para popular o MongoDB local com configuracoes ficticias da foundation, rode:

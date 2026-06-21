@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class HealthResponseDto {
+import { PostgresHealthStatus } from '../../../database/postgres/postgres-health.service';
+
+export class BaseHealthDto {
   @ApiProperty({ example: 'ok' })
   status!: 'ok';
 
@@ -9,4 +11,20 @@ export class HealthResponseDto {
 
   @ApiProperty({ example: 12.34 })
   uptimeSeconds!: number;
+}
+
+export class PostgresHealthDto {
+  @ApiProperty({ enum: ['up', 'down', 'disabled'], example: 'disabled' })
+  status!: PostgresHealthStatus;
+
+  @ApiProperty({ required: false, example: 3, description: 'Round-trip latency in ms when up.' })
+  latencyMs?: number;
+
+  @ApiProperty({ required: false, description: 'Failure reason when down (never a secret).' })
+  error?: string;
+}
+
+export class HealthResponseDto extends BaseHealthDto {
+  @ApiProperty({ type: PostgresHealthDto })
+  postgres!: PostgresHealthDto;
 }
