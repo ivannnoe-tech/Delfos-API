@@ -1,6 +1,6 @@
 # ADR-0040 — Adapter real de fonte (1º incremento: REST read-only `test_connection`)
 
-- **Status**: Proposed
+- **Status**: Accepted
 - **Data**: 2026-06-21
 - **Autores**: Equipe Delfos Analytics
 - **Repositório**: delfos-connectors (impacto primário); delfos-api (broker/transporte já existentes)
@@ -9,13 +9,13 @@
 
 ---
 
-> **Direção autorizada pelo owner em 2026-06-21** (executar fonte real é o
-> objetivo final da Fase 2). Esta ADR é o **artefato exigido** (CLAUDE.md: real
+> **Aceita por decisão humana explícita do owner em 2026-06-21** (escopo mínimo +
+> threat model ratificados). Esta ADR é o **artefato exigido** (CLAUDE.md: real
 > connectors/SQL/API do cliente exigem autorização explícita **e** ADR). A
-> aceitação ratifica o **escopo mínimo + threat model** abaixo — **somente**
-> `rest_api` + `test_connection` read-only, atrás de flag. SQL, leitura de dados,
-> export e outras fontes ficam para ADRs/incrementos posteriores. Cada
-> incremento de código ainda exige go-ahead específico + TDD.
+> aceitação ratifica **somente** `rest_api` + `test_connection` read-only, atrás
+> de flag. SQL, leitura de dados, export e outras fontes ficam para
+> ADRs/incrementos posteriores. Cada incremento de código ainda exige go-ahead
+> específico + TDD.
 
 ## Contexto
 
