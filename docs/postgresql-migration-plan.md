@@ -164,10 +164,31 @@ explícito e, quando indicado, ADR própria. A fase atual concluída é a **P0**
 
 ## P3 — Repository Port Migration
 
+> **Concluída.** Os 12 repositórios foram portados para o padrão **dual-backend**:
+> um contrato abstrato por repositório retornando um **record persistence-neutral**,
+> com `Mongo*Repository` (lógica Mongoose atual) e `Postgres*Repository` (Kysely),
+> selecionados em runtime por um factory no módulo conforme `DELFOS_POSTGRES_URL`.
+> O service mapeia record→DTO, então **o contrato REST é idêntico** nos dois
+> backends. MongoDB segue o default até a P5.
+>
+> Verificação: **550 testes verdes contra PostgreSQL 16 real** (specs de paridade
+> de todos os módulos + migrations) e **E2E 17/17 no caminho MongoDB** (sem
+> regressão). format/lint/build verdes; cobertura 87.9/71.6/83.1/88.1 acima do piso.
+>
+> Notas de implementação:
+> - Decorator compartilhado **`@IsEntityId`** (aceita ObjectId **ou** UUID) substitui
+>   `@IsMongoId` em todos os controllers/DTOs — mantém a validação estável na
+>   transição de formato de id.
+> - Repos PostgreSQL: `tenant_id` em todo `WHERE`; JSONB via `JSON.stringify`
+>   (lido de volta como objeto); ids não-UUID retornam não-encontrado (404, não 500);
+>   `updated_at` atualizado via `sql\`now()\``.
+> - Harness de teste `pg-test-db.ts`: um banco efêmero isolado por spec, migrado,
+>   para specs de paridade rodarem concorrentes sem corrida.
+
 Migração **módulo a módulo**. Para cada módulo: criar o repository PostgreSQL,
 manter o contrato do repository, validar paridade por testes, e só então passar
-ao próximo. O service/controller/DTO não muda; muda a implementação do
-repository.
+ao próximo. O service/controller/DTO muda o **mínimo** (passa a consumir o record
+neutro); o contrato REST não muda.
 
 Ordem sugerida (de menor para maior acoplamento):
 
@@ -360,7 +381,7 @@ Ordem sugerida (de menor para maior acoplamento):
 | P0 | ADR / docs only | concluída |
 | P1 | PostgreSQL Infrastructure Foundation | concluída (resta serviço PG no CI, fecha com P4) |
 | P2 | Schema / Migrations Foundation | concluída |
-| P3 | Repository Port Migration | futura |
+| P3 | Repository Port Migration | concluída (12 módulos, dual-backend) |
 | P4 | Seed and E2E Migration | futura |
 | P5 | Mongo / Mongoose Removal | futura |
 | P6 | Valkey Cache Foundation | futura |
