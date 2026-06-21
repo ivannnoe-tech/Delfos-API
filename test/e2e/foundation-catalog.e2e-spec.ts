@@ -25,6 +25,19 @@ describe('E2E: foundation catalog flow', () => {
     });
   });
 
+  it('accepts the tenant id sent as the auth-context header (UUID on PostgreSQL)', async () => {
+    // Regression (ADR-0035 / P5): the web sends the tenant as the
+    // `x-delfos-tenant-id` header. RequestAuthContextService must accept a real
+    // PostgreSQL UUID there, not only 24-hex ObjectIds — otherwise every real
+    // request 400s with "Invalid tenant context.".
+    const res = await e2eRequest(app.baseUrl, `/api/v1/datasets?tenantId=${E2E_TENANT_ID}`, {
+      tenantId: E2E_TENANT_ID,
+    });
+
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body.items)).toBe(true);
+  });
+
   it('creates a dataset and a query definition, then lists the query definitions', async () => {
     const dataset = await e2eRequest(app.baseUrl, '/api/v1/datasets', {
       method: 'POST',

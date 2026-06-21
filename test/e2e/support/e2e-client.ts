@@ -2,6 +2,7 @@ import {
   DELFOS_ACTOR_ID_HEADER,
   DELFOS_ACTOR_ROLE_HEADER,
   DELFOS_ADMIN_KEY_HEADER,
+  DELFOS_TENANT_ID_HEADER,
 } from '../../../src/modules/auth/constants/auth-headers';
 import { E2E_ADMIN_KEY, E2E_ON_POSTGRES } from './e2e-app';
 
@@ -31,6 +32,8 @@ export interface E2ERequestInit {
   readonly adminKey?: string | null;
   readonly role?: string;
   readonly actorId?: string;
+  /** When set, sends the `x-delfos-tenant-id` auth-context header (as the web does). */
+  readonly tenantId?: string;
   readonly body?: unknown;
 }
 
@@ -50,6 +53,9 @@ export async function e2eRequest(
   }
   if (init.actorId !== undefined) {
     headers[DELFOS_ACTOR_ID_HEADER] = init.actorId;
+  }
+  if (init.tenantId !== undefined) {
+    headers[DELFOS_TENANT_ID_HEADER] = init.tenantId;
   }
   if (init.body !== undefined) {
     headers['content-type'] = 'application/json';
