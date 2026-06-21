@@ -82,7 +82,7 @@ Contrato vigente de erro:
   "details": [
     {
       "field": "tenantId",
-      "message": "tenantId must be a mongodb id"
+      "message": "tenantId must be a Mongo ObjectId or a UUID"
     }
   ],
   "requestId": "dev-req-001",
