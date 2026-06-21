@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsBoolean, IsEnum, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 
-import { DatasetFieldSemanticRole, DatasetFieldType } from '../schemas/dataset.schema';
+import { DatasetFieldSemanticRole, DatasetFieldType } from '../schemas/dataset.constants';
 
 export class DatasetFieldDto {
   @ApiProperty({ example: 'order_id' })

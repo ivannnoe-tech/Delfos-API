@@ -10,7 +10,7 @@ import {
   DashboardDefinitionSection,
   DashboardDefinitionStatus,
   DashboardDefinitionVisibility,
-} from '../schemas/dashboard-definition.schema';
+} from '../schemas/dashboard-definition.constants';
 import {
   CreateDashboardDefinitionRecord,
   DashboardDefinitionFilters,

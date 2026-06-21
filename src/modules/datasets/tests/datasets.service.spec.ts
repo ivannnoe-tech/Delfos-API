@@ -9,7 +9,7 @@ import {
   DatasetSchemaMode,
   DatasetSourceType,
   DatasetStatus,
-} from '../schemas/dataset.schema';
+} from '../schemas/dataset.constants';
 import { DatasetFieldSanitizerService } from '../services/dataset-field-sanitizer.service';
 import { DatasetsService } from '../services/datasets.service';
 

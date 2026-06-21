@@ -2,7 +2,7 @@ import {
   ExecutionRequestKind,
   ExecutionRequestMode,
   ExecutionRequestStatus,
-} from '../schemas/execution-request.schema';
+} from '../schemas/execution-request.constants';
 import {
   ConnectorCapabilityShape,
   ConnectorCommandSafeMetadata,

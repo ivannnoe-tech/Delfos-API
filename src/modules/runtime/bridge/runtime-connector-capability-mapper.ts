@@ -1,4 +1,4 @@
-import { ExecutionRequestKind, ExecutionRequestMode } from '../schemas/execution-request.schema';
+import { ExecutionRequestKind, ExecutionRequestMode } from '../schemas/execution-request.constants';
 import { RuntimeConnectorCapabilityMapperInput } from './bridge-types';
 import { RuntimeConnectorCapabilityMappingResult } from './bridge-types';
 

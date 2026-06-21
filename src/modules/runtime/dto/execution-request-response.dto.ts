@@ -7,7 +7,7 @@ import {
   ExecutionRequestKind,
   ExecutionRequestMode,
   ExecutionRequestStatus,
-} from '../schemas/execution-request.schema';
+} from '../schemas/execution-request.constants';
 
 export class ExecutionRequestResponseDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0901' })

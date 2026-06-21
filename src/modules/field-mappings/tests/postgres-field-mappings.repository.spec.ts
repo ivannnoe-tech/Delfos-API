@@ -8,7 +8,7 @@ import {
   FieldMappingStatus,
   FieldMappingTargetType,
   FieldMappingTransform,
-} from '../schemas/field-mapping.schema';
+} from '../schemas/field-mapping.constants';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

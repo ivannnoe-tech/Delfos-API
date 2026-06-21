@@ -7,7 +7,7 @@ import { CredentialResponseDto } from '../dto/credential-response.dto';
 import { ListCredentialsQueryDto } from '../dto/credential-query.dto';
 import { RotateCredentialDto } from '../dto/rotate-credential.dto';
 import { CredentialRecord, CredentialsRepository } from '../repositories/credentials.repository';
-import { CredentialStatus } from '../schemas/credential.schema';
+import { CredentialStatus } from '../schemas/credential.constants';
 import { LocalCredentialProtectorService } from './local-credential-protector.service';
 
 export interface CredentialActorContext {

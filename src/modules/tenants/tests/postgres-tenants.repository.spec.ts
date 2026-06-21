@@ -4,7 +4,7 @@ import {
   pgDescribe,
 } from '../../../database/postgres/tests/pg-test-db';
 import { PostgresTenantsRepository } from '../repositories/postgres-tenants.repository';
-import { TenantStatus } from '../schemas/tenant.schema';
+import { TenantStatus } from '../schemas/tenant.constants';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

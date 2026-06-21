@@ -12,7 +12,7 @@ import {
   DatasetsRepository,
   UpdateDatasetRecord,
 } from '../repositories/datasets.repository';
-import { DatasetField } from '../schemas/dataset.schema';
+import { DatasetField } from '../schemas/dataset.constants';
 import { DatasetFieldSanitizerService } from './dataset-field-sanitizer.service';
 
 export interface DatasetActorContext {

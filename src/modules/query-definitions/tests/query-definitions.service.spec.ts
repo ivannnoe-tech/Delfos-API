@@ -14,7 +14,7 @@ import {
   QueryDefinitionStatus,
   QueryDefinitionTimeGranularity,
   QueryDefinitionType,
-} from '../schemas/query-definition.schema';
+} from '../schemas/query-definition.constants';
 import { QueryDefinitionSanitizerService } from '../services/query-definition-sanitizer.service';
 import { QueryDefinitionsService } from '../services/query-definitions.service';
 

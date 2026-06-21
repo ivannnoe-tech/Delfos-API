@@ -3,7 +3,7 @@ import { IsEnum, IsOptional, IsString, Matches, MaxLength } from 'class-validato
 
 import { PaginationQueryDto } from '../../../core/dto/pagination-query.dto';
 import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
-import { SemanticModelStatus } from '../schemas/semantic-model.schema';
+import { SemanticModelStatus } from '../schemas/semantic-model.constants';
 
 const stableKeyPattern = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
 

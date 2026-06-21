@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEmail, IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
 
-import { UserRole, UserStatus } from '../schemas/user.schema';
+import { UserRole, UserStatus } from '../schemas/user.constants';
 
 export class UpdateUserDto {
   @ApiPropertyOptional({ example: 'Delfos Operator' })

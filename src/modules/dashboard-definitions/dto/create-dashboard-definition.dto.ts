@@ -16,7 +16,7 @@ import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 import {
   DashboardDefinitionStatus,
   DashboardDefinitionVisibility,
-} from '../schemas/dashboard-definition.schema';
+} from '../schemas/dashboard-definition.constants';
 import { DashboardDefinitionFilterDto } from './dashboard-definition-filter.dto';
 import { DashboardDefinitionLayoutDto } from './dashboard-definition-layout.dto';
 import { DashboardDefinitionSectionDto } from './dashboard-definition-section.dto';

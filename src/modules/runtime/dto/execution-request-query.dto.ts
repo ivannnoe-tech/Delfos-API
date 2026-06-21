@@ -7,7 +7,7 @@ import {
   ExecutionRequestKind,
   ExecutionRequestMode,
   ExecutionRequestStatus,
-} from '../schemas/execution-request.schema';
+} from '../schemas/execution-request.constants';
 
 export class ListExecutionRequestsQueryDto extends PaginationQueryDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })

@@ -1,7 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 
 import { UserRecord, UsersRepository } from '../repositories/users.repository';
-import { UserRole, UserStatus } from '../schemas/user.schema';
+import { UserRole, UserStatus } from '../schemas/user.constants';
 import { UsersService } from '../services/users.service';
 
 describe('UsersService', () => {

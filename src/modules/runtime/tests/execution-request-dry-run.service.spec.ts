@@ -11,30 +11,30 @@ import {
   DashboardDefinitionStatus,
   DashboardDefinitionVisibility,
   DashboardDefinitionWidgetType,
-} from '../../dashboard-definitions/schemas/dashboard-definition.schema';
+} from '../../dashboard-definitions/schemas/dashboard-definition.constants';
 import { DashboardDefinitionsService } from '../../dashboard-definitions/services/dashboard-definitions.service';
 import {
   DatasetRefreshMode,
   DatasetSchemaMode,
   DatasetSourceType,
   DatasetStatus,
-} from '../../datasets/schemas/dataset.schema';
+} from '../../datasets/schemas/dataset.constants';
 import { DatasetsService } from '../../datasets/services/datasets.service';
 import {
   FieldMappingStatus,
   FieldMappingTargetType,
-} from '../../field-mappings/schemas/field-mapping.schema';
+} from '../../field-mappings/schemas/field-mapping.constants';
 import { FieldMappingsService } from '../../field-mappings/services/field-mappings.service';
 import {
   QueryDefinitionStatus,
   QueryDefinitionType,
-} from '../../query-definitions/schemas/query-definition.schema';
+} from '../../query-definitions/schemas/query-definition.constants';
 import { QueryDefinitionsService } from '../../query-definitions/services/query-definitions.service';
 import {
   ReportDefinitionLayoutType,
   ReportDefinitionStatus,
   ReportDefinitionVisibility,
-} from '../../report-definitions/schemas/report-definition.schema';
+} from '../../report-definitions/schemas/report-definition.constants';
 import { ReportDefinitionsService } from '../../report-definitions/services/report-definitions.service';
 import { ExecutionRequestEventsRepository } from '../repositories/execution-request-events.repository';
 import { ExecutionRequestsRepository } from '../repositories/execution-requests.repository';
@@ -42,8 +42,8 @@ import {
   ExecutionRequestKind,
   ExecutionRequestMode,
   ExecutionRequestStatus,
-} from '../schemas/execution-request.schema';
-import { ExecutionRequestEventType } from '../schemas/execution-request-event.schema';
+} from '../schemas/execution-request.constants';
+import { ExecutionRequestEventType } from '../schemas/execution-request-event.constants';
 import { ExecutionRequestAuditService } from '../services/execution-request-audit.service';
 import { ExecutionRequestDryRunService } from '../services/execution-request-dry-run.service';
 import { ExecutionRequestReadinessService } from '../services/execution-request-readiness.service';

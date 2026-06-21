@@ -5,7 +5,7 @@ import {
   FieldMappingRecord,
   FieldMappingsRepository,
 } from '../repositories/field-mappings.repository';
-import { FieldMappingStatus, FieldMappingTargetType } from '../schemas/field-mapping.schema';
+import { FieldMappingStatus, FieldMappingTargetType } from '../schemas/field-mapping.constants';
 import { FieldMappingsService } from '../services/field-mappings.service';
 
 type AuditServiceMock = {

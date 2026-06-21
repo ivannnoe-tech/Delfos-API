@@ -13,7 +13,7 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
-import { SemanticModelStatus } from '../schemas/semantic-model.schema';
+import { SemanticModelStatus } from '../schemas/semantic-model.constants';
 import { SemanticDimensionDto } from './semantic-dimension.dto';
 import { SemanticGlossaryTermDto } from './semantic-glossary-term.dto';
 import { SemanticMeasureDto } from './semantic-measure.dto';

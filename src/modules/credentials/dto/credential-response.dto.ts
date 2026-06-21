@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { ListMetaDto } from '../../../core/dto/list-meta.dto';
-import { CredentialStatus, CredentialType } from '../schemas/credential.schema';
+import { CredentialStatus, CredentialType } from '../schemas/credential.constants';
 
 export class CredentialResponseDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0401' })

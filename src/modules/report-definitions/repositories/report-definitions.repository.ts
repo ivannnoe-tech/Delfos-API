@@ -7,7 +7,7 @@ import {
   ReportDefinitionSection,
   ReportDefinitionStatus,
   ReportDefinitionVisibility,
-} from '../schemas/report-definition.schema';
+} from '../schemas/report-definition.constants';
 
 /**
  * Persistence-neutral block shape used inside a {@link ReportDefinitionRecord}.

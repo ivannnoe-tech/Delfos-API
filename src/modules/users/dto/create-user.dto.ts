@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEmail, IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
 
 import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
-import { UserRole, UserStatus } from '../schemas/user.schema';
+import { UserRole, UserStatus } from '../schemas/user.constants';
 
 export class CreateUserDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })

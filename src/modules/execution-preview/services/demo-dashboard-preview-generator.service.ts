@@ -5,9 +5,9 @@ import {
   DashboardDefinitionVisualizationResponseDto,
   DashboardDefinitionWidgetResponseDto,
 } from '../../dashboard-definitions/dto/dashboard-definition-response.dto';
-import { DashboardDefinitionChartType } from '../../dashboard-definitions/schemas/dashboard-definition.schema';
+import { DashboardDefinitionChartType } from '../../dashboard-definitions/schemas/dashboard-definition.constants';
 import { QueryDefinitionResponseDto } from '../../query-definitions/dto/query-definition-response.dto';
-import { QueryDefinitionType } from '../../query-definitions/schemas/query-definition.schema';
+import { QueryDefinitionType } from '../../query-definitions/schemas/query-definition.constants';
 import {
   DashboardPreviewResultDto,
   DashboardPreviewVisualizationDto,

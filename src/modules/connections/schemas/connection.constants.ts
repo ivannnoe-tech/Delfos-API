@@ -1,4 +1,4 @@
-// Domain enums for the connections module. Mongoose schema removed in P5 (ADR-0035); file kept at this path so existing imports stay valid — rename to *.constants.ts is a tracked follow-up.
+// Domain enums for the connections module. Mongoose schema removed in P5 (ADR-0035).
 
 export enum ConnectionAuthType {
   None = 'none',

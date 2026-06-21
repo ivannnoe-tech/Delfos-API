@@ -26,7 +26,7 @@ import {
   ReportDefinitionLayout,
   ReportDefinitionParameter,
   ReportDefinitionSection,
-} from '../schemas/report-definition.schema';
+} from '../schemas/report-definition.constants';
 import { ReportDefinitionSanitizerService } from './report-definition-sanitizer.service';
 
 export interface ReportDefinitionActorContext {

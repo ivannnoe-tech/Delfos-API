@@ -1,5 +1,5 @@
 import { TenantRecord, TenantsRepository } from '../repositories/tenants.repository';
-import { TenantStatus } from '../schemas/tenant.schema';
+import { TenantStatus } from '../schemas/tenant.constants';
 import { TenantsService } from '../services/tenants.service';
 
 describe('TenantsService', () => {

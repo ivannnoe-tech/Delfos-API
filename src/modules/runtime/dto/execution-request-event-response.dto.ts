@@ -3,8 +3,8 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ListMetaDto } from '../../../core/dto/list-meta.dto';
 import { SanitizedMetadata } from '../../../core/utils/sanitize-metadata';
 import { AdminRole } from '../../auth/types/admin-role';
-import { ExecutionRequestStatus } from '../schemas/execution-request.schema';
-import { ExecutionRequestEventType } from '../schemas/execution-request-event.schema';
+import { ExecutionRequestStatus } from '../schemas/execution-request.constants';
+import { ExecutionRequestEventType } from '../schemas/execution-request-event.constants';
 
 export class ExecutionRequestEventResponseDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0902' })

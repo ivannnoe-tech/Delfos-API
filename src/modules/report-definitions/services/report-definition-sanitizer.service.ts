@@ -17,7 +17,7 @@ import {
   ReportDefinitionLayoutType,
   ReportDefinitionParameter,
   ReportDefinitionSection,
-} from '../schemas/report-definition.schema';
+} from '../schemas/report-definition.constants';
 
 @Injectable()
 export class ReportDefinitionSanitizerService {

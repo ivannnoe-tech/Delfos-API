@@ -4,7 +4,7 @@ import {
   pgDescribe,
 } from '../../../database/postgres/tests/pg-test-db';
 import { PostgresUsersRepository } from '../repositories/postgres-users.repository';
-import { UserRole, UserStatus } from '../schemas/user.schema';
+import { UserRole, UserStatus } from '../schemas/user.constants';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

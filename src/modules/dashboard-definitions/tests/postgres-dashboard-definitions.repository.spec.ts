@@ -13,7 +13,7 @@ import {
   DashboardDefinitionStatus,
   DashboardDefinitionVisibility,
   DashboardDefinitionWidgetType,
-} from '../schemas/dashboard-definition.schema';
+} from '../schemas/dashboard-definition.constants';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

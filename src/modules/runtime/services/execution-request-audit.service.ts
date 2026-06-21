@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { AuditService } from '../../audit/services/audit.service';
 import { ExecutionRequestEventRecord } from '../repositories/execution-request-events.repository';
 import { ExecutionRequestRecord } from '../repositories/execution-requests.repository';
-import { ExecutionRequestStatus } from '../schemas/execution-request.schema';
+import { ExecutionRequestStatus } from '../schemas/execution-request.constants';
 import { ExecutionRequestActorContext } from './execution-request-actor-context';
 
 @Injectable()

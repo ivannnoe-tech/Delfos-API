@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-import { SemanticDimensionDomain, SemanticModelStatus } from '../schemas/semantic-model.schema';
+import { SemanticDimensionDomain, SemanticModelStatus } from '../schemas/semantic-model.constants';
 
 const stableKeyPattern = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
 

@@ -26,7 +26,7 @@ import {
   QueryDefinitionFilter,
   QueryDefinitionMetric,
   QueryDefinitionSort,
-} from '../schemas/query-definition.schema';
+} from '../schemas/query-definition.constants';
 import { QueryDefinitionSanitizerService } from './query-definition-sanitizer.service';
 
 export interface QueryDefinitionActorContext {

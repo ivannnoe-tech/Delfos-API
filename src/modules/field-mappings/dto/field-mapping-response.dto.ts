@@ -5,7 +5,7 @@ import {
   FieldMappingStatus,
   FieldMappingTargetType,
   FieldMappingTransform,
-} from '../schemas/field-mapping.schema';
+} from '../schemas/field-mapping.constants';
 
 export class FieldMappingResponseDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0301' })

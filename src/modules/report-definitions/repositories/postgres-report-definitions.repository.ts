@@ -11,7 +11,7 @@ import {
   ReportDefinitionSection,
   ReportDefinitionStatus,
   ReportDefinitionVisibility,
-} from '../schemas/report-definition.schema';
+} from '../schemas/report-definition.constants';
 import {
   CreateReportDefinitionRecord,
   ReportDefinitionBlockRecord,

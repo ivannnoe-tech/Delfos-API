@@ -8,7 +8,7 @@
  * public import path is unchanged). No runtime/dispatch behavior here —
  * foundation-only (ADR-0014/0015, gated by ADR-0021/0022).
  */
-import { ExecutionRequestKind } from '../schemas/execution-request.schema';
+import { ExecutionRequestKind } from '../schemas/execution-request.constants';
 import { BridgeReadinessBlockerShape } from './bridge-types';
 import { ConnectorCommandSafeMetadata } from './connector-command-shape';
 import { RuntimeConnectorReferenceBundle } from './runtime-connector-reference.types';

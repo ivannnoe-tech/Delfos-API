@@ -1,4 +1,4 @@
-import { CredentialStatus, CredentialType } from '../schemas/credential.schema';
+import { CredentialStatus, CredentialType } from '../schemas/credential.constants';
 
 /**
  * Persistence-neutral credential record returned by every

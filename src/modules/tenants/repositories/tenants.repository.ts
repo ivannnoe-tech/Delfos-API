@@ -1,5 +1,5 @@
 import { SanitizedMetadata } from '../../../core/utils/sanitize-metadata';
-import { TenantStatus } from '../schemas/tenant.schema';
+import { TenantStatus } from '../schemas/tenant.constants';
 
 /**
  * Persistence-neutral tenant record returned by every {@link TenantsRepository}

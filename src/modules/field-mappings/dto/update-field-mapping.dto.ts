@@ -6,7 +6,7 @@ import {
   FieldMappingStatus,
   FieldMappingTargetType,
   FieldMappingTransform,
-} from '../schemas/field-mapping.schema';
+} from '../schemas/field-mapping.constants';
 
 export class UpdateFieldMappingDto {
   @ApiPropertyOptional({ example: '662d4f6e7a1c2b00124f0201' })

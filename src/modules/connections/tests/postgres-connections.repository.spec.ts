@@ -4,7 +4,11 @@ import {
   pgDescribe,
 } from '../../../database/postgres/tests/pg-test-db';
 import { PostgresConnectionsRepository } from '../repositories/postgres-connections.repository';
-import { ConnectionAuthType, ConnectionStatus, ConnectionType } from '../schemas/connection.schema';
+import {
+  ConnectionAuthType,
+  ConnectionStatus,
+  ConnectionType,
+} from '../schemas/connection.constants';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

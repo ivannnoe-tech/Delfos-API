@@ -21,8 +21,8 @@ import {
   ExecutionRequestKind,
   ExecutionRequestMode,
   ExecutionRequestStatus,
-} from '../schemas/execution-request.schema';
-import { ExecutionRequestEventType } from '../schemas/execution-request-event.schema';
+} from '../schemas/execution-request.constants';
+import { ExecutionRequestEventType } from '../schemas/execution-request-event.constants';
 import { ExecutionRequestsService } from '../services/execution-requests.service';
 
 const tenantId = '662d4f6e7a1c2b00124f0001';

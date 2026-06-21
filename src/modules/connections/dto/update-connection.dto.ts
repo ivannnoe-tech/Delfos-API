@@ -10,7 +10,11 @@ import {
   MaxLength,
 } from 'class-validator';
 
-import { ConnectionAuthType, ConnectionStatus, ConnectionType } from '../schemas/connection.schema';
+import {
+  ConnectionAuthType,
+  ConnectionStatus,
+  ConnectionType,
+} from '../schemas/connection.constants';
 
 export class UpdateConnectionDto {
   @ApiPropertyOptional({ example: 'Primary customer API' })

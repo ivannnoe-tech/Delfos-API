@@ -4,7 +4,11 @@ import { Insertable, Kysely, sql, Updateable } from 'kysely';
 import { SanitizedMetadata } from '../../../core/utils/sanitize-metadata';
 import { Connections, DB } from '../../../database/postgres/database.types';
 import { KYSELY_DB } from '../../../database/postgres/postgres.constants';
-import { ConnectionAuthType, ConnectionStatus, ConnectionType } from '../schemas/connection.schema';
+import {
+  ConnectionAuthType,
+  ConnectionStatus,
+  ConnectionType,
+} from '../schemas/connection.constants';
 import {
   ConnectionRecord,
   ConnectionsRepository,

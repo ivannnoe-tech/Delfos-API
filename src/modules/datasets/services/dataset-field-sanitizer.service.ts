@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isSensitiveMetadataValue } from '../../../core/utils/sanitize-metadata';
 import { DatasetFieldDto } from '../dto/dataset-field.dto';
-import { DatasetField } from '../schemas/dataset.schema';
+import { DatasetField } from '../schemas/dataset.constants';
 
 @Injectable()
 export class DatasetFieldSanitizerService {

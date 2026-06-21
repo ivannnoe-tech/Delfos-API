@@ -10,7 +10,7 @@ import {
   QueryDefinitionFilter,
   QueryDefinitionMetric,
   QueryDefinitionSort,
-} from '../schemas/query-definition.schema';
+} from '../schemas/query-definition.constants';
 import { QueryDefinitionDimensionDto } from '../dto/query-definition-dimension.dto';
 import { QueryDefinitionMetricDto } from '../dto/query-definition-metric.dto';
 import { QueryDefinitionSortDto } from '../dto/query-definition-sort.dto';

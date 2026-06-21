@@ -7,7 +7,7 @@ import {
   QueryDefinitionStatus,
   QueryDefinitionTimeGranularity,
   QueryDefinitionType,
-} from '../schemas/query-definition.schema';
+} from '../schemas/query-definition.constants';
 
 /**
  * Persistence-neutral query definition record returned by every

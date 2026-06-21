@@ -4,7 +4,7 @@ import {
   ExecutionRequestKind,
   ExecutionRequestMode,
   ExecutionRequestStatus,
-} from '../schemas/execution-request.schema';
+} from '../schemas/execution-request.constants';
 
 export type ExecutionRequestDemoScalar = string | number | boolean | null;
 export type ExecutionRequestDemoRow = Record<string, ExecutionRequestDemoScalar>;

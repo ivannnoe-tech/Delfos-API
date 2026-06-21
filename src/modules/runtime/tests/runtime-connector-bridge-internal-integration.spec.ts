@@ -9,7 +9,7 @@ import {
   ExecutionRequestKind,
   ExecutionRequestMode,
   ExecutionRequestStatus,
-} from '../schemas/execution-request.schema';
+} from '../schemas/execution-request.constants';
 import {
   CONNECTION_ID,
   CREDENTIAL_REF,

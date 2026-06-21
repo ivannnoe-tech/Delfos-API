@@ -12,7 +12,7 @@ import {
   SemanticModelStatus,
   SemanticQualityLevel,
   SemanticType,
-} from '../schemas/semantic-model.schema';
+} from '../schemas/semantic-model.constants';
 import { SemanticModelSanitizerService } from '../services/semantic-model-sanitizer.service';
 import { SemanticModelsService } from '../services/semantic-models.service';
 

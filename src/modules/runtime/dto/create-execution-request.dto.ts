@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEnum, IsObject, IsOptional } from 'class-validator';
 
 import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
-import { ExecutionRequestKind, ExecutionRequestMode } from '../schemas/execution-request.schema';
+import { ExecutionRequestKind, ExecutionRequestMode } from '../schemas/execution-request.constants';
 
 export class CreateExecutionRequestDto {
   @ApiProperty({ example: '662d4f6e7a1c2b00124f0001' })

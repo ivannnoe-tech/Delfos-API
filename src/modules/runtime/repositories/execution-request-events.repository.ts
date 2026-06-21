@@ -1,7 +1,7 @@
 import { SanitizedMetadata } from '../../../core/utils/sanitize-metadata';
 import { AdminRole } from '../../auth/types/admin-role';
-import { ExecutionRequestStatus } from '../schemas/execution-request.schema';
-import { ExecutionRequestEventType } from '../schemas/execution-request-event.schema';
+import { ExecutionRequestStatus } from '../schemas/execution-request.constants';
+import { ExecutionRequestEventType } from '../schemas/execution-request-event.constants';
 
 /**
  * Persistence-neutral execution request event record returned by every

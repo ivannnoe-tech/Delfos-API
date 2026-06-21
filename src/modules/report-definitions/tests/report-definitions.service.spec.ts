@@ -14,7 +14,7 @@ import {
   ReportDefinitionParameterType,
   ReportDefinitionStatus,
   ReportDefinitionVisibility,
-} from '../schemas/report-definition.schema';
+} from '../schemas/report-definition.constants';
 import { ReportDefinitionSanitizerService } from '../services/report-definition-sanitizer.service';
 import { ReportDefinitionsService } from '../services/report-definitions.service';
 

@@ -9,7 +9,7 @@ import {
   DashboardDefinitionWidgetPosition,
   DashboardDefinitionWidgetSize,
   DashboardDefinitionWidgetType,
-} from '../schemas/dashboard-definition.schema';
+} from '../schemas/dashboard-definition.constants';
 
 /**
  * Persistence-neutral widget shape used inside a {@link DashboardDefinitionRecord}.

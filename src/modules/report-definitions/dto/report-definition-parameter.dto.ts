@@ -11,7 +11,7 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { SanitizedMetadataValue } from '../../../core/utils/sanitize-metadata';
-import { ReportDefinitionParameterType } from '../schemas/report-definition.schema';
+import { ReportDefinitionParameterType } from '../schemas/report-definition.constants';
 
 const stableKeyPattern = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
 

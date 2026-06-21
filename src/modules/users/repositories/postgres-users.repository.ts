@@ -3,7 +3,7 @@ import { Insertable, Kysely, sql, Updateable } from 'kysely';
 
 import { DB, Users } from '../../../database/postgres/database.types';
 import { KYSELY_DB } from '../../../database/postgres/postgres.constants';
-import { UserRole, UserStatus } from '../schemas/user.schema';
+import { UserRole, UserStatus } from '../schemas/user.constants';
 import {
   CreateUserRecord,
   UpdateUserRecord,
