@@ -89,7 +89,9 @@ describe('ExecutionRequestsService', () => {
 
     expect(createRecord).toBeDefined();
     expect(createRecord?.tenantId).toBe(tenantId);
-    expect(createRecord?.requestKey).toMatch(/^exec_req_[0-9a-f]{24}$/);
+    expect(createRecord?.requestKey).toMatch(
+      /^exec_req_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+    );
     expect(createRecord?.kind).toBe(caseData.kind);
     expect(createRecord?.status).toBe(ExecutionRequestStatus.Accepted);
     expect(createRecord?.[caseData.referenceField]).toBe(caseData.referenceId);

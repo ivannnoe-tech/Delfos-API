@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { randomUUID } from 'node:crypto';
 
 import { AuditService } from '../../audit/services/audit.service';
 import { ConnectionRecord, ConnectionsRepository } from '../repositories/connections.repository';
@@ -80,8 +80,8 @@ describe('ConnectionsService', () => {
 function createAuditService(): AuditServiceMock {
   return {
     record: jest.fn(async () => ({
-      id: new Types.ObjectId().toString(),
-      tenantId: new Types.ObjectId().toString(),
+      id: randomUUID(),
+      tenantId: randomUUID(),
       action: 'connection.created',
       entity: 'connection',
       metadata: {},

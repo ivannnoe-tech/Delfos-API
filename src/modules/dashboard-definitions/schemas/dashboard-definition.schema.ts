@@ -1,7 +1,5 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
-
-import { SanitizedMetadata, SanitizedMetadataValue } from '../../../core/utils/sanitize-metadata';
+// Domain enums for the dashboard-definitions module. Mongoose schema removed in P5 (ADR-0035); file kept at this path so existing imports stay valid — rename to *.constants.ts is a tracked follow-up.
+import { SanitizedMetadataValue } from '../../../core/utils/sanitize-metadata';
 
 export enum DashboardDefinitionChartType {
   Line = 'line',
@@ -72,229 +70,45 @@ export enum DashboardDefinitionWidgetType {
   Custom = 'custom',
 }
 
-@Schema({ _id: false })
-export class DashboardDefinitionLayout {
-  @Prop({
-    required: true,
-    enum: DashboardDefinitionLayoutType,
-    default: DashboardDefinitionLayoutType.Grid,
-  })
-  type!: DashboardDefinitionLayoutType;
-
-  @Prop({ min: 1, max: 24 })
+export interface DashboardDefinitionLayout {
+  type: DashboardDefinitionLayoutType;
   columns?: number;
-
-  @Prop({ enum: DashboardDefinitionLayoutGap })
   gap?: DashboardDefinitionLayoutGap;
-
-  @Prop({ enum: DashboardDefinitionLayoutDensity })
   density?: DashboardDefinitionLayoutDensity;
 }
 
-export const DashboardDefinitionLayoutSchema =
-  SchemaFactory.createForClass(DashboardDefinitionLayout);
-
-@Schema({ _id: false })
-export class DashboardDefinitionSection {
-  @Prop({ required: true, trim: true, maxlength: 80 })
-  key!: string;
-
-  @Prop({ required: true, trim: true, maxlength: 120 })
-  title!: string;
-
-  @Prop({ trim: true, maxlength: 300 })
+export interface DashboardDefinitionSection {
+  key: string;
+  title: string;
   description?: string;
-
-  @Prop({ required: true, min: 0, max: 1000 })
-  order!: number;
-
-  @Prop({ type: DashboardDefinitionLayoutSchema })
+  order: number;
   layout?: DashboardDefinitionLayout;
 }
 
-export const DashboardDefinitionSectionSchema = SchemaFactory.createForClass(
-  DashboardDefinitionSection,
-);
-
-@Schema({ _id: false })
-export class DashboardDefinitionWidgetSize {
-  @Prop({ required: true, min: 1, max: 24 })
-  cols!: number;
-
-  @Prop({ required: true, min: 1, max: 24 })
-  rows!: number;
+export interface DashboardDefinitionWidgetSize {
+  cols: number;
+  rows: number;
 }
 
-export const DashboardDefinitionWidgetSizeSchema = SchemaFactory.createForClass(
-  DashboardDefinitionWidgetSize,
-);
-
-@Schema({ _id: false })
-export class DashboardDefinitionWidgetPosition {
-  @Prop({ required: true, min: 0, max: 1000 })
-  x!: number;
-
-  @Prop({ required: true, min: 0, max: 1000 })
-  y!: number;
+export interface DashboardDefinitionWidgetPosition {
+  x: number;
+  y: number;
 }
 
-export const DashboardDefinitionWidgetPositionSchema = SchemaFactory.createForClass(
-  DashboardDefinitionWidgetPosition,
-);
-
-@Schema({ _id: false })
-export class DashboardDefinitionVisualization {
-  @Prop({ enum: DashboardDefinitionChartType })
+export interface DashboardDefinitionVisualization {
   chartType?: DashboardDefinitionChartType;
-
-  @Prop({ trim: true, maxlength: 160 })
   xField?: string;
-
-  @Prop({ type: [String], default: [] })
-  yFields!: string[];
-
-  @Prop({ trim: true, maxlength: 160 })
+  yFields: string[];
   groupBy?: string;
-
-  @Prop({ trim: true, maxlength: 80 })
   format?: string;
 }
 
-export const DashboardDefinitionVisualizationSchema = SchemaFactory.createForClass(
-  DashboardDefinitionVisualization,
-);
-
-@Schema({ _id: false })
-export class DashboardDefinitionWidget {
-  @Prop({ required: true, trim: true, maxlength: 80 })
-  key!: string;
-
-  @Prop({ required: true, trim: true, maxlength: 120 })
-  title!: string;
-
-  @Prop({ trim: true, maxlength: 300 })
-  description?: string;
-
-  @Prop({ required: true, enum: DashboardDefinitionWidgetType })
-  type!: DashboardDefinitionWidgetType;
-
-  @Prop({ type: Types.ObjectId, ref: 'QueryDefinition' })
-  queryDefinitionId?: Types.ObjectId;
-
-  @Prop({ trim: true, maxlength: 80 })
-  sectionKey?: string;
-
-  @Prop({ required: true, min: 0, max: 1000 })
-  order!: number;
-
-  @Prop({ type: DashboardDefinitionWidgetSizeSchema })
-  size?: DashboardDefinitionWidgetSize;
-
-  @Prop({ type: DashboardDefinitionWidgetPositionSchema })
-  position?: DashboardDefinitionWidgetPosition;
-
-  @Prop({ type: DashboardDefinitionVisualizationSchema })
-  visualization?: DashboardDefinitionVisualization;
-
-  @Prop({ type: Object, default: {} })
-  options!: SanitizedMetadata;
-}
-
-export const DashboardDefinitionWidgetSchema =
-  SchemaFactory.createForClass(DashboardDefinitionWidget);
-
-@Schema({ _id: false })
-export class DashboardDefinitionFilter {
-  @Prop({ required: true, trim: true, maxlength: 80 })
-  key!: string;
-
-  @Prop({ required: true, trim: true, maxlength: 120 })
-  label!: string;
-
-  @Prop({ required: true, trim: true, maxlength: 160 })
-  field!: string;
-
-  @Prop({ required: true, enum: DashboardDefinitionFilterOperator })
-  operator!: DashboardDefinitionFilterOperator;
-
-  @Prop({ default: false })
-  required!: boolean;
-
-  @Prop({ type: Object })
+export interface DashboardDefinitionFilter {
+  key: string;
+  label: string;
+  field: string;
+  operator: DashboardDefinitionFilterOperator;
+  required: boolean;
   defaultValue?: SanitizedMetadataValue;
-
-  @Prop({ type: [Object], default: [] })
-  allowedValues!: SanitizedMetadataValue[];
+  allowedValues: SanitizedMetadataValue[];
 }
-
-export const DashboardDefinitionFilterSchema =
-  SchemaFactory.createForClass(DashboardDefinitionFilter);
-
-@Schema({ collection: 'dashboard_definitions', timestamps: true })
-export class DashboardDefinition {
-  @Prop({ required: true, type: Types.ObjectId, ref: 'Tenant' })
-  tenantId!: Types.ObjectId;
-
-  @Prop({ required: true, trim: true, maxlength: 80 })
-  dashboardKey!: string;
-
-  @Prop({ required: true, trim: true, maxlength: 120 })
-  name!: string;
-
-  @Prop({ trim: true, maxlength: 500 })
-  description?: string;
-
-  @Prop({
-    required: true,
-    enum: DashboardDefinitionStatus,
-    default: DashboardDefinitionStatus.Draft,
-  })
-  status!: DashboardDefinitionStatus;
-
-  @Prop({
-    required: true,
-    enum: DashboardDefinitionVisibility,
-    default: DashboardDefinitionVisibility.Tenant,
-  })
-  visibility!: DashboardDefinitionVisibility;
-
-  @Prop({ type: DashboardDefinitionLayoutSchema, default: () => ({}) })
-  layout!: DashboardDefinitionLayout;
-
-  @Prop({ type: [DashboardDefinitionSectionSchema], default: [] })
-  sections!: DashboardDefinitionSection[];
-
-  @Prop({ type: [DashboardDefinitionWidgetSchema], default: [] })
-  widgets!: DashboardDefinitionWidget[];
-
-  @Prop({ type: [DashboardDefinitionFilterSchema], default: [] })
-  filters!: DashboardDefinitionFilter[];
-
-  @Prop({ type: [String], default: [] })
-  tags!: string[];
-
-  @Prop({ type: Object, default: {} })
-  metadata!: SanitizedMetadata;
-
-  @Prop({ type: Object, default: {} })
-  settings!: SanitizedMetadata;
-
-  @Prop({ trim: true, maxlength: 128 })
-  createdBy?: string;
-
-  @Prop({ trim: true, maxlength: 128 })
-  updatedBy?: string;
-
-  createdAt!: Date;
-  updatedAt!: Date;
-}
-
-export type DashboardDefinitionDocument = HydratedDocument<DashboardDefinition> & {
-  _id: Types.ObjectId;
-};
-
-export const DashboardDefinitionSchema = SchemaFactory.createForClass(DashboardDefinition);
-
-DashboardDefinitionSchema.index({ tenantId: 1, dashboardKey: 1 }, { unique: true });
-DashboardDefinitionSchema.index({ tenantId: 1, status: 1 });
-DashboardDefinitionSchema.index({ tenantId: 1, visibility: 1 });

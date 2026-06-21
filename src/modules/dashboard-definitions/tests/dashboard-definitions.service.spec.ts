@@ -1,5 +1,5 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
+import { randomUUID } from 'node:crypto';
 
 import { AuditService } from '../../audit/services/audit.service';
 import {
@@ -25,9 +25,9 @@ type AuditServiceMock = {
 
 describe('DashboardDefinitionsService', () => {
   it('creates a dashboard definition with sanitized free fields and safe audit', async () => {
-    const dashboardDefinitionId = new Types.ObjectId().toString();
-    const tenantId = new Types.ObjectId().toString();
-    const queryDefinitionId = new Types.ObjectId().toString();
+    const dashboardDefinitionId = randomUUID();
+    const tenantId = randomUUID();
+    const queryDefinitionId = randomUUID();
     const createdAt = new Date('2026-04-26T12:00:00.000Z');
     const repository: Pick<DashboardDefinitionsRepository, 'create'> = {
       create: jest.fn(async (record) =>
@@ -153,8 +153,8 @@ describe('DashboardDefinitionsService', () => {
   });
 
   it('lists dashboard definitions by tenant filters', async () => {
-    const tenantId = new Types.ObjectId().toString();
-    const dashboardDefinitionId = new Types.ObjectId().toString();
+    const tenantId = randomUUID();
+    const dashboardDefinitionId = randomUUID();
     const createdAt = new Date('2026-04-26T12:00:00.000Z');
     const repository: Pick<DashboardDefinitionsRepository, 'findByFilters' | 'countByFilters'> = {
       findByFilters: jest.fn(async () => [
@@ -202,8 +202,8 @@ describe('DashboardDefinitionsService', () => {
   });
 
   it('gets one dashboard definition using tenant scoped lookup', async () => {
-    const tenantId = new Types.ObjectId().toString();
-    const dashboardDefinitionId = new Types.ObjectId().toString();
+    const tenantId = randomUUID();
+    const dashboardDefinitionId = randomUUID();
     const repository: Pick<DashboardDefinitionsRepository, 'findByTenantAndId'> = {
       findByTenantAndId: jest.fn(async () => null),
     };
@@ -216,8 +216,8 @@ describe('DashboardDefinitionsService', () => {
   });
 
   it('updates a dashboard definition with sanitized settings and audit', async () => {
-    const tenantId = new Types.ObjectId().toString();
-    const dashboardDefinitionId = new Types.ObjectId().toString();
+    const tenantId = randomUUID();
+    const dashboardDefinitionId = randomUUID();
     const updatedAt = new Date('2026-04-26T13:00:00.000Z');
     const repository: Pick<DashboardDefinitionsRepository, 'updateByTenantAndId'> = {
       updateByTenantAndId: jest.fn(async (_tenantId, _id, record) =>
@@ -270,8 +270,8 @@ describe('DashboardDefinitionsService', () => {
   });
 
   it('archives a dashboard definition using soft delete', async () => {
-    const tenantId = new Types.ObjectId().toString();
-    const dashboardDefinitionId = new Types.ObjectId().toString();
+    const tenantId = randomUUID();
+    const dashboardDefinitionId = randomUUID();
     const updatedAt = new Date('2026-04-26T13:30:00.000Z');
     const repository: Pick<DashboardDefinitionsRepository, 'archiveByTenantAndId'> = {
       archiveByTenantAndId: jest.fn(async () =>
@@ -324,7 +324,7 @@ describe('DashboardDefinitionsService', () => {
 
     await expect(
       service.create({
-        tenantId: new Types.ObjectId().toString(),
+        tenantId: randomUUID(),
         dashboardKey: 'sales_dashboard',
         name: 'Dashboard',
       }),
@@ -346,8 +346,8 @@ function createService(
 function createAuditService(): AuditServiceMock {
   return {
     record: jest.fn(async () => ({
-      id: new Types.ObjectId().toString(),
-      tenantId: new Types.ObjectId().toString(),
+      id: randomUUID(),
+      tenantId: randomUUID(),
       action: 'dashboard_definition.created',
       entity: 'dashboard_definition',
       metadata: {},

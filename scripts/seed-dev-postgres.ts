@@ -1,5 +1,4 @@
 import { Kysely } from 'kysely';
-import { Types } from 'mongoose';
 
 import { DB } from '../src/database/postgres/database.types';
 import { ProtectedCredentialValue } from '../src/modules/credentials/services/local-credential-protector.service';
@@ -45,14 +44,6 @@ export interface PostgresSeedResult {
   dashboardDefinitions: SeedCatalogItem[];
   reportDefinitions: SeedCatalogItem[];
   semanticModels: SeedCatalogItem[];
-}
-
-// The JSONB cross-reference builders are typed for the Mongo path (ObjectId);
-// on Postgres the reference is a UUID string carried verbatim into JSONB / FK
-// columns. This adapter keeps the shared builders reusable without duplicating
-// the (large) demo shapes.
-function asRef(uuid: string): Types.ObjectId {
-  return uuid as unknown as Types.ObjectId;
 }
 
 function json(value: unknown): string {
@@ -387,9 +378,9 @@ async function upsertDashboardDefinitions(
   queries: SeedCatalogItem[],
 ): Promise<SeedCatalogItem[]> {
   const input = buildDashboardInput({
-    salesOverview: asRef(requireItem(queries, 'sales_overview_demo').id),
-    salesByDay: asRef(requireItem(queries, 'sales_by_day_demo').id),
-    customersSummary: asRef(requireItem(queries, 'customers_summary_demo').id),
+    salesOverview: requireItem(queries, 'sales_overview_demo').id,
+    salesByDay: requireItem(queries, 'sales_by_day_demo').id,
+    customersSummary: requireItem(queries, 'customers_summary_demo').id,
   });
 
   const shared = {
@@ -429,8 +420,8 @@ async function upsertReportDefinitions(
   dashboards: SeedCatalogItem[],
 ): Promise<SeedCatalogItem[]> {
   const input = buildReportInput({
-    salesOverview: asRef(requireItem(queries, 'sales_overview_demo').id),
-    commercialDashboard: asRef(requireItem(dashboards, 'commercial_dashboard_demo').id),
+    salesOverview: requireItem(queries, 'sales_overview_demo').id,
+    commercialDashboard: requireItem(dashboards, 'commercial_dashboard_demo').id,
   });
 
   const shared = {

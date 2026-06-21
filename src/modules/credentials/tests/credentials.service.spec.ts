@@ -1,5 +1,5 @@
 import { NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
+import { randomUUID } from 'node:crypto';
 
 import { AuditService } from '../../audit/services/audit.service';
 import { CredentialRecord, CredentialsRepository } from '../repositories/credentials.repository';
@@ -13,9 +13,9 @@ type AuditServiceMock = {
 
 describe('CredentialsService', () => {
   it('creates a credential reference without exposing the secret and audits safe metadata', async () => {
-    const credentialId = new Types.ObjectId().toString();
-    const tenantId = new Types.ObjectId().toString();
-    const connectionId = new Types.ObjectId().toString();
+    const credentialId = randomUUID();
+    const tenantId = randomUUID();
+    const connectionId = randomUUID();
     const createdAt = new Date('2026-04-26T12:00:00.000Z');
     const repository: Pick<CredentialsRepository, 'create'> = {
       create: jest.fn(async (record) =>
@@ -91,8 +91,8 @@ describe('CredentialsService', () => {
   });
 
   it('lists credential metadata without protected values', async () => {
-    const tenantId = new Types.ObjectId().toString();
-    const credentialId = new Types.ObjectId().toString();
+    const tenantId = randomUUID();
+    const credentialId = randomUUID();
     const createdAt = new Date('2026-04-26T12:00:00.000Z');
     const repository: Pick<CredentialsRepository, 'findByFilters' | 'countByFilters'> = {
       findByFilters: jest.fn(async () => [
@@ -131,8 +131,8 @@ describe('CredentialsService', () => {
   });
 
   it('gets one credential using tenant scoped lookup', async () => {
-    const tenantId = new Types.ObjectId().toString();
-    const credentialId = new Types.ObjectId().toString();
+    const tenantId = randomUUID();
+    const credentialId = randomUUID();
     const repository: Pick<CredentialsRepository, 'findByTenantAndId'> = {
       findByTenantAndId: jest.fn(async () => null),
     };
@@ -147,8 +147,8 @@ describe('CredentialsService', () => {
   });
 
   it('rotates a credential without exposing the new secret', async () => {
-    const tenantId = new Types.ObjectId().toString();
-    const credentialId = new Types.ObjectId().toString();
+    const tenantId = randomUUID();
+    const credentialId = randomUUID();
     const rotatedAt = new Date('2026-04-26T12:30:00.000Z');
     const repository: Pick<CredentialsRepository, 'rotateByTenantAndId'> = {
       rotateByTenantAndId: jest.fn(async (_tenantId, _id, record) =>
@@ -196,8 +196,8 @@ describe('CredentialsService', () => {
   });
 
   it('revokes a credential and records audit', async () => {
-    const tenantId = new Types.ObjectId().toString();
-    const credentialId = new Types.ObjectId().toString();
+    const tenantId = randomUUID();
+    const credentialId = randomUUID();
     const revokedAt = new Date('2026-04-26T13:00:00.000Z');
     const repository: Pick<CredentialsRepository, 'revokeByTenantAndId'> = {
       revokeByTenantAndId: jest.fn(async (_tenantId, _id, record) =>
@@ -249,8 +249,8 @@ function createProtector(): LocalCredentialProtectorService {
 function createAuditService(): AuditServiceMock {
   return {
     record: jest.fn(async () => ({
-      id: new Types.ObjectId().toString(),
-      tenantId: new Types.ObjectId().toString(),
+      id: randomUUID(),
+      tenantId: randomUUID(),
       action: 'credential.created',
       entity: 'credential',
       metadata: {},

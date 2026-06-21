@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { randomUUID } from 'node:crypto';
 
 import { AuditService } from '../../audit/services/audit.service';
 import { AdminRole } from '../../auth/types/admin-role';
@@ -20,12 +20,12 @@ export type AuditServiceMock = {
 
 /**
  * Opaque id generator for the neutral-record fixtures. The backend-agnostic
- * record exposes ids as plain strings; an ObjectId-hex value is accepted by
- * `@IsEntityId` validation, so it keeps the fixtures realistic without coupling
- * the tests to a specific backend (ADR-0035 / ADR-0036).
+ * record exposes ids as plain strings; a UUID is accepted by `@IsEntityId`
+ * validation, so it keeps the fixtures realistic without coupling the tests to
+ * a specific backend (ADR-0035 / ADR-0036).
  */
 export function newId(): string {
-  return new Types.ObjectId().toString();
+  return randomUUID();
 }
 
 export function createAuditService(): AuditServiceMock {

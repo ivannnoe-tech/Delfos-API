@@ -10,9 +10,11 @@ import { createKysely } from './postgres.provider';
 /**
  * Global PostgreSQL module (ADR-0035 / ADR-0036).
  *
- * Provides the shared `Kysely<DB>` instance (or `null` when Postgres is not
- * configured) under {@link KYSELY_DB}, plus {@link PostgresHealthService}.
- * MongoDB remains the operational database until phase P5 of the migration.
+ * Provides the shared `Kysely<DB>` instance under {@link KYSELY_DB}, plus
+ * {@link PostgresHealthService}. PostgreSQL is the sole database since P5
+ * (ADR-0035); `DELFOS_POSTGRES_URL` is required at bootstrap. The legacy
+ * nullable provider shape is retained for the health/seed consumers that still
+ * type the injection as `Kysely<DB> | null`.
  */
 @Global()
 @Module({

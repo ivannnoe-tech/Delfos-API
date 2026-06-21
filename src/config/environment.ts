@@ -3,10 +3,8 @@ export type NodeEnvironment = 'development' | 'test' | 'production';
 export interface EnvironmentVariables {
   NODE_ENV: NodeEnvironment;
   PORT: number;
-  DELFOS_DATABASE_URL: string;
-  // PostgreSQL primary database (ADR-0035), phased migration. OPTIONAL during P1:
-  // when absent the API runs on MongoDB only and the Postgres health-check is skipped.
-  DELFOS_POSTGRES_URL?: string;
+  // PostgreSQL primary database (ADR-0035). Sole database since P5 (Mongo removed).
+  DELFOS_POSTGRES_URL: string;
   // Valkey cache URL (ADR-0035 / P6). OPTIONAL: when absent the cache is
   // disabled (no-op) and the system serves everything from PostgreSQL/MongoDB.
   VALKEY_URL?: string;
@@ -28,8 +26,7 @@ const allowedLogLevels = new Set<EnvironmentVariables['LOG_LEVEL']>([
 export function validateEnvironment(config: Record<string, unknown>): EnvironmentVariables {
   const nodeEnv = readEnum(config, 'NODE_ENV', allowedNodeEnvironments, 'development');
   const port = readPort(config);
-  const databaseUrl = readRequiredString(config, 'DELFOS_DATABASE_URL');
-  const postgresUrl = readOptionalPostgresUrl(config);
+  const postgresUrl = readRequiredPostgresUrl(config);
   const valkeyUrl = readOptionalValkeyUrl(config);
   const adminKey = readAdminKey(config);
   const encryptionKeyBase64 = readEncryptionKey(config);
@@ -40,7 +37,6 @@ export function validateEnvironment(config: Record<string, unknown>): Environmen
   return {
     NODE_ENV: nodeEnv,
     PORT: port,
-    DELFOS_DATABASE_URL: databaseUrl,
     DELFOS_POSTGRES_URL: postgresUrl,
     VALKEY_URL: valkeyUrl,
     DELFOS_ADMIN_KEY: adminKey,
@@ -72,15 +68,11 @@ function readAdminKey(config: Record<string, unknown>): string {
   return value;
 }
 
-function readOptionalPostgresUrl(config: Record<string, unknown>): string | undefined {
+function readRequiredPostgresUrl(config: Record<string, unknown>): string {
   const value = config.DELFOS_POSTGRES_URL;
 
-  if (value === undefined || value === null || (typeof value === 'string' && value.trim() === '')) {
-    return undefined;
-  }
-
-  if (typeof value !== 'string') {
-    throw new Error('DELFOS_POSTGRES_URL must be a string when provided.');
+  if (typeof value !== 'string' || value.trim() === '') {
+    throw new Error('DELFOS_POSTGRES_URL is required.');
   }
 
   const trimmed = value.trim();

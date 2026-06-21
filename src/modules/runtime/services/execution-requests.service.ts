@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
+import { randomUUID } from 'node:crypto';
 
 import { buildListMeta, ListResponse } from '../../../core/dto/list-meta.dto';
 import { sanitizeMetadata } from '../../../core/utils/sanitize-metadata';
@@ -48,7 +48,7 @@ export class ExecutionRequestsService {
   ): Promise<ExecutionRequestResponseDto> {
     this.validateRequiredReference(dto);
 
-    const requestKey = `exec_req_${new Types.ObjectId().toString()}`;
+    const requestKey = `exec_req_${randomUUID()}`;
     const executionRequest = await this.executionRequestsRepository.create({
       tenantId: dto.tenantId,
       requestKey,

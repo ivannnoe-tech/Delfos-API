@@ -1,5 +1,5 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
+import { randomUUID } from 'node:crypto';
 
 import { AuditService } from '../../audit/services/audit.service';
 import {
@@ -24,10 +24,10 @@ type AuditServiceMock = {
 
 describe('ReportDefinitionsService', () => {
   it('creates a report definition with sanitized free fields and safe audit', async () => {
-    const reportDefinitionId = new Types.ObjectId().toString();
-    const tenantId = new Types.ObjectId().toString();
-    const queryDefinitionId = new Types.ObjectId().toString();
-    const dashboardDefinitionId = new Types.ObjectId().toString();
+    const reportDefinitionId = randomUUID();
+    const tenantId = randomUUID();
+    const queryDefinitionId = randomUUID();
+    const dashboardDefinitionId = randomUUID();
     const createdAt = new Date('2026-04-26T12:00:00.000Z');
     const repository: Pick<ReportDefinitionsRepository, 'create'> = {
       create: jest.fn(async (record) =>
@@ -173,9 +173,9 @@ describe('ReportDefinitionsService', () => {
   });
 
   it('lists report definitions by tenant filters', async () => {
-    const tenantId = new Types.ObjectId().toString();
-    const queryDefinitionId = new Types.ObjectId().toString();
-    const reportDefinitionId = new Types.ObjectId().toString();
+    const tenantId = randomUUID();
+    const queryDefinitionId = randomUUID();
+    const reportDefinitionId = randomUUID();
     const createdAt = new Date('2026-04-26T12:00:00.000Z');
     const repository: Pick<ReportDefinitionsRepository, 'findByFilters' | 'countByFilters'> = {
       findByFilters: jest.fn(async () => [
@@ -229,8 +229,8 @@ describe('ReportDefinitionsService', () => {
   });
 
   it('gets one report definition using tenant scoped lookup', async () => {
-    const tenantId = new Types.ObjectId().toString();
-    const reportDefinitionId = new Types.ObjectId().toString();
+    const tenantId = randomUUID();
+    const reportDefinitionId = randomUUID();
     const repository: Pick<ReportDefinitionsRepository, 'findByTenantAndId'> = {
       findByTenantAndId: jest.fn(async () => null),
     };
@@ -243,8 +243,8 @@ describe('ReportDefinitionsService', () => {
   });
 
   it('updates a report definition with sanitized settings and audit', async () => {
-    const tenantId = new Types.ObjectId().toString();
-    const reportDefinitionId = new Types.ObjectId().toString();
+    const tenantId = randomUUID();
+    const reportDefinitionId = randomUUID();
     const updatedAt = new Date('2026-04-26T13:00:00.000Z');
     const repository: Pick<ReportDefinitionsRepository, 'updateByTenantAndId'> = {
       updateByTenantAndId: jest.fn(async (_tenantId, _id, record) =>
@@ -302,8 +302,8 @@ describe('ReportDefinitionsService', () => {
   });
 
   it('archives a report definition using soft delete', async () => {
-    const tenantId = new Types.ObjectId().toString();
-    const reportDefinitionId = new Types.ObjectId().toString();
+    const tenantId = randomUUID();
+    const reportDefinitionId = randomUUID();
     const updatedAt = new Date('2026-04-26T13:30:00.000Z');
     const repository: Pick<ReportDefinitionsRepository, 'archiveByTenantAndId'> = {
       archiveByTenantAndId: jest.fn(async () =>
@@ -358,7 +358,7 @@ describe('ReportDefinitionsService', () => {
 
     await expect(
       service.create({
-        tenantId: new Types.ObjectId().toString(),
+        tenantId: randomUUID(),
         reportKey: 'monthly_sales_report',
         name: 'Relatorio',
       }),
@@ -380,8 +380,8 @@ function createService(
 function createAuditService(): AuditServiceMock {
   return {
     record: jest.fn(async () => ({
-      id: new Types.ObjectId().toString(),
-      tenantId: new Types.ObjectId().toString(),
+      id: randomUUID(),
+      tenantId: randomUUID(),
       action: 'report_definition.created',
       entity: 'report_definition',
       metadata: {},

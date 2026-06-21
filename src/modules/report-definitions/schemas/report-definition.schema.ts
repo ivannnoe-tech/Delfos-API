@@ -1,7 +1,5 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
-
-import { SanitizedMetadata, SanitizedMetadataValue } from '../../../core/utils/sanitize-metadata';
+// Domain enums for the report-definitions module. Mongoose schema removed in P5 (ADR-0035); file kept at this path so existing imports stay valid — rename to *.constants.ts is a tracked follow-up.
+import { SanitizedMetadataValue } from '../../../core/utils/sanitize-metadata';
 
 export enum ReportDefinitionBlockType {
   Text = 'text',
@@ -59,201 +57,51 @@ export enum ReportDefinitionVisibility {
   Tenant = 'tenant',
 }
 
-@Schema({ _id: false })
-export class ReportDefinitionLayout {
-  @Prop({
-    required: true,
-    enum: ReportDefinitionLayoutType,
-    default: ReportDefinitionLayoutType.Paged,
-  })
-  type!: ReportDefinitionLayoutType;
-
-  @Prop({ min: 1, max: 24 })
+/**
+ * Persistence-neutral layout shape for a report definition. Plain structural
+ * type (no Mongoose); both backends map their stored layout onto it.
+ */
+export interface ReportDefinitionLayout {
+  type: ReportDefinitionLayoutType;
   columns?: number;
-
-  @Prop({ enum: ReportDefinitionLayoutDensity })
   density?: ReportDefinitionLayoutDensity;
 }
 
-export const ReportDefinitionLayoutSchema = SchemaFactory.createForClass(ReportDefinitionLayout);
-
-@Schema({ _id: false })
-export class ReportDefinitionSection {
-  @Prop({ required: true, trim: true, maxlength: 80 })
-  key!: string;
-
-  @Prop({ required: true, trim: true, maxlength: 120 })
-  title!: string;
-
-  @Prop({ trim: true, maxlength: 300 })
+/**
+ * Persistence-neutral section shape for a report definition. Plain structural
+ * type (no Mongoose); both backends map their stored sections onto it.
+ */
+export interface ReportDefinitionSection {
+  key: string;
+  title: string;
   description?: string;
-
-  @Prop({ required: true, min: 0, max: 1000 })
-  order!: number;
-
-  @Prop({ type: ReportDefinitionLayoutSchema })
+  order: number;
   layout?: ReportDefinitionLayout;
 }
 
-export const ReportDefinitionSectionSchema = SchemaFactory.createForClass(ReportDefinitionSection);
-
-@Schema({ _id: false })
-export class ReportDefinitionBlock {
-  @Prop({ required: true, trim: true, maxlength: 80 })
-  key!: string;
-
-  @Prop({ required: true, trim: true, maxlength: 120 })
-  title!: string;
-
-  @Prop({ trim: true, maxlength: 300 })
-  description?: string;
-
-  @Prop({ required: true, enum: ReportDefinitionBlockType })
-  type!: ReportDefinitionBlockType;
-
-  @Prop({ type: Types.ObjectId, ref: 'QueryDefinition' })
-  queryDefinitionId?: Types.ObjectId;
-
-  @Prop({ type: Types.ObjectId, ref: 'DashboardDefinition' })
-  dashboardDefinitionId?: Types.ObjectId;
-
-  @Prop({ trim: true, maxlength: 80 })
-  sectionKey?: string;
-
-  @Prop({ required: true, min: 0, max: 1000 })
-  order!: number;
-
-  @Prop({ type: Object, default: {} })
-  options!: SanitizedMetadata;
-}
-
-export const ReportDefinitionBlockSchema = SchemaFactory.createForClass(ReportDefinitionBlock);
-
-@Schema({ _id: false })
-export class ReportDefinitionFilter {
-  @Prop({ required: true, trim: true, maxlength: 80 })
-  key!: string;
-
-  @Prop({ required: true, trim: true, maxlength: 120 })
-  label!: string;
-
-  @Prop({ required: true, trim: true, maxlength: 160 })
-  field!: string;
-
-  @Prop({ required: true, enum: ReportDefinitionFilterOperator })
-  operator!: ReportDefinitionFilterOperator;
-
-  @Prop({ default: false })
-  required!: boolean;
-
-  @Prop({ type: Object })
+/**
+ * Persistence-neutral filter shape for a report definition. Plain structural
+ * type (no Mongoose); both backends map their stored filters onto it.
+ */
+export interface ReportDefinitionFilter {
+  key: string;
+  label: string;
+  field: string;
+  operator: ReportDefinitionFilterOperator;
+  required: boolean;
   defaultValue?: SanitizedMetadataValue;
-
-  @Prop({ type: [Object], default: [] })
-  allowedValues!: SanitizedMetadataValue[];
+  allowedValues: SanitizedMetadataValue[];
 }
 
-export const ReportDefinitionFilterSchema = SchemaFactory.createForClass(ReportDefinitionFilter);
-
-@Schema({ _id: false })
-export class ReportDefinitionParameter {
-  @Prop({ required: true, trim: true, maxlength: 80 })
-  key!: string;
-
-  @Prop({ required: true, trim: true, maxlength: 120 })
-  label!: string;
-
-  @Prop({ required: true, enum: ReportDefinitionParameterType })
-  type!: ReportDefinitionParameterType;
-
-  @Prop({ default: false })
-  required!: boolean;
-
-  @Prop({ type: Object })
+/**
+ * Persistence-neutral parameter shape for a report definition. Plain structural
+ * type (no Mongoose); both backends map their stored parameters onto it.
+ */
+export interface ReportDefinitionParameter {
+  key: string;
+  label: string;
+  type: ReportDefinitionParameterType;
+  required: boolean;
   defaultValue?: SanitizedMetadataValue;
-
-  @Prop({ type: [Object], default: [] })
-  allowedValues!: SanitizedMetadataValue[];
+  allowedValues: SanitizedMetadataValue[];
 }
-
-export const ReportDefinitionParameterSchema =
-  SchemaFactory.createForClass(ReportDefinitionParameter);
-
-@Schema({ collection: 'report_definitions', timestamps: true })
-export class ReportDefinition {
-  @Prop({ required: true, type: Types.ObjectId, ref: 'Tenant' })
-  tenantId!: Types.ObjectId;
-
-  @Prop({ required: true, trim: true, maxlength: 80 })
-  reportKey!: string;
-
-  @Prop({ required: true, trim: true, maxlength: 120 })
-  name!: string;
-
-  @Prop({ trim: true, maxlength: 500 })
-  description?: string;
-
-  @Prop({ required: true, enum: ReportDefinitionStatus, default: ReportDefinitionStatus.Draft })
-  status!: ReportDefinitionStatus;
-
-  @Prop({
-    required: true,
-    enum: ReportDefinitionVisibility,
-    default: ReportDefinitionVisibility.Tenant,
-  })
-  visibility!: ReportDefinitionVisibility;
-
-  @Prop({ type: Types.ObjectId, ref: 'QueryDefinition' })
-  queryDefinitionId?: Types.ObjectId;
-
-  @Prop({ type: Types.ObjectId, ref: 'DashboardDefinition' })
-  dashboardDefinitionId?: Types.ObjectId;
-
-  @Prop({ type: ReportDefinitionLayoutSchema, default: () => ({}) })
-  layout!: ReportDefinitionLayout;
-
-  @Prop({ type: [ReportDefinitionSectionSchema], default: [] })
-  sections!: ReportDefinitionSection[];
-
-  @Prop({ type: [ReportDefinitionBlockSchema], default: [] })
-  blocks!: ReportDefinitionBlock[];
-
-  @Prop({ type: [ReportDefinitionFilterSchema], default: [] })
-  filters!: ReportDefinitionFilter[];
-
-  @Prop({ type: [ReportDefinitionParameterSchema], default: [] })
-  parameters!: ReportDefinitionParameter[];
-
-  @Prop({ type: Object, default: {} })
-  exportOptions!: SanitizedMetadata;
-
-  @Prop({ type: [String], default: [] })
-  tags!: string[];
-
-  @Prop({ type: Object, default: {} })
-  metadata!: SanitizedMetadata;
-
-  @Prop({ type: Object, default: {} })
-  settings!: SanitizedMetadata;
-
-  @Prop({ trim: true, maxlength: 128 })
-  createdBy?: string;
-
-  @Prop({ trim: true, maxlength: 128 })
-  updatedBy?: string;
-
-  createdAt!: Date;
-  updatedAt!: Date;
-}
-
-export type ReportDefinitionDocument = HydratedDocument<ReportDefinition> & {
-  _id: Types.ObjectId;
-};
-
-export const ReportDefinitionSchema = SchemaFactory.createForClass(ReportDefinition);
-
-ReportDefinitionSchema.index({ tenantId: 1, reportKey: 1 }, { unique: true });
-ReportDefinitionSchema.index({ tenantId: 1, status: 1 });
-ReportDefinitionSchema.index({ tenantId: 1, visibility: 1 });
-ReportDefinitionSchema.index({ tenantId: 1, queryDefinitionId: 1 });
-ReportDefinitionSchema.index({ tenantId: 1, dashboardDefinitionId: 1 });

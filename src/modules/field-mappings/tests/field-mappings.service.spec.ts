@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { randomUUID } from 'node:crypto';
 
 import { AuditService } from '../../audit/services/audit.service';
 import {
@@ -14,9 +14,9 @@ type AuditServiceMock = {
 
 describe('FieldMappingsService', () => {
   it('deactivates mappings using tenant scoped lookup and safe audit metadata', async () => {
-    const tenantId = new Types.ObjectId().toString();
-    const mappingId = new Types.ObjectId().toString();
-    const connectionId = new Types.ObjectId().toString();
+    const tenantId = randomUUID();
+    const mappingId = randomUUID();
+    const connectionId = randomUUID();
     const createdAt = new Date('2026-04-26T12:00:00.000Z');
     const record: FieldMappingRecord = {
       id: mappingId,
@@ -67,8 +67,8 @@ describe('FieldMappingsService', () => {
 function createAuditService(): AuditServiceMock {
   return {
     record: jest.fn(async () => ({
-      id: new Types.ObjectId().toString(),
-      tenantId: new Types.ObjectId().toString(),
+      id: randomUUID(),
+      tenantId: randomUUID(),
       action: 'field_mapping.deactivated',
       entity: 'field_mapping',
       metadata: {},

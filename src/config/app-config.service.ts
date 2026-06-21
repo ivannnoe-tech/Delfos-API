@@ -15,15 +15,11 @@ export class AppConfigService {
     return this.configService.get('PORT', { infer: true });
   }
 
-  get databaseUrl(): string {
-    return this.configService.get('DELFOS_DATABASE_URL', { infer: true });
-  }
-
   /**
-   * PostgreSQL connection URL (ADR-0035). Optional during the phased migration:
-   * `undefined` means Postgres is not configured and PG-backed features are skipped.
+   * PostgreSQL connection URL (ADR-0035). Sole database since P5 (Mongo removed);
+   * required and validated at bootstrap.
    */
-  get postgresUrl(): string | undefined {
+  get postgresUrl(): string {
     return this.configService.get('DELFOS_POSTGRES_URL', { infer: true });
   }
 
