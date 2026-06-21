@@ -5,8 +5,7 @@ import { sanitizeMetadata } from '../../../core/utils/sanitize-metadata';
 import { CreateTenantDto } from '../dto/create-tenant.dto';
 import { TenantResponseDto } from '../dto/tenant-response.dto';
 import { UpdateTenantDto } from '../dto/update-tenant.dto';
-import { TenantDocument } from '../schemas/tenant.schema';
-import { TenantsRepository } from '../repositories/tenants.repository';
+import { TenantRecord, TenantsRepository } from '../repositories/tenants.repository';
 
 @Injectable()
 export class TenantsService {
@@ -58,9 +57,9 @@ export class TenantsService {
     return this.toResponse(tenant);
   }
 
-  private toResponse(tenant: TenantDocument): TenantResponseDto {
+  private toResponse(tenant: TenantRecord): TenantResponseDto {
     return {
-      id: tenant._id.toString(),
+      id: tenant.id,
       name: tenant.name,
       slug: tenant.slug,
       status: tenant.status,

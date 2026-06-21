@@ -16,6 +16,14 @@ module.exports = {
     // floor. (ADR-0035 / ADR-0036, migration phase P2.)
     '!src/database/postgres/migrations/**',
     '!src/database/postgres/migrator.ts',
+    // Repository implementations are data-access integration-tested, not unit
+    // tested: Mongo repos via the e2e suite (mongodb-memory-server), PostgreSQL
+    // repos via guarded real-Postgres parity specs (TEST_POSTGRES_URL). The
+    // abstract `*.repository.ts` contracts hold the unit-relevant types.
+    // (ADR-0035 / ADR-0036, migration phase P3.)
+    '!src/modules/**/repositories/mongo-*.repository.ts',
+    '!src/modules/**/repositories/postgres-*.repository.ts',
+    '!src/database/postgres/tests/pg-test-db.ts',
   ],
   coverageDirectory: 'coverage',
   // Progressive coverage floor. Set just below the current measured coverage

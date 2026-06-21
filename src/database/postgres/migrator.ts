@@ -12,7 +12,8 @@ import { FileMigrationProvider, Kysely, Migrator } from 'kysely';
  * compiled build (`.js`). Migrations run in lexicographic filename order
  * (`0001_…` … `0005_…`).
  */
-export function createMigrator(db: Kysely<unknown>): Migrator {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- migrations are schema-agnostic; Kysely's canonical migrator type is Kysely<any>.
+export function createMigrator(db: Kysely<any>): Migrator {
   return new Migrator({
     db,
     provider: new FileMigrationProvider({
