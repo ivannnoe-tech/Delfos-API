@@ -15,9 +15,14 @@ import { QueryDefinitionsModule } from '../query-definitions/query-definitions.m
 import { QueryDefinitionsService } from '../query-definitions/services/query-definitions.service';
 import { ReportDefinitionsModule } from '../report-definitions/report-definitions.module';
 import { ReportDefinitionsService } from '../report-definitions/services/report-definitions.service';
+import { AppConfigService } from '../../config/app-config.service';
 import { createRuntimeConnectorBridgeResolver } from './bridge/runtime-connector-bridge-resolver.factory';
-import { NoOpConnectorDispatchAdapter } from './bridge/runtime-connector-dispatch.port';
 import { ExecutionRequestsController } from './controllers/execution-requests.controller';
+import {
+  CONNECTOR_DISPATCH_TRANSPORT,
+  NodeHttpsConnectorDispatchTransport,
+} from './dispatch/connector-dispatch-transport';
+import { HttpConnectorDispatchAdapter } from './dispatch/http-connector-dispatch.adapter';
 import { PostgresExecutionRequestEventsRepository } from './repositories/postgres-execution-request-events.repository';
 import { PostgresExecutionRequestsRepository } from './repositories/postgres-execution-requests.repository';
 import { ExecutionRequestEventsRepository } from './repositories/execution-request-events.repository';
@@ -76,10 +81,18 @@ import { RuntimeReadinessEvaluatorAdapter } from './services/runtime-readiness-e
       useClass: ConnectorBridgeEventRecorder,
     },
     {
-      // Phase 2 dispatch seam: no transport wired (ADR-0038). Returns
-      // not_supported so the bridge flow stays closed and audited end-to-end.
+      provide: CONNECTOR_DISPATCH_TRANSPORT,
+      useFactory: (config: AppConfigService) => new NodeHttpsConnectorDispatchTransport(config),
+      inject: [AppConfigService],
+    },
+    {
+      // Phase 2 dispatch transport (ADR-0038): real HTTP + mTLS adapter, OFF by
+      // default (CONNECTOR_DISPATCH_ENABLED=false). When disabled it returns
+      // not_supported with no external call and no secret resolution; when
+      // enabled it resolves the secret just-in-time and sends it only on the
+      // mTLS channel for this dispatch.
       provide: CONNECTOR_DISPATCH_PORT,
-      useFactory: () => new NoOpConnectorDispatchAdapter(),
+      useClass: HttpConnectorDispatchAdapter,
     },
     {
       provide: RUNTIME_CONNECTOR_BRIDGE_RESOLVER,
