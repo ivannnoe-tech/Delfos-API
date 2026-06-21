@@ -81,7 +81,8 @@ A coluna **Implementação** distingue decisão `Accepted` já construída de de
 | [0032](./adr-0032-phase-1-data-source.md) | Phase 1 data source (supersedes ADR-0001) | Accepted | parcial |
 | [0033](./adr-0033-no-cache-redis-phase-1.md) | No cache/Redis in Phase 1 (supersedes ADR-0007) | Accepted | não iniciada |
 | [0034](./adr-0034-semantic-layer-foundation-declarative-model.md) | Semantic Layer Foundation (declarative model only) | Accepted | implementado |
-| [0035](./adr-0035-postgresql-primary-database-and-valkey-cache.md) | PostgreSQL primary database + Valkey cache layer | Accepted | não iniciada |
+| [0035](./adr-0035-postgresql-primary-database-and-valkey-cache.md) | PostgreSQL primary database + Valkey cache layer | Accepted | parcial (P1 em andamento) |
+| [0036](./adr-0036-orm-query-layer-kysely.md) | ORM / Query Layer: Kysely (resolve subdecisão da ADR-0035) | Accepted | parcial (P1 em andamento) |
 
 > **Nota sobre ADR-0013**: vive no repositório `delfos-connectors`, no caminho `docs/adr/ADR-0013-connectors-boundary-and-multitenant-runtime-contract.md`. Ela complementa ADR-0008 no eixo de governança documental do `delfos-connectors` (foundation documental, contratos conceituais, fronteiras multitenant). Não supersede ADR-0008 no ponto de execução real — serviço/runtime, conectores reais, workers, filas, cache, scheduler, local agent e execução de SQL/API externa continuam fora de escopo.
 >
@@ -117,12 +118,11 @@ A coluna **Implementação** distingue decisão `Accepted` já construída de de
 > `docs/postgresql-data-model-draft.md`; uso futuro do cache em
 > `docs/valkey-cache-plan.md`.
 >
-> **Decisão pendente (não-ADR)**: a escolha de **ORM / query layer** (Prisma,
-> Kysely, Drizzle ou TypeORM) **não foi tomada**. É uma subdecisão registrada
-> pela ADR-0035 e detalhada em `docs/runtime-query-layer-decision.md` — status
-> `pendente`, sem biblioteca escolhida. Não é uma ADR e não deve virar uma até
-> a fase P1 da migração resolver a escolha; nenhuma ADR `Proposed` foi promovida
-> para registrá-la.
+> **Decisão de ORM resolvida — ADR-0036 (Kysely)**: a escolha de **ORM / query
+> layer** foi a subdecisão registrada pela ADR-0035. Foi **resolvida na fase P1**
+> por spike comparativo runnable (Kysely 43, Drizzle 42, Prisma 37 em PostgreSQL
+> real) e formalizada na **ADR-0036 — Kysely**. `docs/runtime-query-layer-decision.md`
+> reflete o status `decidido (Kysely)`.
 >
 > **Lacunas conhecidas**: os módulos `tenants` e `users` não possuem ADR
 > dedicada. Ambos são foundation implementada e estável; uma ADR futura pode
