@@ -1,11 +1,13 @@
-import { IsMongoId, IsObject, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsObject, IsOptional, IsString, MaxLength } from 'class-validator';
+
+import { IsEntityId } from '../../../core/validation/is-entity-id.decorator';
 
 export class CreateAuditLogDto {
-  @IsMongoId()
+  @IsEntityId()
   tenantId!: string;
 
   @IsOptional()
-  @IsMongoId()
+  @IsEntityId()
   actorUserId?: string;
 
   @IsString()

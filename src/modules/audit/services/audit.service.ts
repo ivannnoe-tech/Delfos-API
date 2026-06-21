@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 import { sanitizeMetadata } from '../../../core/utils/sanitize-metadata';
 import { AuditLogResponseDto } from '../dto/audit-log-response.dto';
 import { CreateAuditLogDto } from '../dto/create-audit-log.dto';
-import { AuditLogsRepository } from '../repositories/audit-logs.repository';
-import { AuditLogDocument } from '../schemas/audit-log.schema';
+import { AuditLogRecord, AuditLogsRepository } from '../repositories/audit-logs.repository';
 
 @Injectable()
 export class AuditService {
@@ -13,8 +11,8 @@ export class AuditService {
 
   async record(dto: CreateAuditLogDto): Promise<AuditLogResponseDto> {
     const auditLog = await this.auditLogsRepository.create({
-      tenantId: new Types.ObjectId(dto.tenantId),
-      actorUserId: dto.actorUserId ? new Types.ObjectId(dto.actorUserId) : undefined,
+      tenantId: dto.tenantId,
+      actorUserId: dto.actorUserId,
       action: dto.action,
       entity: dto.entity,
       entityId: dto.entityId,
@@ -24,11 +22,11 @@ export class AuditService {
     return this.toResponse(auditLog);
   }
 
-  private toResponse(auditLog: AuditLogDocument): AuditLogResponseDto {
+  private toResponse(auditLog: AuditLogRecord): AuditLogResponseDto {
     return {
-      id: auditLog._id.toString(),
-      tenantId: auditLog.tenantId.toString(),
-      actorUserId: auditLog.actorUserId?.toString(),
+      id: auditLog.id,
+      tenantId: auditLog.tenantId,
+      actorUserId: auditLog.actorUserId,
       action: auditLog.action,
       entity: auditLog.entity,
       entityId: auditLog.entityId,
