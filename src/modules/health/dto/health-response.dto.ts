@@ -24,7 +24,24 @@ export class PostgresHealthDto {
   error?: string;
 }
 
+export class CacheHealthDto {
+  @ApiProperty({ example: false, description: 'Whether a Valkey backend is active.' })
+  enabled!: boolean;
+
+  @ApiProperty({ example: 0 })
+  hits!: number;
+
+  @ApiProperty({ example: 0 })
+  misses!: number;
+
+  @ApiProperty({ example: 0, description: 'Swallowed backend errors (cache stays best-effort).' })
+  errors!: number;
+}
+
 export class HealthResponseDto extends BaseHealthDto {
   @ApiProperty({ type: PostgresHealthDto })
   postgres!: PostgresHealthDto;
+
+  @ApiProperty({ type: CacheHealthDto })
+  cache!: CacheHealthDto;
 }

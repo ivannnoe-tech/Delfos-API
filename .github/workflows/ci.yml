@@ -38,9 +38,9 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
 
-    # Real PostgreSQL so the guarded parity specs and the migrations round-trip
-    # spec (skipped without TEST_POSTGRES_URL) actually run. They provision and
-    # drop their own ephemeral databases on this throwaway server.
+    # Real PostgreSQL + Valkey so the guarded parity/migrations specs and the
+    # Valkey integration spec (all skipped without their env URLs) actually run.
+    # They provision and drop their own ephemeral databases/keys.
     services:
       postgres:
         image: postgres:16-alpine
@@ -55,9 +55,19 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      valkey:
+        image: valkey/valkey:8-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "valkey-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     env:
       TEST_POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/postgres
+      TEST_VALKEY_URL: redis://localhost:6379
 
     steps:
       - name: Checkout
@@ -100,8 +110,8 @@ jobs:
     name: Coverage
     runs-on: ubuntu-latest
 
-    # Same real PostgreSQL as the test job: the guarded parity/migrations specs
-    # run under coverage too, so they are exercised in CI.
+    # Same real PostgreSQL + Valkey as the test job: the guarded parity/migrations
+    # and Valkey specs run under coverage too, so they are exercised in CI.
     services:
       postgres:
         image: postgres:16-alpine
@@ -116,9 +126,19 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      valkey:
+        image: valkey/valkey:8-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "valkey-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     env:
       TEST_POSTGRES_URL: postgresql://postgres:postgres@localhost:5432/postgres
+      TEST_VALKEY_URL: redis://localhost:6379
 
     steps:
       - name: Checkout

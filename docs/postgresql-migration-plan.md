@@ -386,15 +386,28 @@ Ordem sugerida (de menor para maior acoplamento):
 
 ## P7 — Hardening
 
+> **Concluída (núcleo).** Observabilidade, CI contra PostgreSQL+Valkey, e os
+> registros de backup/restore, segurança de migrations, rollback por fase e
+> avaliação de RLS estão em `docs/postgresql-hardening.md`. Itens de performance
+> sob carga real (planos de query, N+1) ficam para quando houver carga real —
+> não há runtime de query real ainda (gates ADR-0021/0022).
+
 ### Escopo
-- CI completo (lint/test/build/E2E) estável contra PostgreSQL + Valkey.
-- Revisão de branch protection.
-- Observabilidade: métricas de pool de conexão, cache hit ratio, latência.
-- Performance: revisão de índices, planos de query, N+1.
-- Backups e estratégia de restore do PostgreSQL.
-- Segurança de migrations (revisão de migrations destrutivas).
-- Rollback drills documentados e exercitados.
-- Avaliar Row-Level Security (RLS) como defesa adicional de tenant.
+- ~~CI estável contra PostgreSQL + Valkey~~ — **OK**: jobs `test`/`coverage` com
+  serviços `postgres` + `valkey` (os specs guardados rodam em CI); `e2e-postgres`.
+- ~~Observabilidade: cache hit ratio, latência~~ — **OK**: `/health` reporta
+  `postgres` (status+latência) e `cache` (enabled+hits/misses/errors). Métricas
+  de pool e export de métricas ficam como futuro (`observability-plan.md`).
+- ~~Backups e restore do PostgreSQL~~ — **OK (registro)**: `postgresql-hardening.md`
+  §3 + `backup-restore.md` (Valkey não tem backup — derivável/descartável).
+- ~~Segurança de migrations (destrutivas)~~ — **OK (registro)**: `down()` é
+  test-only; produção é forward-only (hardening §4).
+- ~~Rollback drills documentados~~ — **OK (registro)**: rollback por fase +
+  reversibilidade por config (hardening §5).
+- ~~Avaliar Row-Level Security (RLS)~~ — **OK**: avaliada, **não adotada** agora
+  (isolamento já garantido na aplicação); registrada como opção futura (§6).
+- Revisão de branch protection — **registro** em hardening §7 + checklist.
+- Performance sob carga (índices/N+1) — **adiado** (sem runtime de query real).
 
 ### Fora de escopo
 - Novos recursos de produto; runtime real; dispatch real.
@@ -427,9 +440,9 @@ Ordem sugerida (de menor para maior acoplamento):
 | P2 | Schema / Migrations Foundation | concluída |
 | P3 | Repository Port Migration | concluída (12 módulos, dual-backend) |
 | P4 | Seed and E2E Migration | concluída (seed + E2E em PostgreSQL; CI com serviço PG) |
-| P5 | Mongo / Mongoose Removal | futura |
+| P5 | Mongo / Mongoose Removal | adiada (decisão humana de cutover — estado atual dual-backend) |
 | P6 | Valkey Cache Foundation | concluída (fundação — cache não aplicado a endpoints ainda) |
-| P7 | Hardening | futura |
+| P7 | Hardening | concluída (núcleo; performance sob carga adiada até runtime real) |
 
 ## Relação com outros documentos
 

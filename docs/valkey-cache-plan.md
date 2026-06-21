@@ -4,7 +4,7 @@
 > Decisão de origem: **ADR-0035** — PostgreSQL primary database + Valkey cache.
 > Escopo: define **como** o Valkey será usado quando o cache for promovido
 > (fase P6 do `docs/postgresql-migration-plan.md`).
-
+>
 > **Fundação implementada (fase P6).** O cache passou a existir como
 > **abstração** — não como cache aplicado a endpoints ainda. O que existe:
 > `CacheService` (porta) em `src/core/cache/`, com `ValkeyCacheService` (Valkey
