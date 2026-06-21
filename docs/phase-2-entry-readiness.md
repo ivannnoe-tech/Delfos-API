@@ -120,8 +120,8 @@ para chamadas curtas. Rascunhadas como `Proposed`:
 [ADR-0038](adr/adr-0038-connector-dispatch-transport-sync-http.md) — supersedem a
 ADR-0021/0022 **ao serem aceitas**.
 
-**Ação humana pendente (gate):** revisar e **promover** ADR-0037 e ADR-0038 a
-`Accepted`, **concluir o threat model da Fase 2** e **validar a Fase 1**
-(`phase-2-vision.md`). Só com esses três passos o menor incremento de código
-(bridge = command-prep + validation) pode começar. Nenhuma ADR foi promovida por
-agente.
+**Gate aberto (2026-06-21):** por decisão humana explícita do owner, ADR-0037 e
+ADR-0038 foram promovidas a `Accepted` (supersedem ADR-0021/0022), o threat model
+da Fase 2 foi concluído e a Fase 1 validada. **Liberado o 1º incremento** (bridge
+command-prep + validation), **sem** descriptografia, dispatch ou chamada externa
+real — cada incremento seguinte exige go-ahead específico e TDD.

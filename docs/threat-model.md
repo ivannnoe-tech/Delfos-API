@@ -71,15 +71,17 @@ Nenhum desses controles existe como código nesta fase. São contratos para a fa
 
 ---
 
-## Fase 2 — execução real (threat model — RASCUNHO para revisão)
+## Fase 2 — execução real (threat model — revisado/concluído 2026-06-21)
 
-> **Rascunho `Proposed`, não autoriza nada.** A **conclusão** do threat model da
-> Fase 2 é **critério de gate** (ADR-0024) e **ato humano** — este rascunho serve
-> de base para essa revisão. É concreto à arquitetura **decidida** (ainda
-> `Proposed`): [ADR-0037](adr/adr-0037-credential-decryption-via-delfos-api-broker.md)
-> (`delfos-api` credential broker) e
+> **Revisado e concluído por decisão humana do owner em 2026-06-21** — critério de
+> gate da ADR-0024 atendido. Concreto à arquitetura aceita:
+> [ADR-0037](adr/adr-0037-credential-decryption-via-delfos-api-broker.md)
+> (`delfos-api` credential broker, `Accepted`) e
 > [ADR-0038](adr/adr-0038-connector-dispatch-transport-sync-http.md) (HTTP
-> síncrono + mTLS). Nada aqui promove ADR nem libera código.
+> síncrono + mTLS, `Accepted`). Os itens residuais abaixo viram **tarefas de
+> implementação** — cada incremento de código exige TDD e go-ahead específico; o
+> 1º incremento liberado é command-prep + validation, sem descriptografia,
+> dispatch ou chamada externa real.
 
 ### Nova fronteira de confiança (Fase 2)
 

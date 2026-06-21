@@ -1,20 +1,21 @@
 # ADR-0037 — Descriptografia de credenciais via `delfos-api` credential broker
 
-- **Status**: Proposed
+- **Status**: Accepted
 - **Data**: 2026-06-21
 - **Autores**: Equipe Delfos Analytics
 - **Repositório**: delfos-api
 - **Fase impactada**: Fase 2
-- **Implementação**: não iniciada
+- **Implementação**: não iniciada (1º incremento liberado: command-prep + validation)
 
 ---
 
-> **Esta ADR registra uma decisão humana, mas permanece `Proposed`.** Ela **não
-> autoriza implementação**. Por ADR-0024, a promoção para `Accepted` é **ato
-> humano explícito** — nenhum agente pode mudar este status. **Nada** de
-> descriptografia, broker, adapter ou dispatch real pode ser construído enquanto
-> esta ADR não for `Accepted` por um humano. Ao ser aceita, **supersede a
-> ADR-0021** (que enquadrou o problema sem decidir).
+> **Aceita por decisão humana explícita do owner em 2026-06-21** — entrada na
+> Fase 2 (ADR-0024); **supersede a ADR-0021**. A aceitação autoriza o *caminho*
+> (broker = `delfos-api`), mas **não** dispensa cuidado por incremento: cada passo
+> de código (broker real, descriptografia real, adapter real) exige go-ahead
+> específico, TDD e os controles do threat model. O **1º incremento liberado** é a
+> bridge **command-prep + validation**, sem descriptografia, dispatch ou chamada
+> externa real.
 
 ## Contexto
 

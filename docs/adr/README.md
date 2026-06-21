@@ -67,8 +67,8 @@ A coluna **Implementação** distingue decisão `Accepted` já construída de de
 | [0018](./adr-0018-secure-audit-strategy.md) | Secure audit strategy | Accepted | implementado |
 | [0019](./adr-0019-credential-encryption-and-rotation.md) | Credential encryption and rotation | Accepted | implementado |
 | [0020](./adr-0020-metadata-sanitization-and-forbidden-fields.md) | Metadata sanitization and forbidden fields | Accepted | implementado |
-| [0021](./adr-0021-credential-decryption-in-future-execution.md) | Credential decryption in future execution | Proposed | não iniciada |
-| [0022](./adr-0022-connector-dispatch-transport.md) | Connector dispatch transport | Proposed | não iniciada |
+| [0021](./adr-0021-credential-decryption-in-future-execution.md) | Credential decryption in future execution | Superseded by ADR-0037 | substituída |
+| [0022](./adr-0022-connector-dispatch-transport.md) | Connector dispatch transport | Superseded by ADR-0038 | substituída |
 | [0023](./adr-0023-data-masking-policy.md) | Data masking policy | Accepted | implementado |
 | [0024](./adr-0024-phase-1-and-phase-2-definition.md) | Phase 1 and Phase 2 formal definition | Accepted | implementado |
 | [0025](./adr-0025-llm-assisted-analytics-text-generation.md) | LLM-assisted analytics text generation | Accepted | planejamento apenas |
@@ -83,8 +83,8 @@ A coluna **Implementação** distingue decisão `Accepted` já construída de de
 | [0034](./adr-0034-semantic-layer-foundation-declarative-model.md) | Semantic Layer Foundation (declarative model only) | Accepted | implementado |
 | [0035](./adr-0035-postgresql-primary-database-and-valkey-cache.md) | PostgreSQL primary database + Valkey cache layer | Accepted | implementado (P1–P7 + P5; Mongo removido) |
 | [0036](./adr-0036-orm-query-layer-kysely.md) | ORM / Query Layer: Kysely (resolve subdecisão da ADR-0035) | Accepted | implementado (P1–P7) |
-| [0037](./adr-0037-credential-decryption-via-delfos-api-broker.md) | Credential decryption via delfos-api broker (supersede ADR-0021 ao aceitar) | Proposed | não iniciada |
-| [0038](./adr-0038-connector-dispatch-transport-sync-http.md) | Dispatch transport via synchronous HTTP/mTLS (supersede ADR-0022 ao aceitar) | Proposed | não iniciada |
+| [0037](./adr-0037-credential-decryption-via-delfos-api-broker.md) | Credential decryption via delfos-api broker (supersede ADR-0021) | Accepted | não iniciada (1º incremento: command-prep+validation) |
+| [0038](./adr-0038-connector-dispatch-transport-sync-http.md) | Dispatch transport via synchronous HTTP/mTLS (supersede ADR-0022) | Accepted | não iniciada (1º incremento: command-prep+validation) |
 
 > **Nota sobre ADR-0013**: vive no repositório `delfos-connectors`, no caminho `docs/adr/ADR-0013-connectors-boundary-and-multitenant-runtime-contract.md`. Ela complementa ADR-0008 no eixo de governança documental do `delfos-connectors` (foundation documental, contratos conceituais, fronteiras multitenant). Não supersede ADR-0008 no ponto de execução real — serviço/runtime, conectores reais, workers, filas, cache, scheduler, local agent e execução de SQL/API externa continuam fora de escopo.
 >

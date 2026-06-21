@@ -1,6 +1,6 @@
 # ADR-0022 — Transporte de dispatch para connectors
 
-- **Status**: Proposed
+- **Status**: Superseded by ADR-0038
 - **Data**: 2026-05-15
 - **Autores**: Equipe Delfos Analytics
 - **Repositório**: delfos-api
