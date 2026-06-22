@@ -1,6 +1,6 @@
 # ADR-0041 — Adapter real: `rest_api` + `preview_dataset` (amostra read-only mascarada)
 
-- **Status**: Proposed
+- **Status**: Accepted
 - **Data**: 2026-06-21
 - **Autores**: Equipe Delfos Analytics
 - **Repositório**: delfos-connectors (impacto primário); delfos-api (broker/transporte)
@@ -9,12 +9,12 @@
 
 ---
 
-> **Estende a ADR-0040** (que liberou `rest_api` + `test_connection`, só
-> conectividade). Esta ADR introduz a **primeira leitura de DADOS reais do
-> cliente** — capability `preview_dataset` sobre `rest_api`. É um salto de risco
-> (egress de dados, LGPD/PII), então requer ratificação humana do escopo +
-> threat model abaixo antes de qualquer código. Continua atrás de flag; cada
-> incremento de código exige go-ahead específico + TDD.
+> **Aceita por decisão humana explícita do owner em 2026-06-21** (escopo + threat
+> model de egress de dados ratificados). Estende a ADR-0040 (que liberou
+> `rest_api` + `test_connection`, só conectividade) com a **primeira leitura de
+> DADOS reais do cliente** — `preview_dataset` sobre `rest_api`, limitado +
+> mascarado. Continua atrás de flag; cada incremento de código exige go-ahead
+> específico + TDD. Query arbitrária, SQL e export ficam fora.
 
 ## Contexto
 
