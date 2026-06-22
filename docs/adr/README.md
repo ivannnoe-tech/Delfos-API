@@ -86,7 +86,8 @@ A coluna **Implementação** distingue decisão `Accepted` já construída de de
 | [0037](./adr-0037-credential-decryption-via-delfos-api-broker.md) | Credential decryption via delfos-api broker (supersede ADR-0021) | Accepted | parcial (broker real construído, isolado e não plugado ao dispatch) |
 | [0038](./adr-0038-connector-dispatch-transport-sync-http.md) | Dispatch transport via synchronous HTTP/mTLS (supersede ADR-0022) | Accepted | parcial (cliente HTTP+mTLS gated OFF; handshake testado; sem connectors rodando) |
 | [0039](./adr-0039-connectors-dispatch-receiver.md) | Dispatch receiver (HTTP + mTLS) in delfos-connectors | Accepted | não iniciada |
-| [0040](./adr-0040-real-connector-source-adapter.md) | Real connector source adapter (1st: REST read-only test_connection) | Accepted | não iniciada |
+| [0040](./adr-0040-real-connector-source-adapter.md) | Real connector source adapter (1st: REST read-only test_connection) | Accepted | parcial (REST test_connection no delfos-connectors) |
+| [0041](./adr-0041-real-rest-preview-dataset.md) | Real adapter: REST preview_dataset (limited, masked read) | Proposed | não iniciada |
 
 > **Nota sobre ADR-0013**: vive no repositório `delfos-connectors`, no caminho `docs/adr/ADR-0013-connectors-boundary-and-multitenant-runtime-contract.md`. Ela complementa ADR-0008 no eixo de governança documental do `delfos-connectors` (foundation documental, contratos conceituais, fronteiras multitenant). Não supersede ADR-0008 no ponto de execução real — serviço/runtime, conectores reais, workers, filas, cache, scheduler, local agent e execução de SQL/API externa continuam fora de escopo.
 >
